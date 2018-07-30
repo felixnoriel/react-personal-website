@@ -1,0 +1,34 @@
+{
+  "name": "felixwebsite",
+  "version": "1.0.0",
+  "description": "felix website built with react, nextjs for ssr, redux, apollo, graphql, wordpress api",
+  "main": "server.js",
+  "scripts": {
+    "dev": "NODE_ENV=development next",
+    "build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "author": "Felix Noriel",
+  "license": "ISC",
+  "dependencies": {
+    "@zeit/next-sass": "^0.2.0",
+    "css-loader": "^1.0.0",
+    "express": "^4.16.3",
+    "isomorphic-unfetch": "^2.0.0",
+    "moment": "^2.22.2",
+    "next": "^6.1.1",
+    "node-sass": "^4.9.2",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-devtools-extension": "^2.13.5",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "postcss-css-variables": "^0.9.0",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-import": "^11.1.0",
+    "postcss-loader": "^2.1.6"
+  }
+}
