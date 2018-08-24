@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "NODE_ENV=development node server.js",
-    "build": "export NODE_ENV=production next build",
-    "start": "export NODE_ENV=production node server.js"
+    "build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production node server.js"
   },
   "author": "Felix Noriel",
   "license": "ISC",
