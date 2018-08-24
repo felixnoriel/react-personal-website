@@ -10,7 +10,7 @@ function getWPApi(posttype, params){
     }
 
     //const res =  fetch(`${config.endpoint}/${posttype}?_embed=true${filter}`);
-    const res =  fetch(`http://localhost:3000/${posttype}.json`);
+    const res =  fetch(`${config.endpoint}/${posttype}.json`);
     return res;
 }
 
