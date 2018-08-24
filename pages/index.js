@@ -1,18 +1,27 @@
 import { PureComponent } from 'react'
-import fetch from 'isomorphic-unfetch'
+import { connect } from 'react-redux'
+
 import config from '../helpers/config';
-import service from '../helpers/service';
+import { getExperiences, getProjects, getBlogList } from '../actions/action'
+import { action as toggleMenu } from 'redux-burger-menu';
 
 import MainContainer from '../containers/MainContainer'
-//import { Link } from '../routes';
+import Intro from '../components/Intro';
+import CareerTimeline from '../components/CareerTimeline';
+import ProjectList from '../components/ProjectList';
+import BlogList from '../components/BlogList';
+import Skills from '../components/Skills';
 
-export default class Index extends PureComponent{
+class Index extends PureComponent{
 
   //second to be called
   constructor(props){
     super(props)
   }
-  
+
+  componentWillUnmount(){
+    console.log('index.js unmount');
+  }
   //first to be called
   /*
     params pathname = url
@@ -23,22 +32,33 @@ export default class Index extends PureComponent{
     jsonPageRes - fetch response ( client only)
     err - error object
   */
-  static async getInitialProps ({ req, pathname, params, query }) { 
+  static async getInitialProps ({ req, reduxStore, pathname, params, query }) {
+    await reduxStore.dispatch(toggleMenu(false))
+    await reduxStore.dispatch(getExperiences({per_page: 3}))
+    await reduxStore.dispatch(getProjects({per_page:3, order_by: 'menu_order'}))
+    await reduxStore.dispatch(getBlogList({per_page:3, order_by: 'menu_order'}))
 
-    const parameters = {  
-
-          };
-
-    return parameters;
+    return {};
   }
 
   //third to be called
-  //<MainContainer />
+  //
   render(){
-    return (
-        <div>
-        WORKING
-        </div>
-    )
+    const { experiences, projects, blogList } = this.props.reducer;
+    return (<MainContainer>
+              <Intro />
+              <Skills />
+              <CareerTimeline indexPage={true} experiences={experiences}/>
+              <ProjectList indexPage={true} projects={projects} />
+              <BlogList indexPage={true} blogList={blogList} />
+            </MainContainer>)
   }
 }
+const mapStateToProps = state => ({
+ ...state
+})
+const mapDispatchToProps = dispatch => ({
+
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Index);
