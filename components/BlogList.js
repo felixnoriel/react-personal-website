@@ -24,7 +24,7 @@ const BlogList = ({blogList, indexPage}) => {
 
 const BlogListText = ({blogList}) => {
   if(!blogList || !blogList.map){
-    return 'Loading blog';
+    return '';
   }
 
   return blogList.map( blog => {

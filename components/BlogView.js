@@ -15,6 +15,11 @@ const BlogView = ({blog}) => {
             <div className="container">
               <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.content.rendered }} />
               <SharePost blog={modifyBlog}/>
+              <div className="back-to-blog">
+                <Link as={`blog`} route={`/blog`} prefetch>
+                  <a className=""><i className="fas fa-arrow-left"></i>Back to blog</a>
+                </Link>
+              </div>
             </div>
           </section>])
 }

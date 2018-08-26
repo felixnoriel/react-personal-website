@@ -45,7 +45,7 @@ const ProjectListHeader = ({viewType}) => {
 
 const ProjectsListText = ({projects}) => {
   if(!projects || !projects.map){
-    return 'Loading projects';
+    return '';
   }
   const projectsText = projects.map( project => {
     return <Project key={project.id} project={project} />
@@ -89,24 +89,3 @@ const TagList = ({tags}) => {
 
 
 export default ProjectList;
-
-/*
-(<Link as={modifyProject.custom_modified.postUrlPath} route={modifyProject.custom_modified.postUrlPath} prefetch>
-         <a>
-          <div className="columns box project-item">
-            <figure className="column is-one-fifth">
-              <p className="image">
-                <img src={modifyProject.custom_modified.featuredImgSrc.source_url} />
-              </p>
-            </figure>
-            <div className="column">
-              <div className="content">
-                <h2 dangerouslySetInnerHTML={{ __html: modifyProject.title.rendered }} />
-                <TagList tags={modifyProject.custom_modified.tags}/>
-                <div dangerouslySetInnerHTML={{ __html: modifyProject.excerpt.rendered }} />
-              </div>
-            </div>
-           </div>
-          </a>
-        </Link>)
-        */

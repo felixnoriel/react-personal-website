@@ -90,6 +90,21 @@
     }
 
   }
+
+  .back-to-blog{
+    margin: 1.5rem 0 0 0.5rem;
+
+    a{
+      vertical-align: top;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin: 2rem 0 !important;
+      svg{
+        margin-right: 8px;
+        font-size: 1.5rem;
+      }
+    }
+  }
 }
 
 
