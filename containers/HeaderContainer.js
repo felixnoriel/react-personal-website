@@ -107,7 +107,7 @@ const HeadCustom = ({blog}) => {
   }
 
   return <Head>
-          <title dangerouslySetInnerHTML={{ __html: metaTitle}} />
+          <title>{metaTitle}</title>
 
           <script async src="//www.googletagmanager.com/gtag/js?id=UA-80189799-2"></script>
           <script async='async' src='//www.googletagservices.com/tag/js/gpt.js'></script>
