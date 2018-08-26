@@ -56,7 +56,9 @@ const fetch = require('isomorphic-unfetch');
 })
 
 async function generateJSONData({posttype}){
-  const promise =  await fetch(`http://whoisfelix.com/wordpress/wp-json/wp/v2/${posttype}?_embed=true&orderby=menu_order`);
+  const url = `http://whoisfelix.com/wordpress/wp-json/wp/v2/${posttype}?_embed=true&orderby=menu_order&per_page=99`;
+  console.log(url);
+  const promise =  await fetch(url);
   const data = await promise.json();
   writeFile({text: JSON.stringify(data), filename: `${posttype}.json`});
 }

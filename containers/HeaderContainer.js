@@ -85,7 +85,6 @@ class HeaderContainer extends PureComponent {
 
 const HeadCustom = ({blog}) => {
 
-
   let metaDescription = "I am a Software Engineer who loves food, traveling and cooking!";
   let metaTitle = "Felix Noriel";
 
@@ -94,7 +93,7 @@ const HeadCustom = ({blog}) => {
   let ogSiteName = "";
   let ogUpdatedTime = "";
   let publishedTime = "";
-  let ogUrl = "whoisfelix.com";
+  let ogUrl = "//whoisfelix.com";
 
   if(blog && blog[0]){
     const modifyBlog = helper.modifyWordpressObject(blog[0]);
@@ -108,7 +107,7 @@ const HeadCustom = ({blog}) => {
   }
 
   return <Head>
-          <title>{metaTitle}</title>
+          <title dangerouslySetInnerHTML={{ __html: metaTitle}} />
 
           <script async src="//www.googletagmanager.com/gtag/js?id=UA-80189799-2"></script>
           <script async='async' src='//www.googletagservices.com/tag/js/gpt.js'></script>
@@ -142,7 +141,7 @@ const HeadCustom = ({blog}) => {
           <meta property="article:tag" content="blog, article" />
           <meta property="article:section" content="blog" />
 
-          <link rel="canonical" href={ogUrl}/>
+          <link rel="canonical" href={`${ogUrl}`}/>
           <link href="//fonts.googleapis.com/css?family=Oxygen|Raleway" rel="stylesheet" />
          </Head>
 }
