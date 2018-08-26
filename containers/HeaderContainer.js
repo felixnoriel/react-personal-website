@@ -9,6 +9,7 @@ import NProgress from 'nprogress'
 import Head from 'next/head';
 import helper from '../helpers/helper';
 import Socials from '../components/Socials';
+import GoogleTagManager from '../components/GoogleTagManager';
 
 Router.onRouteChangeStart = (url) => {
   NProgress.start()
@@ -77,7 +78,7 @@ class HeaderContainer extends PureComponent {
               <i className="fa fas fa-bars"></i>
             </p>
           </section>,
-          <LinkScroll to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll>]
+          <LinkScroll key="header-4" to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll>]
     );
  }
 }
@@ -93,7 +94,7 @@ const HeadCustom = ({blog}) => {
   let ogSiteName = "";
   let ogUpdatedTime = "";
   let publishedTime = "";
-  let ogUrl = "felixnoriel.com";
+  let ogUrl = "whoisfelix.com";
 
   if(blog && blog[0]){
     const modifyBlog = helper.modifyWordpressObject(blog[0]);
@@ -108,6 +109,11 @@ const HeadCustom = ({blog}) => {
 
   return <Head>
           <title>{metaTitle}</title>
+
+          <script async src="//www.googletagmanager.com/gtag/js?id=UA-80189799-2"></script>
+          <script async='async' src='//www.googletagservices.com/tag/js/gpt.js'></script>
+          <GoogleTagManager scriptId="google-tag-manager" gtmId="GTM-PKHZBV4" type="script"/>
+
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
           <meta name="author" content="Felix Noriel" itemProp="author" />
           <meta name="dcterms.rightsHolder" content="Felix Noriel"/>
@@ -137,7 +143,7 @@ const HeadCustom = ({blog}) => {
           <meta property="article:section" content="blog" />
 
           <link rel="canonical" href={ogUrl}/>
-          <link href="https://fonts.googleapis.com/css?family=Oxygen|Raleway" rel="stylesheet" />
+          <link href="//fonts.googleapis.com/css?family=Oxygen|Raleway" rel="stylesheet" />
          </Head>
 }
 

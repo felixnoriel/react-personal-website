@@ -12,6 +12,3 @@ module.exports = withSass({
       node_env: process.env.NODE_ENV || 'development'
   }
 })
-
-
-

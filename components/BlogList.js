@@ -46,7 +46,7 @@ export const BlogText = ({blog}) => {
                   <p className="title" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
                   <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />
                 </div>
-                <a className="is-link btn-read-more">Read More<i className="fas fa-arrow-right "></i></a>
+                <p className="is-link btn-read-more">Read More<i className="fas fa-arrow-right "></i></p>
                 </a>
               </Link>
             </div>

@@ -30,7 +30,7 @@ const fetch = require('isomorphic-unfetch');
           res.send('...');
         });
 
-        if (process.env.NODE_ENV === 'production') {
+        //if (process.env.NODE_ENV === 'production') {
           const bodyParser = require('body-parser')
           const cors = require('cors')
           const compression = require('compression')
@@ -41,13 +41,13 @@ const fetch = require('isomorphic-unfetch');
                 .use(cors)
                 .use(bodyParser.json())
                 .listen(3000);
-        }else{
+        /*}else{
           console.log('development environment..')
 
           server
           .use(handler)
           .listen(3000);
-        }
+        }*/
 
       })
 .catch((ex) => {

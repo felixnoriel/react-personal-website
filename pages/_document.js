@@ -1,6 +1,8 @@
 import Document, { Head, Main, NextScript } from 'next/document'
-
 import getConfig from 'next/config'
+
+import GoogleTagManager from '../components/GoogleTagManager';
+
 const { publicRuntimeConfig } = getConfig();
 
 export default class MyDocument extends Document {
@@ -18,6 +20,7 @@ export default class MyDocument extends Document {
           <link rel="stylesheet" href="/_next/static/style.css" />
         </Head>
         <body>
+          <GoogleTagManager scriptId="google-tag-manager" gtmId="GTM-PKHZBV4" type="noscript"/>
           <Main />
           <NextScript />
         </body>

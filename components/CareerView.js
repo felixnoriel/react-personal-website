@@ -4,8 +4,6 @@ import helper from '../helpers/helper';
 import ProjectList from './ProjectList';
 
 const CareerView = ({experience, projects}) => {
-  console.log(experience[0]);
-  console.log(projects);
   return ([<section key="career-view-1" className="section career-view-container">
             <CareerInfo experience={experience} />
           </section>,

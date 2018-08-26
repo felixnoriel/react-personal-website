@@ -3,7 +3,6 @@ import helper from '../helpers/helper';
 
 const BlogView = ({blog}) => {
   const modifyBlog = helper.modifyWordpressObject(blog[0]);
-  console.log(modifyBlog);
   return ([<section key="blog-view-1" id="blog-section" className="container blog-view-banner">
   <h1 className="title has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
   <h2 className="subtitle has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />

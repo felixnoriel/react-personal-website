@@ -1,0 +1,9 @@
+{
+  "apps" : [{
+    "name"        : "felix",
+    "script"      : "server.js",
+    "node_args"        : ["--harmony", "--max_old_space_size=500"],
+    "max_memory_restart" : "10G",
+    "watch": true
+  }]
+}
