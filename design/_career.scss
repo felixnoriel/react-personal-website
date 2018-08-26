@@ -1,15 +1,46 @@
 /***** CAREER ****/
-.timeline-content {
-  .company-logo{
-    max-width: 124px;
-    margin-top:20px;
+.timeline-container{
+
+  .timeline{
+
+    .timeline-content {
+      .company-logo{
+        max-width: 124px;
+        margin: 1rem 0;
+      }
+      a{
+        color: $defaultFontColor;
+      }
+    }
+    .timeline-header{
+
+      span.is-dark{
+        background: #fff;
+        font-size: 2.5rem;
+        svg{
+          color: $darkColor2;
+          background: #fff;
+        }
+      }
+
+    }
   }
 }
-.timeline-header{
-  .button-view-all{
-    margin-top: 2rem;
+/*** DESKTOP VIEW ONLY ****/
+@media only screen and (min-width: 769px) {
+  .timeline-container{
+    .btn-view-all-container{
+      margin: 1rem auto;
+      width: 120px;
+      height: 35px;
+      a{
+        float: none;
+        margin: auto;
+      }
+    }
   }
 }
+
 
 .career-view-container{
   .company-logo{

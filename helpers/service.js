@@ -8,7 +8,7 @@ function getWPApi(posttype, params){
             filter += '&' + i + '=' + params[i];
         }
     }
-
+    console.log(config);
     //const res =  fetch(`${config.endpoint}/${posttype}?_embed=true${filter}`);
     const res =  fetch(`${config.endpoint}/${posttype}.json`);
     return res;

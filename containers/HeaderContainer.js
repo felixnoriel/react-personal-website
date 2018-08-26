@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import { action as toggleMenu } from 'redux-burger-menu';
 import { elastic as Menu } from 'react-burger-menu'
 import { Link, Router } from '../routes'
+import { Link as LinkScroll } from 'react-scroll'
+
 import NProgress from 'nprogress'
 import Head from 'next/head';
 import helper from '../helpers/helper';
+import Socials from '../components/Socials';
 
 Router.onRouteChangeStart = (url) => {
   NProgress.start()
@@ -20,7 +23,8 @@ class HeaderContainer extends PureComponent {
    constructor(props){
      super(props);
      this.state = {
-       showBurgerMenu: false
+       showBurgerMenu: false,
+       showUpButton: false
      }
      this.bmChangeState = this.bmChangeState.bind(this);
    }
@@ -42,6 +46,16 @@ class HeaderContainer extends PureComponent {
              showBurgerMenu: false
            })
          }
+         if(windowPosition >= 1200){
+           this.setState({
+             showUpButton: true
+           })
+         }else{
+           this.setState({
+             showUpButton: false
+           })
+         }
+
      });
    }
 
@@ -51,20 +65,23 @@ class HeaderContainer extends PureComponent {
 
    render() {
      const { burgerMenu, reducer } = this.props;
-     const { showBurgerMenu } = this.state;
-     //const hasFadeIn = showBurgerMenu ? '' : 'hide'; - enable during production
-     const hasFadeIn = showBurgerMenu ? '' : '';
+     const { showBurgerMenu, showUpButton } = this.state;
+     const menuHasFadeIn = showBurgerMenu ? 'show-background' : ''; //- enable during production
+     const upButtonHasFadeIn = showUpButton ? '' : 'hide'; //- enable during production
+     //const hasFadeIn = showBurgerMenu ? '' : '';
      return (
         [ <HeadCustom blog={reducer.blog} key="header-1"/>,
           <MenuSidebar key="header-2" bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
-          <section key="header-3"  className={`${hasFadeIn} fade-in top-nav-container`}>
+          <section key="header-3"  className={`${menuHasFadeIn} fade-in top-nav-container`}>
             <p className="btn-burger-menu pointer" onClick={()=>{this.props.toggleMenu(true)}}>
               <i className="fa fas fa-bars"></i>
             </p>
-          </section>]
+          </section>,
+          <LinkScroll to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll>]
     );
  }
 }
+
 const HeadCustom = ({blog}) => {
 
 
@@ -120,28 +137,39 @@ const HeadCustom = ({blog}) => {
           <meta property="article:section" content="blog" />
 
           <link rel="canonical" href={ogUrl}/>
+          <link href="https://fonts.googleapis.com/css?family=Oxygen|Raleway" rel="stylesheet" />
          </Head>
 }
 
 const MenuSidebar = ({burgerMenu, bmChangeState}) => {
   //<button onClick={()=>{Router.pushRoute('/projects')}} className="button">test projects</button>
+  //<LinkScroll to="contact-container" smooth={true} duration={500} >Contact</LinkScroll>
   return (<Menu
             right
             isOpen={ burgerMenu.isOpen }
             customBurgerIcon={ false }
             onStateChange={ bmChangeState }>
-              <Link as="/" href='/' prefetch>
-                <a>Home</a>
-              </Link>
-              <Link as="projects" route='/projects' prefetch>
-                <a>Projects</a>
-              </Link>
-              <Link as="career" route='/career' prefetch>
-                <a>Career</a>
-              </Link>
-              <Link as="blog" route='/blog' prefetch>
-                <a>Blog</a>
-              </Link>
+              <div className="menu-links">
+                <Link as="/" href='/' prefetch>
+                  <a>Home</a>
+                </Link>
+                <Link as="projects" route='/projects' prefetch>
+                  <a>Projects</a>
+                </Link>
+                <Link as="career" route='/career' prefetch>
+                  <a>Career</a>
+                </Link>
+                <Link as="blog" route='/blog' prefetch>
+                  <a>Blog</a>
+                </Link>
+                <Link as="about" route='/about' prefetch>
+                  <a>About</a>
+                </Link>
+                <a href="mailto:jrnoriel_56@yahoo.com">Contact Me</a>
+              </div>
+              <div className="menu-socials">
+                <Socials />
+              </div>
            </Menu>)
 }
 

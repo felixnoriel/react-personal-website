@@ -53,7 +53,8 @@ const TagList = ({tags, className}) => {
     return <Tag className="project-view" key={tag.id} title={tag.name} />
   })
 
-  return ([<h3 key="taglist-header" className="subtitle">Tech stack</h3>,<div key="taglist-list" className={`tags`}>{tagsText}</div>])
+  return ([<h3 key="taglist-header" className="subtitle">Tech stack</h3>,
+            <div key="taglist-list" className={`tags`}>{tagsText}</div>])
 }
 
 const GalleryLightboxText = ({project}) => {

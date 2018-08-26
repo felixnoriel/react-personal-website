@@ -13,6 +13,7 @@ import BlogList from '../components/BlogList';
 import BlogView from '../components/BlogView';
 import CareerTimeline from '../components/CareerTimeline';
 import CareerView from '../components/CareerView';
+import AboutWebsite from '../components/AboutWebsite';
 
 import routes from '../routes';
 
@@ -86,6 +87,7 @@ const components = {
   projectview: ({reducer}) => <ProjectView project={reducer.project}/>,
   careerview: ({reducer}) => <CareerView experience={reducer.experience} projects={reducer.projects_by_career}/>,
   blogview: ({reducer}) => <BlogView blog={reducer.blog}/>,
+  about: () => <AboutWebsite />,
 }
 
 const mapStateToProps = state => ({

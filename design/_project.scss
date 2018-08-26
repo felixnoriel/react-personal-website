@@ -5,22 +5,49 @@
     margin-top: -6rem;
   }
   .project-item{
-    margin: 1rem 0;
-    border-radius: 2px;
-    background: #fafafa;
+    background: #fff;
+    margin: 1rem 0 !important;
+    padding: 1rem;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    color: $defaultFontColor;
+    position: relative;
+    .title{
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
     figure{
       padding: 0;
     }
-    .tag{
-      margin-bottom: 0 !important;
+    .content{
+      min-height: 120px;
+    }
+    .tags{
+      min-height: 115px;
+      border-top: solid 2px #eee;
+      margin-top: 1rem;
+      padding: 1rem 0;
+      .tag{
+        margin-bottom: 0 !important;
+      }
     }
   }
 }
 
 /*** MOBILE VIEW ONLY ****/
 @media only screen and (max-width: 769px) {
+  /*** project list ***/
   .projects-container {
-    margin-top: -7rem;
+    margin-top: -5rem;
+    .project-item{
+      margin: 0 !important;
+
+      .content{
+        min-height: 0px;
+      }
+      .tags{
+        min-height: 50px;
+      }
+    }
   }
   .project-view-container{
     .tags{
@@ -40,15 +67,6 @@
     .content{
       margin: 1rem 0;
     }
-  }
-}
-.tags {
-  .tag{
-    margin: 3px 3px 3px 0;
-    background: white;
-    color: #3273dc;
-    border: 1px solid #3273dc;
-    font-weight: 600;
   }
 }
 .gallery-lightbox-container{

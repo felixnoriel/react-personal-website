@@ -11,7 +11,7 @@ class MainContainer extends PureComponent {
 
  render() {
   return (
-   <div className="main-wrapper">
+   <div id="main-wrapper" className="main-wrapper">
       <HeaderContainer />
       { this.props.children }
       <FooterContainer />

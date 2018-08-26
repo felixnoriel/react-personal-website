@@ -38,7 +38,7 @@ class Index extends PureComponent{
     await reduxStore.dispatch(getProjects({per_page:3, order_by: 'menu_order'}))
     await reduxStore.dispatch(getBlogList({per_page:3, order_by: 'menu_order'}))
 
-    return {};
+    return { };
   }
 
   //third to be called

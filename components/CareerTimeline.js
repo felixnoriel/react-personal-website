@@ -16,21 +16,21 @@ class CareerTimeline extends PureComponent{
                     </div>
                   </div>
                 </section>,
-                <section key="career-2" className="section section-container-default timeline-container">
+                <section key="career-2" className="section container section-container-default timeline-container">
                     <div className="timeline is-centered">
                       <header className="timeline-header">
-                        <span className="tag is-medium is-primary">Present</span>
+                        <span className="tag tag-laptop is-medium is-dark"><i className="fas fa-laptop"></i></span>
                       </header>
                       <ExperienceList experiences={experiences} />
-                      <ViewAllLink route="career" indexPage={indexPage}/>
                     </div>
+                    <ViewAllLink route="career" indexPage={indexPage}/>
                 </section>])
   }
 }
 
 const ExperienceList = ({experiences}) => {
   if(!experiences || experiences.length == 0){
-    return <div> Loading experiences </div>
+    return ''
   }
   return experiences.map(exp => {
     return <Experience key={exp.id} experience={exp}/>
@@ -39,11 +39,16 @@ const ExperienceList = ({experiences}) => {
 export const Experience = ({experience}) => {
   if(!experience){ return '' }
   const modifyExperience = helper.modifyWordpressObject(experience);
-  return (<div className="timeline-item is-primary ">
-            <div className="timeline-marker is-primary"></div>
+  return (<div className="timeline-item is-dark ">
+            <div className="timeline-marker is-dark"></div>
             <div className="timeline-content">
-              <p className="heading heading-1" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title} | ${modifyExperience.title.rendered}` }} />
-              <p className="heading">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</p>
+            <Link as={modifyExperience.custom_modified.postUrlPath}
+                route={modifyExperience.custom_modified.postUrlPath} prefetch>
+              <a>
+                <p className="heading heading-1" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title} | ${modifyExperience.title.rendered}` }} />
+                <p className="heading">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</p>
+              </a>
+            </Link>
               <Link as={modifyExperience.custom_modified.postUrlPath}
                   route={modifyExperience.custom_modified.postUrlPath} prefetch>
                 <a>
