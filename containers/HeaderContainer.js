@@ -25,7 +25,8 @@ class HeaderContainer extends PureComponent {
      super(props);
      this.state = {
        showBurgerMenu: false,
-       showUpButton: false
+       showUpButton: false,
+       showTestLinks: false
      }
      this.bmChangeState = this.bmChangeState.bind(this);
    }
@@ -36,6 +37,12 @@ class HeaderContainer extends PureComponent {
    }
 
    componentDidMount(){
+     console.log(window.location.search);
+     if(window.location && window.location.search.indexOf('?qwe') > -1){
+       this.setState({
+         showTestLinks: true
+       })
+     }
      document.addEventListener('scroll', () => {
          let windowPosition = window.pageYOffset;
          if(windowPosition >= 300){
@@ -66,13 +73,13 @@ class HeaderContainer extends PureComponent {
 
    render() {
      const { burgerMenu, reducer } = this.props;
-     const { showBurgerMenu, showUpButton } = this.state;
+     const { showBurgerMenu, showUpButton, showTestLinks } = this.state;
      const menuHasFadeIn = showBurgerMenu ? 'show-background' : ''; //- enable during production
      const upButtonHasFadeIn = showUpButton ? '' : 'hide'; //- enable during production
      //const hasFadeIn = showBurgerMenu ? '' : '';
      return (
         [ <HeadCustom blog={reducer.blog} key="header-1"/>,
-          <MenuSidebar key="header-2" bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
+          <MenuSidebar key="header-2" showTestLinks={showTestLinks} bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
           <section key="header-3"  className={`${menuHasFadeIn} fade-in top-nav-container`}>
             <p className="btn-burger-menu pointer" onClick={()=>{this.props.toggleMenu(true)}}>
               <i className="fa fas fa-bars"></i>
@@ -146,9 +153,10 @@ const HeadCustom = ({blog}) => {
          </Head>
 }
 
-const MenuSidebar = ({burgerMenu, bmChangeState}) => {
+const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}) => {
   //<button onClick={()=>{Router.pushRoute('/projects')}} className="button">test projects</button>
   //<LinkScroll to="contact-container" smooth={true} duration={500} >Contact</LinkScroll>
+
   return (<Menu
             right
             isOpen={ burgerMenu.isOpen }
@@ -175,6 +183,17 @@ const MenuSidebar = ({burgerMenu, bmChangeState}) => {
               <div className="menu-socials">
                 <Socials />
               </div>
+              {
+                showTestLinks ?
+                <div className="hide">
+                  <a href="/?qwe">Home</a>
+                  <a href="/blog?qwe">Blog</a>
+                  <a href="/career?qwe">Career</a>
+                  <a href="/projects?qwe">Projects</a>
+                </div>
+                : ''
+              }
+
            </Menu>)
 }
 
