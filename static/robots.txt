@@ -1,3 +1,4 @@
+Sitemap: https://whoisfelix.com/sitemap.xml
 User-agent: *
-Disallow:
-Sitemap: /sitemap.xml
+Disallow: /wordpress
+Disallow: /felixnoriel

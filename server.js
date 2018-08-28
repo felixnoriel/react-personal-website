@@ -7,6 +7,7 @@ const express = require('express');
 const path = require('path');
 const server = express();
 const fetch = require('isomorphic-unfetch');
+const moment = require('moment');
 
   app.prepare()
     .then(() => {
@@ -15,7 +16,7 @@ const fetch = require('isomorphic-unfetch');
       server.use('/career.json', express.static(path.join(__dirname, '/static/career.json')));
       server.use('/projects.json', express.static(path.join(__dirname, '/static/projects.json')));
       server.use('/robots.txt', express.static(path.join(__dirname, '/static/robots.txt')));
-      server.use('/sitemap.xml', express.static(path.join(__dirname, '/static/sitemap.txt')));
+      server.use('/sitemap.xml', express.static(path.join(__dirname, '/static/sitemap.xml')));
 
       const handler = routes.getRequestHandler(app, ({req, res, route, query}) => {
         app.render(req, res, route.page, query)
@@ -28,6 +29,10 @@ const fetch = require('isomorphic-unfetch');
           await generateJSONData({posttype:'projects_by_career'});
 
           res.send('...');
+        });
+        server.get('/generate-sitemap',  async (req, res) => {
+          await generateSitemap();
+          res.send('sitemap done...');
         });
 
         //if (process.env.NODE_ENV === 'production') {
@@ -68,4 +73,69 @@ function writeFile(data){
     const fs = require('fs');
     fs.writeFile( path.resolve(`${__dirname}/static/${data.filename}`), data.text , (error) => { console.log(error); });
   }catch(error){ console.log('error writefile: ' + data)}
+}
+
+async function generateSitemap(){
+
+  let finalXmlText = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                        <url>
+                          <loc>
+                            https://whoisfelix.com/blog/
+                          </loc>
+                          <lastmod>2018-08-27</lastmod>
+                        </url>
+                        <url>
+                          <loc>
+                            https://whoisfelix.com/career/
+                          </loc>
+                          <lastmod>2018-08-27</lastmod>
+                        </url>
+                        <url>
+                          <loc>
+                            https://whoisfelix.com/about/
+                          </loc>
+                          <lastmod>2018-08-27</lastmod>
+                        </url>
+                        <url>
+                          <loc>
+                            https://whoisfelix.com/projects/
+                          </loc>
+                          <lastmod>2018-08-27</lastmod>
+                        </url>
+                      `;
+    try{
+      const sitemapDataPromiseBlog =  await fetch(`https://whoisfelix.com/blog.json`);
+      const sitemapDataBlog = await sitemapDataPromiseBlog.json();
+      finalXmlText += structureSitemapUrls(sitemapDataBlog);
+
+      const sitemapDataPromiseCareer =  await fetch(`https://whoisfelix.com/career.json`);
+      const sitemapDataCareer = await sitemapDataPromiseCareer.json();
+      finalXmlText += structureSitemapUrls(sitemapDataCareer);
+
+      const sitemapDataPromiseProjects =  await fetch(`https://whoisfelix.com/projects.json`);
+      const sitemapDataProjects = await sitemapDataPromiseProjects.json();
+      finalXmlText += structureSitemapUrls(sitemapDataProjects);
+
+    }catch(error){ console.log(error); console.log('error sitemap');}
+    finalXmlText += `</urlset>`;
+
+  writeFile({text: finalXmlText, filename: 'sitemap.xml'});
+}
+
+function structureSitemapUrls(data){
+    if(!data){
+      return '';
+    }
+    let urlsetText = '';
+    for(let i in data){
+      const obj = data[i];
+      urlsetText += `<url><loc>${getPostUrlPath(obj)}</loc><lastmod>${moment(obj.post_modified).format('YYYY-MM-DD')}</lastmod></url>`;
+    }
+   return urlsetText;
+}
+function getPostUrlPath(post){
+  if(!post){
+    return '';
+  }
+  return `https://whoisfelix.com/${post.type}/${post.slug}/`;
 }

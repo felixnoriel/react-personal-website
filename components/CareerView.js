@@ -18,7 +18,8 @@ const CareerInfo = ({ experience }) => {
               <h1 className="title " dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title}, ${modifyExperience.title.rendered}` }} />
               <h2 className="subtitle">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</h2>
               <figure className="company-logo image">
-                <img src={modifyExperience.custom_modified.featuredImgSrc.source_url} />
+                <img src={modifyExperience.custom_modified.featuredImgSrc.source_url}
+                    alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered} />
               </figure>
               <em className="" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_location}` }} />
             </div>

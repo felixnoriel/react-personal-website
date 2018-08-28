@@ -53,7 +53,7 @@ export const Experience = ({experience}) => {
                   route={modifyExperience.custom_modified.postUrlPath} prefetch>
                 <a>
                   <figure className="image company-logo">
-                    <img src={modifyExperience.custom_modified.featuredImgSrc.source_url} />
+                    <img src={modifyExperience.custom_modified.featuredImgSrc.source_url} alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered}/>
                   </figure>
                 </a>
               </Link>

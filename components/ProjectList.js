@@ -61,7 +61,8 @@ const Project = ({project}) => {
               <a>
                 <div className="project-item">
                   <figure className="image">
-                    <img src={modifyProject.custom_modified.media.medium.source_url} />
+                    <img src={modifyProject.custom_modified.media.medium.source_url} 
+                        alt={modifyProject.title.rendered} title={modifyProject.title.rendered} />
                   </figure>
                   <h2 className="title" dangerouslySetInnerHTML={{ __html: modifyProject.title.rendered }} />
                   <div className="content">

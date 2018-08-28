@@ -26,7 +26,7 @@ const ProjectView = ({project}) => {
 const ProjectInfo = ({project, className}) => {
     return (<div className={`${className}`}>
               <h1 className="title"  dangerouslySetInnerHTML={{ __html: project.title.rendered}} />
-              <figure className="image"><img src={project.custom_modified.featuredImgSrc.source_url} /></figure>
+              <figure className="image"><img alt={project.title.rendered}  title={project.title.rendered} src={project.custom_modified.featuredImgSrc.source_url} /></figure>
               <div className="content" dangerouslySetInnerHTML={{ __html: project.custom_modified.content }} />
             </div>)
 }

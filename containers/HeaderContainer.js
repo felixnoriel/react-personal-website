@@ -92,8 +92,8 @@ class HeaderContainer extends PureComponent {
 
 const HeadCustom = ({blog}) => {
 
-  let metaDescription = "I am a Software Engineer who loves food, traveling and cooking!";
-  let metaTitle = "Felix Noriel";
+  let metaDescription = "Felix Noriel is a Software Engineer who loves food, traveling and cooking! He loves to challenge himself everyday. He is exploring the world, one country at a time. ";
+  let metaTitle = "Felix Noriel | Foodie | Technology Enthusiast | Mixing life between food, traveling and technology";
 
   let ogType = "blog";
   let ogImg = "";
@@ -163,7 +163,7 @@ const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}) => {
             customBurgerIcon={ false }
             onStateChange={ bmChangeState }>
               <div className="menu-links">
-                <Link as="/" href='/' prefetch>
+                <Link as="/" route='/' prefetch>
                   <a>Home</a>
                 </Link>
                 <Link as="projects" route='/projects' prefetch>

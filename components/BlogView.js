@@ -7,7 +7,8 @@ const BlogView = ({blog}) => {
   <h1 className="title has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
   <h2 className="subtitle has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />
               <img className="image"
-                   src={modifyBlog.custom_modified.featuredImgSrc.source_url} />
+                   src={modifyBlog.custom_modified.featuredImgSrc.source_url} 
+                   alt={modifyBlog.title.rendered} title={modifyBlog.title.rendered}/>
               <div className="info">
               </div>
           </section>,

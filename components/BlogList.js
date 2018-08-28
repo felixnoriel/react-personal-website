@@ -34,12 +34,13 @@ const BlogListText = ({blogList}) => {
 
 export const BlogText = ({blog}) => {
   const modifyBlog = helper.modifyWordpressObject(blog);
+
   //<Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
   return (<div className="column is-4">
             <div className="blog-item">
               <Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
                 <figure className="blog-image">
-                    <img className="image"
+                    <img className="image" alt={modifyBlog.title.rendered} title={modifyBlog.title.rendered}
                          src={modifyBlog.custom_modified.media.medium.source_url} />
                 </figure>
                 <div className="blog-content">
