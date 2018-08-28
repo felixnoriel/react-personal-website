@@ -1,4 +1,2 @@
 Sitemap: https://whoisfelix.com/sitemap.xml
 User-agent: *
-Disallow: /wordpress
-Disallow: /felixnoriel
