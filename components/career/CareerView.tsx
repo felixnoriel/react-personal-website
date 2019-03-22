@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
-import { Link } from '../routes'
-import helper from '../helpers/helper';
-import ProjectList from './ProjectList';
+import { Link } from '../../routes'
+import helper from '../../helpers/helper';
+import ProjectList from '../ProjectList';
 
 const CareerView = ({experience, projects}) => {
   return ([<section key="career-view-1" className="section career-view-container">

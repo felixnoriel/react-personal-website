@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
-import FooterContainer from '../containers/FooterContainer';
-import HeaderContainer from '../containers/HeaderContainer';
+import FooterContainer from './FooterContainer';
+import HeaderContainer from './HeaderContainer';
 
 import "../design/index.scss";
 

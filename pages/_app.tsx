@@ -3,9 +3,9 @@ import App, { Container, NextAppContext } from 'next/app';
 import getConfig from 'next/config';
 import * as StoreJS from 'store';
 
-import APIClient from '../src/store/api/APIClient';
-import Service from '../src/store/api/Service';
-import createStore, { RootServiceDependencies } from '../src/store';
+import APIClient from '../store/api/ApiClient';
+import Service from '../store/api/Service';
+import createStore, { RootServiceDependencies } from '../store';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 

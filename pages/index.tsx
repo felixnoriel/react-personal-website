@@ -7,10 +7,10 @@ import { action as toggleMenu } from 'redux-burger-menu';
 
 import MainContainer from '../containers/MainContainer'
 import Intro from '../components/Intro';
-import CareerTimeline from '../components/CareerTimeline';
+import CareerTimeline from '../components/career/CareerTimeline';
 import ProjectList from '../components/ProjectList';
-import BlogList from '../components/BlogList';
-import Skills from '../components/Skills';
+import BlogList from '../components/blog/BlogList';
+import Skills from '../components/skills/Skills';
 
 class Index extends PureComponent{
 

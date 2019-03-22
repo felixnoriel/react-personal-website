@@ -1,5 +1,5 @@
-import { Link } from '../routes'
-import helper from '../helpers/helper';
+import { Link } from '../../routes'
+import helper from '../../helpers/helper';
 
 const BlogView = ({blog}) => {
   const modifyBlog = helper.modifyWordpressObject(blog[0]);

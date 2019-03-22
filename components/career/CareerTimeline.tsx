@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
-import { Link } from '../routes'
-import helper from '../helpers/helper';
-import ViewAllLink from './ViewAllLink';
+import { Link } from '../../routes'
+import helper from '../../helpers/helper';
+import ViewAllLink from '../ViewAllLink';
 
 class CareerTimeline extends PureComponent{
 

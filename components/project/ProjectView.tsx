@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react'
-import { Link } from '../routes'
-import helper from '../helpers/helper';
+import { Link } from '../../routes'
+import helper from '../../helpers/helper';
 import Lightbox from 'react-images';
 import Gallery from 'react-grid-gallery';
-import Tag from './Tag';
+import Tag from '../Tag';
 import { Experience } from './CareerTimeline';
 
 const ProjectView = ({project}) => {

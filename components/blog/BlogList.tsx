@@ -1,6 +1,6 @@
-import ViewAllLink from './ViewAllLink';
-import { Link } from '../routes'
-import helper from '../helpers/helper';
+import ViewAllLink from '../ViewAllLink';
+import { Link } from '../../routes'
+import helper from '../../helpers/helper';
 
 const BlogList = ({blogList, indexPage}) => {
 
