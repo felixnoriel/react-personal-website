@@ -8,12 +8,12 @@ import { action as toggleMenu } from 'redux-burger-menu';
 
 import MainContainer from '../containers/MainContainer'
 import ProjectList from '../components/ProjectList';
-import ProjectView from '../components/ProjectView';
-import BlogList from '../components/BlogList';
-import BlogView from '../components/BlogView';
-import CareerTimeline from '../components/CareerTimeline';
-import CareerView from '../components/CareerView';
-import AboutWebsite from '../components/AboutWebsite';
+import ProjectView from '../components/project/ProjectView';
+import BlogList from '../components/blog/BlogList';
+import BlogView from '../components/blog/BlogView';
+import CareerTimeline from '../components/career/CareerTimeline';
+import CareerView from '../components/career/CareerView';
+import AboutWebsite from '../components/about/AboutWebsite';
 
 import routes from '../routes';
 
