@@ -1,4 +1,6 @@
-const AboutWebsite = () => {
+import * as React from 'react';
+
+export const AboutWebsite: React.SFC<{}> = ({}) => {
 
   return (<section className="section container about-website-section">
             <h2 className="title">About me</h2>
@@ -37,5 +39,3 @@ const AboutWebsite = () => {
             </ul>
           </section>)
 }
-
-export default AboutWebsite;

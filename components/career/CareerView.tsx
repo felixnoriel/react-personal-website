@@ -1,30 +1,47 @@
-import React, { PureComponent } from 'react'
-import { Link } from '../../routes'
-import helper from '../../helpers/helper';
-import ProjectList from '../ProjectList';
+import * as React from 'react'
 
-const CareerView = ({experience, projects}) => {
-  return ([<section key="career-view-1" className="section career-view-container">
-            <CareerInfo experience={experience} />
-          </section>,
-          <ProjectList key="career-view-2" viewType="career" projects={projects} />])
+import { modifyWordpressObject } from '../../helpers/helper';
+import { ProjectList } from '../project/ProjectList';
+
+import routes from '../../routes';
+const Link = routes.Link;
+
+type CareerViewProps = {
+  experience: any;
+  projects: Array<any>;
+}
+export const CareerView = ({experience, projects}: CareerViewProps) => {
+  return (
+    <div>
+      <section key="career-view-1" className="section career-view-container">
+        <CareerInfo experience={experience} />
+      </section>
+      <ProjectList projects={projects} viewType="career"/>
+    </div>
+  );
 }
 
-const CareerInfo = ({ experience }) => {
-  const modifyExperience = helper.modifyWordpressObject(experience[0]);
-
-  return (<div className="container">
-            <div className="has-text-centered">
-              <h1 className="title " dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title}, ${modifyExperience.title.rendered}` }} />
-              <h2 className="subtitle">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</h2>
-              <figure className="company-logo image">
-                <img src={modifyExperience.custom_modified.featuredImgSrc.source_url}
-                    alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered} />
-              </figure>
-              <em className="" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_location}` }} />
-            </div>
-            <div className="content" dangerouslySetInnerHTML={{ __html: modifyExperience.custom_modified.content }} />
-          </div>)
+const CareerInfo = ({ experience }: any) => {
+  if(!experience || !experience[0]){
+    return <div />;
+  }
+  const modifyExperience = modifyWordpressObject(experience[0]);
+  return (
+    <div className="container">
+      <div className="has-text-centered">
+        <h1 className="title " 
+          dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title}, ${modifyExperience.title.rendered}` }} 
+        />
+        <h2 className="subtitle">
+          {modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}
+        </h2>
+        <figure className="company-logo image">
+          <img src={modifyExperience.custom_modified.featuredImgSrc.source_url}
+              alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered} />
+        </figure>
+        <em className="" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_location}` }} />
+      </div>
+      <div className="content" dangerouslySetInnerHTML={{ __html: modifyExperience.custom_modified.content }} />
+    </div>
+  )
 }
-
-export default CareerView;

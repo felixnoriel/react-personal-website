@@ -1,28 +1,31 @@
-import React, { PureComponent } from 'react';
-import { Link } from '../routes'
-import helper from '../helpers/helper';
-import Tag from './Tag';
-import ViewAllLink from './ViewAllLink';
+import * as React from 'react';
 
-class ProjectList extends PureComponent {
+import { modifyWordpressObject } from '../../helpers/helper';
+import { Tag } from '../Tag';
+import { ViewAllLink } from '../ViewAllLink';
+import routes from '../../routes';
+const { Link } = routes;
+import "./Project.scss";
 
- render() {
-  const { projects, indexPage, viewType } = this.props;
-
-  if(!projects || projects.length <= 0){
-    return '';
-  }
+type ProjectListProps = {
+  projects: Array<any>;
+  viewType?: string;
+  indexPage?: boolean;
+}
+export const ProjectList = ({projects, viewType, indexPage}: ProjectListProps ) => {
+  if(!projects || !projects[0]){ return <div/>};
   return (
-   [<ProjectListHeader key="project-1" viewType={viewType} />,
-   <section key="project-2" className={`section ${viewType} container projects-container`}>
-      <ProjectsListText projects={projects} />
-      <ViewAllLink route="projects" indexPage={indexPage} />
-   </section>]
+      <div>
+        <ProjectListHeader key="project-1" viewType={viewType} />
+        <section key="project-2" className={`section ${viewType} container projects-container`}>
+          { ProjectsListText(projects) }
+          { ViewAllLink(projects, indexPage) } 
+        </section>
+      </div>
   );
- }
 }
 
-const ProjectListHeader = ({viewType}) => {
+const ProjectListHeader = (viewType: any) => {
   let title = "Projects";
   let subtitle = "Some of my past work";
   let heroSize = "is-medium";
@@ -43,50 +46,63 @@ const ProjectListHeader = ({viewType}) => {
 
 
 
-const ProjectsListText = ({projects}) => {
+const ProjectsListText = (projects: any) => {
   if(!projects || !projects.map){
     return '';
   }
-  const projectsText = projects.map( project => {
+  const projectsText = projects.map( (project: any) => {
     return <Project key={project.id} project={project} />
   });
 
-  return (<div className="columns is-multiline">{projectsText}</div>)
+  return (
+    <div className="columns is-multiline">
+      { projectsText }
+    </div>
+  )
 }
 
-const Project = ({project}) => {
-  const modifyProject = helper.modifyWordpressObject(project);
-  return (<div className="column is-4">
-            <Link as={modifyProject.custom_modified.postUrlPath} route={modifyProject.custom_modified.postUrlPath} prefetch>
-              <a>
-                <div className="project-item">
-                  <figure className="image">
-                    <img src={modifyProject.custom_modified.media.medium.source_url} 
-                        alt={modifyProject.title.rendered} title={modifyProject.title.rendered} />
-                  </figure>
-                  <h2 className="title" dangerouslySetInnerHTML={{ __html: modifyProject.title.rendered }} />
-                  <div className="content">
-                    <div dangerouslySetInnerHTML={{ __html: modifyProject.excerpt.rendered }} />
-                  </div>
-                  <TagList tags={modifyProject.custom_modified.tags}/>
-                </div>
-              </a>
-            </Link>
-          </div>)
+const getImage = (modifyProject: any) => {
+  if(!modifyProject.custom_modified.media || !modifyProject.custom_modified.media.medium){
+    return '';
+  }
+  return modifyProject.custom_modified.media.medium.source_url
+}
+const Project = ({project}: any) => {
+  const modifyProject = modifyWordpressObject(project);
+
+  return (
+    <div className="column is-4">
+      <Link as={modifyProject.custom_modified.postUrlPath} route={modifyProject.custom_modified.postUrlPath} prefetch>
+        <a>
+          <div className="project-item">
+            <figure className="image">
+              <img src={getImage(modifyProject)} 
+                  alt={modifyProject.title.rendered} title={modifyProject.title.rendered} />
+            </figure>
+            <h2 className="title" dangerouslySetInnerHTML={{ __html: modifyProject.title.rendered }} />
+            <div className="content">
+              <div dangerouslySetInnerHTML={{ __html: modifyProject.excerpt.rendered }} />
+            </div>
+            { TagList(modifyProject.custom_modified.tags) }
+          </div>
+        </a>
+      </Link>
+    </div>
+    )
 
 }
 
-const TagList = ({tags}) => {
+const TagList = (tags: any) => {
   if(!tags){
     return '';
   }
-  const tagsText = tags.map( tag => {
-    return <Tag key={tag.id} title={tag.name} />
+  const tagsText = tags.map( (tag: any) => {
+    return Tag(tag.name);
   })
 
-  return (<div className="tags">{tagsText}</div>)
+  return (
+    <div className="tags">
+      { tagsText }
+    </div>
+  )
 }
-
-
-
-export default ProjectList;

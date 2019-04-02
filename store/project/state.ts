@@ -2,6 +2,7 @@ import { ActionType, createAsyncAction, getType, createStandardAction } from 'ty
 import Service from '../api/Service';
 import { ThunkAction } from 'redux-thunk';
 import * as _ from 'lodash';
+import { filterBySlug, filterPerPage, filterProjectsByCareerId } from '../../helpers/helper';
 
 export const listProjectAction = createAsyncAction(
     'listProject/REQUEST',
@@ -9,12 +10,20 @@ export const listProjectAction = createAsyncAction(
     'listProject/FAILURE'
 )<void, Array<any>, Error>();
 
-export type ListProject = ActionType<typeof listProjectAction>;
+export const singleProjectAction = createAsyncAction(
+    'singleProject/REQUEST',
+    'singleProject/SUCCESS',
+    'singleProject/FAILURE'
+)<void, any, Error>();
 
-export type ProjectAction = ListProject;
+export type ListProject = ActionType<typeof listProjectAction>;
+export type SingleProject = ActionType<typeof singleProjectAction>;
+
+export type ProjectAction = ListProject | SingleProject;
 
 export type ProjectState = {
-    projects?: Array<any>,
+    projectList?: Array<any>,
+    project?: any,
     loadingProjects: boolean
 };
 
@@ -29,7 +38,11 @@ export const projectReducer = (state: ProjectState = initialState, action: Proje
         }
 
         case getType(listProjectAction.success): {
-            return { ...state, loadingProjects: false, projects: action.payload };
+            return { ...state, loadingProjects: false, projectList: action.payload };
+        }
+
+        case getType(singleProjectAction.success): {
+            return { ...state, project: action.payload };
         }
 
     }
@@ -42,13 +55,46 @@ export type ProjectDependencies = {
 };
 
 
-export function getIngestRecords(): ThunkAction<void, ProjectState, ProjectDependencies, ProjectAction> {
+export function getProjectList(per_page: number): ThunkAction<void, ProjectState, ProjectDependencies, ProjectAction> {
     return async (dispatch, getState, deps) => {
-        // dispatch(listIngestAction.request());
-        // const accountId = deps.storage.get('selectedAccount');
-        // await deps.ingestService
-        //     .fetchIngestRecords(accountId)
-        //     .then(data => dispatch(listIngestAction.success(data)))
-        //     .catch(err => dispatch(listIngestAction.failure(err.message)));
+        await deps.service.fetchData('projects')
+        .then(data => {
+            const filtered = filterPerPage({
+                per_page: per_page,
+                list: data
+            })
+            dispatch(listProjectAction.success(filtered))
+        })
+        .catch(err => dispatch(listProjectAction.failure(err.message)));
     };
 }
+
+export function getProject(slug: string): ThunkAction<void, ProjectState, ProjectDependencies, ProjectAction> {
+    return async (dispatch, getState, deps) => {
+        await deps.service.fetchData('projects')
+        .then(data => {
+            const filtered = filterBySlug({
+                slug: slug,
+                list: data
+            })
+            dispatch(singleProjectAction.success(filtered))
+        })
+        .catch(err => dispatch(singleProjectAction.failure(err.message)));
+    };
+}
+
+export function getProjectsByCareerId(career_id: string): ThunkAction<void, ProjectState, ProjectDependencies, ProjectAction> {
+    return async (dispatch, getState, deps) => {
+        await deps.service.fetchData('projects')
+        .then(data => {
+            const filtered = filterProjectsByCareerId({
+                career_id: career_id,
+                list: data
+            })
+            dispatch(listProjectAction.success(filtered))
+        })
+        .catch(err => dispatch(listProjectAction.failure(err.message)));
+    };
+}
+
+

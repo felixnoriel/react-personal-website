@@ -1,7 +1,7 @@
-import ShortcodeParser from 'meta-shortcodes';
-import ReactDOMServer from 'react-dom/server'
+const ShortcodeParser = require('meta-shortcodes');
 
-function modifyWordpressObject(post){
+
+export function modifyWordpressObject(post: any){
   if(!post || !post.content){ return false; }
   let modified = Object.assign({}, post);
 
@@ -19,14 +19,14 @@ function modifyWordpressObject(post){
   return modified;
 }
 
-function getPostUrlPath(post){
+function getPostUrlPath(post: any){
   if(!post){
     return '';
   }
   return `/${post.type}/${post.slug}/`;
 }
 
-function extractShortcode(text){
+function extractShortcode(text: any){
   if(!text || text == ""){
 		return '';
 	}
@@ -39,7 +39,7 @@ function extractShortcode(text){
   return text;
 }
 
-function extractImageGalleryShortcode(text){
+function extractImageGalleryShortcode(text: any){
 	if(!text || text == ""){
 		return '';
 	}
@@ -47,7 +47,7 @@ function extractImageGalleryShortcode(text){
     return '';
   }
 	let parser = ShortcodeParser();
-	parser.add("img_c", function(opts, content){
+	parser.add("img_c", function(opts: any, content: any){
      return JSON.stringify({thumbnailWidth:320,
                             thumbnailHeight:320,
                             alt: opts.alt,
@@ -56,7 +56,7 @@ function extractImageGalleryShortcode(text){
                             caption: opts.title,
                             tags:[{value:opts.title, title:opts.title}]});
 	});
-	parser.add("gallery_lightbox", function(opts, content){
+	parser.add("gallery_lightbox", function(opts: any, content: any){
      content = JSON.parse(`[${content.replace(/<br ?\/?>/g, "")}]`);
 	   return JSON.stringify({title: opts.title, description: opts.description, type: opts.type, images: content });
 	});
@@ -69,16 +69,16 @@ function extractImageGalleryShortcode(text){
 	return splitText;
 }
 
-function regexUrl(url){
+function regexUrl(url: string){
     if(!url || url == ""){
         return "";
     }
     return url.replace(new RegExp("(.*/)[^/]+$"),"$1");
 }
 
-function structureFeaturedMedia(post){
+function structureFeaturedMedia(post: any){
 
-	let media = {};
+	let media: any = {};
 
 	if( post && post._embedded
 		&& post._embedded['wp:featuredmedia']
@@ -107,8 +107,8 @@ function structureFeaturedMedia(post){
 	}
 	return media;
 }
-function structurePostTags(post){
-	let termList = [];
+function structurePostTags(post: any){
+	let termList: Array<any> = [];
 
 	if( post && post._embedded
 		&& post._embedded['wp:term']
@@ -116,11 +116,11 @@ function structurePostTags(post){
 
 		const taxonomies = post._embedded['wp:term'];
 		if(taxonomies.length > 0){
-			taxonomies.map( tax => {
+			taxonomies.map( (tax: any) => {
 				if(tax.length > 0){
-					tax.map( term => {
+					tax.map( (term: any) => {
 						if(term.taxonomy != "post_tag"){
-							let tempTerm  = {};
+							let tempTerm: any  = {};
 							tempTerm.id = term.id;
 							tempTerm.name = term.name;
 							tempTerm.slug = term.slug;
@@ -136,9 +136,9 @@ function structurePostTags(post){
 	return termList;
 }
 
-function getImageUrl(media, type){
+export function getImageUrl(media: any, type: any){
 	//Default - post-thumbnail
-	let img = {};
+	let img: any = {};
 	img.source_url = "";
 
 	if(type && type != ""){
@@ -202,7 +202,7 @@ function getImageUrl(media, type){
 
 }
 
-function getImageSrcSet(media){
+function getImageSrcSet(media: any){
     let img = "";
 
     /*
@@ -248,7 +248,7 @@ function getImageSrcSet(media){
     return img;
 }
 
-function getReplacedUrlLink(url){
+function getReplacedUrlLink(url: any){
 	 /*if(!url || url == ""){
 		return url;
 	 }
@@ -268,7 +268,46 @@ function getReplacedUrlLink(url){
     return url;
 }
 
-export default {
-  modifyWordpressObject,
-  getImageUrl
+
+
+export function filterProjectsByCareerId({career_id, list}: any){
+  if(!list.map){
+    return false;
+  }
+
+  return list.filter( (obj: any) => {
+    if(obj && obj.custom_meta && obj.custom_meta.custom_meta_company_id){
+      if(career_id == obj.custom_meta.custom_meta_company_id){
+        return obj;
+      }
+    }
+  });
+}
+
+export function filterPerPage({per_page, list}: any){
+  if(!list.map){
+    return false;
+  }
+  if(list.length <= per_page){
+    return list;
+  }
+
+  let counter = 0;
+  return list.filter( (obj: any) => {
+    if(counter++ < per_page){
+      return obj;
+    }
+  });
+}
+
+export function filterBySlug({ slug, list }: any){
+  if(!list.map){
+    return false;
+  }
+
+  return list.filter( (obj: any) => {
+    if(slug === obj.slug){
+      return obj;
+    }
+  });
 }

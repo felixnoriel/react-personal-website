@@ -1,39 +1,49 @@
-import ViewAllLink from '../ViewAllLink';
-import { Link } from '../../routes'
-import helper from '../../helpers/helper';
+import * as React from 'react';
+import { ViewAllLink } from '../ViewAllLink';
+import { modifyWordpressObject } from '../../helpers/helper';
+import routes from '../../routes';
+const { Link  } = routes;
+import "./Blog.scss";
 
-const BlogList = ({blogList, indexPage}) => {
-
-  return ([<section id="blog-section" key="blog-1" className="section-container-default is-light hero has-text-centered ">
-              <div className="hero-body">
-                <div className="container">
-                  <h1 className="title">Blog</h1>
-                  <h2 className="subtitle">I am also a foodie and love traveling</h2>
-                </div>
-              </div>
-            </section>,
-            <section key="blog-2" className="section blog-list-container">
-              <div className="container">
-                <div className="columns is-multiline ">
-                  <BlogListText blogList={blogList} />
-                </div>
-                <ViewAllLink route="blog" indexPage={indexPage} />
-              </div>
-            </section>])
+type BlogListProps = {
+  blogList: Array<any>;
+  indexPage?: boolean;
+}
+export const BlogList = ({blogList, indexPage}: BlogListProps) => {
+  return (
+      <div>
+        <section id="blog-section" key="blog-1" className="section-container-default is-light hero has-text-centered ">
+          <div className="hero-body">
+            <div className="container">
+              <h1 className="title">Blog</h1>
+              <h2 className="subtitle">I am also a foodie and love traveling</h2>
+            </div>
+          </div>
+        </section>
+        <section key="blog-2" className="section blog-list-container">
+          <div className="container">
+            <div className="columns is-multiline ">
+                { BlogListText(blogList) }
+            </div>
+            { ViewAllLink("blog", indexPage) }
+          </div>
+        </section>
+      </div>
+  )
 }
 
-const BlogListText = ({blogList}) => {
+const BlogListText = (blogList: any) => {
   if(!blogList || !blogList.map){
     return '';
   }
 
-  return blogList.map( blog => {
-    return (<BlogText key={blog.id} blog={blog} />)
+  return blogList.map( (blog: any) => {
+    return BlogText(blog)
   })
 }
 
-export const BlogText = ({blog}) => {
-  const modifyBlog = helper.modifyWordpressObject(blog);
+export const BlogText = (blog: any) => {
+  const modifyBlog = modifyWordpressObject(blog);
 
   //<Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
   return (<div className="column is-4">
@@ -52,7 +62,5 @@ export const BlogText = ({blog}) => {
               </Link>
             </div>
           </div>
-            )
+  )
 }
-
-export default BlogList;

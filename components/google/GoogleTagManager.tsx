@@ -1,28 +1,42 @@
-import { PureComponent } from 'react';
+import * as React from 'react';
 import gtmParts from 'react-google-tag-manager';
 
-class GoogleTagManager extends PureComponent {
-    componentDidMount() {
-        const dataLayerName = this.props.dataLayerName || 'dataLayer';
-        const scriptId = this.props.scriptId || 'react-google-tag-manager-gtm';
-        const gtmScriptNode = document.getElementById(scriptId);
-        eval(gtmScriptNode.textContent);
-    }
+type Props = {
+    gtmId: string;
+    dataLayerName?: string;
+    additionalEvents?: string;
+    type: string;
+    scriptId: string;
+}
+export const GoogleTagManager: React.SFC<Props> = ({
+    gtmId,
+    dataLayerName,
+    additionalEvents,
+    type,
+    scriptId
+}) => {
 
-    render() {
-        const { gtmId, dataLayerName, additionalEvents, type } = this.props;
-        const gtm = gtmParts({
-            id: gtmId,
-            dataLayerName: dataLayerName || 'dataLayer',
-            additionalEvents: additionalEvents || {}
-        });
+    React.useEffect(() => {
+        const gtmScriptNode = document.getElementById(scriptId || 'react-google-tag-manager-gtm');
+        eval(gtmScriptNode!.textContent!);
+    }, []);
+    
+    const gtm = gtmParts({
+        id: gtmId,
+        dataLayerName: dataLayerName || 'dataLayer',
+        additionalEvents: additionalEvents || {}
+    });
 
+    const gtmScript = () => {
         if(type == "noscript"){
             return gtm.noScriptAsReact();
         }else{
             return gtm.scriptAsReact();
         }
     }
-}
-
-export default GoogleTagManager;
+    return(
+      <div>  
+          { gtmScript() }
+      </div>
+    );
+};

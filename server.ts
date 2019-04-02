@@ -1,77 +1,77 @@
 // server.js
 const next = require('next')
-const routes = require('./routes')
+import routes from './routes';
 const app = next({dev: (process.env.NODE_ENV !== 'production' ) })
-const handler = routes.getRequestHandler(app)
 const express = require('express');
 const path = require('path');
 const server = express();
-const fetch = require('isomorphic-unfetch');
+const fetchData = require('isomorphic-unfetch');
 const moment = require('moment');
 
-  app.prepare()
-    .then(() => {
+app.prepare()
+  .then(() => {
 
-      server.use('/blog.json', express.static(path.join(__dirname, '/static/blog.json')));
-      server.use('/career.json', express.static(path.join(__dirname, '/static/career.json')));
-      server.use('/projects.json', express.static(path.join(__dirname, '/static/projects.json')));
-      server.use('/robots.txt', express.static(path.join(__dirname, '/static/robots.txt')));
-      server.use('/sitemap.xml', express.static(path.join(__dirname, '/static/sitemap.xml')));
+    server.use('/blog.json', express.static(path.join(__dirname, '/static/blog.json')));
+    server.use('/career.json', express.static(path.join(__dirname, '/static/career.json')));
+    server.use('/projects.json', express.static(path.join(__dirname, '/static/projects.json')));
+    server.use('/projects_by_career.json', express.static(path.join(__dirname, '/static/projects_by_career.json')));
+    server.use('/robots.txt', express.static(path.join(__dirname, '/static/robots.txt')));
+    server.use('/sitemap.xml', express.static(path.join(__dirname, '/static/sitemap.xml')));
 
-      const handler = routes.getRequestHandler(app, ({req, res, route, query}) => {
-        app.render(req, res, route.page, query)
-      })
+    const handler = routes.getRequestHandler(app, ({req, res, route, query}: any) => {
+      app.render(req, res, route.page, query)
+    })
 
-        server.get('/generate-data',  async (req, res) => {
-          await generateJSONData({posttype:'blog'});
-          await generateJSONData({posttype:'career'});
-          await generateJSONData({posttype:'projects'});
-          await generateJSONData({posttype:'projects_by_career'});
+      server.get('/generate-data',  async (req: any, res: any) => {
+        await generateJSONData({posttype:'blog'});
+        await generateJSONData({posttype:'career'});
+        await generateJSONData({posttype:'projects'});
+        await generateJSONData({posttype:'projects_by_career'});
 
-          res.send('...');
-        });
-        server.get('/generate-sitemap',  async (req, res) => {
-          await generateSitemap();
-          res.send('sitemap done...');
-        });
+        res.send('...');
+      });
+      server.get('/generate-sitemap',  async (req: any, res: any) => {
+        await generateSitemap();
+        res.send('sitemap done...');
+      });
 
-        //if (process.env.NODE_ENV === 'production') {
-          const bodyParser = require('body-parser')
-          const cors = require('cors')
-          const compression = require('compression')
-          console.log('Production '+process.env.NODE_ENV+' env..');
+      if (process.env.NODE_ENV === 'production') {
+        const bodyParser = require('body-parser')
+        const cors = require('cors')
+        const compression = require('compression')
+        console.log('Production '+process.env.NODE_ENV+' env..');
 
-          server.use(handler)
-                .use(compression)
-                .use(cors)
-                .use(bodyParser.json())
-                .listen(3000);
-        /*}else{
-          console.log('development environment..')
+        server.use(handler)
+              .use(compression)
+              .use(cors)
+              .use(bodyParser.json())
+              .listen(3000);
+      } else {
+        console.log('development environment..')
 
-          server
-          .use(handler)
-          .listen(3000);
-        }*/
+        server
+        .use(handler)
+        .listen(3000);
+      }
 
-      })
-.catch((ex) => {
+    })
+.catch((ex: any) => {
   console.error(ex.stack)
   process.exit(1)
 })
 
-async function generateJSONData({posttype}){
+async function generateJSONData({posttype}: any){
   const url = `https://whoisfelix.com/wordpress/wp-json/wp/v2/${posttype}?_embed=true&orderby=menu_order&per_page=99`;
   console.log(url);
-  const promise =  await fetch(url);
+  const promise =  await fetchData(url);
   const data = await promise.json();
   writeFile({text: JSON.stringify(data), filename: `${posttype}.json`});
 }
 
-function writeFile(data){
+function writeFile(data: any){
   try{
     const fs = require('fs');
-    fs.writeFile( path.resolve(`${__dirname}/static/${data.filename}`), data.text , (error) => { console.log(error); });
+    fs.writeFile( path.resolve(`${__dirname}/static/${data.filename}`), data.text , (error: any) => { console.log(error); });
   }catch(error){ console.log('error writefile: ' + data)}
 }
 
@@ -104,15 +104,15 @@ async function generateSitemap(){
                         </url>
                       `;
     try{
-      const sitemapDataPromiseBlog =  await fetch(`https://whoisfelix.com/blog.json`);
+      const sitemapDataPromiseBlog =  await fetchData(`https://whoisfelix.com/blog.json`);
       const sitemapDataBlog = await sitemapDataPromiseBlog.json();
       finalXmlText += structureSitemapUrls(sitemapDataBlog);
 
-      const sitemapDataPromiseCareer =  await fetch(`https://whoisfelix.com/career.json`);
+      const sitemapDataPromiseCareer =  await fetchData(`https://whoisfelix.com/career.json`);
       const sitemapDataCareer = await sitemapDataPromiseCareer.json();
       finalXmlText += structureSitemapUrls(sitemapDataCareer);
 
-      const sitemapDataPromiseProjects =  await fetch(`https://whoisfelix.com/projects.json`);
+      const sitemapDataPromiseProjects =  await fetchData(`https://whoisfelix.com/projects.json`);
       const sitemapDataProjects = await sitemapDataPromiseProjects.json();
       finalXmlText += structureSitemapUrls(sitemapDataProjects);
 
@@ -122,7 +122,7 @@ async function generateSitemap(){
   writeFile({text: finalXmlText, filename: 'sitemap.xml'});
 }
 
-function structureSitemapUrls(data){
+function structureSitemapUrls(data: any){
     if(!data){
       return '';
     }
@@ -133,7 +133,7 @@ function structureSitemapUrls(data){
     }
    return urlsetText;
 }
-function getPostUrlPath(post){
+function getPostUrlPath(post: any){
   if(!post){
     return '';
   }

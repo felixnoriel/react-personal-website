@@ -1,8 +1,7 @@
-import { PureComponent } from 'react'
-import MainContainer from '../containers/MainContainer'
+import * as React from 'react'
+import { MainContainer } from '../containers/MainContainer'
 
-export default class ErrorPage extends PureComponent {
-  render () {
+export default () => {
     return (
         <MainContainer>
           <section id="404-section" key="404-1" className="hero is-large is-long is-bold">
@@ -18,6 +17,5 @@ export default class ErrorPage extends PureComponent {
             </div>
           </section>
         </MainContainer>
-    )
-  }
+  )
 }

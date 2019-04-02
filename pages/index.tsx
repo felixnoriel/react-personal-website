@@ -1,21 +1,24 @@
-import { PureComponent } from 'react'
+import * as React from 'react'
 import { connect } from 'react-redux'
 
 import config from '../helpers/config';
-import { getExperiences, getProjects, getBlogList } from '../actions/action'
-import { action as toggleMenu } from 'redux-burger-menu';
+import { getBlogList } from '../store/blog/state';
+import { getCareerList } from '../store/career/state';
+import { getProjectList } from '../store/project/state';
 
-import MainContainer from '../containers/MainContainer'
-import Intro from '../components/Intro';
-import CareerTimeline from '../components/career/CareerTimeline';
-import ProjectList from '../components/ProjectList';
-import BlogList from '../components/blog/BlogList';
-import Skills from '../components/skills/Skills';
+const reduxBurgerMenu = require('redux-burger-menu');
 
-class Index extends PureComponent{
+import { MainContainer } from '../containers/MainContainer'
+import { Intro } from '../components/Intro';
+import { CareerTimeline } from '../components/career/CareerTimeline';
+import { ProjectList } from '../components/project/ProjectList';
+import { BlogList } from '../components/blog/BlogList';
+import { Skills } from '../components/skills/Skills';
+
+class Index extends React.PureComponent{
 
   //second to be called
-  constructor(props){
+  constructor(props: any){
     super(props)
   }
 
@@ -32,11 +35,15 @@ class Index extends PureComponent{
     jsonPageRes - fetch response ( client only)
     err - error object
   */
-  static async getInitialProps ({ req, reduxStore, pathname, params, query }) {
-    await reduxStore.dispatch(toggleMenu(false))
-    await reduxStore.dispatch(getExperiences({per_page: 3}))
-    await reduxStore.dispatch(getProjects({per_page:3, order_by: 'menu_order'}))
-    await reduxStore.dispatch(getBlogList({per_page:3, order_by: 'menu_order'}))
+  static async getInitialProps ({ req, store, pathname, params, query }: any) {
+    // await reduxStore.dispatch(reduxBurgerMenu.action(false))
+    // await reduxStore.dispatch(getExperiences({per_page: 3}))
+    // await reduxStore.dispatch(getProjects({per_page:3, order_by: 'menu_order'}))
+    // await reduxStore.dispatch(getBlogList({per_page:3, order_by: 'menu_order'}))
+
+    await store.dispatch(getCareerList(3))
+    await store.dispatch(getProjectList(3))
+    await store.dispatch(getBlogList(3))
 
     return { };
   }
@@ -44,20 +51,23 @@ class Index extends PureComponent{
   //third to be called
   //
   render(){
-    const { experiences, projects, blogList } = this.props.reducer;
+    const { career, project, blog }: any = this.props;
+
     return (<MainContainer>
               <Intro />
               <Skills />
-              <CareerTimeline indexPage={true} experiences={experiences}/>
-              <ProjectList indexPage={true} projects={projects} />
-              <BlogList indexPage={true} blogList={blogList} />
+              <CareerTimeline indexPage={true} experiences={career.careerList}/>
+              <ProjectList indexPage={true} projects={project.projectList} />
+              <BlogList indexPage={true} blogList={blog.blogList} />
             </MainContainer>)
   }
 }
-const mapStateToProps = state => ({
- ...state
+const mapStateToProps = (state: any) => ({
+  career: state.career,
+  project: state.project,
+  blog: state.blog
 })
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: any) => ({
 
 })
 

@@ -2,6 +2,7 @@ import { ActionType, createAsyncAction, getType, createStandardAction } from 'ty
 import Service from '../api/Service';
 import { ThunkAction } from 'redux-thunk';
 import * as _ from 'lodash';
+import { filterBySlug, filterPerPage, filterProjectsByCareerId } from '../../helpers/helper';
 
 export const listBlogAction = createAsyncAction(
     'listBlog/REQUEST',
@@ -9,12 +10,20 @@ export const listBlogAction = createAsyncAction(
     'listBlog/FAILURE'
 )<void, Array<any>, Error>();
 
-export type ListBlog = ActionType<typeof listBlogAction>;
+export const singleBlogAction = createAsyncAction(
+    'singleBlog/REQUEST',
+    'singleBlog/SUCCESS',
+    'singleBlog/FAILURE'
+)<void, any, Error>();
 
-export type BlogAction = ListBlog;
+export type ListBlog = ActionType<typeof listBlogAction>;
+export type SingleBlog = ActionType<typeof singleBlogAction>;
+
+export type BlogAction = ListBlog | SingleBlog;
 
 export type BlogState = {
-    Blogs?: Array<any>,
+    blogList?: Array<any>,
+    blog?: any,
     loadingBlogs: boolean
 };
 
@@ -29,7 +38,11 @@ export const blogReducer = (state: BlogState = initialState, action: BlogAction)
         }
 
         case getType(listBlogAction.success): {
-            return { ...state, loadingBlogs: false, Blogs: action.payload };
+            return { ...state, loadingBlogs: false, blogList: action.payload };
+        }
+
+        case getType(singleBlogAction.success): {
+            return { ...state, blog: action.payload };
         }
 
     }
@@ -42,13 +55,30 @@ export type BlogDependencies = {
 };
 
 
-export function getIngestRecords(): ThunkAction<void, BlogState, BlogDependencies, BlogAction> {
+export function getBlogList(per_page: number): ThunkAction<void, BlogState, BlogDependencies, BlogAction> {
     return async (dispatch, getState, deps) => {
-        // dispatch(listIngestAction.request());
-        // const accountId = deps.storage.get('selectedAccount');
-        // await deps.ingestService
-        //     .fetchIngestRecords(accountId)
-        //     .then(data => dispatch(listIngestAction.success(data)))
-        //     .catch(err => dispatch(listIngestAction.failure(err.message)));
+        await deps.service.fetchData('blog')
+        .then(data => {
+            const filtered = filterPerPage({
+                per_page: per_page,
+                list: data
+            })
+            dispatch(listBlogAction.success(filtered))
+        })
+        .catch(err => dispatch(listBlogAction.failure(err.message)));
+    };
+}
+
+export function getBlog(slug: string): ThunkAction<void, BlogState, BlogDependencies, BlogAction> {
+    return async (dispatch, getState, deps) => {
+        await deps.service.fetchData('blog')
+        .then(data => {
+            const filtered = filterBySlug({
+                slug: slug,
+                list: data
+            })
+            dispatch(singleBlogAction.success(filtered))
+        })
+        .catch(err => dispatch(singleBlogAction.failure(err.message)));
     };
 }

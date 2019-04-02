@@ -1,16 +1,22 @@
-import React, { PureComponent } from 'react'
-import { Link } from '../../routes'
-import helper from '../../helpers/helper';
-import Lightbox from 'react-images';
-import Gallery from 'react-grid-gallery';
-import Tag from '../Tag';
-import { Experience } from './CareerTimeline';
+import * as React from 'react';
+import { modifyWordpressObject } from '../../helpers/helper';
+import { Tag } from '../Tag';
+import { Experience } from '../career/CareerTimeline';
 
-const ProjectView = ({project}) => {
-  if(!project || !project[0]){
-    return ''
-  }
-  const modifyProject = helper.modifyWordpressObject(project[0]);
+import Lightbox from 'react-images';
+const Gallery = require('react-grid-gallery');
+import routes from '../../routes';
+const Link = routes.Link;
+
+type ProjectViewProps = {
+  project: any
+}
+
+export const ProjectView = ({project}: ProjectViewProps) => {
+  if(!project || !project[0]){ return <div/>};
+
+  const modifyProject = modifyWordpressObject(project[0]);
+  
   return (<section className="section container project-view-container">
             <section className="columns">
               <ProjectInfo className="column project-info is-four-fifths" project={modifyProject}/>
@@ -23,21 +29,24 @@ const ProjectView = ({project}) => {
           </section>)
 }
 
-const ProjectInfo = ({project, className}) => {
+const ProjectInfo = ({project, className}: any) => {
     return (<div className={`${className}`}>
               <h1 className="title"  dangerouslySetInnerHTML={{ __html: project.title.rendered}} />
               <figure className="image"><img alt={project.title.rendered}  title={project.title.rendered} src={project.custom_modified.featuredImgSrc.source_url} /></figure>
               <div className="content" dangerouslySetInnerHTML={{ __html: project.custom_modified.content }} />
             </div>)
 }
-const ProjectSideInfo = ({tags, company, className}) => {
+
+const ProjectSideInfo = ({tags, company, className}: any) => {
     return (<div className={className}>
-              <TagList tags={tags} />
-              <ProjectCompanyInfo company={company} />
+              { TagList(tags, className) }
+              { ProjectCompanyInfo(company) }
             </div>)
 }
-const ProjectCompanyInfo = ({company}) => {
-  const modifyCompany = helper.modifyWordpressObject(company);
+
+const ProjectCompanyInfo = (company: any) => {
+  if(!company) {return <div/>};
+  const modifyCompany = modifyWordpressObject(company);
   return (<div>
             <h3 className="subtitle">Company</h3>
             <Link as={modifyCompany.custom_modified.postUrlPath} route={modifyCompany.custom_modified.postUrlPath} prefetch>
@@ -45,41 +54,50 @@ const ProjectCompanyInfo = ({company}) => {
             </Link>
           </div>)
 }
-const TagList = ({tags, className}) => {
-  if(!tags){
+
+const TagList = (tags:any, className: any) => {
+  if(!tags || !tags.map){
     return '';
   }
-  const tagsText = tags.map( tag => {
-    return <Tag className="project-view" key={tag.id} title={tag.name} />
+  const tagsText = tags.map( (tag:any) => {
+    return Tag(tag.name, "project-view");
   })
 
   return ([<h3 key="taglist-header" className="subtitle">Tech stack</h3>,
             <div key="taglist-list" className={`tags`}>{tagsText}</div>])
 }
 
-const GalleryLightboxText = ({project}) => {
+const GalleryLightboxText = ({project}: any) => {
   if(!project.custom_modified.galleryImgs){
-    return '';
+    return <div/>;
   }
 
-  return project.custom_modified.galleryImgs.map( gallery => {
+  return project.custom_modified.galleryImgs.map( (gallery: any) => {
     return <GalleryLightbox key={gallery.title} gallery={gallery} />
   })
 
 }
 
-class GalleryLightbox extends PureComponent{
+type Props = {
+  key: any;
+  gallery: any;
+}
+class GalleryLightbox extends React.Component<Props>{
+  state: any
   constructor(){
-    super();
+    super({} as any);
 
-    this.state = { currentImage: 0, lightboxIsOpen: false};
+    this.state = { 
+      currentImage: 0, 
+      lightboxIsOpen: false
+    };
     this.closeLightbox = this.closeLightbox.bind(this);
     this.openLightbox = this.openLightbox.bind(this);
     this.gotoNext = this.gotoNext.bind(this);
     this.gotoPrevious = this.gotoPrevious.bind(this);
   }
 
-  openLightbox(event, obj) {
+  openLightbox(event:any, obj:any) {
      this.setState({
        currentImage: obj.index,
        lightboxIsOpen: true,
@@ -104,7 +122,7 @@ class GalleryLightbox extends PureComponent{
    }
 
   render(){
-    const { gallery } = this.props;
+    const { gallery }: any = this.props;
     return <div id={gallery.type} className="column is-half gallery-lightbox-item">
             <h3 className="subtitle">{gallery.title}</h3>
             <Gallery images={gallery.images}
@@ -123,5 +141,3 @@ class GalleryLightbox extends PureComponent{
             </div>
   }
 }
-
-export default ProjectView;

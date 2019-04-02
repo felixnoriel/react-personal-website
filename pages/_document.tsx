@@ -1,14 +1,11 @@
-import Document, { Head, Main, NextScript } from 'next/document'
-import getConfig from 'next/config'
-
-import GoogleTagManager from '../components/google/GoogleTagManager';
-
-const { publicRuntimeConfig } = getConfig();
+import * as React from 'react';
+import Document, { Head, Main, NextScript, NextDocumentContext } from 'next/document'
+import { GoogleTagManager } from '../components/google/GoogleTagManager';
 
 export default class MyDocument extends Document {
-  static async getInitialProps(ctx: any) {
-    const initialProps = await Document.getInitialProps(ctx);
-
+  
+  static async getInitialProps(ctx: NextDocumentContext) {
+    const initialProps = await Document.getInitialProps(ctx)
     return { ...initialProps }
   }
 

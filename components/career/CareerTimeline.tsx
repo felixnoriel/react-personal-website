@@ -1,44 +1,51 @@
-import { PureComponent } from 'react';
-import { Link } from '../../routes'
-import helper from '../../helpers/helper';
-import ViewAllLink from '../ViewAllLink';
+import * as React from 'react';
+import { modifyWordpressObject } from '../../helpers/helper';
+import { ViewAllLink } from '../ViewAllLink';
+import routes from '../../routes';
+const { Link } = routes;
+import "./Career.scss";
 
-class CareerTimeline extends PureComponent{
-
-  render(){
-      const { experiences, indexPage } = this.props;
-
-      return ( [<section id="career-section" key="career-1" className="hero has-text-centered  is-bold">
-                  <div className="hero-body">
-                    <div className="container">
-                      <h1 className="title">Career Timeline</h1>
-                      <h2 className="subtitle">Companies I have been a part of</h2>
-                    </div>
-                  </div>
-                </section>,
-                <section key="career-2" className="section container section-container-default timeline-container">
-                    <div className="timeline is-centered">
-                      <header className="timeline-header">
-                        <span className="tag tag-laptop is-medium is-dark"><i className="fas fa-laptop"></i></span>
-                      </header>
-                      <ExperienceList experiences={experiences} />
-                    </div>
-                    <ViewAllLink route="career" indexPage={indexPage}/>
-                </section>])
-  }
+type CareerTimelineProps = {
+  experiences: any;
+  indexPage?: boolean;
 }
 
-const ExperienceList = ({experiences}) => {
+export const CareerTimeline = ({experiences, indexPage}: CareerTimelineProps) => {
+    return ( 
+      <div>
+        <section id="career-section" key="career-1" className="hero has-text-centered  is-bold">
+          <div className="hero-body">
+            <div className="container">
+              <h1 className="title">Career Timeline</h1>
+              <h2 className="subtitle">Companies I have been a part of</h2>
+            </div>
+          </div>
+        </section>
+        <section key="career-2" className="section container section-container-default timeline-container">
+            <div className="timeline is-centered">
+              <header className="timeline-header">
+                <span className="tag tag-laptop is-medium is-dark"><i className="fas fa-laptop"></i></span>
+              </header>
+                { <ExperienceList experiences={experiences} /> }
+            </div>
+            { ViewAllLink( "career", indexPage) }
+        </section>
+      </div>
+    )
+}
+
+const ExperienceList = ({experiences}: any) => {
   if(!experiences || experiences.length == 0){
     return ''
   }
-  return experiences.map(exp => {
-    return <Experience key={exp.id} experience={exp}/>
+  return experiences.map((exp: any) => {
+    return Experience(exp);
   })
 }
-export const Experience = ({experience}) => {
+
+export const Experience = (experience: any) => {
   if(!experience){ return '' }
-  const modifyExperience = helper.modifyWordpressObject(experience);
+  const modifyExperience = modifyWordpressObject(experience);
   return (<div className="timeline-item is-dark ">
             <div className="timeline-marker is-dark"></div>
             <div className="timeline-content">
@@ -61,7 +68,3 @@ export const Experience = ({experience}) => {
             </div>
           </div>)
 }
-
-
-
-export default CareerTimeline;

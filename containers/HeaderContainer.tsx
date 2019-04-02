@@ -1,27 +1,32 @@
-import React, { PureComponent } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { action as toggleMenu } from 'redux-burger-menu';
+import reduxBurgerMenu from 'redux-burger-menu';
 import { elastic as Menu } from 'react-burger-menu'
-import { Link, Router } from '../routes'
-import { Link as LinkScroll } from 'react-scroll'
+import routes from '../routes';
+const Link = routes.Link;
+const Route = routes.Route;
+import LinkScroll from 'react-scroll';
 
-import NProgress from 'nprogress'
+import NProgress from 'nprogress';
 import Head from 'next/head';
-import helper from '../helpers/helper';
-import Socials from '../components/Socials';
-import GoogleTagManager from '../components/GoogleTagManager';
+import { modifyWordpressObject } from '../helpers/helper';
+import { Socials } from '../components/Socials';
+import { GoogleTagManager } from '../components/google/GoogleTagManager';
 
-Router.onRouteChangeStart = (url) => {
-  NProgress.start()
-}
-Router.onRouteChangeComplete = () => {
-  NProgress.done();
-}
-Router.onRouteChangeError = () => NProgress.done()
+// Route.onRouteChangeStart = (url: string) => {
+//   NProgress.start()
+// }
+// Route.onRouteChangeComplete = () => {
+//   NProgress.done();
+// }
+// Route.onRouteChangeError = () => NProgress.done()
 
-class HeaderContainer extends PureComponent {
+type HeaderProps = {
+  toggleMenu?: (isOpen: boolean) => void;
+}
+class HeaderContainer extends React.Component<HeaderProps> {
   //Router.onRouteChangeComplete = () => NProgress.done()
-   constructor(props){
+   constructor(props: any){
      super(props);
      this.state = {
        showBurgerMenu: false,
@@ -31,8 +36,8 @@ class HeaderContainer extends PureComponent {
      this.bmChangeState = this.bmChangeState.bind(this);
    }
 
-   bmChangeState(state){
-     this.props.toggleMenu(state.isOpen);
+   bmChangeState(state: any){
+     this.props.toggleMenu!(state.isOpen);
      return state.isOpen;
    }
 
@@ -72,25 +77,28 @@ class HeaderContainer extends PureComponent {
    }
 
    render() {
-     const { burgerMenu, reducer } = this.props;
-     const { showBurgerMenu, showUpButton, showTestLinks } = this.state;
+     console.log(this.props);
+     const { burgerMenu, blog }: any = this.props;
+     const { showBurgerMenu, showUpButton, showTestLinks }: any = this.state;
      const menuHasFadeIn = showBurgerMenu ? 'show-background' : ''; //- enable during production
      const upButtonHasFadeIn = showUpButton ? '' : 'hide'; //- enable during production
      //const hasFadeIn = showBurgerMenu ? '' : '';
      return (
-        [ <HeadCustom blog={reducer.blog} key="header-1"/>,
-          <MenuSidebar key="header-2" showTestLinks={showTestLinks} bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
-          <section key="header-3"  className={`${menuHasFadeIn} fade-in top-nav-container`}>
-            <p className="btn-burger-menu pointer" onClick={()=>{this.props.toggleMenu(true)}}>
+        <div>
+          <HeadCustom blog={blog.blog} key="header-1"/>
+          <MenuSidebar showTestLinks={showTestLinks} bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
+          <section className={`${menuHasFadeIn} fade-in top-nav-container`}>
+            <p className="btn-burger-menu pointer" onClick={()=>{this.props.toggleMenu!(true)}}>
               <i className="fa fas fa-bars"></i>
             </p>
-          </section>,
-          <LinkScroll key="header-4" to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll>]
+          </section>
+          {/* <LinkScroll to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll> */}
+        </div>
     );
  }
 }
 
-const HeadCustom = ({blog}) => {
+const HeadCustom = ({blog}: any) => {
 
   let metaDescription = "Felix Noriel is a Software Engineer who loves food, traveling and cooking! He loves to challenge himself everyday. He is exploring the world, one country at a time. ";
   let metaTitle = "Felix Noriel | Foodie | Technology Enthusiast | Mixing life between food, traveling and technology";
@@ -103,7 +111,7 @@ const HeadCustom = ({blog}) => {
   let ogUrl = "//whoisfelix.com";
 
   if(blog && blog[0]){
-    const modifyBlog = helper.modifyWordpressObject(blog[0]);
+    const modifyBlog = modifyWordpressObject(blog[0]);
     metaDescription = modifyBlog.excerpt.rendered;
     metaTitle = modifyBlog.title.rendered;
     ogImg = modifyBlog.custom_modified.featuredImgSrc.source_url;
@@ -117,7 +125,7 @@ const HeadCustom = ({blog}) => {
           <title>{metaTitle}</title>
 
           <script async src="//www.googletagmanager.com/gtag/js?id=UA-80189799-2"></script>
-          <script async='async' src='//www.googletagservices.com/tag/js/gpt.js'></script>
+          <script async src='//www.googletagservices.com/tag/js/gpt.js'></script>
           <GoogleTagManager scriptId="google-tag-manager" gtmId="GTM-PKHZBV4" type="script"/>
 
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -153,13 +161,14 @@ const HeadCustom = ({blog}) => {
          </Head>
 }
 
-const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}) => {
+const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}: any) => {
   //<button onClick={()=>{Router.pushRoute('/projects')}} className="button">test projects</button>
   //<LinkScroll to="contact-container" smooth={true} duration={500} >Contact</LinkScroll>
 
   return (<Menu
             right
-            isOpen={ burgerMenu.isOpen }
+            // isOpen={ burgerMenu.isOpen }
+            // isOpen={true}
             customBurgerIcon={ false }
             onStateChange={ bmChangeState }>
               <div className="menu-links">
@@ -197,11 +206,11 @@ const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}) => {
            </Menu>)
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
  ...state
 })
-const mapDispatchToProps = dispatch => ({
-  toggleMenu: (isOpen) => dispatch(toggleMenu(isOpen))
+const mapDispatchToProps = (dispatch: any) => ({
+  toggleMenu: (isOpen: boolean) => dispatch(reduxBurgerMenu.action(isOpen))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);

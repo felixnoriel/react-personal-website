@@ -1,18 +1,26 @@
-import { Link } from '../../routes'
-import helper from '../../helpers/helper';
+import * as React from 'react';
+import { modifyWordpressObject } from '../../helpers/helper';
+import routes from '../../routes';
+const Link = routes.Link;
 
-const BlogView = ({blog}) => {
-  const modifyBlog = helper.modifyWordpressObject(blog[0]);
-  return ([<section key="blog-view-1" id="blog-section" className="container blog-view-banner">
-  <h1 className="title has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
-  <h2 className="subtitle has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />
+type BlogViewProps = {
+  blog: any;
+}
+export const BlogView = ({blog}: BlogViewProps) => {
+  if(!blog || !blog[0]){ return <div/>};
+  const modifyBlog = modifyWordpressObject(blog[0]);
+  return (
+      <section>
+        <section id="blog-section" className="container blog-view-banner">
+            <h1 className="title has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
+            <h2 className="subtitle has-text-centered" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />
               <img className="image"
                    src={modifyBlog.custom_modified.featuredImgSrc.source_url} 
                    alt={modifyBlog.title.rendered} title={modifyBlog.title.rendered}/>
               <div className="info">
               </div>
-          </section>,
-          <section key="blog-view-2" className="blog-view-content">
+          </section>
+          <section className="blog-view-content">
             <div className="container">
               <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.content.rendered }} />
               <SharePost blog={modifyBlog}/>
@@ -22,10 +30,12 @@ const BlogView = ({blog}) => {
                 </Link>
               </div>
             </div>
-          </section>])
+        </section>
+      </section>
+  )
 }
 
-const SharePost = ({blog}) => {
+const SharePost = (blog: any) => {
   return (<div className="social-share">
             <p className="subtitle">Share this post</p>
             <ul className="level is-mobile">
@@ -64,4 +74,3 @@ const SharePost = ({blog}) => {
             </ul>
           </div>)
 }
-export default BlogView;
