@@ -10,7 +10,8 @@ type CareerViewProps = {
   experience: any;
   projects: Array<any>;
 }
-export const CareerView = ({experience, projects}: CareerViewProps) => {
+
+export const CareerView: React.SFC<CareerViewProps> = ({experience, projects}) => {
   return (
     <div>
       <section key="career-view-1" className="section career-view-container">
@@ -21,7 +22,10 @@ export const CareerView = ({experience, projects}: CareerViewProps) => {
   );
 }
 
-const CareerInfo = ({ experience }: any) => {
+type CareerInfoProps = {
+  experience: any
+}
+const CareerInfo = ({ experience }: CareerInfoProps) => {
   if(!experience || !experience[0]){
     return <div />;
   }

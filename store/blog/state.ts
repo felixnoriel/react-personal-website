@@ -2,7 +2,7 @@ import { ActionType, createAsyncAction, getType, createStandardAction } from 'ty
 import Service from '../api/Service';
 import { ThunkAction } from 'redux-thunk';
 import * as _ from 'lodash';
-import { filterBySlug, filterPerPage, filterProjectsByCareerId } from '../../helpers/helper';
+import { filterBySlug, filterPerPage } from '../../helpers/helper';
 
 export const listBlogAction = createAsyncAction(
     'listBlog/REQUEST',

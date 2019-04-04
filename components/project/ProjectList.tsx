@@ -4,19 +4,19 @@ import { modifyWordpressObject } from '../../helpers/helper';
 import { Tag } from '../Tag';
 import { ViewAllLink } from '../ViewAllLink';
 import routes from '../../routes';
-const { Link } = routes;
-import "./Project.scss";
+const Link = routes.Link;
 
 type ProjectListProps = {
   projects: Array<any>;
   viewType?: string;
   indexPage?: boolean;
 }
-export const ProjectList = ({projects, viewType, indexPage}: ProjectListProps ) => {
+
+export const ProjectList: React.SFC<ProjectListProps> = ({projects, viewType, indexPage}) => {
   if(!projects || !projects[0]){ return <div/>};
   return (
       <div>
-        <ProjectListHeader key="project-1" viewType={viewType} />
+        <ProjectListHeader viewType={viewType} />
         <section key="project-2" className={`section ${viewType} container projects-container`}>
           { ProjectsListText(projects) }
           { ViewAllLink(projects, indexPage) } 
@@ -25,26 +25,26 @@ export const ProjectList = ({projects, viewType, indexPage}: ProjectListProps ) 
   );
 }
 
-const ProjectListHeader = (viewType: any) => {
+const ProjectListHeader = ({viewType}) => {
   let title = "Projects";
   let subtitle = "Some of my past work";
   let heroSize = "is-medium";
-  if(viewType == 'career'){
+  if(viewType === 'career'){
     title = "Some projects I've been involved with";
     subtitle = "";
     heroSize = "";
   }
-  return (<section id="projects-section" className={`hero ${heroSize} is-darkturquoise is-long is-bold`}>
-            <div className="hero-body">
-            <div className="container has-text-centered">
-              <h1 className="title"> { title } </h1>
-              <h2 className="subtitle"> { subtitle } </h2>
-            </div>
-          </div>
-        </section>)
+  return (
+    <section className={`hero ${heroSize} is-darkturquoise is-long is-bold`}>
+        <div className="hero-body">
+        <div className="container has-text-centered">
+          <h1 className="title"> { title } </h1>
+          <h2 className="subtitle"> { subtitle } </h2>
+        </div>
+      </div>
+    </section>
+  )
 }
-
-
 
 const ProjectsListText = (projects: any) => {
   if(!projects || !projects.map){
@@ -96,8 +96,8 @@ const TagList = (tags: any) => {
   if(!tags){
     return '';
   }
-  const tagsText = tags.map( (tag: any) => {
-    return Tag(tag.name);
+  const tagsText = tags.map( (tag: any, index: number) => {
+    return Tag(tag.name, index);
   })
 
   return (

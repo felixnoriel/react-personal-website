@@ -1,6 +1,5 @@
 const ShortcodeParser = require('meta-shortcodes');
 
-
 export function modifyWordpressObject(post: any){
   if(!post || !post.content){ return false; }
   let modified = Object.assign({}, post);
@@ -77,7 +76,6 @@ function regexUrl(url: string){
 }
 
 function structureFeaturedMedia(post: any){
-
 	let media: any = {};
 
 	if( post && post._embedded
@@ -205,18 +203,6 @@ export function getImageUrl(media: any, type: any){
 function getImageSrcSet(media: any){
     let img = "";
 
-    /*
-    set_post_thumbnail_size( 75, 75, true ); // Normal post thumbnails
-    add_image_size( 'small', 150, 0, true ); // Permalink thumbnail size
-    add_image_size( 'medium', 400, 246, true );
-    add_image_size( 'large', 640, 0, true );
-    add_image_size( 'largewide', 640, 300, true );
-    add_image_size( 'xlarge', 800, 0, true );
-    add_image_size( 'wide', 657, 404, true );
-    add_image_size( 'featured', 1900, 0 );
-
-    //https://www.monpurse.com/wp-content/uploads/2017/11/homepage_desktop_dyo-min-450x450.jpg 450w https://www.monpurse.com/wp-content/uploads/2017/11/homepage_desktop_dyo-min-800x312.jpg 800w https://www.monpurse.com/wp-content/uploads/2017/11/homepage_desktop_dyo-min-1200x467.jpg 840w  1926w
-    */
     if(media.thumbnail && media.thumbnail.source_url){
         img += media.thumbnail.source_url + " 75w, ";
     }
@@ -269,10 +255,13 @@ function getReplacedUrlLink(url: any){
 }
 
 
-
-export function filterProjectsByCareerId({career_id, list}: any){
+type FilterProjectsByCareerIdProps = {
+  career_id: string;
+  list: Array<any>;
+}
+export function filterProjectsByCareerId({career_id, list}: FilterProjectsByCareerIdProps): Array<any>{
   if(!list.map){
-    return false;
+    return [];
   }
 
   return list.filter( (obj: any) => {
@@ -284,9 +273,13 @@ export function filterProjectsByCareerId({career_id, list}: any){
   });
 }
 
-export function filterPerPage({per_page, list}: any){
+type FilterPerPageProps = {
+  per_page: number,
+  list: Array<any>
+}
+export function filterPerPage({per_page, list}: FilterPerPageProps): Array<any>{
   if(!list.map){
-    return false;
+    return [];
   }
   if(list.length <= per_page){
     return list;
@@ -300,9 +293,13 @@ export function filterPerPage({per_page, list}: any){
   });
 }
 
-export function filterBySlug({ slug, list }: any){
+type FilterBySlugProps = {
+  slug: string,
+  list: Array<any>
+}
+export function filterBySlug({ slug, list }: FilterBySlugProps): Array<any>{
   if(!list.map){
-    return false;
+    return [];
   }
 
   return list.filter( (obj: any) => {

@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-
+import { Dispatch } from 'redux';
+import { RootState } from '../store';
 import config from '../helpers/config';
 import { getBlogList } from '../store/blog/state';
 import { getCareerList } from '../store/career/state';
 import { getProjectList } from '../store/project/state';
 
-const reduxBurgerMenu = require('redux-burger-menu');
+import { action as toggleMenu }  from 'redux-burger-menu';
 
 import { MainContainer } from '../containers/MainContainer'
 import { Intro } from '../components/Intro';
@@ -15,6 +16,9 @@ import { ProjectList } from '../components/project/ProjectList';
 import { BlogList } from '../components/blog/BlogList';
 import { Skills } from '../components/skills/Skills';
 
+type ReduxActionProps = {
+
+}
 class Index extends React.PureComponent{
 
   //second to be called
@@ -41,6 +45,7 @@ class Index extends React.PureComponent{
     // await reduxStore.dispatch(getProjects({per_page:3, order_by: 'menu_order'}))
     // await reduxStore.dispatch(getBlogList({per_page:3, order_by: 'menu_order'}))
 
+    await store.dispatch(toggleMenu(false));
     await store.dispatch(getCareerList(3))
     await store.dispatch(getProjectList(3))
     await store.dispatch(getBlogList(3))
@@ -62,12 +67,12 @@ class Index extends React.PureComponent{
             </MainContainer>)
   }
 }
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: RootState) => ({
   career: state.career,
   project: state.project,
   blog: state.blog
 })
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>): ReduxActionProps => ({
 
 })
 

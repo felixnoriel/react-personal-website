@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-
-import reduxBurgerMenu from 'redux-burger-menu';
-
+import { RootState } from '../store/index';
+import { action as toggleMenu } from 'redux-burger-menu';
 import { getBlogList, getBlog } from '../store/blog/state';
 import { getCareerList, getCareer } from '../store/career/state';
 import { getProjectList, getProject, getProjectsByCareerId } from '../store/project/state';
@@ -20,7 +19,7 @@ import routes from '../routes';
 const Link = routes.Link;
 const Route = routes.Route;
 
-class List extends React.Component{
+class Page extends React.Component{
 
   //second to be called
   constructor(props: any){
@@ -41,7 +40,7 @@ class List extends React.Component{
     err - error object
   */
   static async getInitialProps ({ req, store, pathname, params, query, asPath }: any) {
-    // await store.dispatch(toggleMenu(false))
+    await store.dispatch(toggleMenu(false))
 
     const route = routes.match(asPath);
     const PostTypeName = route.route.name;
@@ -67,8 +66,6 @@ class List extends React.Component{
     return { PostTypeName: PostTypeName };
   }
 
-  //third to be called
-  //
   render(){
     const { PostTypeName }: any = this.props;
     
@@ -79,18 +76,16 @@ class List extends React.Component{
             </MainContainer>)
   }
 }
-
-              
               
 const components = {
   projects: ({project}: any) => (
-    <ProjectList indexPage={true} projects={project.projectList} />
+    <ProjectList indexPage={false} projects={project.projectList} />
   ),
   career: ({career}: any) => (
-    <CareerTimeline indexPage={true} experiences={career.careerList}/>
+    <CareerTimeline indexPage={false} experiences={career.careerList}/>
   ),
   blog: ({blog}: any) => (
-    <BlogList indexPage={true} blogList={blog.blogList} />
+    <BlogList indexPage={false} blogList={blog.blogList} />
   ),
   projectview: ({project}: any) => (
     <ProjectView project={project.project}/>
@@ -104,11 +99,11 @@ const components = {
   about: () => <AboutWebsite />,
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: RootState) => ({
  ...state
 })
 const mapDispatchToProps = (dispatch: any) => ({
 
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(List);
+export default connect(mapStateToProps, mapDispatchToProps)(Page);

@@ -4,7 +4,10 @@ const Gallery = require('react-photo-gallery');
 
 class GalleryLightbox extends React.PureComponent {
  
- state: any;
+ state: {
+  currentImage: number,
+  lightboxIsOpen: boolean
+ };
  constructor(){
    super({});
 
@@ -41,7 +44,6 @@ class GalleryLightbox extends React.PureComponent {
 
 
  render() {
-  const { projects }: any = this.props;
   const photos = [
       {src: 'https://images.unsplash.com/photo-1470619549108-b85c56fe5be8?w=1024&h=1024', width:4, height:3},
       {src: 'https://images.unsplash.com/photo-1471079502516-250c19af6928?w=1024&h=1024', width:4, height:3},

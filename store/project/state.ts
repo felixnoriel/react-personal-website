@@ -1,4 +1,4 @@
-import { ActionType, createAsyncAction, getType, createStandardAction } from 'typesafe-actions';
+import { ActionType, createAsyncAction, getType } from 'typesafe-actions';
 import Service from '../api/Service';
 import { ThunkAction } from 'redux-thunk';
 import * as _ from 'lodash';

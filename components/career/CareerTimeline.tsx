@@ -3,17 +3,16 @@ import { modifyWordpressObject } from '../../helpers/helper';
 import { ViewAllLink } from '../ViewAllLink';
 import routes from '../../routes';
 const { Link } = routes;
-import "./Career.scss";
 
 type CareerTimelineProps = {
-  experiences: any;
+  experiences: Array<any>;
   indexPage?: boolean;
 }
 
-export const CareerTimeline = ({experiences, indexPage}: CareerTimelineProps) => {
+export const CareerTimeline: React.SFC<CareerTimelineProps> = ({experiences, indexPage}) => {
     return ( 
-      <div>
-        <section id="career-section" key="career-1" className="hero has-text-centered  is-bold">
+      <section>
+        <section id="career-section" className="hero has-text-centered  is-bold">
           <div className="hero-body">
             <div className="container">
               <h1 className="title">Career Timeline</h1>
@@ -21,50 +20,60 @@ export const CareerTimeline = ({experiences, indexPage}: CareerTimelineProps) =>
             </div>
           </div>
         </section>
-        <section key="career-2" className="section container section-container-default timeline-container">
-            <div className="timeline is-centered">
-              <header className="timeline-header">
-                <span className="tag tag-laptop is-medium is-dark"><i className="fas fa-laptop"></i></span>
-              </header>
-                { <ExperienceList experiences={experiences} /> }
-            </div>
-            { ViewAllLink( "career", indexPage) }
+        <section className="section container section-container-default timeline-container">  
+          <ExperienceList experiences={experiences} />
+          { ViewAllLink( "career", indexPage) }
         </section>
-      </div>
+      </section>
     )
 }
 
-const ExperienceList = ({experiences}: any) => {
+type ExperiencesListProps = {
+  experiences: Array<any>
+}
+const ExperienceList = ({experiences}: ExperiencesListProps) => {
   if(!experiences || experiences.length == 0){
-    return ''
+    return <div/>
   }
-  return experiences.map((exp: any) => {
-    return Experience(exp);
-  })
+  return (
+    <div className="timeline is-centered">
+      <header className="timeline-header">
+        <span className="tag tag-laptop is-medium is-dark"><i className="fas fa-laptop"></i></span>
+      </header>
+      { experiences.map((exp: any, index: number) => {
+          return <Experience key={index} experience={exp}/>;
+        }) }
+    </div>
+  )
 }
 
-export const Experience = (experience: any) => {
-  if(!experience){ return '' }
+type ExperienceProps = {
+  experience: any
+}
+export const Experience = ({experience}: ExperienceProps) => {
+  if(!experience){ return <div/> }
   const modifyExperience = modifyWordpressObject(experience);
-  return (<div className="timeline-item is-dark ">
-            <div className="timeline-marker is-dark"></div>
-            <div className="timeline-content">
-            <Link as={modifyExperience.custom_modified.postUrlPath}
-                route={modifyExperience.custom_modified.postUrlPath} prefetch>
-              <a>
-                <p className="heading heading-1" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title} | ${modifyExperience.title.rendered}` }} />
-                <p className="heading">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</p>
-              </a>
-            </Link>
-              <Link as={modifyExperience.custom_modified.postUrlPath}
-                  route={modifyExperience.custom_modified.postUrlPath} prefetch>
-                <a>
-                  <figure className="image company-logo">
-                    <img src={modifyExperience.custom_modified.featuredImgSrc.source_url} alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered}/>
-                  </figure>
-                </a>
-              </Link>
-              <em className="" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_location}` }} />
-            </div>
-          </div>)
+  return (
+    <div className="timeline-item is-dark ">
+      <div className="timeline-marker is-dark"></div>
+      <div className="timeline-content">
+      <Link as={modifyExperience.custom_modified.postUrlPath}
+          route={modifyExperience.custom_modified.postUrlPath} prefetch>
+        <a>
+          <p className="heading heading-1" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title} | ${modifyExperience.title.rendered}` }} />
+          <p className="heading">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</p>
+        </a>
+      </Link>
+        <Link as={modifyExperience.custom_modified.postUrlPath}
+            route={modifyExperience.custom_modified.postUrlPath} prefetch>
+          <a>
+            <figure className="image company-logo">
+              <img src={modifyExperience.custom_modified.featuredImgSrc.source_url} alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered}/>
+            </figure>
+          </a>
+        </Link>
+        <em className="" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_location}` }} />
+      </div>
+    </div>
+  )
 }

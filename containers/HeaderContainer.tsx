@@ -1,31 +1,32 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import reduxBurgerMenu from 'redux-burger-menu';
+import { RootState } from '../store';
+import { action as toggleMenu } from 'redux-burger-menu';
 import { elastic as Menu } from 'react-burger-menu'
-import routes from '../routes';
-const Link = routes.Link;
-const Route = routes.Route;
-import LinkScroll from 'react-scroll';
-
+import { Link as LinkScroll } from 'react-scroll';
+import { Dispatch } from 'redux';
 import NProgress from 'nprogress';
 import Head from 'next/head';
 import { modifyWordpressObject } from '../helpers/helper';
 import { Socials } from '../components/Socials';
 import { GoogleTagManager } from '../components/google/GoogleTagManager';
 
-// Route.onRouteChangeStart = (url: string) => {
-//   NProgress.start()
-// }
-// Route.onRouteChangeComplete = () => {
-//   NProgress.done();
-// }
-// Route.onRouteChangeError = () => NProgress.done()
+import routes from '../routes';
+const Link = routes.Link;
+const Router = routes.Router;
 
-type HeaderProps = {
-  toggleMenu?: (isOpen: boolean) => void;
+Router.onRouteChangeStart = (url: string) => NProgress.start()
+Router.onRouteChangeComplete = () =>  NProgress.done();
+Router.onRouteChangeError = () => NProgress.done()
+
+type HeaderProps = {}
+type ReduxProps = {}
+type ReduxActionProps = {
+  toggleMenu?: (isOpen: boolean) => any;
 }
-class HeaderContainer extends React.Component<HeaderProps> {
-  //Router.onRouteChangeComplete = () => NProgress.done()
+type Props = HeaderProps & ReduxProps & ReduxActionProps;
+class HeaderContainer extends React.Component<Props> {
+
    constructor(props: any){
      super(props);
      this.state = {
@@ -42,7 +43,6 @@ class HeaderContainer extends React.Component<HeaderProps> {
    }
 
    componentDidMount(){
-     console.log(window.location.search);
      if(window.location && window.location.search.indexOf('?qwe') > -1){
        this.setState({
          showTestLinks: true
@@ -77,22 +77,21 @@ class HeaderContainer extends React.Component<HeaderProps> {
    }
 
    render() {
-     console.log(this.props);
      const { burgerMenu, blog }: any = this.props;
      const { showBurgerMenu, showUpButton, showTestLinks }: any = this.state;
      const menuHasFadeIn = showBurgerMenu ? 'show-background' : ''; //- enable during production
      const upButtonHasFadeIn = showUpButton ? '' : 'hide'; //- enable during production
-     //const hasFadeIn = showBurgerMenu ? '' : '';
+
      return (
         <div>
           <HeadCustom blog={blog.blog} key="header-1"/>
           <MenuSidebar showTestLinks={showTestLinks} bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
           <section className={`${menuHasFadeIn} fade-in top-nav-container`}>
-            <p className="btn-burger-menu pointer" onClick={()=>{this.props.toggleMenu!(true)}}>
+            <p className="btn-burger-menu pointer" onClick={()=>{console.log(this.props);this.props.toggleMenu!(true)}}>
               <i className="fa fas fa-bars"></i>
             </p>
           </section>
-          {/* <LinkScroll to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll> */}
+          <LinkScroll to="main-wrapper" className={`${upButtonHasFadeIn}`} smooth={true} duration={750} ><p className="btn-up"><i className="fas fa-arrow-up"></i></p></LinkScroll>
         </div>
     );
  }
@@ -162,13 +161,24 @@ const HeadCustom = ({blog}: any) => {
 }
 
 const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}: any) => {
-  //<button onClick={()=>{Router.pushRoute('/projects')}} className="button">test projects</button>
   //<LinkScroll to="contact-container" smooth={true} duration={500} >Contact</LinkScroll>
 
+  const showTestLinksText = () => {
+    if(showTestLinks){
+      return (
+        <div className="hide">
+          <a href="/?qwe">Home</a>
+          <a href="/blog?qwe">Blog</a>
+          <a href="/career?qwe">Career</a>
+          <a href="/projects?qwe">Projects</a>
+        </div>
+      )
+    }
+    return '';
+  }
   return (<Menu
             right
-            // isOpen={ burgerMenu.isOpen }
-            // isOpen={true}
+            isOpen={ burgerMenu.isOpen }
             customBurgerIcon={ false }
             onStateChange={ bmChangeState }>
               <div className="menu-links">
@@ -192,25 +202,15 @@ const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}: any) => {
               <div className="menu-socials">
                 <Socials />
               </div>
-              {
-                showTestLinks ?
-                <div className="hide">
-                  <a href="/?qwe">Home</a>
-                  <a href="/blog?qwe">Blog</a>
-                  <a href="/career?qwe">Career</a>
-                  <a href="/projects?qwe">Projects</a>
-                </div>
-                : ''
-              }
-
+             { showTestLinksText() }
            </Menu>)
 }
 
-const mapStateToProps = (state: any) => ({
- ...state
+const mapStateToProps = (state: RootState) => ({
+  ...state
 })
-const mapDispatchToProps = (dispatch: any) => ({
-  toggleMenu: (isOpen: boolean) => dispatch(reduxBurgerMenu.action(isOpen))
+const mapDispatchToProps = (dispatch: Dispatch<any>): ReduxActionProps => ({
+  toggleMenu: (isOpen: boolean) => dispatch(toggleMenu(isOpen))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);

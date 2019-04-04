@@ -1,7 +1,7 @@
 import * as React from 'react';
 import routes from '../routes';
 const Link  = routes.Link;
-// import { Link } from '../routes'
+
 export const ViewAllLink = (route: any, indexPage: boolean = false ) => {
   if(!indexPage){
     return;
@@ -14,5 +14,4 @@ export const ViewAllLink = (route: any, indexPage: boolean = false ) => {
         </Link>
       </div>
   )
-  
 }

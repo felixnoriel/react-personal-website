@@ -6,7 +6,7 @@ const Link = routes.Link;
 type BlogViewProps = {
   blog: any;
 }
-export const BlogView = ({blog}: BlogViewProps) => {
+export const BlogView: React.SFC<BlogViewProps> = ({blog}) => {
   if(!blog || !blog[0]){ return <div/>};
   const modifyBlog = modifyWordpressObject(blog[0]);
   return (
@@ -35,42 +35,44 @@ export const BlogView = ({blog}: BlogViewProps) => {
   )
 }
 
-const SharePost = (blog: any) => {
-  return (<div className="social-share">
-            <p className="subtitle">Share this post</p>
-            <ul className="level is-mobile">
-              <li className="level-item">
-                <a className="fb-bg" onClick={ ()=>{
-                  window.open('https://www.facebook.com/sharer/sharer.php?u=' + location.href, 'sharer', 'width=626,height=436');
-                } } href="javascript: void(0)" target="_blank" >
-                    <i className="fab fa-facebook-f"></i>
-                </a>
-              </li>
-              <li className="level-item">
-                <a className="twitter-bg"
-                    onClick={ () => {
-                      window.open('https://twitter.com/share?url=' + location.href + '&text=' + blog.title.rendered, 'sharer', 'width=626,height=436');
-                    } } href="javascript: void(0)" target="_blank">
-                    <i data-type="twitter" className="fab fa-twitter"></i>
-                </a>
-              </li>
-              <li className="level-item">
-                <a className="linkedin-bg"
-                    onClick={ ()=> {
-                      window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + location.href, 'sharer', 'width=626,height=436');
-                    } } href="javascript: void(0)" target="_blank">
-                    <i data-type="linkedin" className="fab fa-linkedin-in"></i>
-                </a>
-              </li>
-              <li className="level-item">
-                <a className="google-plus-bg"
-                    onClick={ ()=> {
-                      window.open('https://plus.google.com/share?url=' + location.href, 'sharer', 'width=626,height=436');
-                    }} href="javascript: void(0)" target="_blank">
-                    <i data-type="googleplus" className="fab fa-google-plus-g"></i>
-                </a>
-              </li>
+const SharePost = ({blog}: any) => {
+  return (
+    <div className="social-share">
+      <p className="subtitle">Share this post</p>
+      <ul className="level is-mobile">
+        <li className="level-item">
+          <a className="fb-bg" onClick={ ()=>{
+            window.open('https://www.facebook.com/sharer/sharer.php?u=' + location.href, 'sharer', 'width=626,height=436');
+          } } href="javascript: void(0)" target="_blank" >
+              <i className="fab fa-facebook-f"></i>
+          </a>
+        </li>
+        <li className="level-item">
+          <a className="twitter-bg"
+              onClick={ () => {
+                window.open('https://twitter.com/share?url=' + location.href + '&text=' + blog.title.rendered, 'sharer', 'width=626,height=436');
+              } } href="javascript: void(0)" target="_blank">
+              <i data-type="twitter" className="fab fa-twitter"></i>
+          </a>
+        </li>
+        <li className="level-item">
+          <a className="linkedin-bg"
+              onClick={ ()=> {
+                window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + location.href, 'sharer', 'width=626,height=436');
+              } } href="javascript: void(0)" target="_blank">
+              <i data-type="linkedin" className="fab fa-linkedin-in"></i>
+          </a>
+        </li>
+        <li className="level-item">
+          <a className="google-plus-bg"
+              onClick={ ()=> {
+                window.open('https://plus.google.com/share?url=' + location.href, 'sharer', 'width=626,height=436');
+              }} href="javascript: void(0)" target="_blank">
+              <i data-type="googleplus" className="fab fa-google-plus-g"></i>
+          </a>
+        </li>
 
-            </ul>
-          </div>)
+      </ul>
+    </div>
+  )
 }

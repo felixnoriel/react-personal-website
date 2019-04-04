@@ -3,13 +3,13 @@ import { ViewAllLink } from '../ViewAllLink';
 import { modifyWordpressObject } from '../../helpers/helper';
 import routes from '../../routes';
 const { Link  } = routes;
-import "./Blog.scss";
 
 type BlogListProps = {
   blogList: Array<any>;
   indexPage?: boolean;
 }
-export const BlogList = ({blogList, indexPage}: BlogListProps) => {
+
+export const BlogList: React.SFC<BlogListProps> = ({blogList, indexPage}) => {
   return (
       <div>
         <section id="blog-section" key="blog-1" className="section-container-default is-light hero has-text-centered ">
@@ -22,9 +22,7 @@ export const BlogList = ({blogList, indexPage}: BlogListProps) => {
         </section>
         <section key="blog-2" className="section blog-list-container">
           <div className="container">
-            <div className="columns is-multiline ">
-                { BlogListText(blogList) }
-            </div>
+            <BlogListText blogList={blogList}/>
             { ViewAllLink("blog", indexPage) }
           </div>
         </section>
@@ -32,35 +30,43 @@ export const BlogList = ({blogList, indexPage}: BlogListProps) => {
   )
 }
 
-const BlogListText = (blogList: any) => {
+type BlogListTextProps = {
+  blogList: Array<any>;
+}
+const BlogListText = ({blogList}: BlogListTextProps) => {
   if(!blogList || !blogList.map){
-    return '';
+    return <div/>;
   }
-
-  return blogList.map( (blog: any) => {
-    return BlogText(blog)
-  })
+  return (
+    <div className="columns is-multiline">
+      { blogList.map( (blog: any, index: number) => {
+          return <BlogText key={index} blog={blog} />
+        }) 
+      }
+    </div>
+  )
 }
 
-export const BlogText = (blog: any) => {
+export const BlogText = ({blog}: any) => {
+  if(!blog){ return <div/>}
   const modifyBlog = modifyWordpressObject(blog);
 
-  //<Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
-  return (<div className="column is-4">
-            <div className="blog-item">
-              <Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
-                <figure className="blog-image">
-                    <img className="image" alt={modifyBlog.title.rendered} title={modifyBlog.title.rendered}
-                         src={modifyBlog.custom_modified.media.medium.source_url} />
-                </figure>
-                <div className="blog-content">
-                  <p className="title" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
-                  <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />
-                </div>
-                <p className="is-link btn-read-more">Read More<i className="fas fa-arrow-right "></i></p>
-                </a>
-              </Link>
-            </div>
+  return (
+    <div className="column is-4">
+      <div className="blog-item">
+        <Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
+          <figure className="blog-image">
+              <img className="image" alt={modifyBlog.title.rendered} title={modifyBlog.title.rendered}
+                    src={modifyBlog.custom_modified.media.medium.source_url} />
+          </figure>
+          <div className="blog-content">
+            <p className="title" dangerouslySetInnerHTML={{ __html: modifyBlog.title.rendered }} />
+            <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.excerpt.rendered }} />
           </div>
+          <p className="is-link btn-read-more">Read More<i className="fas fa-arrow-right "></i></p>
+          </a>
+        </Link>
+      </div>
+    </div>
   )
 }

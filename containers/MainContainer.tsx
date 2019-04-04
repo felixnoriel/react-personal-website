@@ -4,15 +4,16 @@ import { FooterContainer } from './FooterContainer';
 import HeaderContainer from './HeaderContainer';
 import "../design/index.scss";
 
-export class MainContainer extends React.PureComponent {
-   render() {
-      return (
-         <div id="main-wrapper" className="main-wrapper">
-            <HeaderContainer />
-            { this.props.children }
-            <FooterContainer />
-         </div>
-      );
-   }
+type MainProps = {
+   children: any
+}
+export const MainContainer: React.SFC<MainProps> = ({children}) => {
+   return (
+      <div id="main-wrapper" className="main-wrapper">
+         <HeaderContainer />
+         { children }
+         <FooterContainer />
+      </div>
+   );
 }
 

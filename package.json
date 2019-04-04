@@ -1,12 +1,13 @@
 {
     "name": "felixwebsite",
     "version": "1.0.0",
-    "description": "felix website built with react, nextjs for ssr, redux, apollo, graphql, wordpress api",
+    "description": "felix website built with react, typescript, nextjs for ssr, redux, wordpress api",
     "main": "server.js",
     "scripts": {
         "dev": "NODE_ENV=development ts-node server.ts",
         "build": "NODE_ENV=production next build",
-        "start": "NODE_ENV=production ts-node server.ts"
+        "start": "NODE_ENV=production ts-node server.ts",
+        "precommit": "pretty-quick --staged"
     },
     "author": "Felix Noriel",
     "license": "ISC",

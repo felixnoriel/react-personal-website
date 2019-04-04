@@ -7,7 +7,7 @@ export const Skills = () => {
         <div className="hero-body">
           <div className="container has-text-centered">
             <h1 className="title">
-              I have over five years experience as a Full-Stack Engineer
+              I have over five years experience as a Full-Stack Software Engineer
             </h1>
             <h2 className="subtitle">
               Strategising, designing, and developing big scalable applications from end to end
@@ -20,44 +20,50 @@ export const Skills = () => {
           <div className="column ">
             <p className="skills-icon"><i className="far fa-file-code"></i></p>
             <h2 className="title is-size-4 is-spaced">Front end</h2>
+            <h4 className="list-title">frameworks</h4>
+            <ul>
+              <li>ReactJs</li>
+              <li>TypeScript</li>
+              <li>JavaScript</li>
+              <li>EcmaScript</li>
+              <li>AngularJs</li>
+              <li>JQuery</li>
+            </ul>
             <h4 className="list-title">Responsive design</h4>
             <ul>
               <li>HTML 5 & CSS 3 (SASS)</li>
               <li>Flexbox, Grid Layout</li>
-              <li>Bulma, Bootstrap</li>
+              <li>Bulma, Ant Design, Bootstrap</li>
             </ul>
-            <h4 className="list-title">Front end frameworks</h4>
-            <ul>
-              <li>ReactJs</li>
-              <li>AngularJs</li>
-              <li>JQuery</li>
-              <li>VanillaJs</li>
-            </ul>
-
             <h4 className="list-title">Build/Running tools</h4>
             <ul>
               <li>Webpack</li>
             </ul>
-
           </div>
           <div className="column ">
             <p className="skills-icon"><i className="fas fa-code-branch"></i></p>
             <h2 className="title is-size-4 is-spaced">Back end </h2>
             <h4 className="list-title">OOP languages</h4>
             <ul>
+              <li>NodeJs</li>
               <li>PHP</li>
               <li>Java</li>
               <li>.NET</li>
             </ul>
+            <h4 className="list-title">Microservices</h4>
+            <ul>
+              <li>Opentracing, Jaeger Tracing</li>
+              <li>Prometheus for monitoring</li>
+            </ul>
             <h4 className="list-title">CMS</h4>
             <ul>
               <li>Wordpress</li>
-              <li>Wordpress API</li>
             </ul>
 
             <h4 className="list-title">DB/Storage</h4>
             <ul>
               <li>MySQL</li>
+              <li>PostgreSQL</li>
               <li>MSSQL</li>
             </ul>
           </div>

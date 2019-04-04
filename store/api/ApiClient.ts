@@ -1,7 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosPromise, AxiosInstance } from 'axios';
 import { Store } from 'redux';
 import { RootState } from '../root-reducer';
-
 export default class APIClient {
     axiosInstance: AxiosInstance;
 

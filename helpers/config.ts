@@ -9,5 +9,6 @@ if(publicRuntimeConfig.env === "development"){
 }
 // console.log(`publicRuntimeConfig.node_env : ${publicRuntimeConfig.node_env} | endpoint: ${endpoint}`);
 export default {
-    endpoint: endpoint
+    endpoint: endpoint,
+    endpointWpAPI: endpointWpAPI
 }
