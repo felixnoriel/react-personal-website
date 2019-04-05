@@ -48,16 +48,12 @@ export const Skills = () => {
               <li>NodeJs</li>
               <li>PHP</li>
               <li>Java</li>
-              <li>.NET</li>
+              <li>.NET, C#</li>
             </ul>
             <h4 className="list-title">Microservices</h4>
             <ul>
               <li>Opentracing, Jaeger Tracing</li>
               <li>Prometheus for monitoring</li>
-            </ul>
-            <h4 className="list-title">CMS</h4>
-            <ul>
-              <li>Wordpress</li>
             </ul>
 
             <h4 className="list-title">DB/Storage</h4>
@@ -74,14 +70,17 @@ export const Skills = () => {
             <ul>
               <li>EC2 Instance</li>
               <li>API Gateway</li>
+              <li>VPC, Route53</li>
               <li>Cloudfront</li>
               <li>Elastic Load Balancing</li>
               <li>S3 Bucket</li>
-              <li>VPC, Route53</li>
             </ul>
 
             <h4 className="list-title">Google Cloud Services</h4>
-
+            <h4 className="list-title">Containers</h4>
+            <ul>
+              <li>Docker</li>
+            </ul>
             <h4 className="list-title">Server Management</h4>
             <ul>
               <li>Linux, Ubuntu</li>
