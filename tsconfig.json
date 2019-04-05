@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "outDir": "build",
+        "target": "es2018",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "lib": [
+            "es7",
+            // Needed to build the @types/superagent module.
+            "dom"
+        ],
+        "module": "commonjs",
+        "baseUrl": "./",
+    },
+    "files": ["server.ts"]
+}
