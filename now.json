@@ -1,0 +1,10 @@
+{
+    "version": 1.0,
+    "name":"felixnoriel-nextjs",
+    "builds":[
+        {
+            "src":"package.json",
+            "use":"@now/next"
+        }
+    ]
+}
