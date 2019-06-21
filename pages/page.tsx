@@ -103,7 +103,7 @@ const components = {
   },
   blog: ({blog, slug}: any) => {
     if (slug) {
-      console.log("HERE");
+      console.log(blog);
       return <BlogView blog={blog.blog}/>
     }
     return <BlogList indexPage={false} blogList={blog.blogList} />
