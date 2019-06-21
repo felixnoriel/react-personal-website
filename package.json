@@ -4,10 +4,11 @@
     "description": "felix website built with react, typescript, nextjs for ssr, redux, wordpress api",
     "main": "server.js",
     "scripts": {
-        "dev": "NODE_ENV=development ts-node server.ts",
+        "dev": "NODE_ENV=development next",
         "build": "NODE_ENV=production next build",
         "start": "NODE_ENV=production ts-node server.ts",
-        "precommit": "pretty-quick --staged"
+        "precommit": "pretty-quick --staged",
+        "now-build": "NODE_ENV=production next build"
     },
     "author": "Felix Noriel",
     "license": "ISC",
@@ -49,6 +50,7 @@
         "@babel/core": "^7.3.4",
         "@babel/preset-env": "^7.3.4",
         "@babel/preset-react": "^7.0.0",
+        "@now/node": "^0.9.0",
         "@types/axios": "^0.14.0",
         "@types/lodash": "^4.14.122",
         "@types/next": "^8.0.1",

@@ -42,33 +42,44 @@ class Page extends React.Component{
   static async getInitialProps ({ req, store, pathname, params, query, asPath }: any) {
     await store.dispatch(toggleMenu(false))
 
-    const route = routes.match(asPath);
-    const PostTypeName = route.route.name;
-
+    // const route = routes.match(asPath);
+    const PostTypeName = query.name;
+    const slug = query.slug;
+    console.log("pathname", pathname);
+    console.log("params", params);
+    console.log("query", query);
+    console.log("asPath", asPath);
     if(PostTypeName == 'projects'){
-        await store.dispatch(getProjectList(99))
+        if (slug) {
+          await store.dispatch(getProject(slug))
+        } else {
+          await store.dispatch(getProjectList(99))
+        }
     }else if (PostTypeName == 'career'){
-        await store.dispatch(getCareerList(99))
-    }else if (PostTypeName == 'blog'){
-        await store.dispatch(getBlogList(99))
-    }else if(PostTypeName == 'projectview'){
-        await store.dispatch(getProject(query.slug))
-    }else if(PostTypeName == 'careerview'){
+      if (slug) {
         await store.dispatch(getCareer(query.slug))
-        if(store.getState().career && store.getState().career.career[0]){
+        const career = store.getState().career;
+        if (career && career.career[0]) {
           const careerId = store.getState().career.career[0].id;
           await store.dispatch(getProjectsByCareerId(careerId))
         }
-    }else if(PostTypeName == 'blogview'){
-        await store.dispatch(getBlog(query.slug))
+      } else {
+        await store.dispatch(getCareerList(99))
+      }
+    }else if (PostTypeName == 'blog'){
+      if (slug) {
+        await store.dispatch(getBlog(slug))
+      } else {
+        await store.dispatch(getBlogList(99))
+      }
     }
 
-    return { PostTypeName: PostTypeName };
+    return { PostTypeName, slug };
   }
 
   render(){
     const { PostTypeName }: any = this.props;
-    
+    console.log(this.props);
     //Dynamic Component
     const Component = components[PostTypeName];
     return (<MainContainer>
@@ -78,24 +89,25 @@ class Page extends React.Component{
 }
               
 const components = {
-  projects: ({project}: any) => (
-    <ProjectList indexPage={false} projects={project.projectList} />
-  ),
-  career: ({career}: any) => (
-    <CareerTimeline indexPage={false} experiences={career.careerList}/>
-  ),
-  blog: ({blog}: any) => (
-    <BlogList indexPage={false} blogList={blog.blogList} />
-  ),
-  projectview: ({project}: any) => (
-    <ProjectView project={project.project}/>
-  ),
-  careerview: ({career, project}: any) => (
-    <CareerView experience={career.career} projects={project.projectList}/>
-  ),
-  blogview: ({blog}: any) => (
-    <BlogView blog={blog.blog}/>
-  ),
+  projects: ({project, slug}: any) => {
+    if (slug) {
+      return <ProjectView project={project.project}/>
+    }
+    return <ProjectList indexPage={false} projects={project.projectList} />
+  },
+  career: ({career, project, slug}: any) => {
+    if (slug) {
+      return <CareerView experience={career.career} projects={project.projectList}/>
+    }
+    return <CareerTimeline indexPage={false} experiences={career.careerList}/>
+  },
+  blog: ({blog, slug}: any) => {
+    if (slug) {
+      console.log("HERE");
+      return <BlogView blog={blog.blog}/>
+    }
+    return <BlogList indexPage={false} blogList={blog.blogList} />
+  },
   about: () => <AboutWebsite />,
 }
 

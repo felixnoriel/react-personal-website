@@ -1,10 +1,36 @@
 {
-    "version": 1.0,
+    "version": 2,
     "name":"felixnoriel-nextjs",
     "builds":[
         {
-            "src":"package.json",
-            "use":"@now/next"
+            "src":"next.config.js",
+            "use":"@now/next",
+            "config": { 
+                "maxLambdaSize": "25mb" 
+            }
+        },
+        { 
+            "src": "static/**", 
+            "use": "@now/static" 
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(?<name>[^/]+)$", 
+            "dest": "/page?name=$name" 
+        },
+        {
+            "src": "/blog/(?<slug>[^/]*)$", 
+            "dest": "/page?name=blog&slug=$slug" 
+        },
+        {
+            "src": "/career/(?<slug>[^/]*)$", 
+            "dest": "/page?name=career&slug=$slug" 
+        },
+        {
+            "src": "/projects/(?<slug>[^/]*)$", 
+            "dest": "/page?name=projects&slug=$slug" 
         }
     ]
 }
+
