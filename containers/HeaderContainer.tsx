@@ -11,9 +11,8 @@ import { modifyWordpressObject } from '../helpers/helper';
 import { Socials } from '../components/Socials';
 import { GoogleTagManager } from '../components/google/GoogleTagManager';
 
-import routes from '../routes';
-const Link = routes.Link;
-const Router = routes.Router;
+import Link from 'next/link';
+import Router from 'next/router';
 
 Router.onRouteChangeStart = (url: string) => NProgress.start()
 Router.onRouteChangeComplete = () =>  NProgress.done();
@@ -87,7 +86,7 @@ class HeaderContainer extends React.Component<Props> {
           <HeadCustom blog={blog.blog} key="header-1"/>
           <MenuSidebar showTestLinks={showTestLinks} bmChangeState={this.bmChangeState} burgerMenu={burgerMenu}/>,
           <section className={`${menuHasFadeIn} fade-in top-nav-container`}>
-            <p className="btn-burger-menu pointer" onClick={()=>{console.log(this.props);this.props.toggleMenu!(true)}}>
+            <p className="btn-burger-menu pointer" onClick={()=>this.props.toggleMenu!(true)}>
               <i className="fa fas fa-bars"></i>
             </p>
           </section>
@@ -182,19 +181,19 @@ const MenuSidebar = ({burgerMenu, bmChangeState, showTestLinks}: any) => {
             customBurgerIcon={ false }
             onStateChange={ bmChangeState }>
               <div className="menu-links">
-                <Link as="/" route='/' prefetch>
+                <Link as="/" href='/' prefetch>
                   <a>Home</a>
                 </Link>
-                <Link as="projects" route='/projects' prefetch>
+                <Link as="/projects" href='/page?name=projects' prefetch>
                   <a>Projects</a>
                 </Link>
-                <Link as="career" route='/career' prefetch>
+                <Link as="/career" href='/page?name=career' prefetch>
                   <a>Career</a>
                 </Link>
-                <Link as="blog" route='/blog' prefetch>
+                <Link as="/blog" href='/page?name=blog' prefetch>
                   <a>Blog</a>
                 </Link>
-                <Link as="about" route='/about' prefetch>
+                <Link as="/about" href='/page?name=about' prefetch>
                   <a>About</a>
                 </Link>
                 <a href="mailto:jrnoriel_56@yahoo.com">Contact Me</a>

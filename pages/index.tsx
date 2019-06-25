@@ -27,7 +27,7 @@ class Index extends React.PureComponent{
   }
 
   componentWillUnmount(){
-    console.log('index.js unmount');
+
   }
   //first to be called
   /*
@@ -40,11 +40,6 @@ class Index extends React.PureComponent{
     err - error object
   */
   static async getInitialProps ({ req, store, pathname, params, query }: any) {
-    // await reduxStore.dispatch(reduxBurgerMenu.action(false))
-    // await reduxStore.dispatch(getExperiences({per_page: 3}))
-    // await reduxStore.dispatch(getProjects({per_page:3, order_by: 'menu_order'}))
-    // await reduxStore.dispatch(getBlogList({per_page:3, order_by: 'menu_order'}))
-
     await store.dispatch(toggleMenu(false));
     await store.dispatch(getCareerList(3))
     await store.dispatch(getProjectList(3))

@@ -10,13 +10,6 @@ const moment = require('moment');
 
 app.prepare()
   .then(() => {
-    // (?<posttype>[^/]+)$
-    // server.use('/blog.json', express.static(path.join(__dirname, '/static/blog.json')));
-    // server.use('/career.json', express.static(path.join(__dirname, '/static/career.json')));
-    // server.use('/projects.json', express.static(path.join(__dirname, '/static/projects.json')));
-    // server.use('/projects_by_career.json', express.static(path.join(__dirname, '/static/projects_by_career.json')));
-    // server.use('/robots.txt', express.static(path.join(__dirname, '/static/robots.txt')));
-    // server.use('/sitemap.xml', express.static(path.join(__dirname, '/static/sitemap.xml')));
 
     type ServerTypes = {
       req: NowRequest;
@@ -28,37 +21,15 @@ app.prepare()
       app.render(req, res, route.page, query)
     })
 
-      // server.get('/generate-data',  async (req: NowRequest, res: NowResponse) => {
-      //   await generateJSONData({posttype:'blog'});
-      //   await generateJSONData({posttype:'career'});
-      //   await generateJSONData({posttype:'projects'});
-      //   await generateJSONData({posttype:'projects_by_career'});
+    const bodyParser = require('body-parser')
+    const cors = require('cors')
+    const compression = require('compression')
 
-      //   res.send('...');
-      // });
-      // server.get('/generate-sitemap',  async (req: NowRequest, res: NowResponse) => {
-      //   await generateSitemap();
-      //   res.send('sitemap done...');
-      // });
-
-      // if (process.env.NODE_ENV === 'production') {
-        const bodyParser = require('body-parser')
-        const cors = require('cors')
-        const compression = require('compression')
-        console.log('Production '+process.env.NODE_ENV+' env..');
-
-        server.use(handler)
-              .use(compression)
-              .use(cors)
-              .use(bodyParser.json())
-              .listen();
-      // } else {
-      //   console.log('development environment..')
-
-      //   server
-      //   .use(handler)
-      //   .listen(3000);
-      // }
+    server.use(handler)
+          .use(compression)
+          .use(cors)
+          .use(bodyParser.json())
+          .listen();
 
     })
 .catch((ex: any) => {

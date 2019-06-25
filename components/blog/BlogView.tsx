@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { modifyWordpressObject } from '../../helpers/helper';
-import routes from '../../routes';
-const Link = routes.Link;
+import Link from 'next/link';
 
 type BlogViewProps = {
   blog: any;
@@ -25,7 +24,7 @@ export const BlogView: React.SFC<BlogViewProps> = ({blog}) => {
               <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.content.rendered }} />
               <SharePost blog={modifyBlog}/>
               <div className="back-to-blog">
-                <Link as={`blog`} route={`/blog`} prefetch>
+                <Link as={`/blog`} href={`/page?name=blog`} prefetch>
                   <a className=""><i className="fas fa-arrow-left"></i>Back to blog</a>
                 </Link>
               </div>

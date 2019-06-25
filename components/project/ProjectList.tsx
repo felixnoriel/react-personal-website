@@ -3,8 +3,7 @@ import * as React from 'react';
 import { modifyWordpressObject } from '../../helpers/helper';
 import { Tag } from '../Tag';
 import { ViewAllLink } from '../ViewAllLink';
-import routes from '../../routes';
-const Link = routes.Link;
+import Link from 'next/link';
 
 type ProjectListProps = {
   projects: Array<any>;
@@ -72,7 +71,7 @@ const Project = ({project}: any) => {
 
   return (
     <div className="column is-4">
-      <Link as={modifyProject.custom_modified.postUrlPath} route={modifyProject.custom_modified.postUrlPath} prefetch>
+      <Link as={modifyProject.custom_modified.postUrlPath} href={`/page?name=projects&slug=${modifyProject.slug}`} prefetch>
         <a>
           <div className="project-item">
             <figure className="image">

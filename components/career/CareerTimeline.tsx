@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { modifyWordpressObject } from '../../helpers/helper';
 import { ViewAllLink } from '../ViewAllLink';
-import routes from '../../routes';
-const { Link } = routes;
+import Link from 'next/link';
 
 type CareerTimelineProps = {
   experiences: Array<any>;
@@ -58,14 +57,14 @@ export const Experience = ({experience}: ExperienceProps) => {
       <div className="timeline-marker is-dark"></div>
       <div className="timeline-content">
       <Link as={modifyExperience.custom_modified.postUrlPath}
-          route={modifyExperience.custom_modified.postUrlPath} prefetch>
+          href={`/page?name=career&slug=${modifyExperience.slug}`} prefetch>
         <a>
           <p className="heading heading-1" dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_job_title} | ${modifyExperience.title.rendered}` }} />
           <p className="heading">{modifyExperience.custom_meta.custom_meta_start_date} - {modifyExperience.custom_meta.custom_meta_end_date}</p>
         </a>
       </Link>
         <Link as={modifyExperience.custom_modified.postUrlPath}
-            route={modifyExperience.custom_modified.postUrlPath} prefetch>
+            href={`/page?name=career&slug=${modifyExperience.slug}`} prefetch>
           <a>
             <figure className="image company-logo">
               <img src={modifyExperience.custom_modified.featuredImgSrc.source_url} alt={modifyExperience.title.rendered} title={modifyExperience.title.rendered}/>

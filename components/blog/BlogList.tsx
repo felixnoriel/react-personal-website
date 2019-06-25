@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { ViewAllLink } from '../ViewAllLink';
 import { modifyWordpressObject } from '../../helpers/helper';
-import routes from '../../routes';
-const { Link  } = routes;
+import Link from 'next/link';
 
 type BlogListProps = {
   blogList: Array<any>;
@@ -54,7 +53,7 @@ export const BlogText = ({blog}: any) => {
   return (
     <div className="column is-4">
       <div className="blog-item">
-        <Link as={modifyBlog.custom_modified.postUrlPath} route={modifyBlog.custom_modified.postUrlPath} prefetch><a>
+        <Link as={modifyBlog.custom_modified.postUrlPath} href={`/page?name=blog&slug=${modifyBlog.slug}`} prefetch><a>
           <figure className="blog-image">
               <img className="image" alt={modifyBlog.title.rendered} title={modifyBlog.title.rendered}
                     src={modifyBlog.custom_modified.media.medium.source_url} />

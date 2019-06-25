@@ -6,8 +6,7 @@ export const AboutWebsite = () => {
       <h2 className="title">About me</h2>
       <div className="content">
         <ul className="">
-          <li>I'm currently a <strong>Senior Software Engineer</strong> at Switch Media in Pyrmont</li>
-          <li>I'm based in Sydney, Australia</li>
+          <li>I'm a <strong>Senior Software Engineer</strong> based in Sydney, Australia</li>
           <li>When I'm not in front of my computer, I like to cook, trying out different restaurants and cuisines, and traveling every once in a while</li>
         </ul>
       </div>
@@ -32,12 +31,8 @@ export const AboutWebsite = () => {
         <li><strong>MySQL</strong> for RDBMS</li>
       </ul>
 
-      <h2 className="subtitle">Running on Google Cloud Services</h2>
-      <ul>
-        <li><strong>Cloud Compute VM Instance</strong></li>
-        <li><strong>NGINX</strong> for web server</li>
-        <li><strong>Cloud Storage/Bucket</strong> for all static files</li>
-      </ul>
+      <h2 className="subtitle">Hosted on Zeit platform</h2>
+
     </section>
   )
 }

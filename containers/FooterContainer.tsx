@@ -28,7 +28,7 @@ export const FooterContainer = () => {
                   <a>About this website</a>
                 </Link>
               </p>
-              <p className="copyright">Created by Felix Noriel <i className="far fa-copyright"></i> 2018</p>
+              <p className="copyright">Created by Felix Noriel <i className="far fa-copyright"></i> 2019</p>
             </div>
           </div>
           <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>

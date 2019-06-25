@@ -2,9 +2,8 @@ import * as React from 'react';
 import { modifyWordpressObject } from '../../helpers/helper';
 import { Tag } from '../Tag';
 import Lightbox from 'react-images';
+import Link from 'next/link';
 const Gallery = require('react-grid-gallery');
-import routes from '../../routes';
-const Link = routes.Link;
 
 type ProjectViewProps = {
   project: any,
@@ -50,7 +49,7 @@ const ProjectCompanyInfo = (company: any) => {
   const modifyCompany = modifyWordpressObject(company);
   return (<div>
             <h3 className="subtitle">Company</h3>
-            <Link as={modifyCompany.custom_modified.postUrlPath} route={modifyCompany.custom_modified.postUrlPath} prefetch>
+            <Link as={modifyCompany.custom_modified.postUrlPath} href={`/page?name=career&slug=${modifyCompany.slug}`} prefetch>
               <a> <p>{modifyCompany.title.rendered}</p> </a>
             </Link>
           </div>)

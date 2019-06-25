@@ -7,7 +7,7 @@ export const Skills = () => {
         <div className="hero-body">
           <div className="container has-text-centered">
             <h1 className="title">
-              I have over five years experience as a Full-Stack Software Engineer
+              I have over six years experience as a Full-Stack Software Engineer
             </h1>
             <h2 className="subtitle">
               Strategising, designing, and developing big scalable applications from end to end

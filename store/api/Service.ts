@@ -9,7 +9,6 @@ export default class Service extends AbstractService {
                 method: 'GET',
             })
             .then((res: any) => res.data as Array<any>);
-            console.log("data", data);
             return data;
         }catch(err){
             console.log("error fetchData", err);

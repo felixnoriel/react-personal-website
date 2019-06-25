@@ -3,9 +3,6 @@ import * as React from 'react'
 import { modifyWordpressObject } from '../../helpers/helper';
 import { ProjectList } from '../project/ProjectList';
 
-import routes from '../../routes';
-const Link = routes.Link;
-
 type CareerViewProps = {
   experience: any;
   projects: Array<any>;

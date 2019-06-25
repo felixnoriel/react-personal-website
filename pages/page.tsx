@@ -15,10 +15,6 @@ import { CareerTimeline } from '../components/career/CareerTimeline';
 import { CareerView } from '../components/career/CareerView';
 import { AboutWebsite } from '../components/about/AboutWebsite';
 
-import routes from '../routes';
-const Link = routes.Link;
-const Route = routes.Route;
-
 class Page extends React.Component{
 
   //second to be called
@@ -41,21 +37,16 @@ class Page extends React.Component{
   */
   static async getInitialProps ({ req, store, pathname, params, query, asPath }: any) {
     await store.dispatch(toggleMenu(false))
-
-    // const route = routes.match(asPath);
     const PostTypeName = query.name;
     const slug = query.slug;
-    console.log("pathname", pathname);
-    console.log("params", params);
-    console.log("query", query);
-    console.log("asPath", asPath);
-    if(PostTypeName == 'projects'){
+
+    if(PostTypeName === 'projects'){
         if (slug) {
           await store.dispatch(getProject(slug))
         } else {
           await store.dispatch(getProjectList(99))
         }
-    }else if (PostTypeName == 'career'){
+    }else if (PostTypeName === 'career'){
       if (slug) {
         await store.dispatch(getCareer(query.slug))
         const career = store.getState().career;
@@ -66,7 +57,7 @@ class Page extends React.Component{
       } else {
         await store.dispatch(getCareerList(99))
       }
-    }else if (PostTypeName == 'blog'){
+    }else if (PostTypeName === 'blog'){
       if (slug) {
         await store.dispatch(getBlog(slug))
       } else {
@@ -79,7 +70,7 @@ class Page extends React.Component{
 
   render(){
     const { PostTypeName }: any = this.props;
-    console.log(this.props);
+
     //Dynamic Component
     const Component = components[PostTypeName];
     return (<MainContainer>
@@ -103,7 +94,6 @@ const components = {
   },
   blog: ({blog, slug}: any) => {
     if (slug) {
-      console.log(blog);
       return <BlogView blog={blog.blog}/>
     }
     return <BlogList indexPage={false} blogList={blog.blogList} />
