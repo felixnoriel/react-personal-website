@@ -13,6 +13,10 @@
             "src": "static/**", 
             "use": "@now/static" 
         },
+        { 
+            "src": "_next/**", 
+            "use": "@now/static" 
+        },
         { "src": "helpers/trailing-redirect.ts", "use": "@now/node" }
     ],
     "routes": [

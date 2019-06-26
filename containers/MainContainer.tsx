@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { FooterContainer } from './FooterContainer';
 import HeaderContainer from './HeaderContainer';
-import "../design/index.scss";
 
 type MainProps = {
    children: any

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import App, { Container, NextAppContext } from 'next/app';
-// import getConfig from 'next/config';
 import * as StoreJS from 'store';
 import config from '../helpers/config';
 import APIClient from '../store/api/ApiClient';
@@ -8,6 +7,7 @@ import Service from '../store/api/Service';
 import createStore, { RootServiceDependencies } from '../store';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
+import "../design/index.scss";
 
 const isServer = typeof window === 'undefined'
 const __NEXT_REDUX_STORE__: string = '__NEXT_REDUX_STORE__'

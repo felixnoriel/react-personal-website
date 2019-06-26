@@ -16,10 +16,10 @@ export const GoogleTagManager: React.SFC<Props> = ({
     scriptId
 }) => {
 
-    // React.useEffect(() => {
-    //     const gtmScriptNode = document.getElementById(scriptId || 'react-google-tag-manager-gtm');
-    //     eval(gtmScriptNode!.textContent!);
-    // }, []);
+    React.useEffect(() => {
+        const gtmScriptNode = document.getElementById(scriptId || 'react-google-tag-manager-gtm');
+        eval(gtmScriptNode!.textContent!);
+    }, []);
     
     const gtm = gtmParts({
         id: gtmId,
