@@ -7,36 +7,25 @@ type Props = {
     additionalEvents?: string;
     type: string;
     scriptId: string;
-}
-export const GoogleTagManager: React.SFC<Props> = ({
-    gtmId,
-    dataLayerName,
-    additionalEvents,
-    type,
-    scriptId
-}) => {
-
+};
+export const GoogleTagManager: React.SFC<Props> = ({ gtmId, dataLayerName, additionalEvents, type, scriptId }) => {
     React.useEffect(() => {
         const gtmScriptNode = document.getElementById(scriptId || 'react-google-tag-manager-gtm');
         eval(gtmScriptNode!.textContent!);
     }, []);
-    
+
     const gtm = gtmParts({
         id: gtmId,
         dataLayerName: dataLayerName || 'dataLayer',
-        additionalEvents: additionalEvents || {}
+        additionalEvents: additionalEvents || {},
     });
 
     const gtmScript = () => {
-        if(type == "noscript"){
+        if (type == 'noscript') {
             return gtm.noScriptAsReact();
-        }else{
+        } else {
             return gtm.scriptAsReact();
         }
-    }
-    return(
-      <div>  
-          { gtmScript() }
-      </div>
-    );
+    };
+    return <div>{gtmScript()}</div>;
 };

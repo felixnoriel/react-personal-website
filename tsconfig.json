@@ -1,17 +1,12 @@
 {
     "compilerOptions": {
-        "strict": true,
-        "outDir": "build",
-        "target": "es2018",
-        "noImplicitAny": false,
+        "module": "esnext",
+        "target": "esnext",
+        "experimentalDecorators": true,
         "sourceMap": true,
-        "lib": [
-            "es7",
-            // Needed to build the @types/superagent module.
-            "dom"
-        ],
-        "module": "commonjs",
-        "baseUrl": "./",
-    },
-    "files": ["server.ts"]
+        "jsx": "react",
+        "noImplicitReturns": true,
+        "strict": true,
+        "moduleResolution": "node"
+    }
 }
