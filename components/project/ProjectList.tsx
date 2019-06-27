@@ -26,7 +26,7 @@ export const ProjectList: React.SFC<ProjectListProps> = ({ projects, viewType, i
     );
 };
 
-const ProjectListHeader = ({ viewType }) => {
+const ProjectListHeader = ({ viewType }: any) => {
     let title = 'Projects';
     let subtitle = 'Some of my past work';
     let heroSize = 'is-medium';

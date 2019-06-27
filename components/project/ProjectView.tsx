@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { modifyWordpressObject } from '../../helpers/helper';
 import { Tag } from '../Tag';
+// @ts-ignore
 import Lightbox from 'react-images';
 import Link from 'next/link';
 const Gallery = require('react-grid-gallery');

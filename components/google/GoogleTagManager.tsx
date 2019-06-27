@@ -1,4 +1,5 @@
 import * as React from 'react';
+// @ts-ignore
 import gtmParts from 'react-google-tag-manager';
 
 type Props = {

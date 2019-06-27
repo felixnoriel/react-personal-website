@@ -1,4 +1,4 @@
-import APIClient from './APIClient';
+import APIClient from './ApiClient';
 
 export default abstract class AbstractService {
     apiClient: APIClient;

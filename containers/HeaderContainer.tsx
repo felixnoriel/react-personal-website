@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../store';
+import { RootAction } from '../store/root-action';
+// @ts-ignore
 import { action as toggleMenu } from 'redux-burger-menu';
 import { elastic as Menu } from 'react-burger-menu';
 import { Link as LinkScroll } from 'react-scroll';
 import { Dispatch } from 'redux';
+// @ts-ignore
 import NProgress from 'nprogress';
 import Head from 'next/head';
 import { modifyWordpressObject } from '../helpers/helper';
@@ -212,7 +215,7 @@ const MenuSidebar = ({ burgerMenu, bmChangeState, showTestLinks }: any) => {
 const mapStateToProps = (state: RootState) => ({
     ...state,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>): ReduxActionProps => ({
+const mapDispatchToProps = (dispatch: Dispatch<RootAction>): ReduxActionProps => ({
     toggleMenu: (isOpen: boolean) => dispatch(toggleMenu(isOpen)),
 });
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Socials } from '../components/Socials';
-import routes from '../routes';
-const Link = routes.Link;
+import Link from 'next/link';
 
 export const FooterContainer = () => {
     return (
@@ -31,7 +30,7 @@ export const FooterContainer = () => {
                     <div className="content">
                         <Socials />
                         <p className="made-with">
-                            <Link as={`about`} route={`/about`} prefetch>
+                            <Link as={`about`} href={`/about`} prefetch>
                                 <a>About this website</a>
                             </Link>
                         </p>

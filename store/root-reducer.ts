@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+// @ts-ignore
 import { reducer as burgerMenu } from 'redux-burger-menu';
 import { StateType } from 'typesafe-actions';
 
@@ -11,7 +12,7 @@ const rootReducer = () =>
         project: projectReducer,
         career: careerReducer,
         blog: blogReducer,
-        burgerMenu: burgerMenu
+        burgerMenu: burgerMenu,
     });
 
 type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
