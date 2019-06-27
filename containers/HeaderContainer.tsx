@@ -102,7 +102,8 @@ class HeaderContainer extends React.Component<Props> {
 const HeadCustom = ({ blog }: any) => {
     let metaDescription =
         'Felix Noriel is a Software Engineer who loves food, traveling and cooking! He loves to challenge himself everyday. He is exploring the world, one country at a time. ';
-    let metaTitle = 'Felix Noriel | Foodie | Technology Enthusiast | Mixing life between food, traveling and technology';
+    let metaTitle =
+        'Felix Noriel | Foodie | Technology Enthusiast | Mixing life between food, traveling and technology';
 
     let ogType = 'blog';
     let ogImg = '';
