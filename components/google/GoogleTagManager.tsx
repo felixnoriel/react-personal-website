@@ -12,7 +12,7 @@ type Props = {
 export const GoogleTagManager: React.SFC<Props> = ({ gtmId, dataLayerName, additionalEvents, type, scriptId }) => {
     React.useEffect(() => {
         const gtmScriptNode = document.getElementById(scriptId || 'react-google-tag-manager-gtm');
-        eval(gtmScriptNode!.textContent!);
+        eval!(gtmScriptNode!.textContent!);
     }, []);
 
     const gtm = gtmParts({
@@ -22,7 +22,7 @@ export const GoogleTagManager: React.SFC<Props> = ({ gtmId, dataLayerName, addit
     });
 
     const gtmScript = () => {
-        if (type == 'noscript') {
+        if (type === 'noscript') {
             return gtm.noScriptAsReact();
         } else {
             return gtm.scriptAsReact();

@@ -8,7 +8,9 @@
         "build": "NODE_ENV=production next build",
         "start": "NODE_ENV=production ts-node server.ts",
         "precommit": "pretty-quick --staged",
-        "now-build": "NODE_ENV=production next build"
+        "prettier": "prettier --print-width 120 --semi --single-quote --trailing-comma es5 --tab-width=4 --write ./**/**/*.ts",
+        "now-build": "NODE_ENV=production next build",
+        "lint": "tslint --config ./tslint.json --project ./tsconfig.json"
     },
     "author": "Felix Noriel",
     "license": "ISC",
@@ -77,6 +79,7 @@
         "postcss-loader": "^2.1.6",
         "prettier": "^1.18.2",
         "pretty-quick": "^1.11.1",
+        "tslint": "^5.18.0",
         "tslint-config-prettier": "^1.18.0",
         "tslint-plugin-prettier": "^2.0.1",
         "typesafe-actions": "^3.2.1",

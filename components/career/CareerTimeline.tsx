@@ -31,7 +31,7 @@ type ExperiencesListProps = {
     experiences: Array<any>;
 };
 const ExperienceList = ({ experiences }: ExperiencesListProps) => {
-    if (!experiences || experiences.length == 0) {
+    if (!experiences || experiences.length === 0) {
         return <div />;
     }
     return (

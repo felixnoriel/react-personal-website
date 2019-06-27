@@ -4,11 +4,11 @@ import { ThunkAction } from 'redux-thunk';
 import * as _ from 'lodash';
 import { filterBySlug, filterPerPage, filterProjectsByCareerId } from '../../helpers/helper';
 
-export const listCareerAction = createAsyncAction(
-    'listCareer/REQUEST',
-    'listCareer/SUCCESS',
-    'listCareer/FAILURE'
-)<void, Array<any>, Error>();
+export const listCareerAction = createAsyncAction('listCareer/REQUEST', 'listCareer/SUCCESS', 'listCareer/FAILURE')<
+    void,
+    Array<any>,
+    Error
+>();
 
 export const singleCareerAction = createAsyncAction(
     'singleCareer/REQUEST',
@@ -22,13 +22,13 @@ export type SingleCareer = ActionType<typeof singleCareerAction>;
 export type CareerAction = ListCareer | SingleCareer;
 
 export type CareerState = {
-    careerList?: Array<any>,
-    career?: any,
-    loadingCareers: boolean
+    careerList?: Array<any>;
+    career?: any;
+    loadingCareers: boolean;
 };
 
 const initialState: CareerState = {
-    loadingCareers: false
+    loadingCareers: false,
 };
 
 export const careerReducer = (state: CareerState = initialState, action: CareerAction) => {
@@ -42,7 +42,6 @@ export const careerReducer = (state: CareerState = initialState, action: CareerA
         case getType(singleCareerAction.success): {
             return { ...state, career: action.payload };
         }
-
     }
     return state;
 };
@@ -52,31 +51,32 @@ export type CareerDependencies = {
     storage: StoreJsAPI;
 };
 
-
 export function getCareerList(per_page: number): ThunkAction<void, CareerState, CareerDependencies, CareerAction> {
     return async (dispatch, getState, deps) => {
-        await deps.service.fetchData('career')
-        .then(data => {
-            const filtered = filterPerPage({
-                per_page: per_page,
-                list: data
+        await deps.service
+            .fetchData('career')
+            .then(data => {
+                const filtered = filterPerPage({
+                    per_page: per_page,
+                    list: data,
+                });
+                dispatch(listCareerAction.success(filtered));
             })
-            dispatch(listCareerAction.success(filtered))
-        })
-        .catch(err => dispatch(listCareerAction.failure(err.message)));
+            .catch(err => dispatch(listCareerAction.failure(err.message)));
     };
 }
 
 export function getCareer(slug: string): ThunkAction<void, CareerState, CareerDependencies, CareerAction> {
     return async (dispatch, getState, deps) => {
-        await deps.service.fetchData('career')
-        .then(data => {
-            const filtered = filterBySlug({
-                slug: slug,
-                list: data
+        await deps.service
+            .fetchData('career')
+            .then(data => {
+                const filtered = filterBySlug({
+                    slug: slug,
+                    list: data,
+                });
+                dispatch(singleCareerAction.success(filtered));
             })
-            dispatch(singleCareerAction.success(filtered))
-        })
-        .catch(err => dispatch(singleCareerAction.failure(err.message)));
+            .catch(err => dispatch(singleCareerAction.failure(err.message)));
     };
 }

@@ -17,13 +17,13 @@ import { Skills } from '../components/skills/Skills';
 
 type ReduxActionProps = {};
 class Index extends React.PureComponent {
-    //second to be called
+    // second to be called
     constructor(props: any) {
         super(props);
     }
 
     componentWillUnmount() {}
-    //first to be called
+    // first to be called
     /*
     params pathname = url
     query - quer string section of url
@@ -42,7 +42,7 @@ class Index extends React.PureComponent {
         return {};
     }
 
-    //third to be called
+    // third to be called
     //
     render() {
         const { career, project, blog }: any = this.props;

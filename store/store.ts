@@ -28,7 +28,7 @@ let createdStore: Store;
 
 // pass an optional param to rehydrate state on app start
 const store = (deps: RootServiceDependencies, initialState?: any) => {
-    if (createdStore != undefined) {
+    if (createdStore !== undefined) {
         return createdStore;
     }
     createdStore = configureStore(deps, initialState);

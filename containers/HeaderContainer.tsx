@@ -79,8 +79,8 @@ class HeaderContainer extends React.Component<Props> {
     render() {
         const { burgerMenu, blog }: any = this.props;
         const { showBurgerMenu, showUpButton, showTestLinks }: any = this.state;
-        const menuHasFadeIn = showBurgerMenu ? 'show-background' : ''; //- enable during production
-        const upButtonHasFadeIn = showUpButton ? '' : 'hide'; //- enable during production
+        const menuHasFadeIn = showBurgerMenu ? 'show-background' : ''; // - enable during production
+        const upButtonHasFadeIn = showUpButton ? '' : 'hide'; // - enable during production
 
         return (
             <div>
@@ -169,7 +169,7 @@ const HeadCustom = ({ blog }: any) => {
 };
 
 const MenuSidebar = ({ burgerMenu, bmChangeState, showTestLinks }: any) => {
-    //<LinkScroll to="contact-container" smooth={true} duration={500} >Contact</LinkScroll>
+    // <LinkScroll to="contact-container" smooth={true} duration={500} >Contact</LinkScroll>
 
     const showTestLinksText = () => {
         if (showTestLinks) {

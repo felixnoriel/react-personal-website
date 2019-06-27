@@ -28,12 +28,12 @@ function getPostUrlPath(post: any) {
 }
 
 function extractShortcode(text: any) {
-    if (!text || text == '') {
+    if (!text || text === '') {
         return '';
     }
 
     text = text
-        .replace(/\&#8221;/g, '"') //replace special character "
+        .replace(/\&#8221;/g, '"') // replace special character "
         .replace(/\&#8243;/g, '"')
         .replace(/\&#8217;/g, "'")
         .replace(/\&#8220;/g, '"');
@@ -42,7 +42,7 @@ function extractShortcode(text: any) {
 }
 
 function extractImageGalleryShortcode(text: any) {
-    if (!text || text == '') {
+    if (!text || text === '') {
         return '';
     }
     if (text.indexOf('gallery_lightbox') < 0) {
@@ -66,7 +66,7 @@ function extractImageGalleryShortcode(text: any) {
     });
 
     let parsedText = parser.parse(text);
-    var splitText = parsedText.split('<break/>');
+    const splitText = parsedText.split('<break/>');
     for (let i in splitText) {
         splitText[i] = JSON.parse(splitText[i]);
     }
@@ -74,7 +74,7 @@ function extractImageGalleryShortcode(text: any) {
 }
 
 function regexUrl(url: string) {
-    if (!url || url == '') {
+    if (!url || url === '') {
         return '';
     }
     return url.replace(new RegExp('(.*/)[^/]+$'), '$1');
@@ -116,7 +116,7 @@ function structurePostTags(post: any) {
             taxonomies.map((tax: any) => {
                 if (tax.length > 0) {
                     tax.map((term: any) => {
-                        if (term.taxonomy != 'post_tag') {
+                        if (term.taxonomy !== 'post_tag') {
                             let tempTerm: any = {};
                             tempTerm.id = term.id;
                             tempTerm.name = term.name;
@@ -134,64 +134,64 @@ function structurePostTags(post: any) {
 }
 
 export function getImageUrl(media: any, type: any) {
-    //Default - post-thumbnail
+    // Default - post-thumbnail
     let img: any = {};
     img.source_url = '';
 
-    if (type && type != '') {
-        if (type == 'thumbnail') {
+    if (type && type !== '') {
+        if (type === 'thumbnail') {
             img = media.thumbnail;
         }
-        if (type == 'small') {
+        if (type === 'small') {
             img = media.small;
         }
-        if (type == 'medium') {
+        if (type === 'medium') {
             img = media.medium;
         }
-        if (type == 'mediumwide') {
+        if (type === 'mediumwide') {
             img = media.mediumwide;
         }
-        if (type == 'medium_large') {
+        if (type === 'medium_large') {
             img = media.medium_large;
         }
-        if (type == 'large') {
+        if (type === 'large') {
             img = media.large;
         }
-        if (type == 'full') {
+        if (type === 'full') {
             img = media.full;
         }
-        if (type == 'wide') {
+        if (type === 'wide') {
             img = media.wide;
         }
-        if (type == 'xlarge') {
+        if (type === 'xlarge') {
             img = media.xlarge;
         }
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media['post-thumbnail'];
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.thumbnail;
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.small;
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.medium;
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.mediumwide;
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.medium_large;
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.large;
     }
-    if (img && img.source_url == '') {
+    if (img && img.source_url === '') {
         img = media.full;
     }
-    if ((img && img.source_url == '') || !img) {
+    if ((img && img.source_url === '') || !img) {
         img = {};
         img.source_url = media
             ? media.source_url
@@ -235,18 +235,18 @@ function getImageSrcSet(media: any) {
 }
 
 function getReplacedUrlLink(url: any) {
-    /*if(!url || url == ""){
+    /*if(!url || url === ""){
 		return url;
 	 }
     let replaceTo = "http://localhost:3000/";
     let replaceFrom = "https://www.theceomagazine.net/";
 
-    if(publicRuntimeConfig && publicRuntimeConfig.node_env === "production"){
+    if(publicRuntimeConfig && publicRuntimeConfig.node_env ==== "production"){
         replaceTo = "https://www.theceomagazine.com/";
         let replaceFrom = "https://www.theceomagazine.net/";
         return regexUrl(url);
     }
-    if(publicRuntimeConfig && publicRuntimeConfig.node_env === "development"){
+    if(publicRuntimeConfig && publicRuntimeConfig.node_env ==== "development"){
         url = regexUrl(url.replace('https://www.theceomagazine.com/', replaceTo));
     }
     url = regexUrl(url.replace('https://cms.theceomagazine.net/', replaceTo));
@@ -265,7 +265,7 @@ export function filterProjectsByCareerId({ career_id, list }: FilterProjectsByCa
 
     return list.filter((obj: any) => {
         if (obj && obj.custom_meta && obj.custom_meta.custom_meta_company_id) {
-            if (career_id == obj.custom_meta.custom_meta_company_id) {
+            if (career_id === obj.custom_meta.custom_meta_company_id) {
                 return obj;
             }
         }

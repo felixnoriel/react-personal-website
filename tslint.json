@@ -1,5 +1,5 @@
 {
-    "extends": ["tslint-plugin-prettier"],
+    "extends": ["tslint-plugin-prettier", "tslint-config-prettier"],
     "rules": {
         "prettier": true,
         "class-name": true,
@@ -13,20 +13,17 @@
         "one-line": [true, "check-open-brace", "check-whitespace"],
         "semicolon": false,
         "triple-equals": true,
-        "typedef-whitespace": [true, {
-            "call-signature": "nospace",
-            "index-signature": "nospace",
-            "parameter": "nospace",
-            "property-declaration": "nospace",
-            "variable-declaration": "nospace"
-        }],
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            }
+        ],
         "variable-name": [true, "ban-keywords"],
-        "whitespace": [true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator",
-            "check-type"
-        ]
+        "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"]
     }
-  }
+}

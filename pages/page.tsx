@@ -17,7 +17,7 @@ import { CareerView } from '../components/career/CareerView';
 import { AboutWebsite } from '../components/about/AboutWebsite';
 
 class Page extends React.Component {
-    //second to be called
+    // second to be called
     constructor(props: any) {
         super(props);
     }
@@ -25,7 +25,7 @@ class Page extends React.Component {
     componentWillUnmount() {
         console.log('list.js unmount');
     }
-    //first to be called
+    // first to be called
     /*
     params pathname = url
     query - quer string section of url
@@ -71,7 +71,7 @@ class Page extends React.Component {
     render() {
         const { PostTypeName }: any = this.props;
 
-        //Dynamic Component
+        // Dynamic Component
         const Component = components[PostTypeName];
         return (
             <MainContainer>
