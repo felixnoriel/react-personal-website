@@ -14,14 +14,9 @@
             "use": "@now/static" 
         },
         { 
-            "src": "felixstatic/**", 
-            "use": "@now/static" 
-        },
-        { 
-            "src": "_next/**", 
-            "use": "@now/static" 
-        },
-        { "src": "helpers/trailing-redirect.ts", "use": "@now/node" }
+            "src": "helpers/trailing-redirect.ts", 
+            "use": "@now/node" 
+        }
     ],
     "routes": [
         { 
@@ -46,11 +41,6 @@
         },
         {
             "src": "/blog/(?<slug>[^/]*)$", 
-            "headers": { "Cache-Control": "s-maxage=259200" }, 
-            "dest": "/page?name=blog&slug=$slug" 
-        },
-        {
-            "src": "/blog/(?<slug>[^/]*)$/", 
             "headers": { "Cache-Control": "s-maxage=259200" }, 
             "dest": "/page?name=blog&slug=$slug" 
         },
