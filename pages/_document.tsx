@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Document, { Head, Main, NextScript, NextDocumentContext } from 'next/document';
-import { GoogleTagManager } from '../components/google/GoogleTagManager';
+import { GoogleTagManager } from '../src/components/google/GoogleTagManager';
 
 export default class MyDocument extends Document {
-    static async getInitialProps(ctx: NextDocumentContext) {
+    public static async getInitialProps(ctx: NextDocumentContext) {
         const initialProps = await Document.getInitialProps(ctx);
         return { ...initialProps };
     }
 
-    render() {
+    public render() {
         return (
             <html>
                 <Head>

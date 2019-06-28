@@ -1,59 +1,63 @@
 {
     "version": 2,
-    "name":"felixnoriel-nextjs",
-    "builds":[
+    "name": "felixnoriel-nextjs",
+    "builds": [
         {
-            "src":"package.json",
-            "use":"@now/next",
-            "config": { 
-                "maxLambdaSize": "25mb" 
+            "src": "package.json",
+            "use": "@now/next",
+            "config": {
+                "maxLambdaSize": "25mb"
             }
         },
-        { 
-            "src": "static/**", 
-            "use": "@now/static" 
+        {
+            "src": "static/**",
+            "use": "@now/static"
         },
-        { 
-            "src": "helpers/trailing-redirect.ts", 
-            "use": "@now/node" 
+        {
+            "src": "src/helpers/trailing-redirect.ts",
+            "use": "@now/node"
         }
     ],
     "routes": [
-        { 
-            "src": "/", 
+        {
+            "src": "/",
             "dest": "/index",
             "headers": { "Cache-Control": "s-maxage=259200" }
         },
-        { 
-            "src": "(/.*)/", 
-            "dest": "/helpers/trailing-redirect.ts",
+        {
+            "src": "/favicon.ico",
+            "dest": "/static/favicon.ico",
             "headers": { "Cache-Control": "s-maxage=259200" }
         },
-        { 
-            "src": "/static/(.*)", 
+        {
+            "src": "(/.*)/",
+            "dest": "/src/helpers/trailing-redirect.ts",
+            "headers": { "Cache-Control": "s-maxage=259200" }
+        },
+        {
+            "src": "/static/(.*)",
             "dest": "/static/$1",
             "headers": { "Cache-Control": "s-maxage=259200" }
         },
         {
             "src": "/(?<name>[^/]+)$",
-            "headers": { "Cache-Control": "s-maxage=259200" }, 
-            "dest": "/page?name=$name" 
+            "headers": { "Cache-Control": "s-maxage=259200" },
+            "dest": "/page?name=$name"
         },
         {
-            "src": "/blog/(?<slug>[^/]*)$", 
-            "headers": { "Cache-Control": "s-maxage=259200" }, 
-            "dest": "/page?name=blog&slug=$slug" 
+            "src": "/blog/(?<slug>[^/]*)$",
+            "headers": { "Cache-Control": "s-maxage=259200" },
+            "dest": "/page?name=blog&slug=$slug"
         },
         {
-            "src": "/career/(?<slug>[^/]*)$", 
-            "headers": { "Cache-Control": "s-maxage=259200" }, 
-            "dest": "/page?name=career&slug=$slug" 
+            "src": "/career/(?<slug>[^/]*)$",
+            "headers": { "Cache-Control": "s-maxage=259200" },
+            "dest": "/page?name=career&slug=$slug"
         },
         {
-            "src": "/projects/(?<slug>[^/]*)$", 
-            "headers": { "Cache-Control": "s-maxage=259200" }, 
-            "dest": "/page?name=projects&slug=$slug" 
+            "src": "/projects/(?<slug>[^/]*)$",
+            "headers": { "Cache-Control": "s-maxage=259200" },
+            "dest": "/page?name=projects&slug=$slug"
         }
     ]
 }
-

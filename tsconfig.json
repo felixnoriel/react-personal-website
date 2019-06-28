@@ -8,5 +8,6 @@
         "noImplicitReturns": true,
         "strict": true,
         "moduleResolution": "node"
-    }
+    },
+    "include": ["./src/**/*"]
 }

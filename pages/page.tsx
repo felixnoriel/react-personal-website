@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../store/index';
+import { RootState } from '../src/store';
 // @ts-ignore
 import { action as toggleMenu } from 'redux-burger-menu';
-import { getBlogList, getBlog } from '../store/blog/state';
-import { getCareerList, getCareer } from '../store/career/state';
-import { getProjectList, getProject, getProjectsByCareerId } from '../store/project/state';
+import { getBlogList, getBlog } from '../src/store/blog/state';
+import { getCareerList, getCareer } from '../src/store/career/state';
+import { getProjectList, getProject, getProjectsByCareerId } from '../src/store/project/state';
 
-import { MainContainer } from '../containers/MainContainer';
-import { ProjectList } from '../components/project/ProjectList';
-import { ProjectView } from '../components/project/ProjectView';
-import { BlogList } from '../components/blog/BlogList';
-import { BlogView } from '../components/blog/BlogView';
-import { CareerTimeline } from '../components/career/CareerTimeline';
-import { CareerView } from '../components/career/CareerView';
-import { AboutWebsite } from '../components/about/AboutWebsite';
+import { MainContainer } from '../src/containers/MainContainer';
+import { ProjectList } from '../src/components/project/ProjectList';
+import { ProjectView } from '../src/components/project/ProjectView';
+import { BlogList } from '../src/components/blog/BlogList';
+import { BlogView } from '../src/components/blog/BlogView';
+import { CareerTimeline } from '../src/components/career/CareerTimeline';
+import { CareerView } from '../src/components/career/CareerView';
+import { AboutWebsite } from '../src/components/about/AboutWebsite';
 
 class Page extends React.Component {
     // second to be called
@@ -22,7 +22,7 @@ class Page extends React.Component {
         super(props);
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         console.log('list.js unmount');
     }
     // first to be called
@@ -35,7 +35,7 @@ class Page extends React.Component {
     jsonPageRes - fetch response ( client only)
     err - error object
   */
-    static async getInitialProps({ req, store, pathname, params, query, asPath }: any) {
+    public static async getInitialProps({ req, store, pathname, params, query, asPath }: any) {
         await store.dispatch(toggleMenu(false));
         const PostTypeName = query.name;
         const slug = query.slug;
@@ -68,7 +68,7 @@ class Page extends React.Component {
         return { PostTypeName, slug };
     }
 
-    render() {
+    public render() {
         const { PostTypeName }: any = this.props;
 
         // Dynamic Component

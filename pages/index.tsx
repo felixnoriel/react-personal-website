@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { RootState } from '../store';
-import { getBlogList } from '../store/blog/state';
-import { getCareerList } from '../store/career/state';
-import { getProjectList } from '../store/project/state';
+import { RootState } from '../src/store';
+import { getBlogList } from '../src/store/blog/state';
+import { getCareerList } from '../src/store/career/state';
+import { getProjectList } from '../src/store/project/state';
 // @ts-ignore
 import { action as toggleMenu } from 'redux-burger-menu';
 
-import { MainContainer } from '../containers/MainContainer';
-import { Intro } from '../components/Intro';
-import { CareerTimeline } from '../components/career/CareerTimeline';
-import { ProjectList } from '../components/project/ProjectList';
-import { BlogList } from '../components/blog/BlogList';
-import { Skills } from '../components/skills/Skills';
+import { MainContainer } from '../src/containers/MainContainer';
+import { Intro } from '../src/components/Intro';
+import { CareerTimeline } from '../src/components/career/CareerTimeline';
+import { ProjectList } from '../src/components/project/ProjectList';
+import { BlogList } from '../src/components/blog/BlogList';
+import { Skills } from '../src/components/skills/Skills';
 
 type ReduxActionProps = {};
 class Index extends React.PureComponent {
@@ -22,7 +22,9 @@ class Index extends React.PureComponent {
         super(props);
     }
 
-    componentWillUnmount() {}
+    public componentWillUnmount() {
+        /* */
+    }
     // first to be called
     /*
     params pathname = url
@@ -33,7 +35,7 @@ class Index extends React.PureComponent {
     jsonPageRes - fetch response ( client only)
     err - error object
   */
-    static async getInitialProps({ req, store, pathname, params, query }: any) {
+    public static async getInitialProps({ req, store, pathname, params, query }: any) {
         await store.dispatch(toggleMenu(false));
         await store.dispatch(getCareerList(3));
         await store.dispatch(getProjectList(3));
@@ -44,7 +46,7 @@ class Index extends React.PureComponent {
 
     // third to be called
     //
-    render() {
+    public render() {
         const { career, project, blog }: any = this.props;
 
         return (

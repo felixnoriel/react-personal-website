@@ -1,13 +1,13 @@
 import * as React from 'react';
 import App, { Container, NextAppContext } from 'next/app';
 import * as StoreJS from 'store';
-import config from '../helpers/config';
-import APIClient from '../store/api/ApiClient';
-import Service from '../store/api/Service';
-import createStore, { RootServiceDependencies } from '../store';
+import config from '../src/helpers/config';
+import APIClient from '../src/store/api/ApiClient';
+import Service from '../src/store/api/Service';
+import createStore, { RootServiceDependencies } from '../src/store';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import '../design/index.scss';
+import '../src/design/index.scss';
 
 const isServer = typeof window === 'undefined';
 const __NEXT_REDUX_STORE__: string = '__NEXT_REDUX_STORE__';
@@ -17,7 +17,7 @@ class ProviderApp extends App {
         super(props);
     }
 
-    static async getInitialProps(context: NextAppContext) {
+    public static async getInitialProps(context: NextAppContext) {
         let pageProps = {};
 
         if (context.Component.getInitialProps) {
@@ -26,7 +26,7 @@ class ProviderApp extends App {
         return { pageProps };
     }
 
-    render() {
+    public render() {
         const { Component, pageProps, store }: any = this.props;
 
         return (
@@ -69,11 +69,11 @@ function getOrCreateStore(initialState?: any) {
     return (window as any)[__NEXT_REDUX_STORE__];
 }
 
-const withRedux = (App: any) => {
+const withRedux = (Appln: any) => {
     return class AppWithRedux extends React.Component {
-        store: Store;
+        public store: Store;
 
-        static async getInitialProps(appContext: any) {
+        public static async getInitialProps(appContext: any) {
             // Get or Create the store with `undefined` as initialState
             // This allows you to set a custom default initialState
             const reduxStore = getOrCreateStore();
@@ -82,8 +82,8 @@ const withRedux = (App: any) => {
             appContext.ctx.store = reduxStore;
 
             let appProps = {};
-            if (typeof App.getInitialProps === 'function') {
-                appProps = await App.getInitialProps.call(App, appContext);
+            if (typeof Appln.getInitialProps === 'function') {
+                appProps = await Appln.getInitialProps.call(Appln, appContext);
             }
 
             return {
@@ -97,8 +97,8 @@ const withRedux = (App: any) => {
             this.store = getOrCreateStore(props.initialReduxState);
         }
 
-        render() {
-            return <App {...this.props} store={this.store} />;
+        public render() {
+            return <Appln {...this.props} store={this.store} />;
         }
     };
 };

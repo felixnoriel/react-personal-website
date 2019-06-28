@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MainContainer } from '../containers/MainContainer';
+import { MainContainer } from '../src/containers/MainContainer';
 
 export default () => {
     return (

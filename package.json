@@ -8,9 +8,10 @@
         "build": "NODE_ENV=production next build",
         "start": "NODE_ENV=production ts-node server.ts",
         "precommit": "pretty-quick --staged",
-        "prettier": "prettier --print-width 120 --semi --single-quote --trailing-comma es5 --tab-width=4 --write ./**/**/*.ts",
+        "prettier": "prettier --print-width 120 --semi --single-quote --trailing-comma es5 --tab-width=4 --write ./src/**/*.{ts,tsx}",
         "now-build": "NODE_ENV=production next build",
-        "lint": "tslint --config ./tslint.json --project ./tsconfig.json"
+        "ts-lint": "tslint --config ./tslint.json --project ./tsconfig.json ./src/**/*.{ts,tsx} --exclude ./node_modules/**/*.{j,t}s",
+        "tslint-check": "tslint-config-prettier-check ./tslint.json"
     },
     "author": "Felix Noriel",
     "license": "ISC",
@@ -82,6 +83,7 @@
         "tslint": "^5.18.0",
         "tslint-config-prettier": "^1.18.0",
         "tslint-plugin-prettier": "^2.0.1",
+        "tslint-react": "^4.0.0",
         "typesafe-actions": "^3.2.1",
         "typescript": "^3.3.3333",
         "webpack": "^4.29.6"

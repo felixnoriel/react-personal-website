@@ -1,29 +1,29 @@
 {
-    "extends": ["tslint-plugin-prettier", "tslint-config-prettier"],
+    "extends": ["tslint:recommended", "tslint-react", "tslint-plugin-prettier", "tslint-config-prettier"],
     "rules": {
         "prettier": true,
         "class-name": true,
         "comment-format": [true, "check-space"],
-        "indent": [true, "spaces"],
         "no-duplicate-variable": true,
-        "no-eval": true,
         "no-internal-module": true,
-        "no-trailing-whitespace": true,
         "no-var-keyword": true,
-        "one-line": [true, "check-open-brace", "check-whitespace"],
         "semicolon": false,
         "triple-equals": true,
-        "typedef-whitespace": [
-            true,
-            {
-                "call-signature": "nospace",
-                "index-signature": "nospace",
-                "parameter": "nospace",
-                "property-declaration": "nospace",
-                "variable-declaration": "nospace"
-            }
-        ],
         "variable-name": [true, "ban-keywords"],
-        "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"]
+        "jsx-quotes": ["error", "prefer-single"],
+        "jsx-boolean-value": false,
+        "jsx-no-multiline-js": false,
+        "jsx-no-lambda": false,
+        "ordered-imports": false,
+        "object-literal-sort-keys": false,
+        "object-literal-shorthand": false,
+        "member-ordering": false,
+        "interface-over-type-literal": false,
+        "no-console": false,
+        "no-angle-bracket-type-assertion": false,
+        "max-classes-per-file": [true, 2]
+    },
+    "linterOptions": {
+        "exclude": ["node_modules/**"]
     }
 }
