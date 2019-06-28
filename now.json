@@ -22,41 +22,41 @@
         {
             "src": "/",
             "dest": "/index",
-            "headers": { "Cache-Control": "s-maxage=259200" }
+            "headers": { "Cache-Control": "s-maxage=2592000" }
         },
         {
             "src": "/favicon.ico",
             "dest": "/static/favicon.ico",
-            "headers": { "Cache-Control": "s-maxage=259200" }
+            "headers": { "Cache-Control": "s-maxage=2592000" }
         },
         {
             "src": "(/.*)/",
             "dest": "/src/helpers/trailing-redirect.ts",
-            "headers": { "Cache-Control": "s-maxage=259200" }
+            "headers": { "Cache-Control": "s-maxage=2592000" }
         },
         {
             "src": "/static/(.*)",
             "dest": "/static/$1",
-            "headers": { "Cache-Control": "s-maxage=259200" }
+            "headers": { "Cache-Control": "s-maxage=2592000" }
         },
         {
             "src": "/(?<name>[^/]+)$",
-            "headers": { "Cache-Control": "s-maxage=259200" },
+            "headers": { "Cache-Control": "s-maxage=2592000" },
             "dest": "/page?name=$name"
         },
         {
             "src": "/blog/(?<slug>[^/]*)$",
-            "headers": { "Cache-Control": "s-maxage=259200" },
+            "headers": { "Cache-Control": "s-maxage=2592000" },
             "dest": "/page?name=blog&slug=$slug"
         },
         {
             "src": "/career/(?<slug>[^/]*)$",
-            "headers": { "Cache-Control": "s-maxage=259200" },
+            "headers": { "Cache-Control": "s-maxage=2592000" },
             "dest": "/page?name=career&slug=$slug"
         },
         {
             "src": "/projects/(?<slug>[^/]*)$",
-            "headers": { "Cache-Control": "s-maxage=259200" },
+            "headers": { "Cache-Control": "s-maxage=2592000" },
             "dest": "/page?name=projects&slug=$slug"
         }
     ]
