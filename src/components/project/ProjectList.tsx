@@ -21,7 +21,7 @@ export const ProjectList: React.SFC<ProjectListProps> = ({ projects, viewType, i
             <ProjectListHeader viewType={viewType} />
             <section key="project-2" className={`section ${viewType} container projects-container`}>
                 {ProjectsListText(projects)}
-                {ViewAllLink(projects, indexPage)}
+                {ViewAllLink('projects', indexPage)}
             </section>
         </div>
     );
