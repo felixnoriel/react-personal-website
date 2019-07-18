@@ -1,1 +1,1690 @@
-[{"id":166,"date":"2018-08-14T04:12:57","date_gmt":"2018-08-14T04:12:57","guid":{"rendered":"http://35.227.92.179/wordpress/?post_type=career&#038;p=166"},"modified":"2018-08-14T04:13:13","modified_gmt":"2018-08-14T04:13:13","slug":"switch-media","status":"publish","type":"career","link":"https://whoisfelix.com/wordpress/career/switch-media/","title":{"rendered":"Switch Media"},"content":{"rendered":"","protected":false},"excerpt":{"rendered":"","protected":false},"featured_media":167,"parent":0,"menu_order":6,"comment_status":"open","ping_status":"closed","template":"","meta":[],"tags":[],"career-skills-category":[],"custom_meta":{"_thumbnail_id":"167","custom_meta_company_name":"Switch Media","custom_meta_job_title":"Senior Software Engineer","custom_meta_start_date":"Aug 2018","custom_meta_end_date":"Present","custom_meta_location":"Pyrmont, Sydney"},"_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career"}],"replies":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=166"}],"version-history":[{"count":1,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166/revisions"}],"predecessor-version":[{"id":168,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166/revisions/168"}],"wp:featuredmedia":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167"}],"wp:attachment":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=166"}],"wp:term":[{"taxonomy":"post_tag","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=166"},{"taxonomy":"career-skills-category","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=166"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]},"_embedded":{"wp:featuredmedia":[{"id":167,"date":"2018-08-14T04:12:28","slug":"switch-media-web-logo-2016-1","type":"attachment","link":"https://whoisfelix.com/wordpress/career/switch-media/switch-media-web-logo-2016-1/","title":{"rendered":"Switch-Media-web-logo-2016-1"},"author":1,"caption":{"rendered":""},"alt_text":"","media_type":"image","mime_type":"image/png","media_details":{"width":397,"height":72,"file":"2018/08/Switch-Media-web-logo-2016-1.png","sizes":{"thumbnail":{"file":"Switch-Media-web-logo-2016-1-150x72.png","width":150,"height":72,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-150x72.png"},"post-thumbnail":{"file":"Switch-Media-web-logo-2016-1-75x72.png","width":75,"height":72,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-75x72.png"},"small":{"file":"Switch-Media-web-logo-2016-1-150x27.png","width":150,"height":27,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-150x27.png"},"twentyseventeen-thumbnail-avatar":{"file":"Switch-Media-web-logo-2016-1-100x72.png","width":100,"height":72,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-100x72.png"},"full":{"file":"Switch-Media-web-logo-2016-1.png","width":397,"height":72,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1.png"}},"image_meta":{"aperture":"0","credit":"","camera":"","caption":"","created_timestamp":"0","copyright":"","focal_length":"0","iso":"0","shutter_speed":"0","title":"","orientation":"0","keywords":[]}},"source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1.png","_links":{"self":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167"}],"collection":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media"}],"about":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"}],"author":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"}],"replies":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=167"}]}}]}},{"id":54,"date":"2018-08-06T04:40:02","date_gmt":"2018-08-06T04:40:02","guid":{"rendered":"http://35.227.92.179/wordpress/?post_type=career&#038;p=54"},"modified":"2018-08-25T07:47:34","modified_gmt":"2018-08-25T07:47:34","slug":"the-ceo-magazine","status":"publish","type":"career","link":"https://whoisfelix.com/wordpress/career/the-ceo-magazine/","title":{"rendered":"The CEO Magazine"},"content":{"rendered":"<h3>As a Lead developer, my responsibilities include</h3>\n<ul>\n<li>Build and maintain microservices that are integrated with third party APIs within a centralised system</li>\n<li>Setup, implement, and maintain secure and scalable web servers and services</li>\n<li>Manage and maintain websites, applications and integrations between platforms</li>\n<li>Provide technical guidance on any software implementations within the company</li>\n<li>Collaborate with internal teams and vendors to fix and improve systems</li>\n<li>Execute full software development lifecycle methodologies on every software that needs or being developed</li>\n<li>Ensure industry standards on technologies for software development</li>\n<li>Automating manual workflows and processes into applications</li>\n<li>Mentor and guide other team members</li>\n</ul>\n<p>See how I strategised the company <a href=\"https://storage.googleapis.com/felixstatic/projects/ceomag_intranet/ceomag_infrastructure.png\" target=\"_blank\"> cloud infrastructure </a></p>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>PHP</strong> as an OOP back end language</li>\n<li><strong>Javascript</strong>, <strong>ReactJs</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>MobX</strong> for state management</li>\n<li><strong>MySQL</strong> for RDBMS</li>\n<li><strong>HTML</strong>, <strong>CSS 3 technology</strong> and <strong>Bootstrap</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n<h3>AWS services I use and maintain daily</h3>\n<ul>\n<li>9 EC2 web servers (NGINX and Apache)</li>\n<li>Cloudfront</li>\n<li>API Gateway</li>\n<li>ELB</li>\n<li>etc</li>\n</ul>\n<h3>Main platforms I used (that I integrated altogether with our <a href=\"/projects/the-ceo-magazine-intranet/\">Intranet</a>)</h3>\n<ul>\n<li><strong>WordPress</strong> for CMS</li>\n<li><strong>Magento</strong> for E-commerce</li>\n<li><strong>Salesforce</strong> for CRM</li>\n<li><strong>Chargify</strong> for recurring payment service</li>\n<li><strong>XERO</strong> for accounting</li>\n</ul>\n","protected":false},"excerpt":{"rendered":"Lead developer","protected":false},"featured_media":145,"parent":0,"menu_order":5,"comment_status":"open","ping_status":"closed","template":"","meta":[],"tags":[],"career-skills-category":[9,14,11,10,13,12],"custom_meta":{"custom_meta_company_name":"The CEO Magazine","custom_meta_job_title":"Lead Developer","custom_meta_start_date":"Sep 2016","custom_meta_end_date":"Aug 2018","custom_meta_location":"Brookvale, Sydney","_thumbnail_id":"145"},"_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/54"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career"}],"replies":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=54"}],"version-history":[{"count":34,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/54/revisions"}],"predecessor-version":[{"id":359,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/54/revisions/359"}],"wp:featuredmedia":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/145"}],"wp:attachment":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=54"}],"wp:term":[{"taxonomy":"post_tag","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=54"},{"taxonomy":"career-skills-category","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=54"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]},"_embedded":{"wp:featuredmedia":[{"id":145,"date":"2018-08-08T10:12:33","slug":"ceomag-logo-2","type":"attachment","link":"https://whoisfelix.com/wordpress/career/the-ceo-magazine/ceomag-logo-2/","title":{"rendered":"ceomag-logo"},"author":1,"caption":{"rendered":""},"alt_text":"","media_type":"image","mime_type":"image/png","media_details":{"width":1414,"height":527,"file":"2018/08/ceomag-logo-1.png","sizes":{"thumbnail":{"file":"ceomag-logo-1-150x150.png","width":150,"height":150,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-150x150.png"},"medium":{"file":"ceomag-logo-1-440x330.png","width":440,"height":330,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-440x330.png"},"medium_large":{"file":"ceomag-logo-1-768x286.png","width":768,"height":286,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-768x286.png"},"large":{"file":"ceomag-logo-1-640x480.png","width":640,"height":480,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-640x480.png"},"post-thumbnail":{"file":"ceomag-logo-1-75x75.png","width":75,"height":75,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-75x75.png"},"small":{"file":"ceomag-logo-1-150x56.png","width":150,"height":56,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-150x56.png"},"mediumwide":{"file":"ceomag-logo-1-440x260.png","width":440,"height":260,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-440x260.png"},"largewide":{"file":"ceomag-logo-1-640x300.png","width":640,"height":300,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-640x300.png"},"xlarge":{"file":"ceomag-logo-1-800x298.png","width":800,"height":298,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-800x298.png"},"full":{"file":"ceomag-logo-1-1200x447.png","width":1200,"height":447,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-1200x447.png"},"featured":{"file":"ceomag-logo-1-800x298.png","width":800,"height":298,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-800x298.png"},"twentyseventeen-thumbnail-avatar":{"file":"ceomag-logo-1-100x100.png","width":100,"height":100,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-100x100.png"}},"image_meta":{"aperture":"0","credit":"","camera":"","caption":"","created_timestamp":"0","copyright":"","focal_length":"0","iso":"0","shutter_speed":"0","title":"","orientation":"0","keywords":[]}},"source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1.png","_links":{"self":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/145"}],"collection":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media"}],"about":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"}],"author":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"}],"replies":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=145"}]}}],"wp:term":[[],[{"id":9,"link":"https://whoisfelix.com/wordpress/career-skills/aws/","name":"AWS","slug":"aws","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/9"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=9"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":14,"link":"https://whoisfelix.com/wordpress/career-skills/magento/","name":"Magento","slug":"magento","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/14"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=14"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":11,"link":"https://whoisfelix.com/wordpress/career-skills/nextjs/","name":"NextJs","slug":"nextjs","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/11"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=11"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":10,"link":"https://whoisfelix.com/wordpress/career-skills/react/","name":"React","slug":"react","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/10"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=10"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":13,"link":"https://whoisfelix.com/wordpress/career-skills/wordpress/","name":"Wordpress","slug":"wordpress","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/13"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=13"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":12,"link":"https://whoisfelix.com/wordpress/career-skills/wordpress-api/","name":"Wordpress API","slug":"wordpress-api","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/12"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=12"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}}]]}},{"id":58,"date":"2018-08-06T04:45:23","date_gmt":"2018-08-06T04:45:23","guid":{"rendered":"http://35.227.92.179/wordpress/?post_type=career&#038;p=58"},"modified":"2018-08-24T03:40:33","modified_gmt":"2018-08-24T03:40:33","slug":"tech-pilot-fund","status":"publish","type":"career","link":"https://whoisfelix.com/wordpress/career/tech-pilot-fund/","title":{"rendered":"Tech Pilot Fund"},"content":{"rendered":"</h3>\n<p>As a web developer, my responsibilities include</h3>\n<ul>\n<li>Maintain existing company websites and applications by making modifications as required </li>\n<li>Develop new internal applications based on company requirements </li>\n<li>Identify and communicate technical problems, processes and solutions </li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>WordPress</strong> as CMS platform</li>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>PHP and .NET</strong> as an OOP back end language</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>MySQL</strong> and <strong>MSSQL</strong> for RDBMS</li>\n<li><strong>cPanel</strong> for server administration</li>\n<li><strong>AWS</strong> for EC2 Windows instance</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n","protected":false},"excerpt":{"rendered":"As a web developer, my responsibilities include Maintain existing company websites and applications by making modifications as required Develop new internal applications based on company requirements Identify and communicate technical problems, processes and solutions Main technologies I used WordPress as CMS platform Javascript, AngularJS and jQuery as a front end framework PHP and .NET as &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/tech-pilot-fund/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;Tech Pilot Fund&#8221;</span></a></p>","protected":false},"featured_media":141,"parent":0,"menu_order":4,"comment_status":"open","ping_status":"closed","template":"","meta":[],"tags":[],"career-skills-category":[16,9,13,12],"custom_meta":{"custom_meta_company_name":"Tech Pilot Fund","custom_meta_job_title":"Web Developer","custom_meta_start_date":"May 2016","custom_meta_end_date":"Sep 2016","_thumbnail_id":"141","custom_meta_location":"Sydney CBD"},"_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/58"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career"}],"replies":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=58"}],"version-history":[{"count":9,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/58/revisions"}],"predecessor-version":[{"id":343,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/58/revisions/343"}],"wp:featuredmedia":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/141"}],"wp:attachment":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=58"}],"wp:term":[{"taxonomy":"post_tag","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=58"},{"taxonomy":"career-skills-category","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=58"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]},"_embedded":{"wp:featuredmedia":[{"id":141,"date":"2018-08-08T07:37:59","slug":"tpf-logo","type":"attachment","link":"https://whoisfelix.com/wordpress/career/tech-pilot-fund/tpf-logo/","title":{"rendered":"tpf-logo"},"author":1,"caption":{"rendered":""},"alt_text":"","media_type":"image","mime_type":"image/png","media_details":{"width":533,"height":265,"file":"2018/08/tpf-logo.png","sizes":{"thumbnail":{"file":"tpf-logo-150x150.png","width":150,"height":150,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-150x150.png"},"medium":{"file":"tpf-logo-440x265.png","width":440,"height":265,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-440x265.png"},"post-thumbnail":{"file":"tpf-logo-75x75.png","width":75,"height":75,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-75x75.png"},"small":{"file":"tpf-logo-150x75.png","width":150,"height":75,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-150x75.png"},"mediumwide":{"file":"tpf-logo-440x260.png","width":440,"height":260,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-440x260.png"},"twentyseventeen-thumbnail-avatar":{"file":"tpf-logo-100x100.png","width":100,"height":100,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-100x100.png"},"full":{"file":"tpf-logo.png","width":533,"height":265,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo.png"}},"image_meta":{"aperture":"0","credit":"","camera":"","caption":"","created_timestamp":"0","copyright":"","focal_length":"0","iso":"0","shutter_speed":"0","title":"","orientation":"0","keywords":[]}},"source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo.png","_links":{"self":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/141"}],"collection":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media"}],"about":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"}],"author":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"}],"replies":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=141"}]}}],"wp:term":[[],[{"id":16,"link":"https://whoisfelix.com/wordpress/career-skills/net/","name":".NET","slug":"net","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/16"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=16"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":9,"link":"https://whoisfelix.com/wordpress/career-skills/aws/","name":"AWS","slug":"aws","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/9"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=9"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":13,"link":"https://whoisfelix.com/wordpress/career-skills/wordpress/","name":"Wordpress","slug":"wordpress","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/13"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=13"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":12,"link":"https://whoisfelix.com/wordpress/career-skills/wordpress-api/","name":"Wordpress API","slug":"wordpress-api","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/12"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=12"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}}]]}},{"id":60,"date":"2018-08-06T04:46:51","date_gmt":"2018-08-06T04:46:51","guid":{"rendered":"http://35.227.92.179/wordpress/?post_type=career&#038;p=60"},"modified":"2018-08-24T03:40:23","modified_gmt":"2018-08-24T03:40:23","slug":"kforce-global-solutions","status":"publish","type":"career","link":"https://whoisfelix.com/wordpress/career/kforce-global-solutions/","title":{"rendered":"KForce Global Solutions"},"content":{"rendered":"<h3>As a programmer/analyst, my responsibilities include</h3>\n<ul>\n<li>Write, modify, integrate and test software code to meet system requirements, system designs and technical specifications</li>\n<li>Produce specifications and determine operational feasibility</li>\n<li>Present and report projects to project managers and clients </li>\n<li>Create scalable, automated solutions of our customer base</li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>.NET</strong> as an OOP back end language</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n","protected":false},"excerpt":{"rendered":"As a programmer/analyst, my responsibilities include Write, modify, integrate and test software code to meet system requirements, system designs and technical specifications Produce specifications and determine operational feasibility Present and report projects to project managers and clients Create scalable, automated solutions of our customer base Main technologies I used Javascript, AngularJS and jQuery as a &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/kforce-global-solutions/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;KForce Global Solutions&#8221;</span></a></p>","protected":false},"featured_media":142,"parent":0,"menu_order":3,"comment_status":"open","ping_status":"closed","template":"","meta":[],"tags":[],"career-skills-category":[16,15],"custom_meta":{"custom_meta_company_name":"KForce Global Solutions","custom_meta_job_title":"Programmer/Analyst","custom_meta_start_date":"Oct 2015","custom_meta_end_date":"Mar 2016","_thumbnail_id":"142","custom_meta_location":"Makati City, Philippines"},"_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/60"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career"}],"replies":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=60"}],"version-history":[{"count":5,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/60/revisions"}],"predecessor-version":[{"id":342,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/60/revisions/342"}],"wp:featuredmedia":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/142"}],"wp:attachment":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=60"}],"wp:term":[{"taxonomy":"post_tag","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=60"},{"taxonomy":"career-skills-category","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=60"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]},"_embedded":{"wp:featuredmedia":[{"id":142,"date":"2018-08-08T07:44:24","slug":"kforce-logo","type":"attachment","link":"https://whoisfelix.com/wordpress/career/kforce-global-solutions/kforce-logo/","title":{"rendered":"kforce-logo"},"author":1,"caption":{"rendered":""},"alt_text":"","media_type":"image","mime_type":"image/png","media_details":{"width":427,"height":99,"file":"2018/08/kforce-logo.png","sizes":{"thumbnail":{"file":"kforce-logo-150x99.png","width":150,"height":99,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-150x99.png"},"post-thumbnail":{"file":"kforce-logo-75x75.png","width":75,"height":75,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-75x75.png"},"small":{"file":"kforce-logo-150x35.png","width":150,"height":35,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-150x35.png"},"twentyseventeen-thumbnail-avatar":{"file":"kforce-logo-100x99.png","width":100,"height":99,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-100x99.png"},"full":{"file":"kforce-logo.png","width":427,"height":99,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo.png"}},"image_meta":{"aperture":"0","credit":"","camera":"","caption":"","created_timestamp":"0","copyright":"","focal_length":"0","iso":"0","shutter_speed":"0","title":"","orientation":"0","keywords":[]}},"source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo.png","_links":{"self":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/142"}],"collection":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media"}],"about":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"}],"author":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"}],"replies":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=142"}]}}],"wp:term":[[],[{"id":16,"link":"https://whoisfelix.com/wordpress/career-skills/net/","name":".NET","slug":"net","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/16"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=16"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":15,"link":"https://whoisfelix.com/wordpress/career-skills/angularjs/","name":"AngularJs","slug":"angularjs","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/15"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=15"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}}]]}},{"id":62,"date":"2018-08-06T04:47:53","date_gmt":"2018-08-06T04:47:53","guid":{"rendered":"http://35.227.92.179/wordpress/?post_type=career&#038;p=62"},"modified":"2018-08-24T03:40:14","modified_gmt":"2018-08-24T03:40:14","slug":"iserve-customer-management-solutions","status":"publish","type":"career","link":"https://whoisfelix.com/wordpress/career/iserve-customer-management-solutions/","title":{"rendered":"iServe Customer Management Solutions"},"content":{"rendered":"<h3>As a Software Developer, my responsibilities include</h3>\n<ul>\n<li>Design, develop, integrate and test software systems</li>\n<li>Analyze user needs and software requirements to determine feasibility of design within time and cost constraints</li>\n<li>Maintain existing computer programs by making modifications as required </li>\n<li>Identify and communicate technical problems, processes and solutions </li>\n<li>Lead and coordinate teams of computer programmers and developers</li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>Java</strong> as an OOP back end language</li>\n<li><strong>Spring</strong>, <strong>Maven</strong> and <strong>Hibernate</strong> as a backend framework</li>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>MySQL</strong> for RDBMS</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n","protected":false},"excerpt":{"rendered":"As a Software Developer, my responsibilities include Design, develop, integrate and test software systems Analyze user needs and software requirements to determine feasibility of design within time and cost constraints Maintain existing computer programs by making modifications as required Identify and communicate technical problems, processes and solutions Lead and coordinate teams of computer programmers and &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/iserve-customer-management-solutions/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;iServe Customer Management Solutions&#8221;</span></a></p>","protected":false},"featured_media":143,"parent":0,"menu_order":2,"comment_status":"open","ping_status":"closed","template":"","meta":[],"tags":[],"career-skills-category":[15,18,17,19],"custom_meta":{"custom_meta_company_name":"iServe Customer Management Solutions","custom_meta_job_title":"Software Developer","custom_meta_start_date":"October 2014","custom_meta_end_date":"July 2015","_thumbnail_id":"143","custom_meta_location":"San Juan City, Philippines"},"_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/62"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career"}],"replies":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=62"}],"version-history":[{"count":6,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/62/revisions"}],"predecessor-version":[{"id":341,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/62/revisions/341"}],"wp:featuredmedia":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/143"}],"wp:attachment":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=62"}],"wp:term":[{"taxonomy":"post_tag","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=62"},{"taxonomy":"career-skills-category","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=62"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]},"_embedded":{"wp:featuredmedia":[{"id":143,"date":"2018-08-08T07:44:43","slug":"iserve-logo","type":"attachment","link":"https://whoisfelix.com/wordpress/career/iserve-customer-management-solutions/iserve-logo/","title":{"rendered":"iserve-logo"},"author":1,"caption":{"rendered":""},"alt_text":"","media_type":"image","mime_type":"image/png","media_details":{"width":192,"height":70,"file":"2018/08/iserve-logo.png","sizes":{"thumbnail":{"file":"iserve-logo-150x70.png","width":150,"height":70,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-150x70.png"},"post-thumbnail":{"file":"iserve-logo-75x70.png","width":75,"height":70,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-75x70.png"},"small":{"file":"iserve-logo-150x55.png","width":150,"height":55,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-150x55.png"},"twentyseventeen-thumbnail-avatar":{"file":"iserve-logo-100x70.png","width":100,"height":70,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-100x70.png"},"full":{"file":"iserve-logo.png","width":192,"height":70,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo.png"}},"image_meta":{"aperture":"0","credit":"","camera":"","caption":"","created_timestamp":"0","copyright":"","focal_length":"0","iso":"0","shutter_speed":"0","title":"","orientation":"0","keywords":[]}},"source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo.png","_links":{"self":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/143"}],"collection":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media"}],"about":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"}],"author":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"}],"replies":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=143"}]}}],"wp:term":[[],[{"id":15,"link":"https://whoisfelix.com/wordpress/career-skills/angularjs/","name":"AngularJs","slug":"angularjs","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/15"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=15"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":18,"link":"https://whoisfelix.com/wordpress/career-skills/hibernate/","name":"Hibernate","slug":"hibernate","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/18"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=18"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":17,"link":"https://whoisfelix.com/wordpress/career-skills/java/","name":"Java","slug":"java","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/17"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=17"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":19,"link":"https://whoisfelix.com/wordpress/career-skills/maven/","name":"Maven","slug":"maven","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/19"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=19"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}}]]}},{"id":64,"date":"2018-08-06T04:48:24","date_gmt":"2018-08-06T04:48:24","guid":{"rendered":"http://35.227.92.179/wordpress/?post_type=career&#038;p=64"},"modified":"2018-08-24T03:40:03","modified_gmt":"2018-08-24T03:40:03","slug":"yondu","status":"publish","type":"career","link":"https://whoisfelix.com/wordpress/career/yondu/","title":{"rendered":"Yondu"},"content":{"rendered":"<h3>As a Junior Software Engineer, my responsibilities include</h3>\n<ul>\n<li>Analyze requirements, design solutions, and create detailed designs that satisfy the requirements of the client</li>\n<li>Create, test and troubleshoot programs according to prescribed specifications and coding conventions, and utilizing technology appropriate to the solution</li>\n<li>Create test plans and run unit tests on programs developed</li>\n<li>Evaluate simple interrelationships between programs, e.g., how modifications in one module might affect other modules</li>\n<li>Write and maintain program documentation</li>\n<li>Lead and coordinate teams of computer programmers and developers</li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>Java</strong> and <strong>.NET</strong> as an OOP back end language</li>\n<li><strong>Spring</strong>, <strong>Entity Framework</strong>, <strong>Maven</strong> and <strong>Hibernate</strong> as a backend framework</li>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>MySQL</strong> and <strong>MSSQL</strong> for RDBMS</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n","protected":false},"excerpt":{"rendered":"As a Junior Software Engineer, my responsibilities include Analyze requirements, design solutions, and create detailed designs that satisfy the requirements of the client Create, test and troubleshoot programs according to prescribed specifications and coding conventions, and utilizing technology appropriate to the solution Create test plans and run unit tests on programs developed Evaluate simple interrelationships &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/yondu/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;Yondu&#8221;</span></a></p>","protected":false},"featured_media":147,"parent":0,"menu_order":1,"comment_status":"open","ping_status":"closed","template":"","meta":[],"tags":[],"career-skills-category":[16,15,18,17,19],"custom_meta":{"custom_meta_company_name":"Yondu","custom_meta_job_title":"Junior Software Engineer","custom_meta_start_date":"June 2013","custom_meta_end_date":"October 2014","custom_meta_location":"Taguig City, Philippines","_thumbnail_id":"147"},"_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/64"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career"}],"replies":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=64"}],"version-history":[{"count":5,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/64/revisions"}],"predecessor-version":[{"id":340,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career/64/revisions/340"}],"wp:featuredmedia":[{"embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/147"}],"wp:attachment":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=64"}],"wp:term":[{"taxonomy":"post_tag","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=64"},{"taxonomy":"career-skills-category","embeddable":true,"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=64"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]},"_embedded":{"wp:featuredmedia":[{"id":147,"date":"2018-08-08T10:13:42","slug":"yondu-logo","type":"attachment","link":"https://whoisfelix.com/wordpress/career/yondu/yondu-logo/","title":{"rendered":"yondu-logo"},"author":1,"caption":{"rendered":""},"alt_text":"","media_type":"image","mime_type":"image/png","media_details":{"width":1203,"height":253,"file":"2018/08/yondu-logo.png","sizes":{"thumbnail":{"file":"yondu-logo-150x150.png","width":150,"height":150,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-150x150.png"},"medium":{"file":"yondu-logo-440x253.png","width":440,"height":253,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-440x253.png"},"medium_large":{"file":"yondu-logo-768x162.png","width":768,"height":162,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-768x162.png"},"large":{"file":"yondu-logo-640x253.png","width":640,"height":253,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-640x253.png"},"post-thumbnail":{"file":"yondu-logo-75x75.png","width":75,"height":75,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-75x75.png"},"small":{"file":"yondu-logo-150x32.png","width":150,"height":32,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-150x32.png"},"mediumwide":{"file":"yondu-logo-440x253.png","width":440,"height":253,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-440x253.png"},"largewide":{"file":"yondu-logo-640x253.png","width":640,"height":253,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-640x253.png"},"xlarge":{"file":"yondu-logo-800x168.png","width":800,"height":168,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-800x168.png"},"full":{"file":"yondu-logo-1200x252.png","width":1200,"height":252,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-1200x252.png"},"featured":{"file":"yondu-logo-800x168.png","width":800,"height":168,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-800x168.png"},"twentyseventeen-thumbnail-avatar":{"file":"yondu-logo-100x100.png","width":100,"height":100,"mime_type":"image/png","source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-100x100.png"}},"image_meta":{"aperture":"0","credit":"","camera":"","caption":"","created_timestamp":"0","copyright":"","focal_length":"0","iso":"0","shutter_speed":"0","title":"","orientation":"0","keywords":[]}},"source_url":"https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo.png","_links":{"self":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media/147"}],"collection":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/media"}],"about":[{"attributes":[],"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"}],"author":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"}],"replies":[{"attributes":{"embeddable":true},"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=147"}]}}],"wp:term":[[],[{"id":16,"link":"https://whoisfelix.com/wordpress/career-skills/net/","name":".NET","slug":"net","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/16"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=16"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":15,"link":"https://whoisfelix.com/wordpress/career-skills/angularjs/","name":"AngularJs","slug":"angularjs","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/15"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=15"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":18,"link":"https://whoisfelix.com/wordpress/career-skills/hibernate/","name":"Hibernate","slug":"hibernate","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/18"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=18"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":17,"link":"https://whoisfelix.com/wordpress/career-skills/java/","name":"Java","slug":"java","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/17"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=17"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}},{"id":19,"link":"https://whoisfelix.com/wordpress/career-skills/maven/","name":"Maven","slug":"maven","taxonomy":"career-skills-category","_links":{"self":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/19"}],"collection":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category"}],"about":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"}],"wp:post_type":[{"href":"https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=19"}],"curies":[{"name":"wp","href":"https://api.w.org/{rel}","templated":true}]}}]]}}]
+[
+    {
+        "id": 166,
+        "date": "2018-08-14T04:12:57",
+        "date_gmt": "2018-08-14T04:12:57",
+        "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=166" },
+        "modified": "2018-08-14T04:13:13",
+        "modified_gmt": "2018-08-14T04:13:13",
+        "slug": "switch-media",
+        "status": "publish",
+        "type": "career",
+        "link": "https://whoisfelix.com/wordpress/career/switch-media/",
+        "title": { "rendered": "Switch Media" },
+        "content": { "rendered": "", "protected": false },
+        "excerpt": { "rendered": "", "protected": false },
+        "featured_media": 167,
+        "parent": 0,
+        "menu_order": 6,
+        "comment_status": "open",
+        "ping_status": "closed",
+        "template": "",
+        "meta": [],
+        "tags": [],
+        "career-skills-category": [],
+        "custom_meta": {
+            "_thumbnail_id": "167",
+            "custom_meta_company_name": "Switch Media",
+            "custom_meta_job_title": "Senior Software Engineer",
+            "custom_meta_start_date": "Aug 2018",
+            "custom_meta_end_date": "Present",
+            "custom_meta_location": "Pyrmont, Sydney"
+        },
+        "_links": {
+            "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166" }],
+            "collection": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career" }],
+            "about": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career" }],
+            "replies": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=166" }
+            ],
+            "version-history": [
+                { "count": 1, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166/revisions" }
+            ],
+            "predecessor-version": [
+                { "id": 168, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166/revisions/168" }
+            ],
+            "wp:featuredmedia": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167" }
+            ],
+            "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=166" }],
+            "wp:term": [
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=166"
+                },
+                {
+                    "taxonomy": "career-skills-category",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=166"
+                }
+            ],
+            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+        },
+        "_embedded": {
+            "wp:featuredmedia": [
+                {
+                    "id": 167,
+                    "date": "2018-08-14T04:12:28",
+                    "slug": "switch-media-web-logo-2016-1",
+                    "type": "attachment",
+                    "link": "https://whoisfelix.com/wordpress/career/switch-media/switch-media-web-logo-2016-1/",
+                    "title": { "rendered": "Switch-Media-web-logo-2016-1" },
+                    "author": 1,
+                    "caption": { "rendered": "" },
+                    "alt_text": "",
+                    "media_type": "image",
+                    "mime_type": "image/png",
+                    "media_details": {
+                        "width": 397,
+                        "height": 72,
+                        "file": "2018/08/Switch-Media-web-logo-2016-1.png",
+                        "sizes": {
+                            "thumbnail": {
+                                "file": "Switch-Media-web-logo-2016-1-150x72.png",
+                                "width": 150,
+                                "height": 72,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-150x72.png"
+                            },
+                            "post-thumbnail": {
+                                "file": "Switch-Media-web-logo-2016-1-75x72.png",
+                                "width": 75,
+                                "height": 72,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-75x72.png"
+                            },
+                            "small": {
+                                "file": "Switch-Media-web-logo-2016-1-150x27.png",
+                                "width": 150,
+                                "height": 27,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-150x27.png"
+                            },
+                            "twentyseventeen-thumbnail-avatar": {
+                                "file": "Switch-Media-web-logo-2016-1-100x72.png",
+                                "width": 100,
+                                "height": 72,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-100x72.png"
+                            },
+                            "full": {
+                                "file": "Switch-Media-web-logo-2016-1.png",
+                                "width": 397,
+                                "height": 72,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1.png"
+                            }
+                        },
+                        "image_meta": {
+                            "aperture": "0",
+                            "credit": "",
+                            "camera": "",
+                            "caption": "",
+                            "created_timestamp": "0",
+                            "copyright": "",
+                            "focal_length": "0",
+                            "iso": "0",
+                            "shutter_speed": "0",
+                            "title": "",
+                            "orientation": "0",
+                            "keywords": []
+                        }
+                    },
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1.png",
+                    "_links": {
+                        "self": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167" }
+                        ],
+                        "collection": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
+                        ],
+                        "about": [
+                            {
+                                "attributes": [],
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"
+                            }
+                        ],
+                        "author": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"
+                            }
+                        ],
+                        "replies": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=167"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "id": 54,
+        "date": "2018-08-06T04:40:02",
+        "date_gmt": "2018-08-06T04:40:02",
+        "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=54" },
+        "modified": "2018-08-25T07:47:34",
+        "modified_gmt": "2018-08-25T07:47:34",
+        "slug": "the-ceo-magazine",
+        "status": "publish",
+        "type": "career",
+        "link": "https://whoisfelix.com/wordpress/career/the-ceo-magazine/",
+        "title": { "rendered": "The CEO Magazine" },
+        "content": {
+            "rendered": "<h3>As a Lead developer, my responsibilities include</h3>\n<ul>\n<li>Build and maintain microservices that are integrated with third party APIs within a centralised system</li>\n<li>Setup, implement, and maintain secure and scalable web servers and services</li>\n<li>Manage and maintain websites, applications and integrations between platforms</li>\n<li>Provide technical guidance on any software implementations within the company</li>\n<li>Collaborate with internal teams and vendors to fix and improve systems</li>\n<li>Execute full software development lifecycle methodologies on every software that needs or being developed</li>\n<li>Ensure industry standards on technologies for software development</li>\n<li>Automating manual workflows and processes into applications</li>\n<li>Mentor and guide other team members</li>\n</ul>\n<p>See how I strategised the company <a href=\"https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/images/ceomag_intranet/ceomag_infrastructure.png\" target=\"_blank\"> cloud infrastructure </a></p>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>PHP</strong> as an OOP back end language</li>\n<li><strong>Javascript</strong>, <strong>ReactJs</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>MobX</strong> for state management</li>\n<li><strong>MySQL</strong> for RDBMS</li>\n<li><strong>HTML</strong>, <strong>CSS 3 technology</strong> and <strong>Bootstrap</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n<h3>AWS services I use and maintain daily</h3>\n<ul>\n<li>9 EC2 web servers (NGINX and Apache)</li>\n<li>Cloudfront</li>\n<li>API Gateway</li>\n<li>ELB</li>\n<li>etc</li>\n</ul>\n<h3>Main platforms I used (that I integrated altogether with our <a href=\"/projects/the-ceo-magazine-intranet/\">Intranet</a>)</h3>\n<ul>\n<li><strong>WordPress</strong> for CMS</li>\n<li><strong>Magento</strong> for E-commerce</li>\n<li><strong>Salesforce</strong> for CRM</li>\n<li><strong>Chargify</strong> for recurring payment service</li>\n<li><strong>XERO</strong> for accounting</li>\n</ul>\n",
+            "protected": false
+        },
+        "excerpt": { "rendered": "Lead developer", "protected": false },
+        "featured_media": 145,
+        "parent": 0,
+        "menu_order": 5,
+        "comment_status": "open",
+        "ping_status": "closed",
+        "template": "",
+        "meta": [],
+        "tags": [],
+        "career-skills-category": [9, 14, 11, 10, 13, 12],
+        "custom_meta": {
+            "custom_meta_company_name": "The CEO Magazine",
+            "custom_meta_job_title": "Lead Developer",
+            "custom_meta_start_date": "Sep 2016",
+            "custom_meta_end_date": "Aug 2018",
+            "custom_meta_location": "Brookvale, Sydney",
+            "_thumbnail_id": "145"
+        },
+        "_links": {
+            "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/54" }],
+            "collection": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career" }],
+            "about": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career" }],
+            "replies": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=54" }
+            ],
+            "version-history": [
+                { "count": 34, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/54/revisions" }
+            ],
+            "predecessor-version": [
+                { "id": 359, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/54/revisions/359" }
+            ],
+            "wp:featuredmedia": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/145" }
+            ],
+            "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=54" }],
+            "wp:term": [
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=54"
+                },
+                {
+                    "taxonomy": "career-skills-category",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=54"
+                }
+            ],
+            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+        },
+        "_embedded": {
+            "wp:featuredmedia": [
+                {
+                    "id": 145,
+                    "date": "2018-08-08T10:12:33",
+                    "slug": "ceomag-logo-2",
+                    "type": "attachment",
+                    "link": "https://whoisfelix.com/wordpress/career/the-ceo-magazine/ceomag-logo-2/",
+                    "title": { "rendered": "ceomag-logo" },
+                    "author": 1,
+                    "caption": { "rendered": "" },
+                    "alt_text": "",
+                    "media_type": "image",
+                    "mime_type": "image/png",
+                    "media_details": {
+                        "width": 1414,
+                        "height": 527,
+                        "file": "2018/08/ceomag-logo-1.png",
+                        "sizes": {
+                            "thumbnail": {
+                                "file": "ceomag-logo-1-150x150.png",
+                                "width": 150,
+                                "height": 150,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-150x150.png"
+                            },
+                            "medium": {
+                                "file": "ceomag-logo-1-440x330.png",
+                                "width": 440,
+                                "height": 330,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-440x330.png"
+                            },
+                            "medium_large": {
+                                "file": "ceomag-logo-1-768x286.png",
+                                "width": 768,
+                                "height": 286,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-768x286.png"
+                            },
+                            "large": {
+                                "file": "ceomag-logo-1-640x480.png",
+                                "width": 640,
+                                "height": 480,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-640x480.png"
+                            },
+                            "post-thumbnail": {
+                                "file": "ceomag-logo-1-75x75.png",
+                                "width": 75,
+                                "height": 75,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-75x75.png"
+                            },
+                            "small": {
+                                "file": "ceomag-logo-1-150x56.png",
+                                "width": 150,
+                                "height": 56,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-150x56.png"
+                            },
+                            "mediumwide": {
+                                "file": "ceomag-logo-1-440x260.png",
+                                "width": 440,
+                                "height": 260,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-440x260.png"
+                            },
+                            "largewide": {
+                                "file": "ceomag-logo-1-640x300.png",
+                                "width": 640,
+                                "height": 300,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-640x300.png"
+                            },
+                            "xlarge": {
+                                "file": "ceomag-logo-1-800x298.png",
+                                "width": 800,
+                                "height": 298,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-800x298.png"
+                            },
+                            "full": {
+                                "file": "ceomag-logo-1-1200x447.png",
+                                "width": 1200,
+                                "height": 447,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-1200x447.png"
+                            },
+                            "featured": {
+                                "file": "ceomag-logo-1-800x298.png",
+                                "width": 800,
+                                "height": 298,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-800x298.png"
+                            },
+                            "twentyseventeen-thumbnail-avatar": {
+                                "file": "ceomag-logo-1-100x100.png",
+                                "width": 100,
+                                "height": 100,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-100x100.png"
+                            }
+                        },
+                        "image_meta": {
+                            "aperture": "0",
+                            "credit": "",
+                            "camera": "",
+                            "caption": "",
+                            "created_timestamp": "0",
+                            "copyright": "",
+                            "focal_length": "0",
+                            "iso": "0",
+                            "shutter_speed": "0",
+                            "title": "",
+                            "orientation": "0",
+                            "keywords": []
+                        }
+                    },
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1.png",
+                    "_links": {
+                        "self": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/145" }
+                        ],
+                        "collection": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
+                        ],
+                        "about": [
+                            {
+                                "attributes": [],
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"
+                            }
+                        ],
+                        "author": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"
+                            }
+                        ],
+                        "replies": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=145"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "wp:term": [
+                [],
+                [
+                    {
+                        "id": 9,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/aws/",
+                        "name": "AWS",
+                        "slug": "aws",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/9" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=9"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 14,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/magento/",
+                        "name": "Magento",
+                        "slug": "magento",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/14" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=14"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 11,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/nextjs/",
+                        "name": "NextJs",
+                        "slug": "nextjs",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/11" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=11"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 10,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/react/",
+                        "name": "React",
+                        "slug": "react",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/10" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=10"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 13,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/wordpress/",
+                        "name": "Wordpress",
+                        "slug": "wordpress",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/13" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=13"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 12,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/wordpress-api/",
+                        "name": "Wordpress API",
+                        "slug": "wordpress-api",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/12" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=12"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    {
+        "id": 58,
+        "date": "2018-08-06T04:45:23",
+        "date_gmt": "2018-08-06T04:45:23",
+        "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=58" },
+        "modified": "2018-08-24T03:40:33",
+        "modified_gmt": "2018-08-24T03:40:33",
+        "slug": "tech-pilot-fund",
+        "status": "publish",
+        "type": "career",
+        "link": "https://whoisfelix.com/wordpress/career/tech-pilot-fund/",
+        "title": { "rendered": "Tech Pilot Fund" },
+        "content": {
+            "rendered": "</h3>\n<p>As a web developer, my responsibilities include</h3>\n<ul>\n<li>Maintain existing company websites and applications by making modifications as required </li>\n<li>Develop new internal applications based on company requirements </li>\n<li>Identify and communicate technical problems, processes and solutions </li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>WordPress</strong> as CMS platform</li>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>PHP and .NET</strong> as an OOP back end language</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>MySQL</strong> and <strong>MSSQL</strong> for RDBMS</li>\n<li><strong>cPanel</strong> for server administration</li>\n<li><strong>AWS</strong> for EC2 Windows instance</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "As a web developer, my responsibilities include Maintain existing company websites and applications by making modifications as required Develop new internal applications based on company requirements Identify and communicate technical problems, processes and solutions Main technologies I used WordPress as CMS platform Javascript, AngularJS and jQuery as a front end framework PHP and .NET as &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/tech-pilot-fund/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;Tech Pilot Fund&#8221;</span></a></p>",
+            "protected": false
+        },
+        "featured_media": 141,
+        "parent": 0,
+        "menu_order": 4,
+        "comment_status": "open",
+        "ping_status": "closed",
+        "template": "",
+        "meta": [],
+        "tags": [],
+        "career-skills-category": [16, 9, 13, 12],
+        "custom_meta": {
+            "custom_meta_company_name": "Tech Pilot Fund",
+            "custom_meta_job_title": "Web Developer",
+            "custom_meta_start_date": "May 2016",
+            "custom_meta_end_date": "Sep 2016",
+            "_thumbnail_id": "141",
+            "custom_meta_location": "Sydney CBD"
+        },
+        "_links": {
+            "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/58" }],
+            "collection": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career" }],
+            "about": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career" }],
+            "replies": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=58" }
+            ],
+            "version-history": [
+                { "count": 9, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/58/revisions" }
+            ],
+            "predecessor-version": [
+                { "id": 343, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/58/revisions/343" }
+            ],
+            "wp:featuredmedia": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/141" }
+            ],
+            "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=58" }],
+            "wp:term": [
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=58"
+                },
+                {
+                    "taxonomy": "career-skills-category",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=58"
+                }
+            ],
+            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+        },
+        "_embedded": {
+            "wp:featuredmedia": [
+                {
+                    "id": 141,
+                    "date": "2018-08-08T07:37:59",
+                    "slug": "tpf-logo",
+                    "type": "attachment",
+                    "link": "https://whoisfelix.com/wordpress/career/tech-pilot-fund/tpf-logo/",
+                    "title": { "rendered": "tpf-logo" },
+                    "author": 1,
+                    "caption": { "rendered": "" },
+                    "alt_text": "",
+                    "media_type": "image",
+                    "mime_type": "image/png",
+                    "media_details": {
+                        "width": 533,
+                        "height": 265,
+                        "file": "2018/08/tpf-logo.png",
+                        "sizes": {
+                            "thumbnail": {
+                                "file": "tpf-logo-150x150.png",
+                                "width": 150,
+                                "height": 150,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-150x150.png"
+                            },
+                            "medium": {
+                                "file": "tpf-logo-440x265.png",
+                                "width": 440,
+                                "height": 265,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-440x265.png"
+                            },
+                            "post-thumbnail": {
+                                "file": "tpf-logo-75x75.png",
+                                "width": 75,
+                                "height": 75,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-75x75.png"
+                            },
+                            "small": {
+                                "file": "tpf-logo-150x75.png",
+                                "width": 150,
+                                "height": 75,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-150x75.png"
+                            },
+                            "mediumwide": {
+                                "file": "tpf-logo-440x260.png",
+                                "width": 440,
+                                "height": 260,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-440x260.png"
+                            },
+                            "twentyseventeen-thumbnail-avatar": {
+                                "file": "tpf-logo-100x100.png",
+                                "width": 100,
+                                "height": 100,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-100x100.png"
+                            },
+                            "full": {
+                                "file": "tpf-logo.png",
+                                "width": 533,
+                                "height": 265,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo.png"
+                            }
+                        },
+                        "image_meta": {
+                            "aperture": "0",
+                            "credit": "",
+                            "camera": "",
+                            "caption": "",
+                            "created_timestamp": "0",
+                            "copyright": "",
+                            "focal_length": "0",
+                            "iso": "0",
+                            "shutter_speed": "0",
+                            "title": "",
+                            "orientation": "0",
+                            "keywords": []
+                        }
+                    },
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo.png",
+                    "_links": {
+                        "self": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/141" }
+                        ],
+                        "collection": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
+                        ],
+                        "about": [
+                            {
+                                "attributes": [],
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"
+                            }
+                        ],
+                        "author": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"
+                            }
+                        ],
+                        "replies": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=141"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "wp:term": [
+                [],
+                [
+                    {
+                        "id": 16,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/net/",
+                        "name": ".NET",
+                        "slug": "net",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/16" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=16"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 9,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/aws/",
+                        "name": "AWS",
+                        "slug": "aws",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/9" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=9"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 13,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/wordpress/",
+                        "name": "Wordpress",
+                        "slug": "wordpress",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/13" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=13"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 12,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/wordpress-api/",
+                        "name": "Wordpress API",
+                        "slug": "wordpress-api",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/12" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=12"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    {
+        "id": 60,
+        "date": "2018-08-06T04:46:51",
+        "date_gmt": "2018-08-06T04:46:51",
+        "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=60" },
+        "modified": "2018-08-24T03:40:23",
+        "modified_gmt": "2018-08-24T03:40:23",
+        "slug": "kforce-global-solutions",
+        "status": "publish",
+        "type": "career",
+        "link": "https://whoisfelix.com/wordpress/career/kforce-global-solutions/",
+        "title": { "rendered": "KForce Global Solutions" },
+        "content": {
+            "rendered": "<h3>As a programmer/analyst, my responsibilities include</h3>\n<ul>\n<li>Write, modify, integrate and test software code to meet system requirements, system designs and technical specifications</li>\n<li>Produce specifications and determine operational feasibility</li>\n<li>Present and report projects to project managers and clients </li>\n<li>Create scalable, automated solutions of our customer base</li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>.NET</strong> as an OOP back end language</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "As a programmer/analyst, my responsibilities include Write, modify, integrate and test software code to meet system requirements, system designs and technical specifications Produce specifications and determine operational feasibility Present and report projects to project managers and clients Create scalable, automated solutions of our customer base Main technologies I used Javascript, AngularJS and jQuery as a &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/kforce-global-solutions/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;KForce Global Solutions&#8221;</span></a></p>",
+            "protected": false
+        },
+        "featured_media": 142,
+        "parent": 0,
+        "menu_order": 3,
+        "comment_status": "open",
+        "ping_status": "closed",
+        "template": "",
+        "meta": [],
+        "tags": [],
+        "career-skills-category": [16, 15],
+        "custom_meta": {
+            "custom_meta_company_name": "KForce Global Solutions",
+            "custom_meta_job_title": "Programmer/Analyst",
+            "custom_meta_start_date": "Oct 2015",
+            "custom_meta_end_date": "Mar 2016",
+            "_thumbnail_id": "142",
+            "custom_meta_location": "Makati City, Philippines"
+        },
+        "_links": {
+            "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/60" }],
+            "collection": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career" }],
+            "about": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career" }],
+            "replies": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=60" }
+            ],
+            "version-history": [
+                { "count": 5, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/60/revisions" }
+            ],
+            "predecessor-version": [
+                { "id": 342, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/60/revisions/342" }
+            ],
+            "wp:featuredmedia": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/142" }
+            ],
+            "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=60" }],
+            "wp:term": [
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=60"
+                },
+                {
+                    "taxonomy": "career-skills-category",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=60"
+                }
+            ],
+            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+        },
+        "_embedded": {
+            "wp:featuredmedia": [
+                {
+                    "id": 142,
+                    "date": "2018-08-08T07:44:24",
+                    "slug": "kforce-logo",
+                    "type": "attachment",
+                    "link": "https://whoisfelix.com/wordpress/career/kforce-global-solutions/kforce-logo/",
+                    "title": { "rendered": "kforce-logo" },
+                    "author": 1,
+                    "caption": { "rendered": "" },
+                    "alt_text": "",
+                    "media_type": "image",
+                    "mime_type": "image/png",
+                    "media_details": {
+                        "width": 427,
+                        "height": 99,
+                        "file": "2018/08/kforce-logo.png",
+                        "sizes": {
+                            "thumbnail": {
+                                "file": "kforce-logo-150x99.png",
+                                "width": 150,
+                                "height": 99,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-150x99.png"
+                            },
+                            "post-thumbnail": {
+                                "file": "kforce-logo-75x75.png",
+                                "width": 75,
+                                "height": 75,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-75x75.png"
+                            },
+                            "small": {
+                                "file": "kforce-logo-150x35.png",
+                                "width": 150,
+                                "height": 35,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-150x35.png"
+                            },
+                            "twentyseventeen-thumbnail-avatar": {
+                                "file": "kforce-logo-100x99.png",
+                                "width": 100,
+                                "height": 99,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-100x99.png"
+                            },
+                            "full": {
+                                "file": "kforce-logo.png",
+                                "width": 427,
+                                "height": 99,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo.png"
+                            }
+                        },
+                        "image_meta": {
+                            "aperture": "0",
+                            "credit": "",
+                            "camera": "",
+                            "caption": "",
+                            "created_timestamp": "0",
+                            "copyright": "",
+                            "focal_length": "0",
+                            "iso": "0",
+                            "shutter_speed": "0",
+                            "title": "",
+                            "orientation": "0",
+                            "keywords": []
+                        }
+                    },
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo.png",
+                    "_links": {
+                        "self": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/142" }
+                        ],
+                        "collection": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
+                        ],
+                        "about": [
+                            {
+                                "attributes": [],
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"
+                            }
+                        ],
+                        "author": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"
+                            }
+                        ],
+                        "replies": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=142"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "wp:term": [
+                [],
+                [
+                    {
+                        "id": 16,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/net/",
+                        "name": ".NET",
+                        "slug": "net",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/16" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=16"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 15,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/angularjs/",
+                        "name": "AngularJs",
+                        "slug": "angularjs",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/15" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=15"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    {
+        "id": 62,
+        "date": "2018-08-06T04:47:53",
+        "date_gmt": "2018-08-06T04:47:53",
+        "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=62" },
+        "modified": "2018-08-24T03:40:14",
+        "modified_gmt": "2018-08-24T03:40:14",
+        "slug": "iserve-customer-management-solutions",
+        "status": "publish",
+        "type": "career",
+        "link": "https://whoisfelix.com/wordpress/career/iserve-customer-management-solutions/",
+        "title": { "rendered": "iServe Customer Management Solutions" },
+        "content": {
+            "rendered": "<h3>As a Software Developer, my responsibilities include</h3>\n<ul>\n<li>Design, develop, integrate and test software systems</li>\n<li>Analyze user needs and software requirements to determine feasibility of design within time and cost constraints</li>\n<li>Maintain existing computer programs by making modifications as required </li>\n<li>Identify and communicate technical problems, processes and solutions </li>\n<li>Lead and coordinate teams of computer programmers and developers</li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>Java</strong> as an OOP back end language</li>\n<li><strong>Spring</strong>, <strong>Maven</strong> and <strong>Hibernate</strong> as a backend framework</li>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>MySQL</strong> for RDBMS</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "As a Software Developer, my responsibilities include Design, develop, integrate and test software systems Analyze user needs and software requirements to determine feasibility of design within time and cost constraints Maintain existing computer programs by making modifications as required Identify and communicate technical problems, processes and solutions Lead and coordinate teams of computer programmers and &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/iserve-customer-management-solutions/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;iServe Customer Management Solutions&#8221;</span></a></p>",
+            "protected": false
+        },
+        "featured_media": 143,
+        "parent": 0,
+        "menu_order": 2,
+        "comment_status": "open",
+        "ping_status": "closed",
+        "template": "",
+        "meta": [],
+        "tags": [],
+        "career-skills-category": [15, 18, 17, 19],
+        "custom_meta": {
+            "custom_meta_company_name": "iServe Customer Management Solutions",
+            "custom_meta_job_title": "Software Developer",
+            "custom_meta_start_date": "October 2014",
+            "custom_meta_end_date": "July 2015",
+            "_thumbnail_id": "143",
+            "custom_meta_location": "San Juan City, Philippines"
+        },
+        "_links": {
+            "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/62" }],
+            "collection": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career" }],
+            "about": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career" }],
+            "replies": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=62" }
+            ],
+            "version-history": [
+                { "count": 6, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/62/revisions" }
+            ],
+            "predecessor-version": [
+                { "id": 341, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/62/revisions/341" }
+            ],
+            "wp:featuredmedia": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/143" }
+            ],
+            "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=62" }],
+            "wp:term": [
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=62"
+                },
+                {
+                    "taxonomy": "career-skills-category",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=62"
+                }
+            ],
+            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+        },
+        "_embedded": {
+            "wp:featuredmedia": [
+                {
+                    "id": 143,
+                    "date": "2018-08-08T07:44:43",
+                    "slug": "iserve-logo",
+                    "type": "attachment",
+                    "link": "https://whoisfelix.com/wordpress/career/iserve-customer-management-solutions/iserve-logo/",
+                    "title": { "rendered": "iserve-logo" },
+                    "author": 1,
+                    "caption": { "rendered": "" },
+                    "alt_text": "",
+                    "media_type": "image",
+                    "mime_type": "image/png",
+                    "media_details": {
+                        "width": 192,
+                        "height": 70,
+                        "file": "2018/08/iserve-logo.png",
+                        "sizes": {
+                            "thumbnail": {
+                                "file": "iserve-logo-150x70.png",
+                                "width": 150,
+                                "height": 70,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-150x70.png"
+                            },
+                            "post-thumbnail": {
+                                "file": "iserve-logo-75x70.png",
+                                "width": 75,
+                                "height": 70,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-75x70.png"
+                            },
+                            "small": {
+                                "file": "iserve-logo-150x55.png",
+                                "width": 150,
+                                "height": 55,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-150x55.png"
+                            },
+                            "twentyseventeen-thumbnail-avatar": {
+                                "file": "iserve-logo-100x70.png",
+                                "width": 100,
+                                "height": 70,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-100x70.png"
+                            },
+                            "full": {
+                                "file": "iserve-logo.png",
+                                "width": 192,
+                                "height": 70,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo.png"
+                            }
+                        },
+                        "image_meta": {
+                            "aperture": "0",
+                            "credit": "",
+                            "camera": "",
+                            "caption": "",
+                            "created_timestamp": "0",
+                            "copyright": "",
+                            "focal_length": "0",
+                            "iso": "0",
+                            "shutter_speed": "0",
+                            "title": "",
+                            "orientation": "0",
+                            "keywords": []
+                        }
+                    },
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo.png",
+                    "_links": {
+                        "self": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/143" }
+                        ],
+                        "collection": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
+                        ],
+                        "about": [
+                            {
+                                "attributes": [],
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"
+                            }
+                        ],
+                        "author": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"
+                            }
+                        ],
+                        "replies": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=143"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "wp:term": [
+                [],
+                [
+                    {
+                        "id": 15,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/angularjs/",
+                        "name": "AngularJs",
+                        "slug": "angularjs",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/15" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=15"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 18,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/hibernate/",
+                        "name": "Hibernate",
+                        "slug": "hibernate",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/18" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=18"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 17,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/java/",
+                        "name": "Java",
+                        "slug": "java",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/17" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=17"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 19,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/maven/",
+                        "name": "Maven",
+                        "slug": "maven",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/19" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=19"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    {
+        "id": 64,
+        "date": "2018-08-06T04:48:24",
+        "date_gmt": "2018-08-06T04:48:24",
+        "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=64" },
+        "modified": "2018-08-24T03:40:03",
+        "modified_gmt": "2018-08-24T03:40:03",
+        "slug": "yondu",
+        "status": "publish",
+        "type": "career",
+        "link": "https://whoisfelix.com/wordpress/career/yondu/",
+        "title": { "rendered": "Yondu" },
+        "content": {
+            "rendered": "<h3>As a Junior Software Engineer, my responsibilities include</h3>\n<ul>\n<li>Analyze requirements, design solutions, and create detailed designs that satisfy the requirements of the client</li>\n<li>Create, test and troubleshoot programs according to prescribed specifications and coding conventions, and utilizing technology appropriate to the solution</li>\n<li>Create test plans and run unit tests on programs developed</li>\n<li>Evaluate simple interrelationships between programs, e.g., how modifications in one module might affect other modules</li>\n<li>Write and maintain program documentation</li>\n<li>Lead and coordinate teams of computer programmers and developers</li>\n</ul>\n<h3>Main technologies I used</h3>\n<ul>\n<li><strong>Java</strong> and <strong>.NET</strong> as an OOP back end language</li>\n<li><strong>Spring</strong>, <strong>Entity Framework</strong>, <strong>Maven</strong> and <strong>Hibernate</strong> as a backend framework</li>\n<li><strong>Javascript</strong>, <strong>AngularJS</strong> and <strong>jQuery</strong> as a front end framework</li>\n<li><strong>MySQL</strong> and <strong>MSSQL</strong> for RDBMS</li>\n<li><strong>HTML</strong> and <strong>CSS 3 technology</strong> for Responsive Design</li>\n<li><strong>Agile</strong> and <strong>SCRUM</strong> SDLC methodologies</li>\n</ul>\n",
+            "protected": false
+        },
+        "excerpt": {
+            "rendered": "As a Junior Software Engineer, my responsibilities include Analyze requirements, design solutions, and create detailed designs that satisfy the requirements of the client Create, test and troubleshoot programs according to prescribed specifications and coding conventions, and utilizing technology appropriate to the solution Create test plans and run unit tests on programs developed Evaluate simple interrelationships &hellip; <p class=\"link-more\"><a href=\"https://whoisfelix.com/wordpress/career/yondu/\" class=\"more-link\">Continue reading<span class=\"screen-reader-text\"> &#8220;Yondu&#8221;</span></a></p>",
+            "protected": false
+        },
+        "featured_media": 147,
+        "parent": 0,
+        "menu_order": 1,
+        "comment_status": "open",
+        "ping_status": "closed",
+        "template": "",
+        "meta": [],
+        "tags": [],
+        "career-skills-category": [16, 15, 18, 17, 19],
+        "custom_meta": {
+            "custom_meta_company_name": "Yondu",
+            "custom_meta_job_title": "Junior Software Engineer",
+            "custom_meta_start_date": "June 2013",
+            "custom_meta_end_date": "October 2014",
+            "custom_meta_location": "Taguig City, Philippines",
+            "_thumbnail_id": "147"
+        },
+        "_links": {
+            "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/64" }],
+            "collection": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career" }],
+            "about": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/career" }],
+            "replies": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=64" }
+            ],
+            "version-history": [
+                { "count": 5, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/64/revisions" }
+            ],
+            "predecessor-version": [
+                { "id": 340, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/64/revisions/340" }
+            ],
+            "wp:featuredmedia": [
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/147" }
+            ],
+            "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=64" }],
+            "wp:term": [
+                {
+                    "taxonomy": "post_tag",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/tags?post=64"
+                },
+                {
+                    "taxonomy": "career-skills-category",
+                    "embeddable": true,
+                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category?post=64"
+                }
+            ],
+            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+        },
+        "_embedded": {
+            "wp:featuredmedia": [
+                {
+                    "id": 147,
+                    "date": "2018-08-08T10:13:42",
+                    "slug": "yondu-logo",
+                    "type": "attachment",
+                    "link": "https://whoisfelix.com/wordpress/career/yondu/yondu-logo/",
+                    "title": { "rendered": "yondu-logo" },
+                    "author": 1,
+                    "caption": { "rendered": "" },
+                    "alt_text": "",
+                    "media_type": "image",
+                    "mime_type": "image/png",
+                    "media_details": {
+                        "width": 1203,
+                        "height": 253,
+                        "file": "2018/08/yondu-logo.png",
+                        "sizes": {
+                            "thumbnail": {
+                                "file": "yondu-logo-150x150.png",
+                                "width": 150,
+                                "height": 150,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-150x150.png"
+                            },
+                            "medium": {
+                                "file": "yondu-logo-440x253.png",
+                                "width": 440,
+                                "height": 253,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-440x253.png"
+                            },
+                            "medium_large": {
+                                "file": "yondu-logo-768x162.png",
+                                "width": 768,
+                                "height": 162,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-768x162.png"
+                            },
+                            "large": {
+                                "file": "yondu-logo-640x253.png",
+                                "width": 640,
+                                "height": 253,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-640x253.png"
+                            },
+                            "post-thumbnail": {
+                                "file": "yondu-logo-75x75.png",
+                                "width": 75,
+                                "height": 75,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-75x75.png"
+                            },
+                            "small": {
+                                "file": "yondu-logo-150x32.png",
+                                "width": 150,
+                                "height": 32,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-150x32.png"
+                            },
+                            "mediumwide": {
+                                "file": "yondu-logo-440x253.png",
+                                "width": 440,
+                                "height": 253,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-440x253.png"
+                            },
+                            "largewide": {
+                                "file": "yondu-logo-640x253.png",
+                                "width": 640,
+                                "height": 253,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-640x253.png"
+                            },
+                            "xlarge": {
+                                "file": "yondu-logo-800x168.png",
+                                "width": 800,
+                                "height": 168,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-800x168.png"
+                            },
+                            "full": {
+                                "file": "yondu-logo-1200x252.png",
+                                "width": 1200,
+                                "height": 252,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-1200x252.png"
+                            },
+                            "featured": {
+                                "file": "yondu-logo-800x168.png",
+                                "width": 800,
+                                "height": 168,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-800x168.png"
+                            },
+                            "twentyseventeen-thumbnail-avatar": {
+                                "file": "yondu-logo-100x100.png",
+                                "width": 100,
+                                "height": 100,
+                                "mime_type": "image/png",
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-100x100.png"
+                            }
+                        },
+                        "image_meta": {
+                            "aperture": "0",
+                            "credit": "",
+                            "camera": "",
+                            "caption": "",
+                            "created_timestamp": "0",
+                            "copyright": "",
+                            "focal_length": "0",
+                            "iso": "0",
+                            "shutter_speed": "0",
+                            "title": "",
+                            "orientation": "0",
+                            "keywords": []
+                        }
+                    },
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo.png",
+                    "_links": {
+                        "self": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/147" }
+                        ],
+                        "collection": [
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
+                        ],
+                        "about": [
+                            {
+                                "attributes": [],
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/types/attachment"
+                            }
+                        ],
+                        "author": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/users/1"
+                            }
+                        ],
+                        "replies": [
+                            {
+                                "attributes": { "embeddable": true },
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=147"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "wp:term": [
+                [],
+                [
+                    {
+                        "id": 16,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/net/",
+                        "name": ".NET",
+                        "slug": "net",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/16" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=16"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 15,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/angularjs/",
+                        "name": "AngularJs",
+                        "slug": "angularjs",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/15" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=15"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 18,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/hibernate/",
+                        "name": "Hibernate",
+                        "slug": "hibernate",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/18" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=18"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 17,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/java/",
+                        "name": "Java",
+                        "slug": "java",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/17" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=17"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    },
+                    {
+                        "id": 19,
+                        "link": "https://whoisfelix.com/wordpress/career-skills/maven/",
+                        "name": "Maven",
+                        "slug": "maven",
+                        "taxonomy": "career-skills-category",
+                        "_links": {
+                            "self": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category/19" }
+                            ],
+                            "collection": [
+                                { "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career-skills-category" }
+                            ],
+                            "about": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/taxonomies/career-skills-category"
+                                }
+                            ],
+                            "wp:post_type": [
+                                {
+                                    "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career?career-skills-category=19"
+                                }
+                            ],
+                            "curies": [{ "name": "wp", "href": "https://api.w.org/{rel}", "templated": true }]
+                        }
+                    }
+                ]
+            ]
+        }
+    }
+]

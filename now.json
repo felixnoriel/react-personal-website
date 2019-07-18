@@ -1,10 +1,64 @@
 {
-    "version": 1.0,
-    "name":"felixnoriel-nextjs",
-    "builds":[
+    "version": 2,
+    "name": "felixnoriel-nextjs",
+    "alias": "whoisfelix.com",
+    "builds": [
         {
-            "src":"package.json",
-            "use":"@now/next"
+            "src": "package.json",
+            "use": "@now/next",
+            "config": {
+                "maxLambdaSize": "25mb"
+            }
+        },
+        {
+            "src": "static/**",
+            "use": "@now/static"
+        },
+        {
+            "src": "src/helpers/trailing-redirect.ts",
+            "use": "@now/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/",
+            "dest": "/index",
+            "headers": { "Cache-Control": "s-maxage=2592000" }
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "/static/favicon.ico",
+            "headers": { "Cache-Control": "s-maxage=2592000" }
+        },
+        {
+            "src": "(/.*)/",
+            "dest": "/src/helpers/trailing-redirect.ts",
+            "headers": { "Cache-Control": "s-maxage=2592000" }
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1",
+            "headers": { "Cache-Control": "s-maxage=2592000" }
+        },
+        {
+            "src": "/(?<name>[^/]+)$",
+            "headers": { "Cache-Control": "s-maxage=2592000" },
+            "dest": "/page?name=$name"
+        },
+        {
+            "src": "/blog/(?<slug>[^/]*)$",
+            "headers": { "Cache-Control": "s-maxage=2592000" },
+            "dest": "/page?name=blog&slug=$slug"
+        },
+        {
+            "src": "/career/(?<slug>[^/]*)$",
+            "headers": { "Cache-Control": "s-maxage=2592000" },
+            "dest": "/page?name=career&slug=$slug"
+        },
+        {
+            "src": "/projects/(?<slug>[^/]*)$",
+            "headers": { "Cache-Control": "s-maxage=2592000" },
+            "dest": "/page?name=projects&slug=$slug"
         }
     ]
 }
