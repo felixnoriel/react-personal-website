@@ -85,35 +85,35 @@
                                 "width": 150,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-150x72.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-150x72.png"
                             },
                             "post-thumbnail": {
                                 "file": "Switch-Media-web-logo-2016-1-75x72.png",
                                 "width": 75,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-75x72.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-75x72.png"
                             },
                             "small": {
                                 "file": "Switch-Media-web-logo-2016-1-150x27.png",
                                 "width": 150,
                                 "height": 27,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-150x27.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-150x27.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "Switch-Media-web-logo-2016-1-100x72.png",
                                 "width": 100,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1-100x72.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-100x72.png"
                             },
                             "full": {
                                 "file": "Switch-Media-web-logo-2016-1.png",
                                 "width": 397,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1.png"
                             }
                         },
                         "image_meta": {
@@ -131,7 +131,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Switch-Media-web-logo-2016-1.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167" }
@@ -251,84 +251,84 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-150x150.png"
                             },
                             "medium": {
                                 "file": "ceomag-logo-1-440x330.png",
                                 "width": 440,
                                 "height": 330,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-440x330.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-440x330.png"
                             },
                             "medium_large": {
                                 "file": "ceomag-logo-1-768x286.png",
                                 "width": 768,
                                 "height": 286,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-768x286.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-768x286.png"
                             },
                             "large": {
                                 "file": "ceomag-logo-1-640x480.png",
                                 "width": 640,
                                 "height": 480,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-640x480.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-640x480.png"
                             },
                             "post-thumbnail": {
                                 "file": "ceomag-logo-1-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-75x75.png"
                             },
                             "small": {
                                 "file": "ceomag-logo-1-150x56.png",
                                 "width": 150,
                                 "height": 56,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-150x56.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-150x56.png"
                             },
                             "mediumwide": {
                                 "file": "ceomag-logo-1-440x260.png",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-440x260.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-440x260.png"
                             },
                             "largewide": {
                                 "file": "ceomag-logo-1-640x300.png",
                                 "width": 640,
                                 "height": 300,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-640x300.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-640x300.png"
                             },
                             "xlarge": {
                                 "file": "ceomag-logo-1-800x298.png",
                                 "width": 800,
                                 "height": 298,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-800x298.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-800x298.png"
                             },
                             "full": {
                                 "file": "ceomag-logo-1-1200x447.png",
                                 "width": 1200,
                                 "height": 447,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-1200x447.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-1200x447.png"
                             },
                             "featured": {
                                 "file": "ceomag-logo-1-800x298.png",
                                 "width": 800,
                                 "height": 298,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-800x298.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-800x298.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "ceomag-logo-1-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1-100x100.png"
                             }
                         },
                         "image_meta": {
@@ -346,7 +346,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/ceomag-logo-1.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/ceomag-logo-1.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/145" }
@@ -630,49 +630,49 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-150x150.png"
                             },
                             "medium": {
                                 "file": "tpf-logo-440x265.png",
                                 "width": 440,
                                 "height": 265,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-440x265.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-440x265.png"
                             },
                             "post-thumbnail": {
                                 "file": "tpf-logo-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-75x75.png"
                             },
                             "small": {
                                 "file": "tpf-logo-150x75.png",
                                 "width": 150,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-150x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-150x75.png"
                             },
                             "mediumwide": {
                                 "file": "tpf-logo-440x260.png",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-440x260.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-440x260.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "tpf-logo-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo-100x100.png"
                             },
                             "full": {
                                 "file": "tpf-logo.png",
                                 "width": 533,
                                 "height": 265,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo.png"
                             }
                         },
                         "image_meta": {
@@ -690,7 +690,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/tpf-logo.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/tpf-logo.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/141" }
@@ -922,35 +922,35 @@
                                 "width": 150,
                                 "height": 99,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-150x99.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-150x99.png"
                             },
                             "post-thumbnail": {
                                 "file": "kforce-logo-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-75x75.png"
                             },
                             "small": {
                                 "file": "kforce-logo-150x35.png",
                                 "width": 150,
                                 "height": 35,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-150x35.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-150x35.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "kforce-logo-100x99.png",
                                 "width": 100,
                                 "height": 99,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo-100x99.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo-100x99.png"
                             },
                             "full": {
                                 "file": "kforce-logo.png",
                                 "width": 427,
                                 "height": 99,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo.png"
                             }
                         },
                         "image_meta": {
@@ -968,7 +968,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/kforce-logo.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/kforce-logo.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/142" }
@@ -1148,35 +1148,35 @@
                                 "width": 150,
                                 "height": 70,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-150x70.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-150x70.png"
                             },
                             "post-thumbnail": {
                                 "file": "iserve-logo-75x70.png",
                                 "width": 75,
                                 "height": 70,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-75x70.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-75x70.png"
                             },
                             "small": {
                                 "file": "iserve-logo-150x55.png",
                                 "width": 150,
                                 "height": 55,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-150x55.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-150x55.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "iserve-logo-100x70.png",
                                 "width": 100,
                                 "height": 70,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo-100x70.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo-100x70.png"
                             },
                             "full": {
                                 "file": "iserve-logo.png",
                                 "width": 192,
                                 "height": 70,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo.png"
                             }
                         },
                         "image_meta": {
@@ -1194,7 +1194,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/iserve-logo.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/iserve-logo.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/143" }
@@ -1426,84 +1426,84 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-150x150.png"
                             },
                             "medium": {
                                 "file": "yondu-logo-440x253.png",
                                 "width": 440,
                                 "height": 253,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-440x253.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-440x253.png"
                             },
                             "medium_large": {
                                 "file": "yondu-logo-768x162.png",
                                 "width": 768,
                                 "height": 162,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-768x162.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-768x162.png"
                             },
                             "large": {
                                 "file": "yondu-logo-640x253.png",
                                 "width": 640,
                                 "height": 253,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-640x253.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-640x253.png"
                             },
                             "post-thumbnail": {
                                 "file": "yondu-logo-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-75x75.png"
                             },
                             "small": {
                                 "file": "yondu-logo-150x32.png",
                                 "width": 150,
                                 "height": 32,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-150x32.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-150x32.png"
                             },
                             "mediumwide": {
                                 "file": "yondu-logo-440x253.png",
                                 "width": 440,
                                 "height": 253,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-440x253.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-440x253.png"
                             },
                             "largewide": {
                                 "file": "yondu-logo-640x253.png",
                                 "width": 640,
                                 "height": 253,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-640x253.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-640x253.png"
                             },
                             "xlarge": {
                                 "file": "yondu-logo-800x168.png",
                                 "width": 800,
                                 "height": 168,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-800x168.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-800x168.png"
                             },
                             "full": {
                                 "file": "yondu-logo-1200x252.png",
                                 "width": 1200,
                                 "height": 252,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-1200x252.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-1200x252.png"
                             },
                             "featured": {
                                 "file": "yondu-logo-800x168.png",
                                 "width": 800,
                                 "height": 168,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-800x168.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-800x168.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "yondu-logo-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo-100x100.png"
                             }
                         },
                         "image_meta": {
@@ -1521,7 +1521,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/yondu-logo.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/yondu-logo.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/147" }

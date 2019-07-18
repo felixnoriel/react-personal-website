@@ -158,91 +158,91 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-150x150.png"
                             },
                             "medium": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-440x330.png",
                                 "width": 440,
                                 "height": 330,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-440x330.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-440x330.png"
                             },
                             "medium_large": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-768x668.png",
                                 "width": 768,
                                 "height": 668,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-768x668.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-768x668.png"
                             },
                             "large": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-640x480.png",
                                 "width": 640,
                                 "height": 480,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-640x480.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-640x480.png"
                             },
                             "post-thumbnail": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-75x75.png"
                             },
                             "small": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-150x131.png",
                                 "width": 150,
                                 "height": 131,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-150x131.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-150x131.png"
                             },
                             "mediumwide": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-440x260.png",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-440x260.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-440x260.png"
                             },
                             "largewide": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-640x300.png",
                                 "width": 640,
                                 "height": 300,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-640x300.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-640x300.png"
                             },
                             "xlarge": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-800x696.png",
                                 "width": 800,
                                 "height": 696,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-800x696.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-800x696.png"
                             },
                             "full": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-1200x1044.png",
                                 "width": 1200,
                                 "height": 1044,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-1200x1044.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-1200x1044.png"
                             },
                             "featured": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-800x696.png",
                                 "width": 800,
                                 "height": 696,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-800x696.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-800x696.png"
                             },
                             "twentyseventeen-featured-image": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-2000x1200.png",
                                 "width": 2000,
                                 "height": 1200,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-2000x1200.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-2000x1200.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "Screen-Shot-2018-08-14-at-3.04.44-PM-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM-100x100.png"
                             }
                         },
                         "image_meta": {
@@ -260,7 +260,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.04.44-PM.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/180" }
@@ -665,91 +665,91 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-150x150.png"
                             },
                             "medium": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-440x330.png",
                                 "width": 440,
                                 "height": 330,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-440x330.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-440x330.png"
                             },
                             "medium_large": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-768x530.png",
                                 "width": 768,
                                 "height": 530,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-768x530.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-768x530.png"
                             },
                             "large": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-640x480.png",
                                 "width": 640,
                                 "height": 480,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-640x480.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-640x480.png"
                             },
                             "post-thumbnail": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-75x75.png"
                             },
                             "small": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-150x104.png",
                                 "width": 150,
                                 "height": 104,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-150x104.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-150x104.png"
                             },
                             "mediumwide": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-440x260.png",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-440x260.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-440x260.png"
                             },
                             "largewide": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-640x300.png",
                                 "width": 640,
                                 "height": 300,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-640x300.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-640x300.png"
                             },
                             "xlarge": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-800x553.png",
                                 "width": 800,
                                 "height": 553,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-800x553.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-800x553.png"
                             },
                             "full": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-1200x829.png",
                                 "width": 1200,
                                 "height": 829,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-1200x829.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-1200x829.png"
                             },
                             "featured": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-800x553.png",
                                 "width": 800,
                                 "height": 553,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-800x553.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-800x553.png"
                             },
                             "twentyseventeen-featured-image": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-2000x1200.png",
                                 "width": 2000,
                                 "height": 1200,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-2000x1200.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-2000x1200.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "Screen-Shot-2018-08-14-at-2.56.45-PM-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM-100x100.png"
                             }
                         },
                         "image_meta": {
@@ -767,7 +767,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-2.56.45-PM.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/173" }
@@ -1202,91 +1202,91 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-150x150.png"
                             },
                             "medium": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-440x330.png",
                                 "width": 440,
                                 "height": 330,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-440x330.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-440x330.png"
                             },
                             "medium_large": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-768x600.png",
                                 "width": 768,
                                 "height": 600,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-768x600.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-768x600.png"
                             },
                             "large": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-640x480.png",
                                 "width": 640,
                                 "height": 480,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-640x480.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-640x480.png"
                             },
                             "post-thumbnail": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-75x75.png"
                             },
                             "small": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-150x117.png",
                                 "width": 150,
                                 "height": 117,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-150x117.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-150x117.png"
                             },
                             "mediumwide": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-440x260.png",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-440x260.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-440x260.png"
                             },
                             "largewide": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-640x300.png",
                                 "width": 640,
                                 "height": 300,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-640x300.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-640x300.png"
                             },
                             "xlarge": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-800x625.png",
                                 "width": 800,
                                 "height": 625,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-800x625.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-800x625.png"
                             },
                             "full": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-1200x937.png",
                                 "width": 1200,
                                 "height": 937,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-1200x937.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-1200x937.png"
                             },
                             "featured": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-800x625.png",
                                 "width": 800,
                                 "height": 625,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-800x625.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-800x625.png"
                             },
                             "twentyseventeen-featured-image": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-2000x1200.png",
                                 "width": 2000,
                                 "height": 1200,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-2000x1200.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-2000x1200.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "Screen-Shot-2018-08-14-at-3.02.48-PM-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM-100x100.png"
                             }
                         },
                         "image_meta": {
@@ -1304,7 +1304,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/Screen-Shot-2018-08-14-at-3.02.48-PM.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/177" }
@@ -1712,63 +1712,63 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-150x150.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-150x150.jpeg"
                             },
                             "medium": {
                                 "file": "acs7-440x314.jpeg",
                                 "width": 440,
                                 "height": 314,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-440x314.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-440x314.jpeg"
                             },
                             "large": {
                                 "file": "acs7-640x314.jpeg",
                                 "width": 640,
                                 "height": 314,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-640x314.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-640x314.jpeg"
                             },
                             "post-thumbnail": {
                                 "file": "acs7-75x75.jpeg",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-75x75.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-75x75.jpeg"
                             },
                             "small": {
                                 "file": "acs7-150x74.jpeg",
                                 "width": 150,
                                 "height": 74,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-150x74.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-150x74.jpeg"
                             },
                             "mediumwide": {
                                 "file": "acs7-440x260.jpeg",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-440x260.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-440x260.jpeg"
                             },
                             "largewide": {
                                 "file": "acs7-640x300.jpeg",
                                 "width": 640,
                                 "height": 300,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-640x300.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-640x300.jpeg"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "acs7-100x100.jpeg",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7-100x100.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7-100x100.jpeg"
                             },
                             "full": {
                                 "file": "acs7.jpeg",
                                 "width": 640,
                                 "height": 314,
                                 "mime_type": "image/jpeg",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7.jpeg"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7.jpeg"
                             }
                         },
                         "image_meta": {
@@ -1786,7 +1786,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/acs7.jpeg",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/acs7.jpeg",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/326" }
@@ -2134,84 +2134,84 @@
                                 "width": 150,
                                 "height": 150,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-150x150.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-150x150.png"
                             },
                             "medium": {
                                 "file": "hmi1-440x330.png",
                                 "width": 440,
                                 "height": 330,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-440x330.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-440x330.png"
                             },
                             "medium_large": {
                                 "file": "hmi1-768x354.png",
                                 "width": 768,
                                 "height": 354,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-768x354.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-768x354.png"
                             },
                             "large": {
                                 "file": "hmi1-640x480.png",
                                 "width": 640,
                                 "height": 480,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-640x480.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-640x480.png"
                             },
                             "post-thumbnail": {
                                 "file": "hmi1-75x75.png",
                                 "width": 75,
                                 "height": 75,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-75x75.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-75x75.png"
                             },
                             "small": {
                                 "file": "hmi1-150x69.png",
                                 "width": 150,
                                 "height": 69,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-150x69.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-150x69.png"
                             },
                             "mediumwide": {
                                 "file": "hmi1-440x260.png",
                                 "width": 440,
                                 "height": 260,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-440x260.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-440x260.png"
                             },
                             "largewide": {
                                 "file": "hmi1-640x300.png",
                                 "width": 640,
                                 "height": 300,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-640x300.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-640x300.png"
                             },
                             "xlarge": {
                                 "file": "hmi1-800x369.png",
                                 "width": 800,
                                 "height": 369,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-800x369.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-800x369.png"
                             },
                             "full": {
                                 "file": "hmi1-1200x554.png",
                                 "width": 1200,
                                 "height": 554,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-1200x554.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-1200x554.png"
                             },
                             "featured": {
                                 "file": "hmi1-800x369.png",
                                 "width": 800,
                                 "height": 369,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-800x369.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-800x369.png"
                             },
                             "twentyseventeen-thumbnail-avatar": {
                                 "file": "hmi1-100x100.png",
                                 "width": 100,
                                 "height": 100,
                                 "mime_type": "image/png",
-                                "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1-100x100.png"
+                                "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1-100x100.png"
                             }
                         },
                         "image_meta": {
@@ -2229,7 +2229,7 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://whoisfelix.com/wordpress/wp-content/uploads/2018/08/hmi1.png",
+                    "source_url": "https://felixstatic.s3-ap-southeast-2.amazonaws.com/uploads/2018/08/hmi1.png",
                     "_links": {
                         "self": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/324" }
