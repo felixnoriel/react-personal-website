@@ -1,6 +1,7 @@
 {
     "version": 2,
     "name": "felixnoriel-nextjs",
+    "alias": "https://felixnoriel-nextjs.felixnoriel.now.sh",
     "builds": [
         {
             "src": "package.json",
