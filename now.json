@@ -1,7 +1,6 @@
 {
     "version": 2,
     "name": "felixnoriel-nextjs",
-    "alias": "whoisfelix.com",
     "builds": [
         {
             "src": "package.json",
