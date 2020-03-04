@@ -1,8 +1,3 @@
-import createStore, { RootServiceDependencies } from './store';
-export type RootServiceDependencies = RootServiceDependencies;
+import createStore from './store';
 export default createStore;
-
-import { RootState } from './root-reducer';
-export type RootState = RootState;
-
 export { default as rootReducer } from './root-reducer';

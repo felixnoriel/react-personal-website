@@ -11,15 +11,15 @@ import { action as toggleMenu } from 'redux-burger-menu';
 import { GoogleTagManager } from '../components/google/GoogleTagManager';
 import { Socials } from '../components/Socials';
 import { modifyWordpressObject } from '../helpers/helper';
-import { RootState } from '../store';
+import { RootState } from '../store/root-reducer';
 import { RootAction } from '../store/root-action';
 
 import Link from 'next/link';
 import Router from 'next/router';
 
-Router.onRouteChangeStart = (url: string) => NProgress.start();
-Router.onRouteChangeComplete = () => NProgress.done();
-Router.onRouteChangeError = () => NProgress.done();
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 type HeaderProps = {};
 type ReduxProps = {};
@@ -180,19 +180,19 @@ const MenuSidebar = ({ burgerMenu, bmChangeState }: any) => {
     return (
         <Menu right isOpen={burgerMenu.isOpen} customBurgerIcon={false} onStateChange={bmChangeState}>
             <div className="menu-links">
-                <Link as="/" href="/" prefetch>
+                <Link as="/" href="/">
                     <a>Home</a>
                 </Link>
-                <Link as="/projects" href="/page?name=projects" prefetch>
+                <Link as="/projects" href="/page?name=projects">
                     <a>Projects</a>
                 </Link>
-                <Link as="/career" href="/page?name=career" prefetch>
+                <Link as="/career" href="/page?name=career">
                     <a>Career</a>
                 </Link>
-                <Link as="/blog" href="/page?name=blog" prefetch>
+                <Link as="/blog" href="/page?name=blog">
                     <a>Blog</a>
                 </Link>
-                <Link as="/about" href="/page?name=about" prefetch>
+                <Link as="/about" href="/page?name=about">
                     <a>About</a>
                 </Link>
                 <a href="mailto:jrnoriel_56@yahoo.com">Contact Me</a>
@@ -211,7 +211,4 @@ const mapDispatchToProps = (dispatch: Dispatch<RootAction>): ReduxActionProps =>
     toggleMenu: (isOpen: boolean) => dispatch(toggleMenu(isOpen)),
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(HeaderContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);

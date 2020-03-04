@@ -73,7 +73,6 @@ const Project = ({ project }: any) => {
             <Link
                 as={modifyProject.custom_modified.postUrlPath}
                 href={`/page?name=projects&slug=${modifyProject.slug}`}
-                prefetch
             >
                 <a>
                     <div className="project-item">

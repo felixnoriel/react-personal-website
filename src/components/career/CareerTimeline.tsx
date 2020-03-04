@@ -64,7 +64,6 @@ export const Experience = ({ experience }: ExperienceProps) => {
                 <Link
                     as={modifyExperience.custom_modified.postUrlPath}
                     href={`/page?name=career&slug=${modifyExperience.slug}`}
-                    prefetch
                 >
                     <a>
                         <p
@@ -82,7 +81,6 @@ export const Experience = ({ experience }: ExperienceProps) => {
                 <Link
                     as={modifyExperience.custom_modified.postUrlPath}
                     href={`/page?name=career&slug=${modifyExperience.slug}`}
-                    prefetch
                 >
                     <a>
                         <figure className="image company-logo">

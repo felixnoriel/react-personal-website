@@ -1,10 +1,10 @@
 import * as React from 'react';
-import App, { Container, NextAppContext } from 'next/app';
+import App from 'next/app';
 import * as StoreJS from 'store';
 import config from '../src/helpers/config';
 import APIClient from '../src/store/api/ApiClient';
 import Service from '../src/store/api/Service';
-import createStore, { RootServiceDependencies } from '../src/store';
+import createStore from '../src/store';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import '../src/design/index.scss';
@@ -17,7 +17,15 @@ class ProviderApp extends App {
         super(props);
     }
 
-    public static async getInitialProps(context: NextAppContext) {
+    componentDidMount() {
+        // Remove the server-side injected CSS.
+        const jssStyles = document.querySelector('#jss-server-side');
+        if (jssStyles) {
+            jssStyles.parentElement.removeChild(jssStyles);
+        }
+    }
+
+    public static async getInitialProps(context) {
         let pageProps = {};
 
         if (context.Component.getInitialProps) {
@@ -30,16 +38,14 @@ class ProviderApp extends App {
         const { Component, pageProps, store }: any = this.props;
 
         return (
-            <Container>
-                <Provider store={store}>
-                    <Component {...pageProps} />
-                </Provider>
-            </Container>
+            <Provider store={store}>
+                <Component {...pageProps} />
+            </Provider>
         );
     }
 }
 
-const createDeps = (apiClient: APIClient): RootServiceDependencies => {
+const createDeps = (apiClient: APIClient) => {
     const deps = {
         service: new Service(apiClient),
         storage: StoreJS,

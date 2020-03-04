@@ -71,11 +71,7 @@ const ProjectCompanyInfo = (company: any) => {
     return (
         <div>
             <h3 className="subtitle">Company</h3>
-            <Link
-                as={modifyCompany.custom_modified.postUrlPath}
-                href={`/page?name=career&slug=${modifyCompany.slug}`}
-                prefetch
-            >
+            <Link as={modifyCompany.custom_modified.postUrlPath} href={`/page?name=career&slug=${modifyCompany.slug}`}>
                 <a>
                     {' '}
                     <p>{modifyCompany.title.rendered}</p>{' '}

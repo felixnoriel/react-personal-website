@@ -30,7 +30,7 @@ export const FooterContainer = () => {
                     <div className="content">
                         <Socials />
                         <p className="made-with">
-                            <Link as={`/about`} href={`/page?name=about`} prefetch>
+                            <Link as={`/about`} href={`/page?name=about`}>
                                 <a>About this website</a>
                             </Link>
                         </p>

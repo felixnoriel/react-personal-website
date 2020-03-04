@@ -8,7 +8,7 @@ export const ViewAllLink = (route: any, indexPage: boolean = false) => {
 
     return (
         <div className="btn-view-all-container">
-            <Link as={`${route}`} href={`/page?name=${route}`} prefetch>
+            <Link as={`${route}`} href={`/page?name=${route}`}>
                 <a className="button-view-all is-link">
                     view more <i className="fas fa-arrow-right" />
                 </a>

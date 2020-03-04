@@ -35,7 +35,7 @@ export const BlogView: React.SFC<BlogViewProps> = ({ blog }) => {
                     <div className="content" dangerouslySetInnerHTML={{ __html: modifyBlog.content.rendered }} />
                     <SharePost blog={modifyBlog} />
                     <div className="back-to-blog">
-                        <Link as={`/blog`} href={`/page?name=blog`} prefetch>
+                        <Link as={`/blog`} href={`/page?name=blog`}>
                             <a className="">
                                 <i className="fas fa-arrow-left" />
                                 Back to blog

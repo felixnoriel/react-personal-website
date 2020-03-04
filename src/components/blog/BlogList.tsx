@@ -59,11 +59,7 @@ export const BlogText = ({ blog }: any) => {
     return (
         <div className="column is-4">
             <div className="blog-item">
-                <Link
-                    as={modifyBlog.custom_modified.postUrlPath}
-                    href={`/page?name=blog&slug=${modifyBlog.slug}`}
-                    prefetch
-                >
+                <Link as={modifyBlog.custom_modified.postUrlPath} href={`/page?name=blog&slug=${modifyBlog.slug}`}>
                     <a>
                         <figure className="blog-image">
                             <img
