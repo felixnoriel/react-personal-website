@@ -6,8 +6,8 @@ const nextConfig = {
     target: 'serverless',
     env: {
         env: process.env.NODE_ENV,
-        domain: "https://felixnoriel-nextjs.felixnoriel.now.sh"
-    }
+        domain: 'https://whoisfelix.com',
+    },
 };
 
 module.exports = withCss(withSass(withTypescript(nextConfig)));
