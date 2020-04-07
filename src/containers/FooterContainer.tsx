@@ -4,7 +4,7 @@ import { Socials } from '../components/Socials';
 
 export const FooterContainer = () => {
     return (
-        <div>
+        <div className="footer-wrapper">
             <section className="section container contact-container has-text-centered">
                 <div className="box hero is-dark2">
                     <div className="columns level">
@@ -35,7 +35,7 @@ export const FooterContainer = () => {
                             </Link>
                         </p>
                         <p className="copyright">
-                            Created by Felix Noriel <i className="far fa-copyright" /> 2019
+                            Created by Felix Noriel <i className="far fa-copyright" /> {new Date().getFullYear()}
                         </p>
                     </div>
                 </div>

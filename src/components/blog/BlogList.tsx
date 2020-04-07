@@ -81,7 +81,7 @@ export const BlogText = ({ blog }: any) => {
                             />
                         </div>
                         <p className="is-link btn-read-more">
-                            Read More
+                            View
                             <i className="fas fa-arrow-right " />
                         </p>
                     </a>

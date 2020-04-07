@@ -1,7 +1,7 @@
 @import '../../design/variables.scss';
 /**** PROJECTS ****/
 .projects-container {
-    margin-top: -9rem;
+    margin-top: -9rem !important;
     &.career {
         margin-top: -6rem;
     }

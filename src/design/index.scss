@@ -27,6 +27,7 @@ body {
     .learn-more {
         font-weight: 600;
         .btn-learn-more {
+            margin-left: 5px;
             font-size: 25px;
             vertical-align: middle;
         }
@@ -142,6 +143,9 @@ body {
 }
 
 /***** FOOTER *****/
+.footer-wrapper {
+    background-color: #f5f5f5;
+}
 .contact-container {
     margin-bottom: -5rem;
     z-index: 1;

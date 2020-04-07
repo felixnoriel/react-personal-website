@@ -6,7 +6,7 @@ export const Skills = () => {
             <section id="skills-section" className="hero is-medium is-primary is-long is-bold">
                 <div className="hero-body">
                     <div className="container has-text-centered">
-                        <h1 className="title">I have over six years experience as a Full-Stack Software Engineer</h1>
+                        <h1 className="title">I have over 6 years experience as a Full-Stack Software Engineer</h1>
                         <h2 className="subtitle">
                             Strategising, designing, and developing big scalable applications from end to end
                         </h2>
@@ -45,14 +45,14 @@ export const Skills = () => {
                             <i className="fas fa-code-branch" />
                         </p>
                         <h2 className="title is-size-4 is-spaced">Back end </h2>
-                        <h4 className="list-title">OOP languages</h4>
+                        <h4 className="list-title">languages</h4>
                         <ul>
                             <li>NodeJs</li>
                             <li>PHP</li>
                             <li>Java</li>
                             <li>.NET, C#</li>
                         </ul>
-                        <h4 className="list-title">Microservices</h4>
+                        <h4 className="list-title">Tracing/Monitoring</h4>
                         <ul>
                             <li>Opentracing, Jaeger Tracing</li>
                             <li>Prometheus for monitoring</li>
@@ -72,19 +72,17 @@ export const Skills = () => {
                         <h2 className="title is-size-4 is-spaced">Dev Ops </h2>
                         <h4 className="list-title">AWS Services</h4>
                         <ul>
-                            <li>EC2 Instance</li>
                             <li>API Gateway</li>
+                            <li>Lambda</li>
                             <li>VPC, Route53</li>
                             <li>Cloudfront</li>
-                            <li>Elastic Load Balancing</li>
                             <li>S3 Bucket</li>
+                            <li>EC2, ELB, etc</li>
                         </ul>
 
                         <h4 className="list-title">Google Cloud Services</h4>
-                        <h4 className="list-title">Containers</h4>
-                        <ul>
-                            <li>Docker</li>
-                        </ul>
+                        <h4 className="list-title">Docker</h4>
+                        <h4 className="list-title">Serverless</h4>
                         <h4 className="list-title">Server Management</h4>
                         <ul>
                             <li>Linux, Ubuntu</li>
