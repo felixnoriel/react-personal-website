@@ -1,19 +1,19 @@
 [
     {
-        "id": 166,
+        "id": 168,
         "date": "2018-08-14T04:12:57",
         "date_gmt": "2018-08-14T04:12:57",
         "guid": { "rendered": "http://35.227.92.179/wordpress/?post_type=career&#038;p=166" },
         "modified": "2018-08-14T04:13:13",
         "modified_gmt": "2018-08-14T04:13:13",
-        "slug": "switch-media",
+        "slug": "zookal",
         "status": "publish",
         "type": "career",
-        "link": "https://whoisfelix.com/wordpress/career/switch-media/",
-        "title": { "rendered": "Switch Media" },
+        "link": "https://whoisfelix.com/wordpress/career/zookal/",
+        "title": { "rendered": "Zookal" },
         "content": { "rendered": "", "protected": false },
         "excerpt": { "rendered": "", "protected": false },
-        "featured_media": 167,
+        "featured_media": 168,
         "parent": 0,
         "menu_order": 6,
         "comment_status": "open",
@@ -23,12 +23,12 @@
         "tags": [],
         "career-skills-category": [],
         "custom_meta": {
-            "_thumbnail_id": "167",
-            "custom_meta_company_name": "Switch Media",
-            "custom_meta_job_title": "Senior Software Engineer",
-            "custom_meta_start_date": "Aug 2018",
-            "custom_meta_end_date": "July 2019",
-            "custom_meta_location": "Pyrmont, Sydney"
+            "_thumbnail_id": "168",
+            "custom_meta_company_name": "Zookal",
+            "custom_meta_job_title": "Software Engineer",
+            "custom_meta_start_date": "Feb 2020",
+            "custom_meta_end_date": "Present",
+            "custom_meta_location": "Sydney, Australia"
         },
         "_links": {
             "self": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166" }],
@@ -44,7 +44,7 @@
                 { "id": 168, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/career/166/revisions/168" }
             ],
             "wp:featuredmedia": [
-                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167" }
+                { "embeddable": true, "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/168" }
             ],
             "wp:attachment": [{ "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media?parent=166" }],
             "wp:term": [
@@ -64,12 +64,12 @@
         "_embedded": {
             "wp:featuredmedia": [
                 {
-                    "id": 167,
+                    "id": 168,
                     "date": "2018-08-14T04:12:28",
-                    "slug": "switch-media-web-logo-2016-1",
+                    "slug": "zookal-web-logo-2016-1",
                     "type": "attachment",
-                    "link": "https://whoisfelix.com/wordpress/career/switch-media/switch-media-web-logo-2016-1/",
-                    "title": { "rendered": "Switch-Media-web-logo-2016-1" },
+                    "link": "https://whoisfelix.com/wordpress/career/zookal/zookal-web-logo-2016-1/",
+                    "title": { "rendered": "zookal-web-logo-2016-1" },
                     "author": 1,
                     "caption": { "rendered": "" },
                     "alt_text": "",
@@ -78,42 +78,42 @@
                     "media_details": {
                         "width": 397,
                         "height": 72,
-                        "file": "2018/08/Switch-Media-web-logo-2016-1.png",
+                        "file": "2018/08/zookal-web-logo-2016-1.png",
                         "sizes": {
                             "thumbnail": {
-                                "file": "Switch-Media-web-logo-2016-1-150x72.png",
+                                "file": "zookal-web-logo-2016-1-150x72.png",
                                 "width": 150,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://felixstatic.s3.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-150x72.png"
+                                "source_url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg"
                             },
                             "post-thumbnail": {
-                                "file": "Switch-Media-web-logo-2016-1-75x72.png",
+                                "file": "zookal-web-logo-2016-1-75x72.png",
                                 "width": 75,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://felixstatic.s3.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-75x72.png"
+                                "source_url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg"
                             },
                             "small": {
-                                "file": "Switch-Media-web-logo-2016-1-150x27.png",
+                                "file": "zookal-web-logo-2016-1-150x27.png",
                                 "width": 150,
                                 "height": 27,
                                 "mime_type": "image/png",
-                                "source_url": "https://felixstatic.s3.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-150x27.png"
+                                "source_url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg"
                             },
                             "twentyseventeen-thumbnail-avatar": {
-                                "file": "Switch-Media-web-logo-2016-1-100x72.png",
+                                "file": "zookal-web-logo-2016-1-100x72.png",
                                 "width": 100,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://felixstatic.s3.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1-100x72.png"
+                                "source_url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg"
                             },
                             "full": {
-                                "file": "Switch-Media-web-logo-2016-1.png",
+                                "file": "zookal-web-logo-2016-1.png",
                                 "width": 397,
                                 "height": 72,
                                 "mime_type": "image/png",
-                                "source_url": "https://felixstatic.s3.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1.png"
+                                "source_url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg"
                             }
                         },
                         "image_meta": {
@@ -131,10 +131,10 @@
                             "keywords": []
                         }
                     },
-                    "source_url": "https://felixstatic.s3.amazonaws.com/uploads/2018/08/Switch-Media-web-logo-2016-1.png",
+                    "source_url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg",
                     "_links": {
                         "self": [
-                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/167" }
+                            { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media/168" }
                         ],
                         "collection": [
                             { "attributes": [], "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/media" }
@@ -154,7 +154,7 @@
                         "replies": [
                             {
                                 "attributes": { "embeddable": true },
-                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=167"
+                                "href": "https://whoisfelix.com/wordpress/wp-json/wp/v2/comments?post=168"
                             }
                         ]
                     }
