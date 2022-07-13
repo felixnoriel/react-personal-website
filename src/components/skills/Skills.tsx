@@ -6,7 +6,7 @@ export const Skills = () => {
             <section id="skills-section" className="hero is-medium is-primary is-long is-bold">
                 <div className="hero-body">
                     <div className="container has-text-centered">
-                        <h1 className="title">I have over 8 years of experience as a Full-Stack Software Engineer</h1>
+                        <h1 className="title">I have over 9 years of experience as a Full-Stack Software Engineer</h1>
                         <h2 className="subtitle">
                             Strategising, designing, and developing big scalable applications from end to end
                         </h2>
