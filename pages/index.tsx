@@ -54,8 +54,8 @@ class Index extends React.PureComponent {
                 <Intro />
                 <Skills />
                 <CareerTimeline indexPage={true} experiences={career.careerList} />
-                <ProjectList indexPage={true} projects={project.projectList} />
                 <BlogList indexPage={true} blogList={blog.blogList} />
+                <ProjectList indexPage={true} projects={project.projectList} />
             </MainContainer>
         );
     }
@@ -67,7 +67,4 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>): ReduxActionProps => ({});
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Index);
+export default connect(mapStateToProps, mapDispatchToProps)(Index);
