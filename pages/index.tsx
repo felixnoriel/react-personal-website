@@ -54,8 +54,8 @@ class Index extends React.PureComponent {
                 <Intro />
                 <Skills />
                 <CareerTimeline indexPage={true} experiences={career.careerList} />
-                <BlogList indexPage={true} blogList={blog.blogList} />
                 <ProjectList indexPage={true} projects={project.projectList} />
+                <BlogList indexPage={true} blogList={blog.blogList} />
             </MainContainer>
         );
     }
