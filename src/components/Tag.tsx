@@ -1,5 +1,14 @@
-import * as React from 'react';
+import { Badge } from './ui/badge'
 
-export const Tag = (title: string, key: any, className?: string) => {
-    return <p key={key} className={`tag ${className}`} dangerouslySetInnerHTML={{ __html: title }} />;
-};
+interface TagProps {
+  title: string
+  className?: string
+}
+
+export function Tag({ title, className }: TagProps) {
+  return (
+    <Badge variant="secondary" className={className}>
+      <span dangerouslySetInnerHTML={{ __html: title }} />
+    </Badge>
+  )
+}

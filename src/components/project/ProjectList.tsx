@@ -1,108 +1,86 @@
-import * as React from 'react';
+import { Link } from 'react-router-dom'
+import { Card, CardContent } from '../ui/card'
+import { ViewAllLink } from '../ViewAllLink'
+import { Tag } from '../Tag'
+import type { Project } from '../../types/data'
 
-import { modifyWordpressObject } from '../../helpers/helper';
-import { Tag } from '../Tag';
-import { ViewAllLink } from '../ViewAllLink';
-import Link from 'next/link';
-import './Project.scss';
+interface ProjectListProps {
+  projects: Project[]
+  viewType?: string
+  indexPage?: boolean
+}
 
-type ProjectListProps = {
-    projects: any[];
-    viewType?: string;
-    indexPage?: boolean;
-};
+export function ProjectList({ projects, viewType, indexPage }: ProjectListProps) {
+  if (!projects || !projects[0]) {
+    return <div className="text-center text-muted-foreground">No projects found</div>
+  }
 
-export const ProjectList: React.SFC<ProjectListProps> = ({ projects, viewType, indexPage }) => {
-    if (!projects || !projects[0]) {
-        return <div />;
-    }
-    return (
-        <div>
-            <ProjectListHeader viewType={viewType} />
-            <section key="project-2" className={`section ${viewType} container projects-container`}>
-                {ProjectsListText(projects)}
-                {ViewAllLink('projects', indexPage)}
-            </section>
+  return (
+    <div>
+      <ProjectListHeader viewType={viewType} />
+      <section className="py-12 container mx-auto max-w-7xl px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project: Project) => (
+            <ProjectItem key={project.slug} project={project} />
+          ))}
         </div>
-    );
-};
+        <ViewAllLink route="projects" indexPage={indexPage} />
+      </section>
+    </div>
+  )
+}
 
-const ProjectListHeader = ({ viewType }: any) => {
-    let title = 'Projects';
-    let subtitle = 'Some of my past work';
-    let heroSize = 'is-medium';
-    if (viewType === 'career') {
-        title = "Some projects I've been involved with";
-        subtitle = '';
-        heroSize = '';
-    }
-    return (
-        <section className={`hero ${heroSize} is-darkturquoise is-long is-bold`}>
-            <div className="hero-body">
-                <div className="container has-text-centered">
-                    <h1 className="title"> {title} </h1>
-                    <h2 className="subtitle"> {subtitle} </h2>
-                </div>
+function ProjectListHeader({ viewType }: { viewType?: string }) {
+  let title = 'Projects'
+  let subtitle = 'Some of my past work'
+
+  if (viewType === 'career') {
+    title = "Some projects I've been involved with"
+    subtitle = ''
+  }
+
+  return (
+    <section className="bg-teal-gradient text-white py-20 text-center">
+      <div className="container mx-auto max-w-7xl px-4">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
+        {subtitle && <h2 className="text-xl md:text-2xl opacity-90">{subtitle}</h2>}
+      </div>
+    </section>
+  )
+}
+
+function ProjectItem({ project }: { project: Project }) {
+  if (!project) {
+    return null
+  }
+
+  return (
+    <Link to={`/projects/${project.slug}`} className="block group">
+      <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow">
+        {project.image?.url && (
+          <figure className="aspect-video overflow-hidden">
+            <img
+              src={project.image.url}
+              alt={project.image.alt || project.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </figure>
+        )}
+        <CardContent className="p-6">
+          <h2 className="text-xl font-semibold mb-3 line-clamp-2" dangerouslySetInnerHTML={{ __html: project.title }} />
+          <div
+            className="text-sm text-muted-foreground line-clamp-3 mb-4"
+            dangerouslySetInnerHTML={{ __html: project.excerpt }}
+          />
+          {project.tags && project.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <Tag key={tag.slug} title={tag.name} />
+              ))}
             </div>
-        </section>
-    );
-};
-
-const ProjectsListText = (projects: any) => {
-    if (!projects || !projects.map) {
-        return '';
-    }
-    const projectsText = projects.map((project: any) => {
-        return <Project key={project.id} project={project} />;
-    });
-
-    return <div className="columns is-multiline">{projectsText}</div>;
-};
-
-const getImage = (modifyProject: any) => {
-    if (!modifyProject.custom_modified.media || !modifyProject.custom_modified.media.medium) {
-        return '';
-    }
-    return modifyProject.custom_modified.media.medium.source_url;
-};
-const Project = ({ project }: any) => {
-    const modifyProject = modifyWordpressObject(project);
-
-    return (
-        <div className="column is-4">
-            <Link
-                as={modifyProject.custom_modified.postUrlPath}
-                href={`/page?name=projects&slug=${modifyProject.slug}`}
-                prefetch
-            >
-                <a>
-                    <div className="project-item">
-                        <figure className="image">
-                            <img
-                                src={getImage(modifyProject)}
-                                alt={modifyProject.title.rendered}
-                                title={modifyProject.title.rendered}
-                            />
-                        </figure>
-                        <h2 className="title" dangerouslySetInnerHTML={{ __html: modifyProject.title.rendered }} />
-                        <div className="content">
-                            <div dangerouslySetInnerHTML={{ __html: modifyProject.excerpt.rendered }} />
-                        </div>
-                        {TagList(modifyProject.custom_modified.tags)}
-                    </div>
-                </a>
-            </Link>
-        </div>
-    );
-};
-
-const TagList = (tags: any) => {
-    if (!tags) {
-        return '';
-    }
-    const tagsText = tags.map((tag: any, index: number) => {
-        return Tag(tag.name, index);
-    });
-
-    return <div className="tags">{tagsText}</div>;
-};
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  )
+}

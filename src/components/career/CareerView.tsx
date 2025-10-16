@@ -1,58 +1,51 @@
-import * as React from 'react';
-import { modifyWordpressObject } from '../../helpers/helper';
-import { ProjectList } from '../project/ProjectList';
-import './Career.scss';
+import { ProjectList } from '../project/ProjectList'
+import type { Career, Project } from '../../types/data'
 
-type CareerViewProps = {
-    experience: any;
-    projects: any[];
-};
+interface CareerViewProps {
+  experience: Career | null
+  projects: Project[]
+}
 
-export const CareerView: React.SFC<CareerViewProps> = ({ experience, projects }) => {
-    return (
-        <div>
-            <section key="career-view-1" className="section career-view-container">
-                <CareerInfo experience={experience} />
-            </section>
-            <ProjectList projects={projects} viewType="career" />
-        </div>
-    );
-};
+export function CareerView({ experience, projects }: CareerViewProps) {
+  return (
+    <div>
+      <section className="py-12">
+        <CareerInfo experience={experience} />
+      </section>
+      <ProjectList projects={projects} viewType="career" />
+    </div>
+  )
+}
 
-type CareerInfoProps = {
-    experience: any;
-};
-const CareerInfo = ({ experience }: CareerInfoProps) => {
-    if (!experience || !experience[0]) {
-        return <div />;
-    }
-    const modifyExperience = modifyWordpressObject(experience[0]);
-    return (
-        <div className="container">
-            <div className="has-text-centered">
-                <h1
-                    className="title "
-                    dangerouslySetInnerHTML={{
-                        __html: `${modifyExperience.custom_meta.custom_meta_job_title}, ${modifyExperience.title.rendered}`,
-                    }}
-                />
-                <h2 className="subtitle">
-                    {modifyExperience.custom_meta.custom_meta_start_date} -{' '}
-                    {modifyExperience.custom_meta.custom_meta_end_date}
-                </h2>
-                <figure className="company-logo image">
-                    <img
-                        src={modifyExperience.custom_modified.featuredImgSrc.source_url}
-                        alt={modifyExperience.title.rendered}
-                        title={modifyExperience.title.rendered}
-                    />
-                </figure>
-                <em
-                    className=""
-                    dangerouslySetInnerHTML={{ __html: `${modifyExperience.custom_meta.custom_meta_location}` }}
-                />
-            </div>
-            <div className="content" dangerouslySetInnerHTML={{ __html: modifyExperience.custom_modified.content }} />
-        </div>
-    );
-};
+function CareerInfo({ experience }: { experience: Career | null }) {
+  if (!experience) {
+    return <div className="text-center py-20 text-muted-foreground">Experience not found</div>
+  }
+
+  return (
+    <div className="container mx-auto max-w-4xl px-4">
+      <div className="text-center mb-12">
+        <h1
+          className="text-4xl md:text-5xl font-bold mb-4"
+          dangerouslySetInnerHTML={{
+            __html: `${experience.jobTitle}, ${experience.title}`,
+          }}
+        />
+        <h2 className="text-xl text-muted-foreground mb-8">
+          {experience.startDate} - {experience.endDate}
+        </h2>
+        {experience.image?.url && (
+          <figure className="flex justify-center mb-6">
+            <img
+              src={experience.image.url}
+              alt={experience.image.alt || experience.title}
+              className="max-w-md w-full h-auto"
+            />
+          </figure>
+        )}
+        <em className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: experience.location }} />
+      </div>
+      <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: experience.content }} />
+    </div>
+  )
+}

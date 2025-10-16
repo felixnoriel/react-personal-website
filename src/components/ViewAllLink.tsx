@@ -1,18 +1,23 @@
-import Link from 'next/link';
-import * as React from 'react';
+import { Link } from 'react-router-dom'
+import { Button } from './ui/button'
 
-export const ViewAllLink = (route: any, indexPage: boolean = false) => {
-    if (!indexPage) {
-        return;
-    }
+interface ViewAllLinkProps {
+  route: string
+  indexPage?: boolean
+}
 
-    return (
-        <div className="btn-view-all-container">
-            <Link as={`${route}`} href={`/page?name=${route}`} prefetch>
-                <a className="button-view-all is-link">
-                    see all <i className="fas fa-arrow-right" />
-                </a>
-            </Link>
-        </div>
-    );
-};
+export function ViewAllLink({ route, indexPage = false }: ViewAllLinkProps) {
+  if (!indexPage) {
+    return null
+  }
+
+  return (
+    <div className="flex justify-center mt-8">
+      <Link to={`/${route}`}>
+        <Button variant="link" className="text-lg">
+          see all <i className="fas fa-arrow-right ml-2" />
+        </Button>
+      </Link>
+    </div>
+  )
+}

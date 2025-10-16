@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+bun.lockb
+
+# Build outputs
+dist
+.vite
+
+# Generated files
+src/data/career.ts
+src/data/projects.ts
+public/data/blog.json
+
+# Config files that should not be formatted
+package-lock.json
+bun.lockb
+
+# Old version
+old-version
+
+# Documentation (preserve markdown formatting)
+*.md
+

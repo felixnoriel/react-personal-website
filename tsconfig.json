@@ -1,13 +1,4 @@
 {
-    "compilerOptions": {
-        "module": "esnext",
-        "target": "esnext",
-        "experimentalDecorators": true,
-        "sourceMap": true,
-        "jsx": "react",
-        "noImplicitReturns": true,
-        "strict": true,
-        "moduleResolution": "node"
-    },
-    "include": ["./src/**/*"]
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

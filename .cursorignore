@@ -1,0 +1,9 @@
+# Exclude from Cursor AI searches and indexing
+old-version/
+node_modules/
+dist/
+.vite/
+.git/
+bun.lock
+*.log
+

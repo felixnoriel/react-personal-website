@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 220 13% 28%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 28%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 28%;
+    /* Teal/Turquoise primary color */
+    --primary: 174 100% 41%;
+    --primary-foreground: 0 0% 100%;
+    /* Teal gradient variant */
+    --secondary: 172 66% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 174 100% 41%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 174 100% 41%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Oxygen', sans-serif;
+  }
+
+  .font-raleway {
+    font-family: 'Raleway', 'Oxygen', sans-serif;
+  }
+}
+
+/* Custom effects from original design */
+.shadow.pink {
+  background: linear-gradient(to bottom, transparent 75%, rgba(255, 105, 180, 0.4) 75%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.shadow.success {
+  background: linear-gradient(to bottom, transparent 75%, rgba(72, 199, 142, 0.4) 75%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.shadow.info {
+  background: linear-gradient(to bottom, transparent 75%, rgba(62, 142, 208, 0.4) 75%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.shadow.purple {
+  background: linear-gradient(to bottom, transparent 75%, rgba(138, 43, 226, 0.4) 75%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Teal gradient backgrounds */
+.bg-teal-gradient {
+  background: linear-gradient(135deg, #00d2a0 0%, #00c9b7 100%);
+}
+
+.bg-teal-gradient-dark {
+  background: linear-gradient(135deg, #00b88f 0%, #00a89e 100%);
+}
+
+/* Footer dark background */
+.bg-dark-slate {
+  background-color: #2c3e50;
+}
