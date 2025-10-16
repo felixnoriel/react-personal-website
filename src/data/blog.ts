@@ -1,4 +1,11 @@
-[
+/**
+ * blogPosts data
+ * Auto-generated - DO NOT EDIT MANUALLY
+ */
+
+import type { BlogPost } from '../types/data';
+
+export const blogPosts: BlogPost[] = [
   {
     "slug": "5-things-to-do-in-ho-chi-minh-city-vietnam",
     "title": "5 Things to do in Ho Chi Minh City, Vietnam",
@@ -269,4 +276,4 @@
     "modifiedDate": "2018-08-26T10:44:32",
     "tags": []
   }
-]
+];

@@ -17,11 +17,11 @@ interface SEOHeadProps {
 const defaultMeta = {
   title: 'Felix Noriel - Software Engineer',
   description:
-    'Software Engineer who loves solving problems and getting my hands dirty with new technologies. Big foodie, loves cooking and traveling.',
-  image: 'https://whoisfelix.com/og-image.jpg',
-  url: 'https://whoisfelix.com',
+    'Product-Focused Software Engineer who loves solving problems and getting my hands dirty with new technologies. Big foodie, loves cooking and traveling.',
+  image:
+    'https://media.licdn.com/dms/image/v2/C5603AQELrWWM8qWfTA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1595380035576?e=1762387200&v=beta&t=evvVd9G1ZHlqC1HBM6SfEZn81AQg2SevcgwHCtQmoao',
+  url: 'https://felixnoriel-dashify.vercel.app',
   siteName: 'Felix Noriel',
-  twitterHandle: '@felixnoriel',
 }
 
 export function SEOHead({
@@ -62,8 +62,6 @@ export function SEOHead({
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content={defaultMeta.twitterHandle} />
-      <meta name="twitter:creator" content={defaultMeta.twitterHandle} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />

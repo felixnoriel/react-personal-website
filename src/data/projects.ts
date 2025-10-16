@@ -81,7 +81,7 @@ export const projects: Project[] = [
       "title": "The CEO Magazine",
       "slug": "the-ceo-magazine",
       "image": {
-        "url": "",
+        "url": "https://via.placeholder.com/800x600",
         "alt": ""
       }
     }
@@ -201,7 +201,7 @@ export const projects: Project[] = [
       "title": "The CEO Magazine",
       "slug": "the-ceo-magazine",
       "image": {
-        "url": "",
+        "url": "https://via.placeholder.com/800x600",
         "alt": ""
       }
     }
@@ -265,7 +265,7 @@ export const projects: Project[] = [
       "title": "The CEO Magazine",
       "slug": "the-ceo-magazine",
       "image": {
-        "url": "",
+        "url": "https://via.placeholder.com/800x600",
         "alt": ""
       }
     }
@@ -341,7 +341,7 @@ export const projects: Project[] = [
       "title": "Yondu",
       "slug": "yondu",
       "image": {
-        "url": "",
+        "url": "https://via.placeholder.com/800x600",
         "alt": ""
       }
     }
@@ -401,7 +401,7 @@ export const projects: Project[] = [
       "title": "Yondu",
       "slug": "yondu",
       "image": {
-        "url": "",
+        "url": "https://via.placeholder.com/800x600",
         "alt": ""
       }
     }

@@ -7,9 +7,9 @@ dist
 .vite
 
 # Generated files
+src/data/blog.ts
 src/data/career.ts
 src/data/projects.ts
-public/data/blog.json
 
 # Config files that should not be formatted
 package-lock.json

@@ -180,23 +180,23 @@ function transformData() {
     fs.mkdirSync(publicDataDir, { recursive: true })
   }
 
-  console.log('🔄 Optimized data transformation...\n')
+  console.log('🔄 Data transformation...\n')
 
-  // Blog: Save as JSON (too large for bundling)
-  console.log('📝 Transforming blog posts → JSON...')
+  // Blog: Save as TypeScript (Vite 5.x handles it fine)
+  console.log('📝 Transforming blog posts → TypeScript...')
   const blogJson = JSON.parse(fs.readFileSync(path.join(oldDataDir, 'blog.json'), 'utf-8'))
   const blogPosts = transformBlogPosts(blogJson)
-  fs.writeFileSync(path.join(publicDataDir, 'blog.json'), JSON.stringify(blogPosts, null, 2))
-  console.log(`✅ Blog: ${blogPosts.length} posts → public/data/blog.json (fetched at runtime)\n`)
+  fs.writeFileSync(path.join(srcDataDir, 'blog.ts'), generateTSFile('blogPosts', 'BlogPost', blogPosts))
+  console.log(`✅ Blog: ${blogPosts.length} posts → src/data/blog.ts (bundled)\n`)
 
-  // Career: Save as TypeScript (small, bundle it)
+  // Career: Save as TypeScript
   console.log('💼 Transforming career → TypeScript...')
   const careerJson = JSON.parse(fs.readFileSync(path.join(oldDataDir, 'career.json'), 'utf-8'))
   const careers = transformCareer(careerJson)
   fs.writeFileSync(path.join(srcDataDir, 'career.ts'), generateTSFile('careers', 'Career', careers))
   console.log(`✅ Career: ${careers.length} entries → src/data/career.ts (bundled)\n`)
 
-  // Projects: Save as TypeScript (small, bundle it)
+  // Projects: Save as TypeScript
   console.log('🚀 Transforming projects → TypeScript...')
   const projectsJson = JSON.parse(fs.readFileSync(path.join(oldDataDir, 'projects.json'), 'utf-8'))
   const projects = transformProjects(projectsJson)
@@ -204,8 +204,7 @@ function transformData() {
   console.log(`✅ Projects: ${projects.length} projects → src/data/projects.ts (bundled)\n`)
 
   console.log('🎉 Data transformation complete!')
-  console.log(`📁 TypeScript (bundled): ${srcDataDir}`)
-  console.log(`📁 JSON (runtime): ${publicDataDir}`)
+  console.log(`📁 All data bundled as TypeScript: ${srcDataDir}`)
 }
 
 transformData()

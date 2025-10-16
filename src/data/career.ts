@@ -10,7 +10,7 @@ export const careers: Career[] = [
     "slug": "genopets",
     "title": "Genopets",
     "content": "",
-    "jobTitle": "Senior Full-Stack Engineer",
+    "jobTitle": "Full-Stack Engineer",
     "startDate": "Apr 2022",
     "endDate": "Present",
     "location": "Genoverse",

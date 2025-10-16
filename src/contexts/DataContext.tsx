@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { BlogPost, Career, Project } from '../types/data'
+import { blogPosts } from '../data/blog'
 import { careers } from '../data/career'
 import { projects } from '../data/projects'
 
@@ -20,31 +21,28 @@ const DataContext = createContext<DataContextType | undefined>(undefined)
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<DataState>({
     blog: [],
-    career: careers, // Bundled - instant
-    projects: projects, // Bundled - instant
+    career: [],
+    projects: [],
     loading: true,
     error: null,
   })
 
-  const loadData = async () => {
+  const loadData = () => {
     try {
-      // Fetch blog data at runtime (too large to bundle)
-      const response = await fetch('/data/blog.json')
-      const blogData: BlogPost[] = await response.json()
-
+      // All data bundled as TypeScript - instant, no HTTP requests!
       setState({
-        blog: blogData,
+        blog: blogPosts,
         career: careers,
         projects: projects,
         loading: false,
         error: null,
       })
     } catch (error) {
-      console.error('Error loading blog data:', error)
+      console.error('Error loading data:', error)
       setState((prev) => ({
         ...prev,
         loading: false,
-        error: 'Failed to load blog data',
+        error: 'Failed to load data',
       }))
     }
   }
