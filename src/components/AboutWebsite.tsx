@@ -5,7 +5,7 @@ export function AboutWebsite() {
       <div className="prose prose-lg mb-12">
         <ul>
           <li>
-            I'm a <strong>Senior Software Engineer</strong> based in Sydney, Australia
+            I'm a Product-focused <strong>Senior Software Engineer</strong> based in Sydney, Australia
           </li>
           <li>
             When I'm not in front of my computer, I like to cook, trying out different restaurants and cuisines, and

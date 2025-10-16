@@ -22,25 +22,27 @@ export function Skills() {
 
             <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">frameworks</h4>
             <ul className="space-y-1 text-sm">
-              <li>React (Hooks, NextJs)</li>
-              <li>TypeScript</li>
-              <li>JavaScript</li>
-              <li>AngularJs</li>
-              <li>JQuery</li>
+              <li>React (Hooks, Vite, NextJs)</li>
+              <li>AngularJs/JQuery</li>
             </ul>
 
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Responsive design</h4>
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">UI</h4>
             <ul className="space-y-1 text-sm">
-              <li>Tailwind</li>
-              <li>HTML 5 & CSS 3 (SASS)</li>
-              <li>Flexbox, Grid Layout</li>
-              <li>Bulma, Ant Design, Bootstrap</li>
+              <li>Tailwind, Chakra, Material, Shadcn</li>
             </ul>
 
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Tools</h4>
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Others</h4>
             <ul className="space-y-1 text-sm">
+              <li>GraphQL</li>
+              <li>Storybook</li>
               <li>Turborepo</li>
               <li>Webpack</li>
+            </ul>
+
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Testing</h4>
+            <ul className="space-y-1 text-sm">
+              <li>Jest</li>
+              <li>Playwright</li>
             </ul>
           </div>
 
@@ -53,24 +55,21 @@ export function Skills() {
             <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">languages</h4>
             <ul className="space-y-1 text-sm">
               <li>Node (NestJS, Express, Koa)</li>
-              <li>PHP</li>
-              <li>Java</li>
-              <li>.NET, C#</li>
+              <li>Java, .NET, C#, PHP</li>
             </ul>
 
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Tracing/Monitoring</h4>
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Databases</h4>
+            <ul className="space-y-1 text-sm">
+              <li>PostgreSQL</li>
+              <li>MySQL</li>
+              <li>Firebase/DocumentDB</li>
+              <li>Convex</li>
+            </ul>
+
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Monitoring</h4>
             <ul className="space-y-1 text-sm">
               <li>New relic</li>
               <li>Sentry</li>
-              <li>Opentracing, Jaeger Tracing</li>
-            </ul>
-
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">DB/Storage</h4>
-            <ul className="space-y-1 text-sm">
-              <li>PostgreSQL</li>
-              <li>Firebase</li>
-              <li>Convex</li>
-              <li>MySQL</li>
             </ul>
           </div>
 
@@ -78,36 +77,31 @@ export function Skills() {
             <p className="text-5xl mb-4 text-muted-foreground">
               <i className="fas fa-terminal" />
             </p>
-            <h2 className="text-2xl font-semibold mb-6">Dev Ops / Infra</h2>
+            <h2 className="text-2xl font-semibold mb-6">DevOps</h2>
 
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Google Cloud Services</h4>
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Google Cloud</h4>
             <ul className="space-y-1 text-sm">
-              <li>Cloud Run</li>
-              <li>Cloud Functions</li>
-              <li>Cloud BigQuery</li>
-              <li>Cloud Pub/Sub</li>
+              <li>Cloud Run, Functions</li>
+              <li>Cloud Tasks, Pub/Sub</li>
+              <li>Cloud BigQuery, SQL, Storage</li>
+              <li>Cloud Build</li>
             </ul>
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">AWS Services</h4>
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">AWS</h4>
             <ul className="space-y-1 text-sm">
-              <li>ECS</li>
-              <li>API Gateway</li>
-              <li>Lambda</li>
-              <li>Cloudfront</li>
-              <li>EC2, ELB, etc</li>
+              <li>CDK, Cloudformation</li>
+              <li>ECS, EC2</li>
+              <li>SNS, SQS, Lambda</li>
+              <li>S3, Cloudfront</li>
+              <li>RDS, API Gateway, ELB, etc</li>
             </ul>
 
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">CI/CD</h4>
+            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Others</h4>
             <ul className="space-y-1 text-sm">
-              <li>Circle CI</li>
+              <li>Secrets Management</li>
+              <li>Redis, Elasticache, Algolia, Typesense</li>
+              <li>Circle CI, GitHub Actions</li>
               <li>Vercel</li>
-              <li>Serverless framework</li>
-            </ul>
-
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Docker</h4>
-            <h4 className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2">Server Management</h4>
-            <ul className="space-y-1 text-sm">
-              <li>Linux, Ubuntu</li>
-              <li>Web servers like Apache, NGINX</li>
+              <li>Docker</li>
             </ul>
           </div>
         </div>
