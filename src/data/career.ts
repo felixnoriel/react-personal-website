@@ -10,13 +10,28 @@ export const careers: Career[] = [
     "slug": "genopets",
     "title": "Genopets",
     "content": "",
-    "jobTitle": "Full-Stack Engineer",
+    "jobTitle": "Senior Full-Stack Engineer",
     "startDate": "Apr 2022",
     "endDate": "Present",
     "location": "Genoverse",
     "image": {
       "url": "https://assets.website-files.com/61255ebd7501b8c435f5d531/625873a2f6c6845e0c2794c9_1*W2nbRQKCDFB3K4nIygnFDg.png",
       "alt": "Genopets",
+      "width": 397,
+      "height": 72
+    }
+  },
+  {
+    "slug": "dashify",
+    "title": "Dashify",
+    "content": "Built <a href=\"https://www.dashify.com.au/\" target=\"_blank\">dashify.com.au</a> from scratch which serves 20+ hospitality venues and a wholesale supplier to help them with all their digital presence and workflow needs.",
+    "jobTitle": "Technical Co-founder",
+    "startDate": "March 2020",
+    "endDate": "Present",
+    "location": "Sydney, Australia",
+    "image": {
+      "url": "https://www.dashify.com.au/wp-content/themes/dashify/images/logo.png",
+      "alt": "Dashify",
       "width": 397,
       "height": 72
     }

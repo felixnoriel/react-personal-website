@@ -12,7 +12,7 @@ interface ProjectListProps {
 
 export function ProjectList({ projects, viewType, indexPage }: ProjectListProps) {
   if (!projects || !projects[0]) {
-    return <div className="text-center text-muted-foreground">No projects found</div>
+    return <div className="text-center text-muted-foreground"></div>
   }
 
   return (
