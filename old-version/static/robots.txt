@@ -1,2 +1,0 @@
-Sitemap: https://whoisfelix.com/sitemap.xml
-User-agent: *
