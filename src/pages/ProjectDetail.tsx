@@ -23,6 +23,10 @@ export function ProjectDetail() {
   const projectItems = filterBySlug<Project>(slug || '', projects)
   const project = projectItems[0] || null
 
+  // Calculate next project
+  const currentIndex = projects.findIndex((p) => p.slug === slug)
+  const nextProject = currentIndex !== -1 ? projects[(currentIndex + 1) % projects.length] : null
+
   return (
     <>
       {project && (
@@ -33,7 +37,7 @@ export function ProjectDetail() {
           url={`/projects/${project.slug}`}
         />
       )}
-      <ProjectView project={project} />
+      <ProjectView project={project} nextProject={nextProject} />
     </>
   )
 }

@@ -54,8 +54,8 @@ export function Header() {
 
         {/* Sidebar */}
         <div
-          className={`absolute right-0 top-0 bottom-0 w-80 bg-background shadow-2xl transition-transform duration-300 ${
-            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          className={`absolute left-0 top-0 bottom-0 w-80 bg-background shadow-2xl transition-transform duration-300 ${
+            isMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
           <div className="flex flex-col h-full p-8">
@@ -68,27 +68,33 @@ export function Header() {
             </button>
 
             <nav className="flex-1 flex flex-col gap-6 text-xl">
-              <Link to="/" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors">
-                Home
+              <Link to="/" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-3">
+                <i className="fas fa-home w-6 text-center" />
+                <span>Home</span>
               </Link>
               <Link
                 to="/projects"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors flex items-center gap-3"
               >
-                Projects
+                <i className="fas fa-briefcase w-6 text-center" />
+                <span>Projects</span>
               </Link>
-              <Link to="/career" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors">
-                Career
+              <Link to="/career" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-3">
+                <i className="fas fa-building w-6 text-center" />
+                <span>Career</span>
               </Link>
-              <Link to="/blog" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors">
-                Blog
+              <Link to="/blog" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-3">
+                <i className="fas fa-newspaper w-6 text-center" />
+                <span>Blog</span>
               </Link>
-              <Link to="/about" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors">
-                About
+              <Link to="/about" onClick={() => setIsMenuOpen(false)} className="hover:text-primary transition-colors flex items-center gap-3">
+                <i className="fas fa-user w-6 text-center" />
+                <span>About</span>
               </Link>
-              <a href="mailto:jrnoriel_56@yahoo.com" className="hover:text-primary transition-colors">
-                Contact Me
+              <a href="mailto:jrnoriel_56@yahoo.com" className="hover:text-primary transition-colors flex items-center gap-3">
+                <i className="fas fa-envelope w-6 text-center" />
+                <span>Contact Me</span>
               </a>
             </nav>
 

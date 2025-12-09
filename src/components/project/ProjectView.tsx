@@ -8,9 +8,10 @@ import type { Project } from '../../types/data'
 
 interface ProjectViewProps {
   project: Project | null
+  nextProject?: Project | null
 }
 
-export function ProjectView({ project }: ProjectViewProps) {
+export function ProjectView({ project, nextProject }: ProjectViewProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [photoIndex, setPhotoIndex] = useState(0)
 
@@ -44,39 +45,97 @@ export function ProjectView({ project }: ProjectViewProps) {
         </div>
 
         <div className="lg:col-span-1">
-          <ProjectSideInfo tags={project.tags} company={project.company} />
+          <ProjectSideInfo tags={project.tags} company={project.company} nextProject={nextProject} />
         </div>
       </div>
 
       {/* Gallery Images */}
       {project.gallery && project.gallery.filter((img) => img.url).length > 0 && (
         <div className="mt-12">
-          <h2 className="text-3xl font-bold mb-6">Images</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {project.gallery
-              .filter((img) => img.url)
-              .map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setPhotoIndex(index)
-                    setLightboxOpen(true)
-                  }}
-                  className="group relative overflow-hidden rounded-lg cursor-pointer"
-                >
-                  <img
-                    src={img.url}
-                    alt={img.alt || `Gallery image ${index + 1}`}
-                    className="w-full h-auto aspect-video object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  {img.alt && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {img.alt}
+          <h2 className="text-3xl font-bold mb-6">Gallery</h2>
+          
+          {(() => {
+            const validImages = project.gallery?.filter((img) => img.url) || []
+            
+            // Check if we have any categories defined
+            const hasCategories = validImages.some(img => img.category)
+            
+            if (!hasCategories) {
+               // Fallback to simpler view if no categories
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {validImages.map((img, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setPhotoIndex(index)
+                          setLightboxOpen(true)
+                        }}
+                        className="group relative overflow-hidden rounded-lg cursor-pointer bg-muted"
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.alt || `Gallery image ${index + 1}`}
+                          className="w-full h-auto aspect-video object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                        {img.alt && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity text-left">
+                            {img.alt}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )
+            }
+
+            // Group by category
+            const grouped = validImages.reduce((acc, img, index) => {
+              const category = img.category || 'Other'
+              if (!acc[category]) acc[category] = []
+              acc[category].push({ img, index })
+              return acc
+            }, {} as Record<string, { img: typeof validImages[0], index: number }[]>)
+
+            // Sort categories if needed, or keep order of appearance (acc keys order)
+            
+            return (
+              <div className="space-y-10">
+                {Object.entries(grouped).map(([category, items]) => (
+                  <div key={category} className="space-y-4">
+                     <div className="flex items-center gap-4">
+                        <h3 className="text-xl font-semibold text-primary">{category}</h3>
+                        <div className="h-px bg-border flex-1"></div>
+                     </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {items.map(({ img, index }) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setPhotoIndex(index)
+                            setLightboxOpen(true)
+                          }}
+                          className="group relative overflow-hidden rounded-lg cursor-pointer bg-muted"
+                        >
+                          <img
+                            src={img.url}
+                            alt={img.alt || ''}
+                            className="w-full h-auto aspect-video object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          {(img.alt && img.alt !== 'Default') && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity text-left truncate">
+                              {img.alt}
+                            </div>
+                          )}
+                        </button>
+                      ))}
                     </div>
-                  )}
-                </button>
-              ))}
-          </div>
+                  </div>
+                ))}
+            </div>
+            )
+
+          })()}
 
           {/* Lightbox */}
           <Lightbox
@@ -91,7 +150,7 @@ export function ProjectView({ project }: ProjectViewProps) {
   )
 }
 
-function ProjectSideInfo({ tags, company }: { tags: any[]; company?: Project['company'] }) {
+function ProjectSideInfo({ tags, company, nextProject }: { tags: any[]; company?: Project['company']; nextProject?: Project | null }) {
   return (
     <div className="space-y-6">
       {tags && tags.length > 0 && (
@@ -110,6 +169,26 @@ function ProjectSideInfo({ tags, company }: { tags: any[]; company?: Project['co
       )}
 
       {company && <ProjectCompanyInfo company={company} />}
+
+      {nextProject && (
+        <Card>
+           <CardHeader>
+            <CardTitle className="text-lg">Other Projects</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Link to={`/projects/${nextProject.slug}`} className="block group hover:opacity-80 transition-opacity">
+              {nextProject.image?.url && (
+                <img
+                  src={nextProject.image.url}
+                  alt={nextProject.image.alt || nextProject.title}
+                  className="w-full h-auto mb-3 rounded-md shadow-sm"
+                />
+              )}
+              <h3 className="text-xl font-bold group-hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: nextProject.title }} />
+            </Link>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

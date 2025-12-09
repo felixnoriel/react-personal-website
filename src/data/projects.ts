@@ -89,7 +89,6 @@ export const projects: Project[] = [
       { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering.png", "alt": "employee-rostering", "category": "Employee Rostering" },
       { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering2.png", "alt": "employee-rostering2", "category": "Employee Rostering" },
       { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering3.png", "alt": "employee-rostering3", "category": "Employee Rostering" },
-      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering4.png", "alt": "employee-rostering4", "category": "Employee Rostering" },
       { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee.png", "alt": "employee", "category": "Employee" },
       { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee2.png", "alt": "employee2", "category": "Employee" },
       { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee3.png", "alt": "employee3", "category": "Employee" },
