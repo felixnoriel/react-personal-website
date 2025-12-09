@@ -1,11 +1,126 @@
-/**
- * projects data
- * Auto-generated - DO NOT EDIT MANUALLY
- */
-
 import type { Project } from '../types/data';
 
 export const projects: Project[] = [
+  {
+    "slug": "genopets",
+    "title": "Genopets",
+    "excerpt": "Senior Full-Stack Engineer at Genoverse.",
+    "content": "<p>At Genopets, I wear all the hats as a full stack dev, owning the full lifecycle of features from architecture to production maintenance. We used Typescript - React, NestJS, Google Cloud Services, Vercel, Firebase, Solana Blockchain (Rust, Anchor)</p><h3>Architecture</h3><ul><li>Built an event-driven data pipeline (Pub/Sub, Cloud Functions, BigQuery) handling 7.5M+ messages/day that powered 50+ analytics dashboards for product/marketing decisions. These data are also used by other features like autobahn, rewards system, etc.</li><li>Optimized performance to handle 60k DAU, 150k MAU at 300+ req/sec at peak, improving p95 latency by 80% through strategic caching and async processing.</li></ul><h3>Feature Work</h3><ul><li>Designed and deployed \"Autobahn\" a robust anti-fraud system leveraging proprietary game data and player behaviour analysis to identify and manage bots and fraud</li><li>Created config-driven frameworks for game mechanics (leaderboards, achievements) that empowered product managers to iterate independently without engineering work.</li><li>Engineered secure Web2/Web3 auth bridges and OTP login flows for both web and mobile clients, hardening critical user access paths. This fixed all login bugs and issues resulting in better UX.</li><li>Implemented & optimised a notification system that sends 1.8m+ users efficiently.</li></ul><h3>DevOps</h3><ul><li>Maintained & improved CI/CD, cutting build/deploy times by 50%.</li><li>Integrated observability tooling (Sentry, Cloud Alerts) enabling rapid issue detection.</li><li>Established E2E testing framework achieving 70%+ code coverage, significantly boosting developer confidence and reducing post-deployment issues.</li></ul><h3>AI</h3><ul><li>Implemented a flexible framework for users to build personalized AI agents capable of executing custom tasks via MCP servers & tool-calling</li></ul><h3>Cost Optimisation</h3><ul><li>Migrated infra from AppEngine to Cloud Run, reducing infra costs by 50%+ while improving system reliability.</li><li>Migrated leaderboard mechanism from Redis to Firestore, improving performance and reducing costs</li></ul>",
+    "image": {
+      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/genopets-banner.png",
+      "alt": "Genopets",
+      "width": 397,
+      "height": 72
+    },
+    "tags": [
+      { "name": "TypeScript", "slug": "typescript" },
+      { "name": "React", "slug": "react" },
+      { "name": "NestJS", "slug": "nestjs" },
+      { "name": "Google Cloud", "slug": "google-cloud" },
+      { "name": "Firebase", "slug": "firebase" },
+      { "name": "Solana", "slug": "solana" },
+      { "name": "Rust", "slug": "rust" },
+      { "name": "Vercel", "slug": "vercel" }
+    ],
+    "gallery": [
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile1.png", "alt": "mobile1", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile2.png", "alt": "mobile2", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile3.png", "alt": "mobile3", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile4.png", "alt": "mobile4", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile5.png", "alt": "mobile5", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile6.png", "alt": "mobile6", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile7.png", "alt": "mobile7", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile8.png", "alt": "mobile8", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/mobile9.png", "alt": "mobile9", "category": "Mobile" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/telegram1.png", "alt": "telegram1", "category": "Telegram" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/telegram2.png", "alt": "telegram2", "category": "Telegram" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/telegram3.png", "alt": "telegram3", "category": "Telegram" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/telegram4.png", "alt": "telegram4", "category": "Telegram" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/web1.png", "alt": "web1", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/web2.png", "alt": "web2", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/web3.png", "alt": "web3", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/web4.png", "alt": "web4", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/web5.png", "alt": "web5", "category": "Web" }
+    ],
+    "company": {
+      "title": "Genopets",
+      "slug": "genopets",
+      "image": {
+        "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/genopets.png",
+        "alt": "Genopets"
+      }
+    }
+  },
+  {
+    "slug": "dashify",
+    "title": "Dashify",
+    "excerpt": "Built dashify.com.au from scratch which serves 20+ hospitality venues and a wholesale supplier to help them with all their digital presence and workflow needs.",
+    "content": "<p>As the technical co-founder, I built <a href='https://dashify.com.au/' target='_blank'>dashify.com.au</a> from scratch (started during covid 2020) which serves 20+ hospitality venues and a wholesale supplier, 5k MAU, to help them manage all their digital workflow in one app. Simplified & cost efficient version instead of using different & disconnected services.</p><h3>Services Offered</h3><ul><li>Employee Management & Rostering (Kiosk Time-in & Time-out), Paperless Employee Onboarding</li><li>Table Reservation, Restaurant Booking Management</li><li>Purchase Ordering, Invoicing & Inventory Management</li><li>Task Management</li><li>CRM</li></ul><h3>Technologies</h3><ul><li>Typescript, React, Node/Nest.js, Material UI, Vercel, CDK/AWS, PostgreSQL</li></ul>",
+    "image": {
+      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/dashify-banner.png",
+      "alt": "Dashify",
+      "width": 397,
+      "height": 72
+    },
+    "tags": [
+      { "name": "TypeScript", "slug": "typescript" },
+      { "name": "React", "slug": "react" },
+      { "name": "NestJS", "slug": "nestjs" },
+      { "name": "AWS", "slug": "aws" },
+      { "name": "AWS CDK", "slug": "aws-cdk" },
+      { "name": "PostgreSQL", "slug": "postgresql" },
+      { "name": "Material UI", "slug": "material-ui" },
+      { "name": "Vercel", "slug": "vercel" }
+    ],
+    "gallery": [
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/articles.png", "alt": "articles", "category": "Articles" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/articles2.png", "alt": "articles2", "category": "Articles" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/bookings.png", "alt": "bookings", "category": "Bookings" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/bookings1.png", "alt": "bookings1", "category": "Bookings" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/bookings2.png", "alt": "bookings2", "category": "Bookings" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/bookings3.png", "alt": "bookings3", "category": "Bookings" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/cash-management.png", "alt": "cash-management", "category": "Cash Management" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/cash-management2.png", "alt": "cash-management2", "category": "Cash Management" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/crm.png", "alt": "crm", "category": "CRM" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/crm2.png", "alt": "crm2", "category": "CRM" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/crm3.png", "alt": "crm3", "category": "CRM" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/crm4.png", "alt": "crm4", "category": "CRM" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/crm5.png", "alt": "crm5", "category": "CRM" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering.png", "alt": "employee-rostering", "category": "Employee Rostering" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering2.png", "alt": "employee-rostering2", "category": "Employee Rostering" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering3.png", "alt": "employee-rostering3", "category": "Employee Rostering" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee-rostering4.png", "alt": "employee-rostering4", "category": "Employee Rostering" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee.png", "alt": "employee", "category": "Employee" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee2.png", "alt": "employee2", "category": "Employee" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee3.png", "alt": "employee3", "category": "Employee" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/employee4.png", "alt": "employee4", "category": "Employee" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/inventory.png", "alt": "inventory", "category": "Inventory" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/inventory2.png", "alt": "inventory2", "category": "Inventory" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/inventory3.png", "alt": "inventory3", "category": "Inventory" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/inventory4.png", "alt": "inventory4", "category": "Inventory" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/projects3.png", "alt": "projects3", "category": "Projects" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/projects4.png", "alt": "projects4", "category": "Projects" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/projects5.png", "alt": "projects5", "category": "Projects" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/purchase-orders.png", "alt": "purchase-orders", "category": "Purchase Orders" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/purchase-orders2.png", "alt": "purchase-orders2", "category": "Purchase Orders" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/purchase-orders3.png", "alt": "purchase-orders3", "category": "Purchase Orders" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/purchase-orders4.png", "alt": "purchase-orders4", "category": "Purchase Orders" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/purchase-orders5.png", "alt": "purchase-orders5", "category": "Purchase Orders" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/purchase-orders6.png", "alt": "purchase-orders6", "category": "Purchase Orders" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/kiosk.png", "alt": "kiosk", "category": "Kiosk" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/kiosk2.png", "alt": "kiosk2", "category": "Kiosk" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/kiosk3.png", "alt": "kiosk3", "category": "Kiosk" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/dashify/kiosk4.png", "alt": "kiosk4", "category": "Kiosk" }
+    ],
+    "company": {
+      "title": "Dashify",
+      "slug": "dashify",
+      "image": {
+        "url": "https://www.dashify.com.au/wp-content/themes/dashify/images/logo.png",
+        "alt": "Dashify"
+      }
+    }
+  },
   {
     "slug": "the-ceo-magazine-website",
     "title": "The CEO Magazine Website",
@@ -50,31 +165,38 @@ export const projects: Project[] = [
     "gallery": [
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website1.png",
-        "alt": "Default"
+        "alt": "Default",
+        "category": "Website"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website2.png",
-        "alt": "Home"
+        "alt": "Home",
+        "category": "Website"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website_mobile1.png",
-        "alt": "Archive"
+        "alt": "Archive",
+        "category": "Mobile"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website_mobile2.png",
-        "alt": "Mobile"
+        "alt": "Mobile",
+        "category": "Mobile"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website7.png",
-        "alt": "Home"
+        "alt": "Home",
+        "category": "Website"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website8.png",
-        "alt": "Post"
+        "alt": "Post",
+        "category": "Website"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_website/website3.png",
-        "alt": "Post View"
+        "alt": "Post View",
+        "category": "Website"
       }
     ],
     "company": {
@@ -134,67 +256,83 @@ export const projects: Project[] = [
     "gallery": [
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag-db.png",
-        "alt": "Dashboard, Cloud Infrastructure"
+        "alt": "Dashboard, Cloud Infrastructure",
+        "category": "Dashboard"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_infrastructure.png",
-        "alt": "Dashboard"
+        "alt": "Dashboard",
+        "category": "Infrastructure"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_it2.png",
-        "alt": "Cloud Infastructure"
+        "alt": "Cloud Infastructure",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_it1.png",
-        "alt": "Ticketing system"
+        "alt": "Ticketing system",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_it4.png",
-        "alt": "Tickets Portal"
+        "alt": "Tickets Portal",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_it6.png",
-        "alt": "submitting ticket"
+        "alt": "submitting ticket",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_ticket1.png",
-        "alt": "viewing ticket"
+        "alt": "viewing ticket",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_ticket2.png",
-        "alt": "viewing ticket 2"
+        "alt": "viewing ticket 2",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_ticket3.png",
-        "alt": "Project Management tool"
+        "alt": "Project Management tool",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_custom5.png",
-        "alt": "Projects Portal"
+        "alt": "Projects Portal",
+        "category": "Custom Tools"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/sprintboard2.png",
-        "alt": "Project List"
+        "alt": "Project List",
+        "category": "Sprintboard"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_kb1.png",
-        "alt": "Project view"
+        "alt": "Project view",
+        "category": "Knowledge Base"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/kb-2.png",
-        "alt": "Sprintboard"
+        "alt": "Sprintboard",
+        "category": "Knowledge Base"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_it3.png",
-        "alt": "sprint board 1"
+        "alt": "sprint board 1",
+        "category": "IT Support"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_custom1.png",
-        "alt": "sprint board 2"
+        "alt": "sprint board 2",
+        "category": "Custom Tools"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_intranet/ceomag_custom3.png",
-        "alt": "Knowledge base"
+        "alt": "Knowledge base",
+        "category": "Custom Tools"
       }
     ],
     "company": {
@@ -250,15 +388,18 @@ export const projects: Project[] = [
     "gallery": [
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_shop/shop_1.png",
-        "alt": "Shop"
+        "alt": "Shop",
+        "category": "Shop"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_shop/shop2.png",
-        "alt": "List"
+        "alt": "List",
+        "category": "Shop"
       },
       {
         "url": "https://felixstatic.s3.amazonaws.com/uploads/images/ceomag_shop/shop3.png",
-        "alt": "Checkout"
+        "alt": "Checkout",
+        "category": "Shop"
       }
     ],
     "company": {

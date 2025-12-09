@@ -1,21 +1,16 @@
-/**
- * careers data
- * Auto-generated - DO NOT EDIT MANUALLY
- */
-
 import type { Career } from '../types/data';
 
 export const careers: Career[] = [
   {
     "slug": "genopets",
     "title": "Genopets",
-    "content": "",
+    "content": "<p>At Genopets, I wear all the hats as a full stack dev, owning the full lifecycle of features from architecture to production maintenance. We used Typescript - React, NestJS, Google Cloud Services, Vercel, Firebase, Solana Blockchain (Rust, Anchor)</p><h3>Architecture</h3><ul><li>Built an event-driven data pipeline (Pub/Sub, Cloud Functions, BigQuery) handling 7.5M+ messages/day that powered 50+ analytics dashboards for product/marketing decisions. These data are also used by other features like autobahn, rewards system, etc.</li><li>Optimized performance to handle 60k DAU, 150k MAU at 300+ req/sec at peak, improving p95 latency by 80% through strategic caching and async processing.</li></ul><h3>Feature Work</h3><ul><li>Designed and deployed \"Autobahn\" a robust anti-fraud system leveraging proprietary game data and player behaviour analysis to identify and manage bots and fraud</li><li>Created config-driven frameworks for game mechanics (leaderboards, achievements) that empowered product managers to iterate independently without engineering work.</li><li>Engineered secure Web2/Web3 auth bridges and OTP login flows for both web and mobile clients, hardening critical user access paths. This fixed all login bugs and issues resulting in better UX.</li><li>Implemented & optimised a notification system that sends 1.8m+ users efficiently.</li></ul><h3>DevOps</h3><ul><li>Maintained & improved CI/CD, cutting build/deploy times by 50%.</li><li>Integrated observability tooling (Sentry, Cloud Alerts) enabling rapid issue detection.</li><li>Established E2E testing framework achieving 70%+ code coverage, significantly boosting developer confidence and reducing post-deployment issues.</li></ul><h3>AI</h3><ul><li>Implemented a flexible framework for users to build personalized AI agents capable of executing custom tasks via MCP servers & tool-calling</li></ul><h3>Cost Optimisation</h3><ul><li>Migrated infra from AppEngine to Cloud Run, reducing infra costs by 50%+ while improving system reliability.</li><li>Migrated leaderboard mechanism from Redis to Firestore, improving performance and reducing costs</li></ul>",
     "jobTitle": "Senior Full-Stack Engineer",
     "startDate": "Apr 2022",
     "endDate": "Present",
     "location": "Genoverse",
     "image": {
-      "url": "https://assets.website-files.com/61255ebd7501b8c435f5d531/625873a2f6c6845e0c2794c9_1*W2nbRQKCDFB3K4nIygnFDg.png",
+      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/genopets.png",
       "alt": "Genopets",
       "width": 397,
       "height": 72
@@ -24,7 +19,7 @@ export const careers: Career[] = [
   {
     "slug": "dashify",
     "title": "Dashify",
-    "content": "Built <a href=\"https://www.dashify.com.au/\" target=\"_blank\">dashify.com.au</a> from scratch which serves 20+ hospitality venues and a wholesale supplier to help them with all their digital presence and workflow needs.",
+    "content": "<p>As the technical co-founder, I built <a href='https://dashify.com.au/' target='_blank'>dashify.com.au</a> from scratch (started during covid 2020) which serves 20+ hospitality venues and a wholesale supplier, 5k MAU, to help them manage all their digital workflow in one app. Simplified & cost efficient version instead of using different & disconnected services.</p><h3>Services Offered</h3><ul><li>Employee Management & Rostering (Kiosk Time-in & Time-out), Paperless Employee Onboarding</li><li>Table Reservation, Restaurant Booking Management</li><li>Purchase Ordering, Invoicing & Inventory Management</li><li>Task Management</li><li>CRM</li></ul><h3>Technologies</h3><ul><li>Typescript, React, Node/Nest.js, Material UI, Vercel, CDK/AWS, PostgreSQL</li></ul>",
     "jobTitle": "Technical Co-founder",
     "startDate": "March 2020",
     "endDate": "Present",
@@ -45,7 +40,7 @@ export const careers: Career[] = [
     "endDate": "Apr 2022",
     "location": "Sydney, Australia",
     "image": {
-      "url": "https://assets.zookal-web.production.aws.zookal.com/images/zookal-logo.svg",
+      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal.png",
       "alt": "Zookal",
       "width": 397,
       "height": 72

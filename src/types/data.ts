@@ -9,6 +9,7 @@ export interface Image {
   alt?: string
   width?: number
   height?: number
+  category?: string
 }
 
 // Tag/Category type
