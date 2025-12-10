@@ -11,14 +11,14 @@ export function ContactSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Handle form submission - open mail client
-    const mailtoLink = `mailto:jrnoriel_56@yahoo.com?subject=Message from ${formData.name}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${formData.email}`
+    const mailtoLink = `mailto:norielfelixjr@gmail.com?subject=Message from ${formData.name}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${formData.email}`
     window.location.href = mailtoLink
   }
 
   const contactMethods = [
     {
       title: 'Email Me',
-      value: 'jrnoriel_56@yahoo.com',
+      value: 'norielfelixjr@gmail.com',
       emoji: '📧',
       color: 'from-violet-500 to-purple-600',
     },

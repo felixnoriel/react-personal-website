@@ -10,7 +10,7 @@ export function Footer() {
     { name: 'Skills', href: '/#skills-section' },
     { name: 'Projects', href: '/projects' },
     { name: 'Journey', href: '/career' },
-    { name: 'Contact', href: 'mailto:jrnoriel_56@yahoo.com' },
+    { name: 'Contact', href: 'mailto:norielfelixjr@gmail.com' },
   ]
 
   return (
@@ -138,7 +138,7 @@ export function Footer() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
               >
-                📧 jrnoriel_56@yahoo.com
+                📧 norielfelixjr@gmail.com
               </motion.li>
               <motion.li
                 initial={{ opacity: 0 }}
