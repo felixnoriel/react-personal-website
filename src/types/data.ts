@@ -34,12 +34,23 @@ export interface BlogPost {
 export interface Career {
   slug: string
   title: string // Company name
+  excerpt?: string // Short description for cards
   content: string
+  linkToProject?: boolean
   jobTitle: string
   startDate: string
   endDate: string
   location: string
-  image: Image
+  image: Image // Logo
+  banner?: Image // Hero/Banner image (similar to Project.image)
+  achievements?: {
+    icon: string // Lucide icon name
+    title: string
+    badge?: string
+    description: string
+  }[]
+  techStack?: string[]
+  color?: string // Tailwind gradient class
 }
 
 // Project type (simplified)

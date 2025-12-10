@@ -7,7 +7,7 @@ export const projects: Project[] = [
     "excerpt": "Senior Full-Stack Engineer at Genoverse.",
     "content": "<p>At Genopets, I wear all the hats as a full stack dev, owning the full lifecycle of features from architecture to production maintenance. We used Typescript - React, NestJS, Google Cloud Services, Vercel, Firebase, Solana Blockchain (Rust, Anchor)</p><h3>Architecture</h3><ul><li>Built an event-driven data pipeline (Pub/Sub, Cloud Functions, BigQuery) handling 7.5M+ messages/day that powered 50+ analytics dashboards for product/marketing decisions. These data are also used by other features like autobahn, rewards system, etc.</li><li>Optimized performance to handle 60k DAU, 150k MAU at 300+ req/sec at peak, improving p95 latency by 80% through strategic caching and async processing.</li></ul><h3>Feature Work</h3><ul><li>Designed and deployed \"Autobahn\" a robust anti-fraud system leveraging proprietary game data and player behaviour analysis to identify and manage bots and fraud</li><li>Created config-driven frameworks for game mechanics (leaderboards, achievements) that empowered product managers to iterate independently without engineering work.</li><li>Engineered secure Web2/Web3 auth bridges and OTP login flows for both web and mobile clients, hardening critical user access paths. This fixed all login bugs and issues resulting in better UX.</li><li>Implemented & optimised a notification system that sends 1.8m+ users efficiently.</li></ul><h3>DevOps</h3><ul><li>Maintained & improved CI/CD, cutting build/deploy times by 50%.</li><li>Integrated observability tooling (Sentry, Cloud Alerts) enabling rapid issue detection.</li><li>Established E2E testing framework achieving 70%+ code coverage, significantly boosting developer confidence and reducing post-deployment issues.</li></ul><h3>AI</h3><ul><li>Implemented a flexible framework for users to build personalized AI agents capable of executing custom tasks via MCP servers & tool-calling</li></ul><h3>Cost Optimisation</h3><ul><li>Migrated infra from AppEngine to Cloud Run, reducing infra costs by 50%+ while improving system reliability.</li><li>Migrated leaderboard mechanism from Redis to Firestore, improving performance and reducing costs</li></ul>",
     "image": {
-      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/genopets-banner.png",
+      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/genopets-banner-v2.png",
       "alt": "Genopets",
       "width": 397,
       "height": 72
@@ -117,6 +117,39 @@ export const projects: Project[] = [
       "image": {
         "url": "https://www.dashify.com.au/wp-content/themes/dashify/images/logo.png",
         "alt": "Dashify"
+      }
+    }
+  },
+  {
+    "slug": "zookal",
+    "title": "Zookal Platform",
+    "excerpt": "Architected and built Zookal's homework help app and core student platform, establishing modern engineering practices and scaling to millions of users.",
+    "content": "<p>Led the end-to-end creation of the homework help mobile app (React Native) and bootstrapped the new core student web app (React). Established modern architecture with React Query, Zustand, and a custom design system.</p><h3>Key Achievements</h3><ul><li>Architected and implemented in-app purchase (IAP) subscription flow with webhook integrations.</li><li>Integrated product subscriptions into Shopify checkout, boosting subscriber conversion.</li><li>Established monitoring/observability with Sentry and New Relic.</li><li>Bootstrapped CI/CD pipelines (CircleCI, CodePush) for rapid mobile releases.</li></ul>",
+    "image": {
+      "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal1.png",
+      "alt": "Zookal Platform",
+      "width": 800,
+      "height": 600
+    },
+    "tags": [
+      { "name": "TypeScript", "slug": "typescript" },
+      { "name": "React", "slug": "react" },
+      { "name": "React Native", "slug": "react-native" },
+      { "name": "AWS CDK", "slug": "aws-cdk" },
+      { "name": "PostgreSQL", "slug": "postgresql" }
+    ],
+    "gallery": [
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal1.png", "alt": "Zookal App Interface", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal2.png", "alt": "Zookal Features", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal3.png", "alt": "Student Platform", "category": "Web" },
+      { "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal4.png", "alt": "Study Tools", "category": "Web" }
+    ],
+    "company": {
+      "title": "Zookal",
+      "slug": "zookal",
+      "image": {
+        "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/zookal/zookal.png",
+        "alt": "Zookal"
       }
     }
   },

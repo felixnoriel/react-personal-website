@@ -1,5 +1,6 @@
 import { SEOHead } from '../components/seo/SEOHead'
 import { AboutWebsite } from '../components/AboutWebsite'
+import { ContactSection } from '../components/ContactSection'
 
 export function About() {
   return (
@@ -10,6 +11,7 @@ export function About() {
         url="/about"
       />
       <AboutWebsite />
+      <ContactSection />
     </>
   )
 }

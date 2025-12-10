@@ -1,6 +1,6 @@
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
-import { ProjectList } from '../components/project/ProjectList'
+import { ProductsBuilt } from '../components/ProductsBuilt'
 
 export function Projects() {
   const { projects, loading } = useData()
@@ -23,7 +23,7 @@ export function Projects() {
         description="Some of my past work and projects I've been involved with."
         url="/projects"
       />
-      <ProjectList projects={projects} indexPage={false} />
+      <ProductsBuilt projects={projects} showViewAllLink={false} />
     </>
   )
 }

@@ -23,9 +23,26 @@ export function ProjectDetail() {
   const projectItems = filterBySlug<Project>(slug || '', projects)
   const project = projectItems[0] || null
 
-  // Calculate next project
+  // Calculate other projects (2 items)
   const currentIndex = projects.findIndex((p) => p.slug === slug)
-  const nextProject = currentIndex !== -1 ? projects[(currentIndex + 1) % projects.length] : null
+  
+  let otherProjects: Project[] = []
+  
+  if (projects.length >= 3 && currentIndex !== -1) {
+      if (currentIndex === 0) {
+          // First item: First two items are next two projects
+          otherProjects = [projects[1], projects[2]]
+      } else if (currentIndex === projects.length - 1) {
+          // Last item: Other projects are the first two projects
+          otherProjects = [projects[0], projects[1]]
+      } else {
+          // Middle items: Previous and Next
+          otherProjects = [projects[currentIndex - 1], projects[currentIndex + 1]]
+      }
+  } else if (projects.length === 2 && currentIndex !== -1) {
+      // Fallback for only 2 projects, just show the other one (twice? or just once? List handles array)
+      otherProjects = [projects[(currentIndex + 1) % 2]]
+  }
 
   return (
     <>
@@ -37,7 +54,7 @@ export function ProjectDetail() {
           url={`/projects/${project.slug}`}
         />
       )}
-      <ProjectView project={project} nextProject={nextProject} />
+      <ProjectView project={project} otherProjects={otherProjects} />
     </>
   )
 }

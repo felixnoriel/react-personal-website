@@ -8,10 +8,10 @@ import type { Project } from '../../types/data'
 
 interface ProjectViewProps {
   project: Project | null
-  nextProject?: Project | null
+  otherProjects: Project[]
 }
 
-export function ProjectView({ project, nextProject }: ProjectViewProps) {
+export function ProjectView({ project, otherProjects }: ProjectViewProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [photoIndex, setPhotoIndex] = useState(0)
 
@@ -45,7 +45,7 @@ export function ProjectView({ project, nextProject }: ProjectViewProps) {
         </div>
 
         <div className="lg:col-span-1">
-          <ProjectSideInfo tags={project.tags} company={project.company} nextProject={nextProject} />
+          <ProjectSideInfo tags={project.tags} otherProjects={otherProjects} />
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export function ProjectView({ project, nextProject }: ProjectViewProps) {
   )
 }
 
-function ProjectSideInfo({ tags, company, nextProject }: { tags: any[]; company?: Project['company']; nextProject?: Project | null }) {
+function ProjectSideInfo({ tags, otherProjects }: { tags: any[]; otherProjects: Project[] }) {
   return (
     <div className="space-y-6">
       {tags && tags.length > 0 && (
@@ -168,52 +168,27 @@ function ProjectSideInfo({ tags, company, nextProject }: { tags: any[]; company?
         </Card>
       )}
 
-      {company && <ProjectCompanyInfo company={company} />}
-
-      {nextProject && (
+      {otherProjects.length > 0 && (
         <Card>
            <CardHeader>
             <CardTitle className="text-lg">Other Projects</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Link to={`/projects/${nextProject.slug}`} className="block group hover:opacity-80 transition-opacity">
-              {nextProject.image?.url && (
-                <img
-                  src={nextProject.image.url}
-                  alt={nextProject.image.alt || nextProject.title}
-                  className="w-full h-auto mb-3 rounded-md shadow-sm"
-                />
-              )}
-              <h3 className="text-xl font-bold group-hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: nextProject.title }} />
-            </Link>
+          <CardContent className="space-y-6">
+            {otherProjects.map((project) => (
+                <Link key={project.slug} to={`/projects/${project.slug}`} className="block group hover:opacity-80 transition-opacity">
+                {project.image?.url && (
+                    <img
+                    src={project.image.url}
+                    alt={project.image.alt || project.title}
+                    className="w-full h-auto mb-3 rounded-md shadow-sm"
+                    />
+                )}
+                <h3 className="text-xl font-bold group-hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: project.title }} />
+                </Link>
+            ))}
           </CardContent>
         </Card>
       )}
     </div>
-  )
-}
-
-function ProjectCompanyInfo({ company }: { company: Project['company'] }) {
-  if (!company) {
-    return null
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Company</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Link to={`/career/${company.slug}`} className="block group hover:opacity-80 transition-opacity">
-          {company.image?.url && (
-            <img src={company.image.url} alt={company.image.alt || company.title} className="w-full h-auto mb-3" />
-          )}
-          <p
-            className="font-semibold group-hover:text-primary transition-colors"
-            dangerouslySetInnerHTML={{ __html: company.title }}
-          />
-        </Link>
-      </CardContent>
-    </Card>
   )
 }

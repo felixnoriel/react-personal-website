@@ -1,6 +1,6 @@
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
-import { CareerTimeline } from '../components/career/CareerTimeline'
+import { BuildingJourney } from '../components/BuildingJourney'
 
 export function Career() {
   const { career, loading } = useData()
@@ -19,7 +19,7 @@ export function Career() {
   return (
     <>
       <SEOHead title="Career" description="Career timeline - Companies I have been a part of" url="/career" />
-      <CareerTimeline experiences={career} indexPage={false} />
+      <BuildingJourney experiences={career} showViewAllLink={false} />
     </>
   )
 }
