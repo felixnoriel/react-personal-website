@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { trackTechClick } from '../utils/analytics';
 
 interface SkillBubbleProps {
   name: string;
@@ -70,6 +71,7 @@ export function SkillBubble({ name, tags, size, color, compact = false, icon }: 
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         whileHover={{ scale: 1.05, y: -2 }}
+        onMouseEnter={() => trackTechClick(name, 'compact_bubble')}
         transition={{ duration: 0.2 }}
         className={`inline-flex items-center gap-2 ${sizeClass.bubble} ${colorClass.bg} ${colorClass.text} border ${colorClass.bg.split(' ')[2]} rounded-full backdrop-blur-sm transition-all cursor-default`}
       >
@@ -84,6 +86,7 @@ export function SkillBubble({ name, tags, size, color, compact = false, icon }: 
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       whileHover={{ scale: 1.02, y: -2 }}
+      onMouseEnter={() => trackTechClick(name, 'full_bubble')}
       transition={{ duration: 0.2 }}
       className={`flex items-start gap-3 ${sizeClass.bubble} ${colorClass.bg} border ${colorClass.bg.split(' ')[2]} rounded-2xl backdrop-blur-sm transition-all cursor-default w-full`}
     >

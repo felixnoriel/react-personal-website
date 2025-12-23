@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Socials } from '../Socials'
+import { trackNavigation, trackEmailClick } from '../../utils/analytics'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -101,6 +102,13 @@ export function Footer() {
                   {link.href.startsWith('mailto:') || link.href.startsWith('/#') ? (
                     <a
                       href={link.href}
+                      onClick={() => {
+                        if (link.href.startsWith('mailto:')) {
+                          trackEmailClick('footer_quick_link')
+                        } else {
+                          trackNavigation(link.href, 'footer_quick_link')
+                        }
+                      }}
                       className="text-muted-foreground hover:text-violet-600 transition-colors flex items-center gap-2 group text-sm"
                     >
                       <span className="w-1 h-1 bg-violet-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -109,6 +117,7 @@ export function Footer() {
                   ) : (
                     <Link
                       to={link.href}
+                      onClick={() => trackNavigation(link.href, 'footer_quick_link')}
                       className="text-muted-foreground hover:text-violet-600 transition-colors flex items-center gap-2 group text-sm"
                     >
                       <span className="w-1 h-1 bg-violet-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />

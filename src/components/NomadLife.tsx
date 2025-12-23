@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Card } from './ui/card'
 import { Plane, Coffee, MapPin, Wifi, Utensils, Camera } from 'lucide-react'
+import { trackEvent } from '../utils/analytics'
 
 // Mock Data
 const workspaces = [
@@ -99,6 +100,7 @@ export function NomadLife() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ y: -10, scale: 1.02 }}
+              onMouseEnter={() => trackEvent('Nomad Life', 'Workspace View', workspace.title)}
             >
               <Card className="overflow-hidden border-2 hover:border-blue-300 transition-all hover:shadow-2xl group h-full">
                 <div className="relative aspect-square overflow-hidden">
@@ -149,6 +151,7 @@ export function NomadLife() {
                 type: 'spring',
               }}
               whileHover={{ scale: 1.1, rotate: 5 }}
+              onMouseEnter={() => trackEvent('Nomad Life', 'Stat View', stat.label)}
             >
               <Card className="p-4 text-center bg-white/80 backdrop-blur-sm border-2 border-blue-200 hover:shadow-xl transition-all">
                 <motion.div

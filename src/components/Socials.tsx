@@ -1,3 +1,5 @@
+import { trackSocialClick } from '../utils/analytics'
+
 export function Socials() {
   const socials = [
     {
@@ -30,6 +32,7 @@ export function Socials() {
           target="_blank"
           rel="noopener noreferrer"
           href={social.url}
+          onClick={() => trackSocialClick(social.name)}
           className="w-12 h-12 rounded-full border-2 border-current flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20"
           aria-label={social.name}
         >

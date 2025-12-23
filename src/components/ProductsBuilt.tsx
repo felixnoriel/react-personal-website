@@ -5,6 +5,7 @@ import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { ExternalLink, Code2, Users, Zap, TrendingUp } from 'lucide-react'
 import type { Project, Tag } from '../types/data'
+import { trackProjectView, trackButtonClick } from '../utils/analytics'
 
 interface ProductsBuiltProps {
   projects: Project[]
@@ -94,7 +95,11 @@ export function ProductsBuilt({ projects, showViewAllLink = true }: ProductsBuil
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link to={`/projects/${project.slug}`} className="block group">
+              <Link 
+                to={`/projects/${project.slug}`} 
+                onClick={() => trackProjectView(project.title)}
+                className="block group"
+              >
                   <Card className="overflow-hidden border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white group rounded-3xl">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                         
@@ -197,7 +202,10 @@ export function ProductsBuilt({ projects, showViewAllLink = true }: ProductsBuil
         {/* View All Button */}
         {showViewAllLink && (
             <div className="text-center mb-20">
-                <Link to="/projects">
+                <Link 
+                    to="/projects"
+                    onClick={() => trackButtonClick('View All Projects', 'ProductsBuilt')}
+                >
                     <Button size="lg" className="bg-pink-500 hover:bg-pink-600 text-white shadow-lg shadow-pink-200 transition-all px-8 rounded-full h-12 text-md font-medium">
                         View All Projects
                         <ExternalLink className="ml-2 w-4 h-4" />
