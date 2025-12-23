@@ -34,6 +34,8 @@ export function PersonalLogo({ size = 'md', animated = true }: PersonalLogoProps
         <img
           src="https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/felixnoriellogo.png"
           alt="Felix Noriel Logo"
+          width={128}
+          height={128}
           className="w-full h-full object-cover"
         />
       </div>

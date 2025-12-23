@@ -39,6 +39,9 @@ function CareerInfo({ experience }: { experience: Career | null }) {
             <img
               src={experience.image.url}
               alt={experience.image.alt || experience.title}
+              width={600}
+              height={400}
+              loading="lazy"
               className="max-w-md w-full h-auto"
             />
           </figure>

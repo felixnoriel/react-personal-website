@@ -109,6 +109,9 @@ export function ProductsBuilt({ projects, showViewAllLink = true }: ProductsBuil
                           <img
                             src={project.image.url}
                             alt={project.title}
+                            width={800}
+                            height={600}
+                            loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                           />
                         ) : (
@@ -127,6 +130,9 @@ export function ProductsBuilt({ projects, showViewAllLink = true }: ProductsBuil
                                     <img 
                                         src={project.company.image.url} 
                                         alt={project.company.title} 
+                                        width={64}
+                                        height={64}
+                                        loading="lazy"
                                         className="w-full h-full object-contain"
                                     />
                                 ) : (

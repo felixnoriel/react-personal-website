@@ -79,6 +79,9 @@ export function TravelStories({ stories }: TravelStoriesProps) {
                         <img
                         src={post.image.url}
                         alt={post.title}
+                        width={800}
+                        height={450}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                         ) : (

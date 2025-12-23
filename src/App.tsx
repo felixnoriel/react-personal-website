@@ -1,17 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { DataProvider } from './contexts/DataContext'
 import { MainLayout } from './components/layout/MainLayout'
 import { ScrollToTop } from './components/ScrollToTop'
-import { Home } from './pages/Home'
-import { Blog } from './pages/Blog'
-import { BlogDetail } from './pages/BlogDetail'
-import { Projects } from './pages/Projects'
-import { ProjectDetail } from './pages/ProjectDetail'
-import { Career } from './pages/Career'
-import { CareerDetail } from './pages/CareerDetail'
-import { About } from './pages/About'
+
+// Lazy Load Pages
+const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
+const Blog = lazy(() => import('./pages/Blog').then(m => ({ default: m.Blog })))
+const BlogDetail = lazy(() => import('./pages/BlogDetail').then(m => ({ default: m.BlogDetail })))
+const Projects = lazy(() => import('./pages/Projects').then(m => ({ default: m.Projects })))
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail').then(m => ({ default: m.ProjectDetail })))
+const Career = lazy(() => import('./pages/Career').then(m => ({ default: m.Career })))
+const CareerDetail = lazy(() => import('./pages/CareerDetail').then(m => ({ default: m.CareerDetail })))
+const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })))
 import { initGA, trackError } from './utils/analytics'
 import { usePageTracking } from './hooks/usePageTracking'
 import { useScrollTracking } from './hooks/useScrollTracking'
@@ -55,16 +57,28 @@ function App() {
           <AnalyticsWrapper>
             <ScrollToTop />
             <MainLayout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogDetail />} />
-                <Route path="/projects" element={<Projects />} />
-                <Route path="/projects/:slug" element={<ProjectDetail />} />
-                <Route path="/career" element={<Career />} />
-                <Route path="/career/:slug" element={<CareerDetail />} />
-                <Route path="/about" element={<About />} />
-              </Routes>
+              <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                  <div className="text-center">
+                    <div className="relative w-20 h-20 mx-auto mb-4">
+                      <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-4 border-violet-600 rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                    <p className="text-xl font-medium text-gray-500">Loading experience...</p>
+                  </div>
+                </div>
+              }>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogDetail />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/projects/:slug" element={<ProjectDetail />} />
+                  <Route path="/career" element={<Career />} />
+                  <Route path="/career/:slug" element={<CareerDetail />} />
+                  <Route path="/about" element={<About />} />
+                </Routes>
+              </Suspense>
             </MainLayout>
           </AnalyticsWrapper>
         </Router>

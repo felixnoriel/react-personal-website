@@ -46,6 +46,8 @@ export function Footer() {
                   <img
                     src="https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/felixnoriellogo.png"
                     alt="Felix Noriel"
+                    width={48}
+                    height={48}
                     className="h-12 w-auto"
                   />
                 </motion.div>

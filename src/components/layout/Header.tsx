@@ -27,7 +27,7 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleNavClick = (href: string, id: string, redirectPath?: string) => {
+  const handleNavClick = (_href: string, id: string, redirectPath?: string) => {
     // Mobile specific behavior
     if (isMobileMenuOpen) {
         setIsMobileMenuOpen(false)
@@ -125,6 +125,8 @@ export function Header() {
               <img
                 src="https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/felixnoriellogo.png"
                 alt="Felix Noriel"
+                width={40}
+                height={40}
                 className="h-10 w-auto"
               />
             </Link>

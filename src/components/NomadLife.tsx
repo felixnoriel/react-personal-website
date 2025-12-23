@@ -107,6 +107,9 @@ export function NomadLife() {
                   <img
                     src={workspace.image}
                     alt={workspace.title}
+                    width={400}
+                    height={400}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
