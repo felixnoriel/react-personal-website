@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { trackTechClick } from '../utils/analytics';
+import { memo } from 'react';
 
 interface SkillBubbleProps {
   name: string;
@@ -7,7 +8,7 @@ interface SkillBubbleProps {
   size: 'small' | 'medium' | 'large';
   color: 'blue' | 'green' | 'orange';
   compact?: boolean;
-  icon?: string; // Added icon support
+  icon?: string;
 }
 
 const sizeClasses = {
@@ -28,7 +29,7 @@ const sizeClasses = {
 const colorClasses = {
   blue: {
     bg: 'bg-blue-500/20 hover:bg-blue-500/30 border-blue-400/40',
-    text: 'text-blue-600', // Adjusted for light mode readability on existing bg
+    text: 'text-blue-600',
     dot: 'bg-blue-400',
     tag: 'bg-blue-400/30 text-blue-700'
   },
@@ -46,11 +47,24 @@ const colorClasses = {
   }
 };
 
-export function SkillBubble({ name, tags, size, color, compact = false, icon }: SkillBubbleProps) {
+// Variants for staggered entrance
+export const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { 
+      type: 'spring', 
+      stiffness: 300, 
+      damping: 24 
+    } as const
+  }
+};
+
+export const SkillBubble = memo(({ name, tags, size, color, compact = false, icon }: SkillBubbleProps) => {
   const sizeClass = sizeClasses[size];
   const colorClass = colorClasses[color];
 
-  // If icon is provided, render it. Otherwise render the dot.
   const renderIconOrDot = () => {
     if (icon) {
       return <span className="text-lg leading-none">{icon}</span>;
@@ -68,12 +82,10 @@ export function SkillBubble({ name, tags, size, color, compact = false, icon }: 
   if (compact) {
     return (
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        variants={itemVariants}
         whileHover={{ scale: 1.05, y: -2 }}
         onMouseEnter={() => trackTechClick(name, 'compact_bubble')}
-        transition={{ duration: 0.2 }}
-        className={`inline-flex items-center gap-2 ${sizeClass.bubble} ${colorClass.bg} ${colorClass.text} border ${colorClass.bg.split(' ')[2]} rounded-full backdrop-blur-sm transition-all cursor-default`}
+        className={`inline-flex items-center gap-2 ${sizeClass.bubble} ${colorClass.bg} ${colorClass.text} border ${colorClass.bg.split(' ')[2]} rounded-full backdrop-blur-sm cursor-default will-change-transform`}
       >
         {renderIconOrDot()}
         <span className="font-medium">{name}</span>
@@ -83,12 +95,10 @@ export function SkillBubble({ name, tags, size, color, compact = false, icon }: 
 
   return (
     <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
+      variants={itemVariants}
       whileHover={{ scale: 1.02, y: -2 }}
       onMouseEnter={() => trackTechClick(name, 'full_bubble')}
-      transition={{ duration: 0.2 }}
-      className={`flex items-start gap-3 ${sizeClass.bubble} ${colorClass.bg} border ${colorClass.bg.split(' ')[2]} rounded-2xl backdrop-blur-sm transition-all cursor-default w-full`}
+      className={`flex items-start gap-3 ${sizeClass.bubble} ${colorClass.bg} border ${colorClass.bg.split(' ')[2]} rounded-2xl backdrop-blur-sm cursor-default w-full will-change-transform`}
     >
       <div className="flex items-center gap-2 flex-1">
         {renderIconOrDotWrapper()}
@@ -110,4 +120,8 @@ export function SkillBubble({ name, tags, size, color, compact = false, icon }: 
       </div>
     </motion.div>
   );
-}
+});
+
+// For better debugging display name
+SkillBubble.displayName = 'SkillBubble';
+

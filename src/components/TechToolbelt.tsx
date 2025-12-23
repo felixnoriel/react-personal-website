@@ -2,29 +2,40 @@ import { Code2, Server, Cloud, Sparkles, Zap, Database, Boxes, TestTube } from '
 import { motion } from 'framer-motion';
 import { SkillBubble } from './SkillBubble';
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1,
+    }
+  }
+};
+
 export function TechToolbelt() {
   return (
     <section id="skills-section" className="py-20 relative overflow-hidden bg-gradient-to-br from-violet-50/50 via-white to-pink-50/50 scroll-mt-28">
-       {/* Decorative blobs - Keeping existing background as requested */}
-       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-to-br from-violet-400/10 to-purple-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-pink-400/10 to-orange-400/10 rounded-full blur-3xl" />
+       {/* Decorative blobs - Optimizing potential paint costs by adding static pointers */}
+       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-to-br from-violet-400/5 to-purple-400/5 rounded-full blur-[100px] will-change-[filter]" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-pink-400/5 to-orange-400/5 rounded-full blur-[100px] will-change-[filter]" />
       </div>
 
     <div className="container mx-auto max-w-[1600px] px-4 relative z-10">
       {/* Header */}
       <div className="text-center mb-12">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="inline-flex items-center gap-3 mb-4"
         >
-          <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
+          <Sparkles className="w-8 h-8 text-yellow-400" />
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
             My Tech Toolbelt
           </h2>
-          <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
+          <Sparkles className="w-8 h-8 text-yellow-400" />
         </motion.div>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           A constellation of skills & technologies I use to build amazing products.
@@ -32,17 +43,20 @@ export function TechToolbelt() {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-12 gap-6 auto-rows-auto">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        className="grid grid-cols-12 gap-6 auto-rows-auto"
+      >
         
         {/* Frontend Section - Takes 4 columns */}
         <div className="col-span-12 lg:col-span-4 space-y-4">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="bg-white/80 backdrop-blur-sm border border-blue-200/50 rounded-3xl p-6 h-full shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-white/80 backdrop-blur-sm border border-blue-200/50 rounded-3xl p-6 h-full shadow-lg hover:shadow-xl transition-all duration-300 will-change-transform"
           >
+            {/* Same content but inside a staggered container now */}
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-md">
                 <Code2 className="w-6 h-6 text-white" />
@@ -61,7 +75,7 @@ export function TechToolbelt() {
               </div>
               <div className="space-y-2">
                 <SkillBubble 
-                  name="React" 
+                  name="React, React Native" 
                   tags={['Hooks', 'Vite', 'NextJS']}
                   size="medium"
                   color="blue"
@@ -123,11 +137,7 @@ export function TechToolbelt() {
         {/* Backend Section - Takes 4 columns */}
         <div className="col-span-12 lg:col-span-4 space-y-4">
           <motion.div 
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.5, delay: 0.1 }}
-             className="bg-white/80 backdrop-blur-sm border border-green-200/50 rounded-3xl p-6 h-full shadow-lg hover:shadow-xl transition-all duration-300"
+             className="bg-white/80 backdrop-blur-sm border border-green-200/50 rounded-3xl p-6 h-full shadow-lg hover:shadow-xl transition-all duration-300 will-change-transform"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-md">
@@ -203,11 +213,7 @@ export function TechToolbelt() {
         {/* DevOps Section - Takes 4 columns */}
         <div className="col-span-12 lg:col-span-4 space-y-4">
           <motion.div 
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.5, delay: 0.2 }}
-             className="bg-white/80 backdrop-blur-sm border border-orange-200/50 rounded-3xl p-6 h-full shadow-lg hover:shadow-xl transition-all duration-300"
+             className="bg-white/80 backdrop-blur-sm border border-orange-200/50 rounded-3xl p-6 h-full shadow-lg hover:shadow-xl transition-all duration-300 will-change-transform"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-md">
@@ -277,7 +283,7 @@ export function TechToolbelt() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
     </div>
     </section>
