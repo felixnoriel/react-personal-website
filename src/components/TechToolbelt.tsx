@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { SkillBubble } from './SkillBubble';
 
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
+    y: 0,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.1,
-    }
+      duration: 0.6,
+      ease: 'easeOut',
+    } as const
   }
 };
 

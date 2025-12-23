@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { trackTechClick } from '../utils/analytics';
 import { memo } from 'react';
 
@@ -47,17 +46,12 @@ const colorClasses = {
   }
 };
 
-// Variants for staggered entrance
+// Variants for staggered entrance - Simplified to just fade in if needed
 export const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { opacity: 0 },
   visible: { 
-    y: 0, 
     opacity: 1,
-    transition: { 
-      type: 'spring', 
-      stiffness: 300, 
-      damping: 24 
-    } as const
+    transition: { duration: 0.3 }
   }
 };
 
@@ -81,24 +75,20 @@ export const SkillBubble = memo(({ name, tags, size, color, compact = false, ico
 
   if (compact) {
     return (
-      <motion.div
-        variants={itemVariants}
-        whileHover={{ scale: 1.05, y: -2 }}
+      <div
         onMouseEnter={() => trackTechClick(name, 'compact_bubble')}
-        className={`inline-flex items-center gap-2 ${sizeClass.bubble} ${colorClass.bg} ${colorClass.text} border ${colorClass.bg.split(' ')[2]} rounded-full backdrop-blur-sm cursor-default will-change-transform`}
+        className={`inline-flex items-center gap-2 ${sizeClass.bubble} ${colorClass.bg} ${colorClass.text} border ${colorClass.bg.split(' ')[2]} rounded-full backdrop-blur-sm cursor-default transition-transform hover:scale-105 hover:-translate-y-0.5`}
       >
         {renderIconOrDot()}
         <span className="font-medium">{name}</span>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      variants={itemVariants}
-      whileHover={{ scale: 1.02, y: -2 }}
+    <div
       onMouseEnter={() => trackTechClick(name, 'full_bubble')}
-      className={`flex items-start gap-3 ${sizeClass.bubble} ${colorClass.bg} border ${colorClass.bg.split(' ')[2]} rounded-2xl backdrop-blur-sm cursor-default w-full will-change-transform`}
+      className={`flex items-start gap-3 ${sizeClass.bubble} ${colorClass.bg} border ${colorClass.bg.split(' ')[2]} rounded-2xl backdrop-blur-sm cursor-default w-full transition-transform hover:scale-[1.02] hover:-translate-y-0.5`}
     >
       <div className="flex items-center gap-2 flex-1">
         {renderIconOrDotWrapper()}
@@ -118,10 +108,9 @@ export const SkillBubble = memo(({ name, tags, size, color, compact = false, ico
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 });
 
 // For better debugging display name
 SkillBubble.displayName = 'SkillBubble';
-
