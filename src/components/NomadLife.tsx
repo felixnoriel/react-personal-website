@@ -49,12 +49,8 @@ export function NomadLife() {
     <section id="nomad-section" className="py-20 bg-gradient-to-br from-cyan-50/50 via-blue-50/50 to-indigo-50/50 relative overflow-hidden scroll-mt-28">
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="absolute inset-0 opacity-30"
+        <div
+          className="absolute inset-0 opacity-20"
           style={{
             backgroundImage:
               'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)',
@@ -72,11 +68,9 @@ export function NomadLife() {
           className="text-center mb-16"
         >
           <motion.div
-            animate={{
-              rotate: [0, 10, -10, 0],
-              y: [0, -10, 0],
-            }}
-            transition={{ duration: 5, repeat: Infinity }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
             className="text-6xl mb-4 inline-block"
           >
             🎒
@@ -158,14 +152,6 @@ export function NomadLife() {
             >
               <Card className="p-4 text-center bg-white/80 backdrop-blur-sm border-2 border-blue-200 hover:shadow-xl transition-all">
                 <motion.div
-                  animate={{
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: index * 0.2,
-                  }}
                   className="text-4xl mb-2"
                 >
                   {stat.emoji}
@@ -188,37 +174,13 @@ export function NomadLife() {
           className="max-w-4xl mx-auto"
         >
           <Card className="p-8 bg-gradient-to-br from-blue-500/10 via-cyan-500/10 to-indigo-500/10 border-2 border-blue-300 relative overflow-hidden">
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
-              animate={{
-                x: ['-100%', '100%'],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
             <div className="relative z-10">
               <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-                <motion.div
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                  className="text-6xl shrink-0"
-                >
-                  🌏
-                </motion.div>
+                <div className="text-6xl shrink-0">🌏</div>
                 <div>
                   <h3 className="mb-3 text-2xl font-bold flex items-center justify-center md:justify-start gap-2 text-blue-900">
-                    Why I Love This Lifestyle
-                    <motion.span
-                      animate={{ scale: [1, 1.3, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      ❤️
-                    </motion.span>
+                    Why I Love This Lifestyle ❤️
                   </h3>
                   <p className="text-muted-foreground mb-4 leading-relaxed">
                     Being a digital nomad isn't just about working from exotic

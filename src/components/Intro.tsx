@@ -30,44 +30,35 @@ export function Intro() {
         <motion.div
           className="absolute w-[600px] h-[600px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%)',
             top: '10%',
             left: '10%',
           }}
-          animate={{
-            x: [0, 100, 0],
-            y: [0, 50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2 }}
         />
         <motion.div
           className="absolute w-[500px] h-[500px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%)',
             top: '50%',
             right: '10%',
           }}
-          animate={{
-            x: [0, -80, 0],
-            y: [0, -60, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2, delay: 0.5 }}
         />
         <motion.div
           className="absolute w-[400px] h-[400px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)',
             bottom: '10%',
             left: '40%',
           }}
-          animate={{
-            x: [0, 60, 0],
-            y: [0, -40, 0],
-            scale: [1.2, 1, 1.2],
-          }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2, delay: 1 }}
         />
       </div>
 
@@ -78,9 +69,7 @@ export function Intro() {
           className="absolute hidden lg:block pointer-events-none"
           style={{ left: item.x, top: item.y }}
           animate={{
-            y: [0, -30, 0],
-            rotate: [0, 10, -10, 0],
-            scale: [1, 1.1, 0.9, 1],
+            y: [0, -20, 0],
           }}
           transition={{
             duration: item.duration,
@@ -90,11 +79,7 @@ export function Intro() {
           }}
         >
           <div className="relative">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 bg-gradient-to-r from-violet-500 to-pink-500 rounded-2xl blur-xl opacity-40"
-            />
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-pink-500/20 rounded-2xl blur-xl" />
             <div className="relative bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-violet-200">
               <item.Icon className="w-6 h-6 text-violet-600" />
             </div>
@@ -113,11 +98,7 @@ export function Intro() {
             className="mb-8 inline-block"
           >
             <div className="relative">
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-0 bg-gradient-to-r from-violet-500 via-pink-500 to-orange-500 rounded-full blur-xl opacity-50"
-              />
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-500 via-pink-500 to-orange-500 rounded-full blur-xl opacity-30" />
               <div className="relative w-32 h-32 bg-gradient-to-br from-violet-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center border-4 border-white shadow-2xl">
                 <span className="text-white text-5xl">👨‍💻</span>
               </div>
@@ -199,14 +180,7 @@ export function Intro() {
               , loves cooking and traveling every once in a while.
             </p>
             <div className="relative inline-block mb-8">
-              <motion.div
-                animate={{
-                  scale: [1, 1.05, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-pink-400/20 rounded-2xl blur-xl"
-              />
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-400/10 to-pink-400/10 rounded-2xl blur-xl" />
               <p className="relative text-muted-foreground text-lg bg-white/50 backdrop-blur-md px-6 py-4 rounded-2xl border-2 border-violet-200 shadow-lg">
                 In the past 4 years, I've been digital nomading in{' '}
                 <span className="text-violet-600 font-semibold">

@@ -19,13 +19,8 @@ export function Footer() {
     <footer className="bg-gradient-to-br from-violet-50/50 via-pink-50/50 to-orange-50/50 border-t-2 border-violet-100 relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <div
           className="absolute -bottom-20 left-1/4 w-96 h-96 bg-gradient-to-br from-violet-400/10 to-pink-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-          }}
-          transition={{ duration: 15, repeat: Infinity }}
         />
       </div>
 
@@ -187,14 +182,7 @@ export function Footer() {
             className="text-muted-foreground text-sm flex items-center gap-2"
             whileHover={{ scale: 1.05 }}
           >
-            Made with{' '}
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              ❤️
-            </motion.span>{' '}
-            and lots of ☕
+            Made with ❤️ and lots of ☕
           </motion.p>
         </motion.div>
       </div>

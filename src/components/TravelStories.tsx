@@ -22,14 +22,8 @@ export function TravelStories({ stories }: TravelStoriesProps) {
     <section className="py-20 bg-gradient-to-br from-emerald-50/50 via-teal-50/50 to-cyan-50/50 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <div
           className="absolute bottom-20 right-1/4 w-96 h-96 bg-gradient-to-br from-teal-400/10 to-cyan-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, -50, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{ duration: 18, repeat: Infinity }}
         />
       </div>
 
@@ -42,10 +36,9 @@ export function TravelStories({ stories }: TravelStoriesProps) {
           className="text-center mb-16"
         >
           <motion.div
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
             className="inline-block text-6xl mb-4"
           >
             ✈️

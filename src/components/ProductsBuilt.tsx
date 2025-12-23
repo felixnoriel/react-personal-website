@@ -54,14 +54,8 @@ export function ProductsBuilt({ projects, showViewAllLink = true }: ProductsBuil
     <section id="projects-section" className="py-20 relative overflow-hidden bg-gradient-to-br from-emerald-50/50 via-teal-50/50 to-cyan-50/50 scroll-mt-28">
       {/* Background decoration - Copied from TravelStories */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <div
           className="absolute bottom-20 right-1/4 w-96 h-96 bg-gradient-to-br from-teal-400/10 to-cyan-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, -50, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{ duration: 18, repeat: Infinity }}
         />
       </div>
 

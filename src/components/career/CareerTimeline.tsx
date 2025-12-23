@@ -26,14 +26,8 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
     <section className="py-20 bg-gradient-to-br from-pink-50/50 via-white to-orange-50/50 relative overflow-hidden">
       {/* Decorative blob */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <div
           className="absolute top-1/4 left-10 w-72 h-72 bg-gradient-to-br from-violet-400/10 to-pink-400/10 rounded-full blur-3xl"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 15, repeat: Infinity }}
         />
       </div>
 
@@ -97,18 +91,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
                       {/* Icon and timeline */}
                       <div className="flex md:flex-col items-center md:items-start gap-4">
                         <motion.div whileHover={{ scale: 1.1, rotate: 10 }} className="relative">
-                          <motion.div
-                            animate={{
-                              scale: [1, 1.2, 1],
-                              opacity: [0.5, 0.8, 0.5],
-                            }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              delay: index * 0.5,
-                            }}
-                            className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl blur-md`}
-                          />
+                          <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl blur-md opacity-30`} />
                           <div className="relative w-14 h-14 bg-gradient-to-br from-white to-gray-50 rounded-2xl flex items-center justify-center border-2 border-violet-200 shadow-lg text-2xl">
                             {emoji}
                           </div>
@@ -128,16 +111,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
                         <div className="mb-3">
                           <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
                             <span dangerouslySetInnerHTML={{ __html: exp.jobTitle }} />
-                            <motion.div
-                              animate={{ rotate: [0, 15, 0] }}
-                              transition={{
-                                duration: 2,
-                                repeat: Infinity,
-                                delay: index * 0.3,
-                              }}
-                            >
-                              <Award className="w-4 h-4 text-yellow-500" />
-                            </motion.div>
+                                <Award className="w-4 h-4 text-yellow-500" />
                           </h3>
                           <div className="flex items-center gap-2">
                             <Building2 className="w-4 h-4 text-muted-foreground" />
@@ -171,13 +145,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
         >
           <div className="p-8 bg-gradient-to-br from-violet-500/10 via-pink-500/10 to-orange-500/10 border-2 border-violet-200 rounded-xl">
             <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="text-6xl"
-              >
-                🏆
-              </motion.div>
+                <div className="text-6xl">🏆</div>
               <div className="flex-grow">
                 <h3 className="text-xl font-bold mb-2">Always Learning & Growing</h3>
                 <p className="text-muted-foreground">

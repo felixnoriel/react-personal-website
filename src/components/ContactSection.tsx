@@ -43,23 +43,11 @@ export function ContactSection() {
     <section id="contact-section" className="py-20 bg-gradient-to-br from-violet-50/50 via-white to-pink-50/50 relative overflow-hidden scroll-mt-28">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <div
           className="absolute top-20 right-1/4 w-96 h-96 bg-gradient-to-br from-violet-400/10 to-pink-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity }}
         />
-        <motion.div
+        <div
           className="absolute bottom-20 left-1/4 w-96 h-96 bg-gradient-to-br from-orange-400/10 to-pink-400/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1.3, 1, 1.3],
-            x: [0, -50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity }}
         />
       </div>
 
@@ -80,14 +68,7 @@ export function ContactSection() {
             className="inline-block mb-4"
           >
             <div className="relative">
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                  rotate: [0, 180, 360],
-                }}
-                transition={{ duration: 10, repeat: Infinity }}
-                className="absolute inset-0 bg-gradient-to-r from-violet-500 via-pink-500 to-orange-500 rounded-2xl blur-xl opacity-50"
-              />
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-500 via-pink-500 to-orange-500 rounded-2xl blur-xl opacity-30" />
               <div className="relative w-16 h-16 mx-auto bg-gradient-to-br from-violet-500 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <MessageSquare className="text-white w-8 h-8" />
               </div>
@@ -223,18 +204,7 @@ export function ContactSection() {
                       transition={{ duration: 0.5 }}
                       className="relative"
                     >
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.2, 1],
-                          opacity: [0.5, 0.8, 0.5],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          delay: index * 0.5,
-                        }}
-                        className={`absolute inset-0 bg-gradient-to-br ${method.color} rounded-xl blur-lg`}
-                      />
+                      <div className={`absolute inset-0 bg-gradient-to-br ${method.color} rounded-xl blur-lg opacity-30`} />
                       <div className="relative w-12 h-12 bg-gradient-to-br from-white to-gray-50 rounded-xl flex items-center justify-center border-2 border-violet-200 shadow-lg text-xl">
                         {method.emoji}
                       </div>
