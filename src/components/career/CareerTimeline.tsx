@@ -1,3 +1,4 @@
+import { Rocket, Calendar, Award, Building2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ViewAllLink } from '../ViewAllLink'
@@ -53,7 +54,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
             className="inline-block mb-4"
           >
             <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
-              <i className="fas fa-rocket text-white text-2xl" />
+              <Rocket className="text-white w-8 h-8" />
             </div>
           </motion.div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gradient-primary">My Journey</h2>
@@ -115,7 +116,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
 
                         {/* Calendar badge */}
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-violet-100 to-pink-100 rounded-full border border-violet-200">
-                          <i className="fas fa-calendar-alt text-xs text-violet-600" />
+                          <Calendar className="w-3 h-3 text-violet-600" />
                           <span className="text-sm text-violet-700">
                             {exp.startDate} - {exp.endDate}
                           </span>
@@ -135,11 +136,11 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
                                 delay: index * 0.3,
                               }}
                             >
-                              <i className="fas fa-award text-yellow-500" />
+                              <Award className="w-4 h-4 text-yellow-500" />
                             </motion.div>
                           </h3>
                           <div className="flex items-center gap-2">
-                            <i className="fas fa-building text-sm text-muted-foreground" />
+                            <Building2 className="w-4 h-4 text-muted-foreground" />
                             <p className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: exp.title }} />
                           </div>
                         </div>

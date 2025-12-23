@@ -1,3 +1,4 @@
+import { Code, Sparkles, Mail } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Socials } from '../Socials'
@@ -54,7 +55,7 @@ export function Footer() {
               <div>
                 <h4 className="font-bold text-gradient-primary">Felix Noriel</h4>
                 <p className="text-muted-foreground text-sm flex items-center gap-1">
-                  <i className="fas fa-code text-xs" />
+                  <Code className="w-3 h-3" />
                   Software Engineer
                 </p>
               </div>
@@ -88,7 +89,7 @@ export function Footer() {
             transition={{ delay: 0.2 }}
           >
             <h4 className="font-bold mb-4 flex items-center gap-2">
-              <i className="fas fa-sparkles text-violet-600" />
+              <Sparkles className="w-4 h-4 text-violet-600" />
               Quick Links
             </h4>
             <ul className="space-y-2">
@@ -106,9 +107,9 @@ export function Footer() {
                       href={link.href}
                       onClick={() => {
                         if (link.href.startsWith('mailto:')) {
-                          trackEmailClick('footer_quick_link')
+                           trackEmailClick('footer_quick_link')
                         } else {
-                          trackNavigation(link.href, 'footer_quick_link')
+                           trackNavigation(link.href, 'footer_quick_link')
                         }
                       }}
                       className="text-muted-foreground hover:text-violet-600 transition-colors flex items-center gap-2 group text-sm"
@@ -139,7 +140,7 @@ export function Footer() {
             transition={{ delay: 0.3 }}
           >
             <h4 className="font-bold mb-4 flex items-center gap-2">
-              <i className="fas fa-envelope text-pink-600" />
+              <Mail className="w-4 h-4 text-pink-600" />
               Get in Touch
             </h4>
             <ul className="space-y-2 text-muted-foreground text-sm">

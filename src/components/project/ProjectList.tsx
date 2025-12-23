@@ -63,6 +63,9 @@ function ProjectItem({ project }: { project: Project }) {
               src={project.image.url}
               alt={project.image.alt || project.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={600}
+              height={400}
+              loading="lazy"
             />
           </figure>
         )}

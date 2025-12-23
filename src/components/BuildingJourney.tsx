@@ -100,7 +100,6 @@ export function BuildingJourney({ experiences, showViewAllLink = true }: Buildin
                 const brandColor = exp.color || 'bg-gradient-to-r from-gray-700 to-gray-900'
                 const achievements = exp.achievements || []
                 const techs = exp.techStack || []
-                const isPresent = exp.endDate.toLowerCase() === 'present'
 
                 return (
                     <motion.div
@@ -123,6 +122,9 @@ export function BuildingJourney({ experiences, showViewAllLink = true }: Buildin
                                                         src={exp.image.url}
                                                         alt={exp.title}
                                                         className="w-full h-full object-contain"
+                                                        width={80}
+                                                        height={80}
+                                                        loading="lazy"
                                                     />
                                                 ) : (
                                                     <span className="text-3xl">🏢</span>

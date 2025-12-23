@@ -1,3 +1,4 @@
+import { MessageSquare, Send, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
@@ -88,7 +89,7 @@ export function ContactSection() {
                 className="absolute inset-0 bg-gradient-to-r from-violet-500 via-pink-500 to-orange-500 rounded-2xl blur-xl opacity-50"
               />
               <div className="relative w-16 h-16 mx-auto bg-gradient-to-br from-violet-500 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <i className="fas fa-comments text-white text-2xl" />
+                <MessageSquare className="text-white w-8 h-8" />
               </div>
             </div>
           </motion.div>
@@ -111,7 +112,7 @@ export function ContactSection() {
             <div className="p-8 border-2 border-violet-100 hover:border-violet-200 transition-all bg-white/80 backdrop-blur rounded-xl">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <i className="fas fa-paper-plane text-white" />
+                  <Send className="text-white w-5 h-5" />
                 </div>
                 <h3 className="text-xl font-bold">Send Me a Message</h3>
               </div>
@@ -189,9 +190,9 @@ export function ContactSection() {
                     type="submit"
                     className="w-full py-3  font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
                   >
-                    <i className="fas fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                     Send Message
-                    <i className="fas fa-sparkles" />
+                    <Sparkles className="w-5 h-5" />
                   </button>
                 </motion.div>
               </form>

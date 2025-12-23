@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent } from '../ui/card'
 import { ViewAllLink } from '../ViewAllLink'
@@ -54,6 +55,9 @@ function BlogItem({ blog }: { blog: BlogPost }) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               alt={blog.image.alt || blog.title}
               src={blog.image.url}
+              width={400}
+              height={225}
+              loading="lazy"
             />
           </figure>
         )}
@@ -65,7 +69,7 @@ function BlogItem({ blog }: { blog: BlogPost }) {
           />
           <p className="text-primary mt-4 flex items-center gap-2 group-hover:gap-3 transition-all">
             View
-            <i className="fas fa-arrow-right text-sm" />
+            <ArrowRight className="w-4 h-4" />
           </p>
         </CardContent>
       </Card>

@@ -38,6 +38,9 @@ export function ProjectView({ project, otherProjects }: ProjectViewProps) {
                 alt={project.image.alt || project.title}
                 src={project.image.url}
                 className="w-full rounded-lg shadow-lg"
+                width={800}
+                height={600}
+                loading="lazy"
               />
             </figure>
           )}
@@ -77,6 +80,9 @@ export function ProjectView({ project, otherProjects }: ProjectViewProps) {
                           src={img.url}
                           alt={img.alt || `Gallery image ${index + 1}`}
                           className="w-full h-auto aspect-video object-cover group-hover:scale-110 transition-transform duration-300"
+                          width={400}
+                          height={225}
+                          loading="lazy"
                         />
                         {img.alt && (
                           <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity text-left">
@@ -121,6 +127,9 @@ export function ProjectView({ project, otherProjects }: ProjectViewProps) {
                             src={img.url}
                             alt={img.alt || ''}
                             className="w-full h-auto aspect-video object-cover group-hover:scale-110 transition-transform duration-300"
+                            width={400}
+                            height={225}
+                            loading="lazy"
                           />
                           {(img.alt && img.alt !== 'Default') && (
                             <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity text-left truncate">
@@ -181,6 +190,9 @@ function ProjectSideInfo({ tags, otherProjects }: { tags: any[]; otherProjects: 
                     src={project.image.url}
                     alt={project.image.alt || project.title}
                     className="w-full h-auto mb-3 rounded-md shadow-sm"
+                    width={300}
+                    height={200}
+                    loading="lazy"
                     />
                 )}
                 <h3 className="text-xl font-bold group-hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: project.title }} />

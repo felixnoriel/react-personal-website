@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from './ui/button'
 
@@ -15,7 +16,7 @@ export function ViewAllLink({ route, indexPage = false }: ViewAllLinkProps) {
     <div className="flex justify-center mt-8">
       <Link to={`/${route}`}>
         <Button variant="link" className="text-lg">
-          see all <i className="fas fa-arrow-right ml-2" />
+          see all <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </Link>
     </div>

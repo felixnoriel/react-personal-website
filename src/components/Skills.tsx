@@ -1,3 +1,4 @@
+import { FileCode, GitBranch, Terminal, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const skillCategories = [
@@ -5,7 +6,7 @@ const skillCategories = [
     title: 'Frontend Magic ✨',
     color: 'from-violet-500 to-purple-600',
     bgColor: 'from-violet-500/10 to-purple-500/10',
-    icon: 'far fa-file-code',
+    Icon: FileCode,
     skills: [
       { name: 'React (Hooks, Vite, NextJs)', level: 95 },
       { name: 'TypeScript', level: 92 },
@@ -19,7 +20,7 @@ const skillCategories = [
     title: 'Backend Power 🚀',
     color: 'from-pink-500 to-rose-600',
     bgColor: 'from-pink-500/10 to-rose-500/10',
-    icon: 'fas fa-code-branch',
+    Icon: GitBranch,
     skills: [
       { name: 'Node (NestJS, Express, Koa)', level: 95 },
       { name: 'Java, .NET, C#, PHP', level: 75 },
@@ -32,7 +33,7 @@ const skillCategories = [
     title: 'DevOps & Tools 🛠️',
     color: 'from-orange-500 to-amber-600',
     bgColor: 'from-orange-500/10 to-amber-500/10',
-    icon: 'fas fa-terminal',
+    Icon: Terminal,
     skills: [
       { name: 'Google Cloud (Run, Functions, BigQuery)', level: 90 },
       { name: 'AWS (CDK, ECS, Lambda, S3)', level: 88 },
@@ -98,7 +99,7 @@ export function Skills() {
               className="inline-block mb-4"
             >
               <div className="w-16 h-16 mx-auto bg-gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
-                <i className="fas fa-sparkles text-white text-2xl" />
+                <Sparkles className="text-white w-8 h-8" />
               </div>
             </motion.div>
             <h2 className="text-3xl font-bold mb-4 text-gradient-primary">My Superpowers</h2>
@@ -123,7 +124,7 @@ export function Skills() {
                     <div
                       className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${category.bgColor} border border-violet-200`}
                     >
-                      <i className={`${category.icon} text-2xl text-violet-600`} />
+                      <category.Icon className="w-6 h-6 text-violet-600" />
                     </div>
                   </motion.div>
 

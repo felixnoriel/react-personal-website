@@ -1,3 +1,4 @@
+import { ArrowLeft, Facebook, Twitter, Linkedin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '../ui/button'
 import type { BlogPost } from '../../types/data'
@@ -23,7 +24,14 @@ export function BlogView({ blog }: BlogViewProps) {
           dangerouslySetInnerHTML={{ __html: blog.excerpt }}
         />
         {blog.image?.url && (
-          <img className="w-full rounded-lg shadow-lg mb-8" src={blog.image.url} alt={blog.image.alt || blog.title} />
+          <img
+            className="w-full rounded-lg shadow-lg mb-8"
+            src={blog.image.url}
+            alt={blog.image.alt || blog.title}
+            width={800}
+            height={450}
+            loading="lazy"
+          />
         )}
       </section>
 
@@ -35,7 +43,7 @@ export function BlogView({ blog }: BlogViewProps) {
         <div className="mt-12">
           <Link to="/blog">
             <Button variant="outline">
-              <i className="fas fa-arrow-left mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Back to blog
             </Button>
           </Link>
@@ -79,21 +87,21 @@ function SharePost({ blog }: { blog: BlogPost }) {
           className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors"
           aria-label="Share on Facebook"
         >
-          <i className="fab fa-facebook-f" />
+          <Facebook className="w-5 h-5" />
         </button>
         <button
           onClick={shareToTwitter}
           className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center hover:bg-sky-600 transition-colors"
           aria-label="Share on Twitter"
         >
-          <i className="fab fa-twitter" />
+          <Twitter className="w-5 h-5" />
         </button>
         <button
           onClick={shareToLinkedIn}
           className="w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition-colors"
           aria-label="Share on LinkedIn"
         >
-          <i className="fab fa-linkedin-in" />
+          <Linkedin className="w-5 h-5" />
         </button>
       </div>
     </div>
