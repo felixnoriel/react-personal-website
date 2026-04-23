@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react'
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
 import { Intro } from '../components/Intro'
-import { BootLoader } from '../components/ui/BootLoader'
 
 const TechToolbelt = lazy(() => import('../components/TechToolbelt').then(m => ({ default: m.TechToolbelt })))
 const BuildingJourney = lazy(() => import('../components/BuildingJourney').then(m => ({ default: m.BuildingJourney })))
@@ -21,7 +20,16 @@ export function Home() {
   const blogList = filterPerPage(4, blog) // Show 4 items as requested
 
   if (loading) {
-    return <BootLoader />
+    return (
+      <div
+        className="min-h-screen bg-background flex items-center justify-center"
+        aria-label="Loading"
+      >
+        <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-ink-soft/70 animate-pulse">
+          loading…
+        </span>
+      </div>
+    )
   }
 
   return (

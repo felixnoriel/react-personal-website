@@ -79,7 +79,18 @@ function App() {
             <ScrollHUD />
             <TechCursor />
             <MainLayout>
-              <Suspense fallback={<BootLoader />}>
+              <Suspense
+                fallback={
+                  <div
+                    className="min-h-screen bg-background flex items-center justify-center"
+                    aria-label="Loading"
+                  >
+                    <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-ink-soft/70 animate-pulse">
+                      loading…
+                    </span>
+                  </div>
+                }
+              >
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/blog" element={<Blog />} />
