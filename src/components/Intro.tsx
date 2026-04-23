@@ -1421,18 +1421,6 @@ function ShipEngine({ frame }: { frame: number }) {
       onMouseMove={reduce ? undefined : onMove}
       onMouseLeave={reduce ? undefined : onLeave}
     >
-      {/* animated border glow — richer conic rainbow sweep */}
-      <motion.div
-        aria-hidden
-        className="absolute -inset-[2px] rounded-2xl opacity-80 blur-[2px]"
-        style={{
-          background:
-            'conic-gradient(from 0deg at 50% 50%, hsl(var(--accent)) 0deg, hsl(var(--amber)) 90deg, hsl(var(--lime)) 180deg, hsl(var(--electric)) 270deg, hsl(var(--accent)) 360deg)',
-        }}
-        animate={reduce ? undefined : { rotate: [0, 360] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-      />
-
       {/* Shockwave ring that fires on every new ship */}
       <AnimatePresence>
         <motion.span
