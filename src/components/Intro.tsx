@@ -966,31 +966,121 @@ function ShipEngine({ frame }: { frame: number }) {
   const iter = 2847 + Math.floor(frame / 12)
   const shippedToday = 7 + (uidRef.current - 5)
 
+  // === 3D tilt on cursor ===
+  const cardRef = useRef<HTMLDivElement | null>(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), {
+    stiffness: 140,
+    damping: 22,
+    mass: 0.6,
+  })
+  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), {
+    stiffness: 140,
+    damping: 22,
+    mass: 0.6,
+  })
+  const glowBg = useTransform([mx, my] as never, ([x, y]: number[]) =>
+    `radial-gradient(600px circle at ${50 + x * 80}% ${50 + y * 80}%, hsl(var(--accent) / 0.35), transparent 55%)`,
+  )
+  const rafRef = useRef<number | null>(null)
+  const pendingPtr = useRef<{ x: number; y: number } | null>(null)
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    pendingPtr.current = { x: e.clientX, y: e.clientY }
+    if (rafRef.current !== null) return
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null
+      const p = pendingPtr.current
+      if (!p || !cardRef.current) return
+      const r = cardRef.current.getBoundingClientRect()
+      mx.set((p.x - r.left) / r.width - 0.5)
+      my.set((p.y - r.top) / r.height - 0.5)
+    })
+  }
+  const onLeave = () => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+    }
+    pendingPtr.current = null
+    mx.set(0)
+    my.set(0)
+  }
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  // Ship pulse: fires whenever a new artifact is added. Drives the
+  // shockwave + border flash.
+  const [shipPulse, setShipPulse] = useState(0)
+  const latestUid = queue[queue.length - 1]?.uid
+  useEffect(() => {
+    setShipPulse((n) => n + 1)
+  }, [latestUid])
+
   return (
-    <div className="relative">
-      {/* animated border glow */}
+    <div
+      className="relative"
+      style={{ perspective: '1400px' }}
+      onMouseMove={reduce ? undefined : onMove}
+      onMouseLeave={reduce ? undefined : onLeave}
+    >
+      {/* animated border glow — richer conic rainbow sweep */}
       <motion.div
         aria-hidden
-        className="absolute -inset-px rounded-2xl opacity-70 blur-[1px]"
+        className="absolute -inset-[2px] rounded-2xl opacity-80 blur-[2px]"
         style={{
           background:
-            'linear-gradient(120deg, hsl(var(--accent) / 0.4), hsl(var(--amber) / 0.25), hsl(var(--lime) / 0.4), hsl(var(--electric) / 0.3), hsl(var(--accent) / 0.4))',
-          backgroundSize: '250% 250%',
+            'conic-gradient(from 0deg at 50% 50%, hsl(var(--accent)) 0deg, hsl(var(--amber)) 90deg, hsl(var(--lime)) 180deg, hsl(var(--electric)) 270deg, hsl(var(--accent)) 360deg)',
         }}
-        animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        animate={reduce ? undefined : { rotate: [0, 360] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
       />
 
-      <div className="relative rounded-2xl border border-border bg-background overflow-hidden shadow-[0_30px_80px_-30px_hsl(var(--ink)/0.3)]">
+      {/* Shockwave ring that fires on every new ship */}
+      <AnimatePresence>
+        <motion.span
+          key={shipPulse}
+          aria-hidden
+          className="pointer-events-none absolute -inset-1 rounded-[20px]"
+          initial={{ opacity: 0.9, scale: 0.98 }}
+          animate={{ opacity: 0, scale: 1.015 }}
+          transition={{ duration: 1.1, ease: 'easeOut' }}
+          style={{
+            border: '1px solid hsl(var(--amber) / 0.6)',
+            boxShadow: '0 0 30px hsl(var(--amber) / 0.45)',
+          }}
+        />
+      </AnimatePresence>
+
+      <motion.div
+        ref={cardRef}
+        className="relative rounded-2xl border border-border bg-background overflow-hidden shadow-[0_30px_80px_-30px_hsl(var(--ink)/0.35)]"
+        style={{
+          rotateX: reduce ? 0 : rotX,
+          rotateY: reduce ? 0 : rotY,
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        {/* Cursor-tracking spotlight */}
+        {!reduce && (
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-[5] opacity-[0.35] mix-blend-plus-lighter"
+            style={{ background: glowBg }}
+          />
+        )}
         {/* Title bar */}
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-ink text-background">
+        <div className="relative flex items-center gap-2 px-4 py-2.5 border-b border-border bg-ink text-background">
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
             <span className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
             <span className="w-3 h-3 rounded-full bg-[#28C840]" />
           </span>
           <span className="font-mono text-[11px] text-white/70 ml-2 truncate">
-            felix.sys · <span className="text-white">ship.engine</span>
+            felix.sys · <HoloText>ship.engine</HoloText>
           </span>
           <span className="ml-auto flex items-center gap-1.5 font-mono text-[10px] text-lime">
             <span className="relative flex h-1.5 w-1.5">
@@ -1001,16 +1091,40 @@ function ShipEngine({ frame }: { frame: number }) {
           </span>
         </div>
 
-        {/* Session meta strip */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 border-b border-border bg-surface/50 text-[10px] font-mono text-ink-soft tracking-[0.1em] uppercase">
+        {/* Session meta strip — now includes a stability gauge */}
+        <div className="relative flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 border-b border-border bg-surface/50 text-[10px] font-mono text-ink-soft tracking-[0.1em] uppercase overflow-hidden">
+          {/* shimmer sweep */}
+          {!reduce && (
+            <motion.span
+              aria-hidden
+              className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-accent/15 to-transparent pointer-events-none"
+              animate={{ left: ['-20%', '120%'] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+            />
+          )}
           <span>iter</span>
-          <span className="text-ink tabular-nums">#{iter}</span>
+          <span className="text-ink tabular-nums">
+            #<GlitchNum value={iter} reduce={reduce} />
+          </span>
           <span className="text-ink-soft">·</span>
           <span>build</span>
           <span className="text-accent tabular-nums">v2026.1</span>
+          <span className="text-ink-soft hidden md:inline">·</span>
+          <span className="hidden md:inline-flex items-center gap-1.5 normal-case tracking-normal">
+            <span className="text-ink-muted uppercase tracking-[0.15em] text-[9px]">
+              loop
+            </span>
+            <StabilityMeter frame={frame} reduce={reduce} />
+            <span className="text-lime tabular-nums text-[9.5px]">
+              {(98 + (Math.sin(frame / 28) + 1) * 0.9).toFixed(2)}%
+            </span>
+          </span>
           <span className="ml-auto flex items-center gap-1 normal-case tracking-normal">
             <Cpu className="w-3 h-3 text-lime" />
-            <span className="text-ink tabular-nums">{fps}rpm</span>
+            <span className="text-ink tabular-nums">
+              <GlitchNum value={fps} reduce={reduce} />
+              rpm
+            </span>
           </span>
         </div>
 
@@ -1025,8 +1139,24 @@ function ShipEngine({ frame }: { frame: number }) {
                 'repeating-linear-gradient(0deg, hsl(var(--ink)) 0px, hsl(var(--ink)) 1px, transparent 1px, transparent 3px)',
             }}
           />
-          <LoopEngine reduce={reduce} />
+          {/* CRT roll — a single band sweeping vertically */}
+          {!reduce && (
+            <motion.div
+              aria-hidden
+              className="absolute inset-x-0 h-24 pointer-events-none z-[3]"
+              style={{
+                background:
+                  'linear-gradient(180deg, transparent, hsl(var(--accent) / 0.08), transparent)',
+              }}
+              animate={{ y: ['-30%', '130%'] }}
+              transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
+            />
+          )}
+          <LoopEngine reduce={reduce} frame={frame} />
         </div>
+
+        {/* === EKG / heartbeat strip === */}
+        <EkgStrip reduce={reduce} pulse={shipPulse} />
 
         {/* === Shipped Stream === */}
         <div className="px-4 pt-3 pb-3 bg-surface/30">
@@ -1068,7 +1198,208 @@ function ShipEngine({ frame }: { frame: number }) {
             127.0.0.1
           </span>
         </div>
-      </div>
+      </motion.div>
+    </div>
+  )
+}
+
+// ============================================================
+// HoloText — chromatic-aberration title with occasional glitch
+// ============================================================
+
+function HoloText({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="relative inline-block">
+      <span
+        aria-hidden
+        className="absolute inset-0 text-[hsl(var(--accent))] opacity-80 pointer-events-none"
+        style={{
+          transform: 'translateX(-0.6px)',
+          mixBlendMode: 'screen',
+        }}
+      >
+        {children}
+      </span>
+      <span
+        aria-hidden
+        className="absolute inset-0 text-[hsl(var(--lime))] opacity-80 pointer-events-none"
+        style={{
+          transform: 'translateX(0.6px)',
+          mixBlendMode: 'screen',
+        }}
+      >
+        {children}
+      </span>
+      <span className="relative text-white">{children}</span>
+    </span>
+  )
+}
+
+// ============================================================
+// GlitchNum — number that randomly "hiccups" with scrambled chars
+// for a few frames each second. Keeps numeric lock most of the time
+// for readability.
+// ============================================================
+
+function GlitchNum({
+  value,
+  reduce,
+}: {
+  value: number
+  reduce: boolean
+}) {
+  const [glitch, setGlitch] = useState('')
+  useEffect(() => {
+    if (reduce) return
+    const id = setInterval(() => {
+      // Small chance to scramble for ~160ms
+      if (Math.random() < 0.18) {
+        const len = String(value).length
+        const chars = '0123456789ABCDEF'
+        const s = Array.from({ length: len }, () =>
+          chars[Math.floor(Math.random() * chars.length)],
+        ).join('')
+        setGlitch(s)
+        setTimeout(() => setGlitch(''), 160)
+      }
+    }, 900)
+    return () => clearInterval(id)
+  }, [value, reduce])
+  return <span>{glitch || value}</span>
+}
+
+// ============================================================
+// StabilityMeter — segmented bar that animates a lime peak
+// ============================================================
+
+function StabilityMeter({
+  frame,
+  reduce,
+}: {
+  frame: number
+  reduce: boolean
+}) {
+  const segs = 14
+  const peak = reduce
+    ? segs - 2
+    : Math.floor(segs * 0.82 + Math.sin(frame / 22) * 1.2)
+  return (
+    <span className="inline-flex items-center gap-[2px]">
+      {Array.from({ length: segs }, (_, i) => {
+        const on = i <= peak
+        const color =
+          i >= segs - 2
+            ? 'hsl(var(--amber))'
+            : i >= segs - 5
+            ? 'hsl(var(--lime))'
+            : 'hsl(var(--accent))'
+        return (
+          <span
+            key={i}
+            className="block h-2 w-[3px] rounded-[0.5px]"
+            style={{
+              background: on ? color : 'hsl(var(--border))',
+              opacity: on ? 1 : 0.5,
+              transition: 'background 0.2s',
+            }}
+          />
+        )
+      })}
+    </span>
+  )
+}
+
+// ============================================================
+// EkgStrip — narrow heartbeat waveform beneath the loop engine.
+// Draws a rolling sine + periodic beat spike using SMIL offset.
+// ============================================================
+
+function EkgStrip({ reduce, pulse }: { reduce: boolean; pulse: number }) {
+  const W = 600
+  const H = 28
+  // Build the waveform: flat, gentle wobble, a beat spike, then flat again.
+  const path = useMemo(() => {
+    const pts: string[] = []
+    const baseline = H / 2
+    for (let x = 0; x <= W; x += 4) {
+      const t = x / W
+      // spike around 55%
+      const d = Math.abs(t - 0.55)
+      let y = baseline + Math.sin(x / 18) * 1.2
+      if (d < 0.04) {
+        y = baseline - 9 * (1 - d / 0.04)
+      } else if (d >= 0.04 && d < 0.06) {
+        y = baseline + 5 * (1 - (d - 0.04) / 0.02)
+      }
+      pts.push(`${pts.length === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(2)}`)
+    }
+    return pts.join(' ')
+  }, [])
+
+  return (
+    <div className="relative h-7 border-b border-border bg-black/40 overflow-hidden">
+      {/* baseline */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-1/2 h-px bg-border/60"
+      />
+      {/* label */}
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[8.5px] tracking-[0.25em] uppercase text-ink-muted">
+        pulse
+      </span>
+      <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[8.5px] tracking-[0.25em] uppercase text-lime tabular-nums">
+        {72 + (pulse % 7)} bpm
+      </span>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        className="absolute inset-0 w-full h-full"
+      >
+        <defs>
+          <linearGradient id="ekg-grad" x1="0" x2="1">
+            <stop offset="0%" stopColor="hsl(var(--lime))" stopOpacity="0" />
+            <stop offset="20%" stopColor="hsl(var(--lime))" stopOpacity="1" />
+            <stop offset="100%" stopColor="hsl(var(--lime))" stopOpacity="1" />
+          </linearGradient>
+        </defs>
+        <path
+          d={path}
+          fill="none"
+          stroke="url(#ekg-grad)"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+        >
+          {!reduce && (
+            <animate
+              attributeName="stroke-dashoffset"
+              from="0"
+              to={-W}
+              dur="4.5s"
+              repeatCount="indefinite"
+            />
+          )}
+        </path>
+        {/* replicate the wave, shifted for scroll illusion */}
+        <path
+          d={path}
+          fill="none"
+          stroke="hsl(var(--lime))"
+          strokeOpacity="0.35"
+          strokeWidth="1"
+          transform={`translate(${W} 0)`}
+        />
+      </svg>
+      {/* pulse flash */}
+      {!reduce && (
+        <motion.span
+          key={pulse}
+          aria-hidden
+          className="absolute inset-0 bg-lime/10 pointer-events-none"
+          initial={{ opacity: 0.5 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.7 }}
+        />
+      )}
     </div>
   )
 }
@@ -1082,13 +1413,55 @@ function ShipEngine({ frame }: { frame: number }) {
 // particles drip downward into the stream below.
 // ============================================================
 
-function LoopEngine({ reduce }: { reduce: boolean }) {
+function LoopEngine({
+  reduce,
+  frame,
+}: {
+  reduce: boolean
+  frame: number
+}) {
   const W = 320
   const H = 180
   const CX = W / 2
   const CY = 92
   const A = 112 // horizontal reach
   const B = 52 // vertical reach
+
+  // Deterministic neural dot grid — sparse, with twinkling subset
+  const grid = useMemo(() => {
+    const pts: { x: number; y: number; bright: boolean }[] = []
+    for (let gx = 8; gx < W; gx += 14) {
+      for (let gy = 24; gy < H - 18; gy += 14) {
+        // exclude dots too close to nodes (visual mess)
+        const dLeft = Math.hypot(gx - 48, gy - CY)
+        const dRight = Math.hypot(gx - (W - 48), gy - CY)
+        if (dLeft < 32 || dRight < 32) continue
+        pts.push({ x: gx, y: gy, bright: ((gx + gy) % 28) === 0 })
+      }
+    }
+    return pts
+  }, [])
+
+  // Electric arc — zig-zag polyline between Felix and Claude nodes
+  const arcPath = useMemo(() => {
+    const x1 = 84
+    const x2 = W - 84
+    const mid = (x1 + x2) / 2
+    const jitter = (seed: number) =>
+      Math.sin(seed * 12.9898 + frame * 0.7) * 3
+    const segs = 10
+    const pts: string[] = [`M ${x1} ${CY}`]
+    for (let i = 1; i < segs; i++) {
+      const t = i / segs
+      const x = x1 + (x2 - x1) * t
+      const y = CY + jitter(i) * (1 - Math.abs(t - 0.5) * 1.6)
+      pts.push(`L ${x.toFixed(1)} ${y.toFixed(2)}`)
+    }
+    pts.push(`L ${x2} ${CY}`)
+    // suppress unused mid warning
+    void mid
+    return pts.join(' ')
+  }, [frame])
 
   // Figure-8 / lemniscate traced as 4 cubic bezier segments.
   // left → center (upper-left arc), center → right (lower-right arc),
@@ -1128,7 +1501,72 @@ function LoopEngine({ reduce }: { reduce: boolean }) {
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <filter id="burst-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.4" />
+        </filter>
       </defs>
+
+      {/* === Neural dot grid — the "substrate" under the loop === */}
+      <g pointerEvents="none">
+        {grid.map((p, i) => (
+          <circle
+            key={i}
+            cx={p.x}
+            cy={p.y}
+            r={p.bright ? 0.9 : 0.6}
+            fill={p.bright ? 'hsl(var(--accent))' : 'hsl(var(--ink-soft))'}
+            opacity={p.bright ? 0.7 : 0.25}
+          >
+            {!reduce && p.bright && (
+              <animate
+                attributeName="opacity"
+                values="0.2;0.9;0.2"
+                dur={`${2 + (i % 5) * 0.4}s`}
+                begin={`${(i % 7) * 0.2}s`}
+                repeatCount="indefinite"
+              />
+            )}
+          </circle>
+        ))}
+        {/* very faint connector lines to evoke a network mesh */}
+        {grid.slice(0, 14).map((p, i) => {
+          const q = grid[i + 3]
+          if (!q) return null
+          return (
+            <line
+              key={`l-${i}`}
+              x1={p.x}
+              y1={p.y}
+              x2={q.x}
+              y2={q.y}
+              stroke="hsl(var(--accent))"
+              strokeOpacity="0.05"
+              strokeWidth="0.5"
+            />
+          )
+        })}
+      </g>
+
+      {/* === Electric arc between nodes === */}
+      {!reduce && (
+        <g pointerEvents="none">
+          <path
+            d={arcPath}
+            fill="none"
+            stroke="hsl(var(--electric))"
+            strokeOpacity="0.35"
+            strokeWidth="1.4"
+            filter="url(#burst-glow)"
+          />
+          <path
+            d={arcPath}
+            fill="none"
+            stroke="hsl(var(--electric))"
+            strokeOpacity="0.9"
+            strokeWidth="0.7"
+          />
+        </g>
+      )}
 
       {/* top label */}
       <text
@@ -1198,6 +1636,87 @@ function LoopEngine({ reduce }: { reduce: boolean }) {
           />
         )}
       </circle>
+
+      {/* Crossover collision burst — tiny particles scatter outward on a
+          periodic cycle synced with the expanding ring. Gives a real
+          "sparks fly" feel at the intersection. */}
+      {!reduce && (
+        <g pointerEvents="none">
+          {Array.from({ length: 8 }, (_, i) => {
+            const a = (i / 8) * Math.PI * 2
+            const dx = Math.cos(a) * 16
+            const dy = Math.sin(a) * 10
+            return (
+              <circle
+                key={i}
+                cx={CX}
+                cy={CY}
+                r="1.1"
+                fill={
+                  i % 3 === 0
+                    ? 'hsl(var(--amber))'
+                    : i % 3 === 1
+                    ? 'hsl(var(--lime))'
+                    : 'hsl(var(--accent))'
+                }
+                filter="url(#particle-glow)"
+              >
+                <animate
+                  attributeName="cx"
+                  from={CX}
+                  to={CX + dx}
+                  dur="1.8s"
+                  begin={`${(i * 0.12) % 1.4}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="cy"
+                  from={CY}
+                  to={CY + dy}
+                  dur="1.8s"
+                  begin={`${(i * 0.12) % 1.4}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;1;0"
+                  dur="1.8s"
+                  begin={`${(i * 0.12) % 1.4}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="r"
+                  values="0.6;1.6;0.2"
+                  dur="1.8s"
+                  begin={`${(i * 0.12) % 1.4}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+            )
+          })}
+          {/* Central energy spike — grows and fades */}
+          <circle
+            cx={CX}
+            cy={CY}
+            r="2"
+            fill="#ffffff"
+            filter="url(#burst-glow)"
+          >
+            <animate
+              attributeName="r"
+              values="1.2;4.5;1.2"
+              dur="1.4s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="opacity"
+              values="0.6;1;0.6"
+              dur="1.4s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+      )}
 
       {/* expanding pulse ring at crossover */}
       {!reduce && (
