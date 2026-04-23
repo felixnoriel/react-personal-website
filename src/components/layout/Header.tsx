@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Button } from '../ui/button'
-import { Menu, X, Sparkles } from 'lucide-react'
+import { Menu, X, ArrowUpRight, Search } from 'lucide-react'
 
 const navItems = [
-  { name: 'Home', href: '/', id: 'home', redirectPath: '/' },
+  { name: 'Work', href: '/#projects-section', id: 'projects-section', redirectPath: '/projects' },
+  { name: 'Experience', href: '/#career-section', id: 'career-section', redirectPath: '/career' },
   { name: 'Skills', href: '/#skills-section', id: 'skills-section', redirectPath: '/' },
-  { name: 'Career', href: '/#career-section', id: 'career-section', redirectPath: '/career' },
-  { name: 'Projects', href: '/#projects-section', id: 'projects-section', redirectPath: '/projects' },
-  { name: 'Travel', href: '/#nomad-section', id: 'nomad-section', redirectPath: '/blog' },
+  { name: 'Writing', href: '/#nomad-section', id: 'nomad-section', redirectPath: '/blog' },
 ]
 
 export function Header() {
@@ -20,7 +18,7 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      setIsScrolled(window.scrollY > 20)
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -28,45 +26,36 @@ export function Header() {
   }, [])
 
   const handleNavClick = (_href: string, id: string, redirectPath?: string) => {
-    // Mobile specific behavior
     if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false)
-        if (redirectPath) {
-            if (id === 'skills-section') {
-               // Special case for skills: Go to home then scroll
-               if (location.pathname !== '/') {
-                   navigate('/')
-                    setTimeout(() => {
-                        const element = document.getElementById(id)
-                        if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' })
-                        }
-                    }, 100)
-               } else {
-                   const element = document.getElementById(id)
-                   if (element) {
-                       element.scrollIntoView({ behavior: 'smooth' })
-                   }
-               }
-               return
-            }
-            if (redirectPath !== location.pathname) {
-                 navigate(redirectPath)
-                 window.scrollTo({ top: 0, behavior: 'smooth' })
-                 return
-            }
+      setIsMobileMenuOpen(false)
+      if (redirectPath) {
+        if (id === 'skills-section') {
+          if (location.pathname !== '/') {
+            navigate('/')
+            setTimeout(() => {
+              const element = document.getElementById(id)
+              if (element) element.scrollIntoView({ behavior: 'smooth' })
+            }, 100)
+          } else {
+            const element = document.getElementById(id)
+            if (element) element.scrollIntoView({ behavior: 'smooth' })
+          }
+          return
         }
+        if (redirectPath !== location.pathname) {
+          navigate(redirectPath)
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          return
+        }
+      }
     }
 
-    // Default Desktop / Existing Behavior
     setIsMobileMenuOpen(false)
     if (location.pathname !== '/') {
       navigate('/')
       setTimeout(() => {
         const element = document.getElementById(id)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth' })
       }, 100)
     } else {
       const element = document.getElementById(id)
@@ -80,10 +69,10 @@ export function Header() {
 
   const handleContactClick = () => {
     if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false)
-        navigate('/about')
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-        return
+      setIsMobileMenuOpen(false)
+      navigate('/about')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
     }
 
     setIsMobileMenuOpen(false)
@@ -91,157 +80,124 @@ export function Header() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     } else {
-        if (location.pathname !== '/') {
-            navigate('/')
-            setTimeout(() => {
-              const el = document.getElementById('contact-section')
-              if (el) el.scrollIntoView({ behavior: 'smooth' })
-            }, 100)
-        }
+      if (location.pathname !== '/') {
+        navigate('/')
+        setTimeout(() => {
+          const el = document.getElementById('contact-section')
+          if (el) el.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
+      }
     }
   }
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 100 }}
+      initial={{ y: -30, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-violet-100'
+          ? 'bg-background/80 backdrop-blur-xl border-b border-border'
           : 'bg-transparent'
       }`}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring' }}
-            whileHover={{ scale: 1.05 }}
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-1.5 group"
           >
-            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center">
-              <img
-                src="https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/felixnoriellogo.png"
-                alt="Felix Noriel"
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
-            </Link>
-          </motion.div>
+            <span className="flex items-center justify-center w-11 h-11 rounded-full bg-ink text-background font-display text-lg font-medium">
+              F
+            </span>
+            <span className="font-display text-[17px] font-medium text-ink hidden sm:inline tracking-tight">
+              Felix Noriel
+            </span>
+          </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item, index) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <Button
-                  variant="ghost"
-                  className="relative hover:text-violet-600 transition-colors text-base"
-                  onClick={() => handleNavClick(item.href, item.id)}
-                >
-                  {item.name}
-                  <motion.span
-                    className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-violet-600 to-pink-600 origin-left"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </Button>
-              </motion.div>
-            ))}
+          <div className="hidden md:flex items-center flex-1 justify-center px-6">
+            <button
+              type="button"
+              onClick={() => {
+                window.dispatchEvent(
+                  new KeyboardEvent('keydown', {
+                    key: 'k',
+                    metaKey: true,
+                    ctrlKey: true,
+                    bubbles: true,
+                  })
+                )
+              }}
+              className="group relative w-full max-w-sm inline-flex items-center gap-3 h-10 pl-4 pr-1.5 rounded-full border border-border bg-surface/60 backdrop-blur-sm hover:border-accent/40 hover:bg-background transition-colors text-left overflow-hidden"
+              aria-label="Open command palette"
+            >
+              <Search className="w-4 h-4 text-ink-soft group-hover:text-accent transition-colors shrink-0" />
+              <span className="flex-1 text-sm text-ink-muted group-hover:text-ink transition-colors truncate">
+                Jump anywhere — work, experience, skills…
+              </span>
+              <kbd className="shrink-0 inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full border border-border bg-background text-[11px] font-mono text-ink-muted group-hover:border-accent/40 group-hover:text-accent transition-colors">
+                ⌘K
+              </kbd>
+              <span
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-accent/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </button>
           </div>
 
-          {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, type: 'spring' }}
-            className="hidden md:block"
-          >
-            <Button 
-                onClick={handleContactClick}
-                className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all group"
+          <div className="hidden md:block">
+            <button
+              onClick={handleContactClick}
+              className="group inline-flex items-center gap-1.5 h-10 px-5 rounded-full bg-ink text-background text-sm font-medium hover:bg-accent transition-colors"
             >
-              <Sparkles className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
               Contact
-            </Button>
-          </motion.div>
+              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
+          </div>
 
-          {/* Mobile Menu Button */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="md:hidden"
-          >
-            <Button
-              variant="ghost"
-              size="icon"
+          <div className="md:hidden">
+            <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="relative"
+              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface transition-colors"
+              aria-label="Toggle menu"
             >
-              <motion.div
-                animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
-              </motion.div>
-            </Button>
-          </motion.div>
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5 text-ink" />
+              ) : (
+                <Menu className="h-5 w-5 text-ink" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-            className="md:hidden bg-white/95 backdrop-blur-xl border-t border-violet-100 overflow-hidden"
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="md:hidden bg-background border-t border-border overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
-              {navItems.map((item, index) => (
-                <motion.div
+            <div className="container mx-auto px-6 py-6 flex flex-col gap-1">
+              {navItems.map((item) => (
+                <button
                   key={item.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  onClick={() => handleNavClick(item.href, item.id, item.redirectPath)}
+                  className="text-left py-3 text-lg font-display font-light text-ink border-b border-border last:border-b-0"
                 >
-                  <Button
-                    variant="ghost"
-                    className="justify-start w-full hover:bg-violet-50 hover:text-violet-600 text-lg py-6"
-                    onClick={() => handleNavClick(item.href, item.id, item.redirectPath)}
-                  >
-                    {item.name}
-                  </Button>
-                </motion.div>
+                  {item.name}
+                </button>
               ))}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navItems.length * 0.05 }}
+              <button
+                onClick={handleContactClick}
+                className="mt-4 inline-flex items-center justify-center gap-1.5 h-12 rounded-full bg-ink text-background font-medium"
               >
-                <Button 
-                    onClick={handleContactClick}
-                    className="w-full mt-4 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white py-6 text-lg"
-                >
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  Contact
-                </Button>
-              </motion.div>
+                Contact
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
             </div>
           </motion.div>
         )}

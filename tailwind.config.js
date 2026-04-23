@@ -4,18 +4,32 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: '1.5rem',
       screens: {
-        '2xl': '1400px',
+        '2xl': '1280px',
       },
     },
     extend: {
+      fontFamily: {
+        display: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'ui-monospace', 'monospace'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        surface: {
+          DEFAULT: 'hsl(var(--surface))',
+          strong: 'hsl(var(--surface-strong))',
+        },
+        ink: {
+          DEFAULT: 'hsl(var(--ink))',
+          muted: 'hsl(var(--ink-muted))',
+          soft: 'hsl(var(--ink-soft))',
+        },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -35,6 +49,20 @@ export default {
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
+          soft: 'hsl(var(--accent-soft))',
+        },
+        lime: {
+          DEFAULT: 'hsl(var(--lime))',
+          soft: 'hsl(var(--lime-soft))',
+        },
+        electric: {
+          DEFAULT: 'hsl(var(--electric))',
+        },
+        amber: {
+          DEFAULT: 'hsl(var(--amber))',
+        },
+        plum: {
+          DEFAULT: 'hsl(var(--plum))',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
@@ -49,6 +77,10 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      letterSpacing: {
+        tightest: '-0.04em',
+        tighter: '-0.03em',
       },
     },
   },

@@ -1,9 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { DataProvider } from './contexts/DataContext'
 import { MainLayout } from './components/layout/MainLayout'
 import { ScrollToTop } from './components/ScrollToTop'
+import { CommandPalette } from './components/ui/CommandPalette'
+import { ScrollHUD } from './components/ui/ScrollHUD'
+import { TechCursor } from './components/ui/TechCursor'
+import { BootLoader } from './components/ui/BootLoader'
 
 // Lazy Load Pages
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
@@ -50,24 +54,32 @@ function App() {
     }
   }, [])
 
+  // Show the cinematic BootLoader for 3s on first page load
+  const [bootDone, setBootDone] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setBootDone(true), 3000)
+    return () => clearTimeout(t)
+  }, [])
+
+  if (!bootDone) {
+    return (
+      <HelmetProvider>
+        <BootLoader durationMs={3000} />
+      </HelmetProvider>
+    )
+  }
+
   return (
     <HelmetProvider>
       <DataProvider>
         <Router>
           <AnalyticsWrapper>
             <ScrollToTop />
+            <CommandPalette />
+            <ScrollHUD />
+            <TechCursor />
             <MainLayout>
-              <Suspense fallback={
-                <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                  <div className="text-center">
-                    <div className="relative w-20 h-20 mx-auto mb-4">
-                      <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                      <div className="absolute inset-0 border-4 border-violet-600 rounded-full border-t-transparent animate-spin"></div>
-                    </div>
-                    <p className="text-xl font-medium text-gray-500">Loading experience...</p>
-                  </div>
-                </div>
-              }>
+              <Suspense fallback={<BootLoader />}>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/blog" element={<Blog />} />

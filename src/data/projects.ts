@@ -2,6 +2,34 @@ import type { Project } from '../types/data';
 
 export const projects: Project[] = [
   {
+    "slug": "stable",
+    "title": "StablePay",
+    "excerpt": "StablePay turns your USDT into everyday money — pay friends, split bills, or send home, instantly and free.",
+    "content": "<p>At <strong>Stable</strong>, I'm building <a href='https://www.stable.xyz/' target='_blank'>StablePay</a> — a mobile app that turns USDT into everyday money. Pay friends, split bills, or send home, instantly and free.</p><h3>What I'm working on</h3><ul><li>Full-stack engineering across React Native (mobile) and Golang (services)</li><li>EVM integrations that power instant, free stablecoin transfers</li><li>AWS infrastructure with Datadog for end-to-end observability</li><li>Core pay / split / send-home flows with a focus on feel and reliability</li></ul><h3>Technologies</h3><ul><li>React Native, TypeScript, Golang, AWS, Datadog, EVM</li></ul>",
+    "image": {
+      "url": "/stablepay-banner.png",
+      "alt": "StablePay — USDT Made Easy, Send & Receive Instantly, Zero Fees, No Borders",
+      "width": 2000,
+      "height": 1000
+    },
+    "tags": [
+      { "name": "React Native", "slug": "react-native" },
+      { "name": "TypeScript", "slug": "typescript" },
+      { "name": "Golang", "slug": "golang" },
+      { "name": "AWS", "slug": "aws" },
+      { "name": "Datadog", "slug": "datadog" },
+      { "name": "EVM", "slug": "evm" }
+    ],
+    "company": {
+      "title": "Stable",
+      "slug": "stable",
+      "image": {
+        "url": "https://www.stable.xyz/images/identity/stable-wordmark.svg",
+        "alt": "Stable"
+      }
+    }
+  },
+  {
     "slug": "genopets",
     "title": "Genopets",
     "excerpt": "Senior Full-Stack Engineer at Genoverse.",

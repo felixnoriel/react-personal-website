@@ -2,6 +2,43 @@ import type { Career } from '../types/data';
 
 export const careers: Career[] = [
   {
+    "slug": "stable",
+    "title": "Stable",
+    linkToProject: true,
+    "excerpt": "Building StablePay — turning USDT into everyday money. Pay friends, split bills, or send home, instantly and free.",
+    "content": "<p>At Stable, I'm building <strong>StablePay</strong> — a mobile app that turns USDT into everyday money. Pay friends, split bills, or send home, instantly and free.</p><h3>What I do</h3><ul><li>Full-stack engineering across React Native mobile and Golang services</li><li>EVM integrations for on-chain payment rails</li><li>AWS infrastructure and Datadog observability</li><li>Shipping the core pay / split / send home flows</li></ul>",
+    "jobTitle": "Senior Full Stack Engineer",
+    "startDate": "Dec 2025",
+    "endDate": "Present",
+    "location": "Fully Remote",
+    "image": {
+      "url": "https://www.stable.xyz/images/identity/stable-wordmark.svg",
+      "alt": "Stable"
+    },
+    "color": "bg-gradient-to-r from-emerald-600 to-teal-600",
+    "techStack": ["React Native", "Golang", "AWS", "Datadog", "EVM", "TypeScript"],
+    "achievements": [
+      {
+        "icon": "Smartphone",
+        "title": "StablePay Mobile App",
+        "badge": "USDT → everyday money",
+        "description": "Building the React Native app letting users pay friends, split bills, and send home instantly and free"
+      },
+      {
+        "icon": "Banknote",
+        "title": "On-chain Payment Rails",
+        "badge": "EVM",
+        "description": "Shipping EVM integrations that power instant, free stablecoin transfers for real-world payments"
+      },
+      {
+        "icon": "Server",
+        "title": "Go Services on AWS",
+        "badge": "Datadog-observed",
+        "description": "Building Golang backend services on AWS with Datadog for end-to-end observability"
+      }
+    ]
+  },
+  {
     "slug": "genopets",
     "title": "Genopets",
     linkToProject: true,
@@ -9,7 +46,7 @@ export const careers: Career[] = [
     "content": "", // Content is now primarily in achievements
     "jobTitle": "Senior Full Stack Engineer",
     "startDate": "Apr 2022",
-    "endDate": "Present",
+    "endDate": "Oct 2025",
     "location": "Fully Remote",
     "image": {
       "url": "https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/genopets/genopets.png",

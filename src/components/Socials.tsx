@@ -26,7 +26,7 @@ export function Socials() {
   ]
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-3">
       {socials.map((social) => (
         <a
           key={social.name}
@@ -34,10 +34,10 @@ export function Socials() {
           rel="noopener noreferrer"
           href={social.url}
           onClick={() => trackSocialClick(social.name)}
-          className="w-12 h-12 rounded-full border-2 border-current flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20"
+          className="w-10 h-10 rounded-full border border-border text-ink-muted flex items-center justify-center hover:border-ink hover:text-ink hover:bg-surface transition-colors"
           aria-label={social.name}
         >
-          <social.Icon className="w-5 h-5" />
+          <social.Icon className="w-4 h-4" />
         </a>
       ))}
     </div>

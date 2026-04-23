@@ -23,25 +23,23 @@ export function ProjectDetail() {
   const projectItems = filterBySlug<Project>(slug || '', projects)
   const project = projectItems[0] || null
 
-  // Calculate other projects (2 items)
+  // Compute navigation context
   const currentIndex = projects.findIndex((p) => p.slug === slug)
-  
+  const total = projects.length
+
+  let prev: Project | null = null
+  let next: Project | null = null
   let otherProjects: Project[] = []
-  
-  if (projects.length >= 3 && currentIndex !== -1) {
-      if (currentIndex === 0) {
-          // First item: First two items are next two projects
-          otherProjects = [projects[1], projects[2]]
-      } else if (currentIndex === projects.length - 1) {
-          // Last item: Other projects are the first two projects
-          otherProjects = [projects[0], projects[1]]
-      } else {
-          // Middle items: Previous and Next
-          otherProjects = [projects[currentIndex - 1], projects[currentIndex + 1]]
-      }
-  } else if (projects.length === 2 && currentIndex !== -1) {
-      // Fallback for only 2 projects, just show the other one (twice? or just once? List handles array)
+
+  if (total > 0 && currentIndex !== -1) {
+    prev = projects[(currentIndex - 1 + total) % total]
+    next = projects[(currentIndex + 1) % total]
+    // Keep otherProjects for the sidebar (prev + next)
+    if (total >= 3) {
+      otherProjects = [prev, next]
+    } else if (total === 2) {
       otherProjects = [projects[(currentIndex + 1) % 2]]
+    }
   }
 
   return (
@@ -54,7 +52,14 @@ export function ProjectDetail() {
           url={`/projects/${project.slug}`}
         />
       )}
-      <ProjectView project={project} otherProjects={otherProjects} />
+      <ProjectView
+        project={project}
+        otherProjects={otherProjects}
+        index={currentIndex}
+        total={total}
+        prev={prev}
+        next={next}
+      />
     </>
   )
 }

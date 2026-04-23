@@ -34,8 +34,8 @@ export function AboutWebsite() {
                 </h2>
                 <div className="max-w-2xl mx-auto text-xl text-muted-foreground leading-relaxed">
                     <p className="mb-4">
-                        I'm a Product-focused <strong>Senior Software Engineer</strong> based in{' '}
-                        <span className="text-violet-600 font-semibold">Sydney, Australia</span> 🇦🇺
+                        I'm a <strong>Product Engineer</strong> based in{' '}
+                        <span className="text-violet-600 font-semibold">Asia</span>, digital nomading with the fam 🌏
                     </p>
                     <p>
                         When I'm not in front of my computer, I like to cook, trying out

@@ -1,190 +1,158 @@
-import { Code, Sparkles, Mail } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { ArrowUpRight, Terminal } from 'lucide-react'
 import { Socials } from '../Socials'
 import { trackNavigation, trackEmailClick } from '../../utils/analytics'
+import { LiveClock } from '../ui/LiveClock'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
   const quickLinks = [
     { name: 'Home', href: '/' },
+    { name: 'Work', href: '/projects' },
+    { name: 'Experience', href: '/career' },
     { name: 'Skills', href: '/#skills-section' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'Journey', href: '/career' },
-    { name: 'Contact', href: 'mailto:norielfelixjr@gmail.com' },
+    { name: 'Writing', href: '/blog' },
   ]
 
   return (
-    <footer className="bg-gradient-to-br from-violet-50/50 via-pink-50/50 to-orange-50/50 border-t-2 border-violet-100 relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute -bottom-20 left-1/4 w-96 h-96 bg-gradient-to-br from-violet-400/10 to-pink-400/10 rounded-full blur-3xl"
-        />
-      </div>
+    <footer className="relative bg-ink text-background overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(hsl(var(--lime)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--lime)) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute -top-40 right-0 w-[60%] h-[60%] pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at top right, hsl(var(--accent) / 0.18), transparent 60%)',
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-40 left-0 w-[50%] h-[50%] pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at bottom left, hsl(var(--lime) / 0.1), transparent 60%)',
+        }}
+      />
+      <div className="container mx-auto max-w-7xl px-6 py-20 md:py-28 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-4xl mb-20"
+        >
+          <div className="flex flex-wrap items-center gap-3 mb-6 text-[11px] tracking-[0.2em] uppercase">
+            <span className="text-background/60 font-mono">— Let&apos;s build something</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-lime/40 bg-lime/10 text-lime font-mono normal-case text-[10px]">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+              </span>
+              online · accepting dms
+            </span>
+          </div>
+          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tightest text-background text-balance leading-[0.95]">
+            Have an idea?{' '}
+            <a
+              href="mailto:norielfelixjr@gmail.com"
+              onClick={() => trackEmailClick('footer_hero')}
+              className="italic font-extrabold text-accent hover:text-lime transition-colors hover:underline underline-offset-8 decoration-2"
+            >
+              Say hello
+            </a>
+            .
+          </h2>
+        </motion.div>
 
-      <div className="container mx-auto max-w-7xl px-4 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Brand */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="flex items-center gap-3 mb-4">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, type: 'spring' }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <img
-                    src="https://felixstatic.s3.ap-southeast-2.amazonaws.com/uploads/images/felixnoriellogo.png"
-                    alt="Felix Noriel"
-                    width={48}
-                    height={48}
-                    className="h-12 w-auto"
-                  />
-                </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-background/10">
+          <div className="md:col-span-5">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-background text-ink font-display text-base font-medium">
+                F
+              </span>
               <div>
-                <h4 className="font-bold text-gradient-primary">Felix Noriel</h4>
-                <p className="text-muted-foreground text-sm flex items-center gap-1">
-                  <Code className="w-3 h-3" />
-                  Software Engineer
-                </p>
+                <div className="font-display text-lg font-bold text-background">Felix Noriel</div>
+                <div className="text-sm text-background/50">Product Engineer · Asia</div>
               </div>
             </div>
+            <p className="text-background/60 leading-relaxed text-sm max-w-sm mb-6">
+              Full-stack engineer and technical co-founder. Currently shipping
+              at Stable on StablePay, and building Dashify on the side.
+            </p>
+            <Socials />
+          </div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-muted-foreground mb-4 text-sm"
-            >
-              Crafting exceptional digital experiences with modern technologies. Let's build something amazing together! ✨
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <Socials />
-            </motion.div>
-          </motion.div>
-
-          {/* Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            <h4 className="font-bold mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-violet-600" />
-              Quick Links
-            </h4>
-            <ul className="space-y-2">
-              {quickLinks.map((link, index) => (
-                <motion.li
-                  key={link.name}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + index * 0.05 }}
-                  whileHover={{ x: 5 }}
-                >
-                  {link.href.startsWith('mailto:') || link.href.startsWith('/#') ? (
+          <div className="md:col-span-3 md:col-start-7">
+            <div className="text-[11px] tracking-[0.18em] uppercase text-background/50 mb-5">
+              Navigate
+            </div>
+            <ul className="space-y-3">
+              {quickLinks.map((link) => (
+                <li key={link.name}>
+                  {link.href.startsWith('/#') ? (
                     <a
                       href={link.href}
-                      onClick={() => {
-                        if (link.href.startsWith('mailto:')) {
-                           trackEmailClick('footer_quick_link')
-                        } else {
-                           trackNavigation(link.href, 'footer_quick_link')
-                        }
-                      }}
-                      className="text-muted-foreground hover:text-violet-600 transition-colors flex items-center gap-2 group text-sm"
+                      onClick={() => trackNavigation(link.href, 'footer_quick_link')}
+                      className="group inline-flex items-center gap-1.5 text-background/80 hover:text-accent transition-colors text-sm"
                     >
-                      <span className="w-1 h-1 bg-violet-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                       {link.name}
+                      <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </a>
                   ) : (
                     <Link
                       to={link.href}
                       onClick={() => trackNavigation(link.href, 'footer_quick_link')}
-                      className="text-muted-foreground hover:text-violet-600 transition-colors flex items-center gap-2 group text-sm"
+                      className="group inline-flex items-center gap-1.5 text-background/80 hover:text-accent transition-colors text-sm"
                     >
-                      <span className="w-1 h-1 bg-violet-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                       {link.name}
+                      <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   )}
-                </motion.li>
+                </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Get in Touch */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <h4 className="font-bold mb-4 flex items-center gap-2">
-              <Mail className="w-4 h-4 text-pink-600" />
-              Get in Touch
-            </h4>
-            <ul className="space-y-2 text-muted-foreground text-sm">
-              <motion.li
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-              >
-                📧 norielfelixjr@gmail.com
-              </motion.li>
-              <motion.li
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.45 }}
-              >
-                📍 Sydney, Australia
-              </motion.li>
-              <motion.li
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 }}
-              >
-                🌍 Available remotely
-              </motion.li>
+          <div className="md:col-span-3">
+            <div className="text-[11px] tracking-[0.18em] uppercase text-background/50 mb-5">
+              Contact
+            </div>
+            <ul className="space-y-3 text-sm text-background/80">
+              <li>
+                <a
+                  href="mailto:norielfelixjr@gmail.com"
+                  onClick={() => trackEmailClick('footer_contact')}
+                  className="hover:text-accent transition-colors"
+                >
+                  norielfelixjr@gmail.com
+                </a>
+              </li>
+              <li>Based in Asia · nomading</li>
+              <li>Available for remote work</li>
             </ul>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Bottom Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="pt-8 border-t-2 border-violet-100 flex flex-col md:flex-row justify-between items-center gap-4"
-        >
-          <p className="text-muted-foreground text-sm text-center md:text-left">
-            © {currentYear} Felix Noriel. All rights reserved.
+        <div className="pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <p className="text-background/50 text-xs font-mono">
+            © {currentYear} Felix Noriel · MIT-licensed curiosity
           </p>
-          <motion.p
-            className="text-muted-foreground text-sm flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
-          >
-            Made with ❤️ and lots of ☕
-          </motion.p>
-        </motion.div>
+          <div className="inline-flex items-center gap-2 text-xs text-background/50 font-mono">
+            <Terminal className="w-3 h-3 text-lime" />
+            <LiveClock timezone="UTC" className="text-background/80" />
+            <span className="text-background/40">· UTC</span>
+          </div>
+        </div>
       </div>
     </footer>
   )
