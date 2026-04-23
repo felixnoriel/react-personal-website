@@ -215,11 +215,14 @@ export function Intro() {
         style={{ background: spotlight }}
         className="absolute inset-0 pointer-events-none"
       />
-      {/* === Aurora blobs — drifting, morphing ambient glow === */}
-      <AuroraBackdrop />
+      {/* === Circuit-board energy grid: glowing traces pulse with energy === */}
+      <CircuitField />
 
-      {/* === Lightning bolts — random electric arcs across the hero === */}
+      {/* === Lightning bolts: dramatic electric arcs fire across the hero === */}
       <LightningField />
+
+      {/* === Shooting stars: bright diagonal streaks === */}
+      <MeteorField />
 
       {/* floating micro-particles */}
       <div
@@ -902,75 +905,244 @@ function HudCorners() {
 }
 
 // ============================================================
-// AuroraBackdrop — drifting, morphing blurred blobs that replace
-// the static radial gradients. Each blob has its own slow orbit,
-// scale cycle, and hue so the background feels alive without
-// being distracting. Hidden behind mix-blend-screen for a subtle
-// auroral glow.
+// CircuitField — animated SVG circuit-board traces across the hero.
+// Each trace is a horizontal or vertical run with 90-degree bends,
+// drawn with a dim base stroke and a bright "energy packet" that
+// travels along it via <animateMotion>. Pulses of light glide
+// across the canvas like data running through a PCB.
 // ============================================================
 
-function AuroraBackdrop() {
-  const blobs = [
-    {
-      color: 'hsl(var(--accent) / 0.28)',
-      size: '48vw',
-      top: '-8%',
-      left: '55%',
-      delay: 0,
-      dur: 26,
-    },
-    {
-      color: 'hsl(var(--amber) / 0.22)',
-      size: '44vw',
-      top: '18%',
-      left: '-10%',
-      delay: 4,
-      dur: 32,
-    },
-    {
-      color: 'hsl(var(--electric) / 0.18)',
-      size: '40vw',
-      top: '52%',
-      left: '38%',
-      delay: 8,
-      dur: 30,
-    },
-    {
-      color: 'hsl(var(--lime) / 0.18)',
-      size: '36vw',
-      top: '60%',
-      left: '-6%',
-      delay: 12,
-      dur: 28,
-    },
-  ]
+type Trace = {
+  id: string
+  d: string
+  color: string
+  dur: number
+  delay: number
+}
+
+function CircuitField() {
+  const traces: Trace[] = useMemo(() => {
+    const palette = [
+      'hsl(var(--accent))',
+      'hsl(var(--lime))',
+      'hsl(var(--electric))',
+      'hsl(var(--amber))',
+    ]
+    // Hand-laid traces — each is a compact L/Z shape.
+    const raw = [
+      'M 0 12 L 28 12 L 28 22 L 58 22',
+      'M 100 20 L 72 20 L 72 34 L 42 34',
+      'M 0 48 L 18 48 L 18 62 L 46 62 L 46 58',
+      'M 100 54 L 78 54 L 78 68 L 52 68',
+      'M 0 80 L 24 80 L 24 92 L 64 92',
+      'M 100 84 L 84 84 L 84 74 L 58 74',
+      'M 8 4 L 8 18 L 38 18 L 38 6',
+      'M 90 6 L 90 24 L 60 24 L 60 12',
+      'M 14 96 L 14 82 L 40 82 L 40 90',
+      'M 86 96 L 86 78 L 66 78 L 66 86',
+    ]
+    return raw.map((d, i) => ({
+      id: `trace-${i}`,
+      d,
+      color: palette[i % palette.length],
+      dur: 6 + (i % 4) * 1.4,
+      delay: (i * 0.7) % 5,
+    }))
+  }, [])
+
+  return (
+    <svg
+      aria-hidden
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      style={{ opacity: 0.9 }}
+    >
+      <defs>
+        {traces.map((t) => (
+          <path key={`def-${t.id}`} id={t.id} d={t.d} />
+        ))}
+        <filter id="trace-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="0.5" />
+        </filter>
+      </defs>
+      {/* base traces — very dim baseline */}
+      {traces.map((t) => (
+        <use
+          key={`base-${t.id}`}
+          href={`#${t.id}`}
+          fill="none"
+          stroke={t.color}
+          strokeOpacity="0.18"
+          strokeWidth="0.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+      {/* bright energy packets travelling each trace */}
+      {traces.map((t) => (
+        <g key={`pkt-${t.id}`}>
+          <circle r="0.9" fill={t.color} filter="url(#trace-glow)">
+            <animateMotion
+              dur={`${t.dur}s`}
+              begin={`-${t.delay}s`}
+              repeatCount="indefinite"
+            >
+              <mpath href={`#${t.id}`} />
+            </animateMotion>
+            <animate
+              attributeName="opacity"
+              values="0;1;1;0"
+              keyTimes="0;0.1;0.9;1"
+              dur={`${t.dur}s`}
+              begin={`-${t.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle r="0.35" fill="#ffffff">
+            <animateMotion
+              dur={`${t.dur}s`}
+              begin={`-${t.delay}s`}
+              repeatCount="indefinite"
+            >
+              <mpath href={`#${t.id}`} />
+            </animateMotion>
+            <animate
+              attributeName="opacity"
+              values="0;1;1;0"
+              keyTimes="0;0.1;0.9;1"
+              dur={`${t.dur}s`}
+              begin={`-${t.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+      ))}
+      {/* solder pads at trace endpoints */}
+      {traces.map((t) => {
+        const parts = t.d.split(/\s+/)
+        const sx = Number(parts[1])
+        const sy = Number(parts[2])
+        const ex = Number(parts[parts.length - 2])
+        const ey = Number(parts[parts.length - 1])
+        return (
+          <g key={`pad-${t.id}`}>
+            <circle
+              cx={sx}
+              cy={sy}
+              r="0.7"
+              fill="none"
+              stroke={t.color}
+              strokeOpacity="0.45"
+              strokeWidth="0.2"
+              vectorEffect="non-scaling-stroke"
+            />
+            <circle
+              cx={ex}
+              cy={ey}
+              r="0.7"
+              fill="none"
+              stroke={t.color}
+              strokeOpacity="0.45"
+              strokeWidth="0.2"
+              vectorEffect="non-scaling-stroke"
+            />
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+// ============================================================
+// MeteorField — diagonal shooting-star streaks that fire across
+// the hero every few seconds. Each streak is a tapered line with
+// a bright head and a fading tail, tweened with framer-motion.
+// ============================================================
+
+type Meteor = {
+  id: number
+  startX: number
+  startY: number
+  color: string
+  duration: number
+  length: number
+}
+
+function MeteorField() {
+  const [reduce, setReduce] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReduce(mq.matches)
+    const onChange = () => setReduce(mq.matches)
+    mq.addEventListener?.('change', onChange)
+    return () => mq.removeEventListener?.('change', onChange)
+  }, [])
+  const [meteors, setMeteors] = useState<Meteor[]>([])
+  const idRef = useRef(0)
+
+  useEffect(() => {
+    if (reduce) return
+    const spawn = () => {
+      const id = idRef.current++
+      const palette = [
+        'hsl(var(--lime))',
+        'hsl(var(--accent))',
+        'hsl(var(--electric))',
+        'hsl(var(--amber))',
+      ]
+      const color = palette[Math.floor(Math.random() * palette.length)]
+      const m: Meteor = {
+        id,
+        startX: Math.random() * 100,
+        startY: Math.random() * 30 - 20,
+        color,
+        duration: 1.4 + Math.random() * 0.9,
+        length: 120 + Math.random() * 80,
+      }
+      setMeteors((prev) => [...prev.slice(-3), m])
+      setTimeout(() => {
+        setMeteors((prev) => prev.filter((x) => x.id !== id))
+      }, (m.duration + 0.1) * 1000)
+    }
+    const first = setTimeout(spawn, 2400)
+    const iv = setInterval(() => {
+      if (Math.random() < 0.55) spawn()
+    }, 2200)
+    return () => {
+      clearTimeout(first)
+      clearInterval(iv)
+    }
+  }, [reduce])
+
+  if (reduce) return null
   return (
     <div
       aria-hidden
-      className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen"
-      style={{ filter: 'blur(60px)' }}
+      className="absolute inset-0 pointer-events-none overflow-hidden"
     >
-      {blobs.map((b, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full"
+      {meteors.map((m) => (
+        <motion.span
+          key={m.id}
+          className="absolute"
           style={{
-            top: b.top,
-            left: b.left,
-            width: b.size,
-            height: b.size,
-            background: b.color,
+            left: `${m.startX}%`,
+            top: `${m.startY}%`,
+            width: `${m.length}px`,
+            height: '1.5px',
+            transform: 'rotate(32deg)',
+            transformOrigin: '0 50%',
+            background: `linear-gradient(90deg, transparent 0%, ${m.color} 60%, #ffffff 100%)`,
+            boxShadow: `0 0 10px ${m.color}, 0 0 20px ${m.color}`,
           }}
-          animate={{
-            x: [0, 40, -30, 20, 0],
-            y: [0, -25, 30, -15, 0],
-            scale: [1, 1.15, 0.9, 1.1, 1],
-          }}
+          initial={{ x: -20, y: -20, opacity: 0 }}
+          animate={{ x: 600, y: 380, opacity: [0, 1, 1, 0] }}
           transition={{
-            duration: b.dur,
-            delay: b.delay,
-            repeat: Infinity,
-            ease: 'easeInOut',
+            duration: m.duration,
+            ease: 'easeOut',
+            times: [0, 0.1, 0.8, 1],
           }}
         />
       ))}
@@ -1055,12 +1227,14 @@ function LightningField() {
         setBolts((prev) => prev.filter((b) => b.id !== boltId))
       }, (duration + 0.1) * 1000)
     }
-    // First bolt after a beat, then irregular cadence
-    const first = setTimeout(spawn, 1500)
+    // First bolt soon, then rapid-fire cadence for real "electric storm" feel
+    const first = setTimeout(spawn, 600)
     const interval = setInterval(() => {
-      // ~40% chance each tick, tick every 1.6s → ~avg 4s between bolts
-      if (Math.random() < 0.4) spawn()
-    }, 1600)
+      // ~65% chance each tick, tick every 900ms → ~avg 1.4s between bolts
+      if (Math.random() < 0.65) spawn()
+      // occasional double-strike
+      if (Math.random() < 0.2) setTimeout(spawn, 140)
+    }, 900)
     return () => {
       clearTimeout(first)
       clearInterval(interval)
@@ -1078,8 +1252,11 @@ function LightningField() {
       style={{ opacity: 0.7 }}
     >
       <defs>
-        <filter id="bolt-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="0.8" />
+        <filter id="bolt-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="1.6" />
+        </filter>
+        <filter id="bolt-glow-soft" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" />
         </filter>
       </defs>
       <AnimatePresence>
@@ -1087,33 +1264,45 @@ function LightningField() {
           <motion.g
             key={b.id}
             initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0.7, 1, 0] }}
+            animate={{ opacity: [0, 1, 0.4, 1, 0.8, 0] }}
             exit={{ opacity: 0 }}
             transition={{
               duration: b.duration,
               ease: 'linear',
-              times: [0, 0.05, 0.2, 0.35, 1],
+              times: [0, 0.04, 0.15, 0.28, 0.55, 1],
             }}
           >
-            {/* Outer blurred glow */}
+            {/* Diffuse halo */}
             <motion.path
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="0.9"
-              strokeOpacity="0.8"
+              strokeWidth="3.2"
+              strokeOpacity="0.45"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#bolt-glow-soft)"
+              vectorEffect="non-scaling-stroke"
+            />
+            {/* Outer glowing bolt */}
+            <motion.path
+              d={b.d}
+              fill="none"
+              stroke={b.color}
+              strokeWidth="1.6"
+              strokeOpacity="0.95"
               strokeLinecap="round"
               strokeLinejoin="round"
               filter="url(#bolt-glow)"
               vectorEffect="non-scaling-stroke"
             />
-            {/* Inner crisp bolt */}
+            {/* Inner white-hot core */}
             <motion.path
               d={b.d}
               fill="none"
               stroke="#ffffff"
-              strokeWidth="0.25"
-              strokeOpacity="0.95"
+              strokeWidth="0.5"
+              strokeOpacity="1"
               strokeLinecap="round"
               strokeLinejoin="round"
               vectorEffect="non-scaling-stroke"
