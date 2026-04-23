@@ -199,11 +199,8 @@ export function Intro() {
       ref={sectionRef}
       className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-background"
     >
-      {/* dot grid */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-dots opacity-40 pointer-events-none"
-      />
+      {/* crisp SVG dot substrate (replaces pixelated CSS radial-gradient) */}
+      <DotSubstrate />
       {/* faint scan lines */}
       <div
         aria-hidden
@@ -901,6 +898,107 @@ function HudCorners() {
         </motion.svg>
       ))}
     </div>
+  )
+}
+
+// ============================================================
+// DotSubstrate — crisp, anti-aliased dot grid that replaces the
+// legacy CSS `bg-dots` radial-gradient. SVG `<pattern>` renders
+// dots as real circles so they look sharp at any DPI. A sparse
+// twinkling layer of colored accent dots adds subtle life without
+// cluttering the grid.
+// ============================================================
+
+function DotSubstrate() {
+  // Deterministic twinkle positions — stable across renders.
+  const twinkles = useMemo(() => {
+    const palette = [
+      'hsl(var(--accent))',
+      'hsl(var(--lime))',
+      'hsl(var(--electric))',
+      'hsl(var(--amber))',
+    ]
+    let seed = 41
+    const rand = () => {
+      seed = (seed * 9301 + 49297) % 233280
+      return seed / 233280
+    }
+    return Array.from({ length: 30 }).map(() => ({
+      x: rand() * 100,
+      y: rand() * 100,
+      color: palette[Math.floor(rand() * palette.length)],
+      dur: 3 + rand() * 4,
+      delay: rand() * 5,
+      maxR: 1.5 + rand() * 1.2,
+    }))
+  }, [])
+
+  return (
+    <>
+      {/* Base grid — crisp anti-aliased dots via SVG pattern */}
+      <svg
+        aria-hidden
+        className="absolute inset-0 w-full h-full pointer-events-none"
+      >
+        <defs>
+          <pattern
+            id="dot-substrate"
+            x="0"
+            y="0"
+            width="22"
+            height="22"
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx="11" cy="11" r="1" fill="hsl(var(--ink) / 0.11)" />
+          </pattern>
+          <pattern
+            id="dot-substrate-accent"
+            x="0"
+            y="0"
+            width="88"
+            height="88"
+            patternUnits="userSpaceOnUse"
+          >
+            {/* Every 4th dot gets a slightly larger accent ring */}
+            <circle cx="11" cy="11" r="1.4" fill="hsl(var(--ink) / 0.22)" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dot-substrate)" />
+        <rect width="100%" height="100%" fill="url(#dot-substrate-accent)" />
+      </svg>
+
+      {/* Twinkle layer — colored accent dots that fade in/out */}
+      <svg
+        aria-hidden
+        className="absolute inset-0 w-full h-full pointer-events-none"
+      >
+        {twinkles.map((t, i) => (
+          <circle
+            key={`twinkle-${i}`}
+            cx={`${t.x}%`}
+            cy={`${t.y}%`}
+            r={t.maxR}
+            fill={t.color}
+            opacity="0"
+          >
+            <animate
+              attributeName="opacity"
+              values="0;0.85;0"
+              dur={`${t.dur}s`}
+              begin={`${t.delay}s`}
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="r"
+              values={`0.8;${t.maxR};0.8`}
+              dur={`${t.dur}s`}
+              begin={`${t.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+        ))}
+      </svg>
+    </>
   )
 }
 
