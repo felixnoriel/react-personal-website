@@ -37,10 +37,10 @@ export function Home() {
       <SEOHead />
       <Intro />
       <Suspense fallback={<div className="h-40 flex items-center justify-center text-muted-foreground">Loading...</div>}>
+        <NomadLife />
         <TechToolbelt />
         <BuildingJourney experiences={careerList} />
         <ProductsBuilt projects={projectList} />
-        <NomadLife />
         <TravelStories stories={blogList} />
         <ContactSection />
       </Suspense>

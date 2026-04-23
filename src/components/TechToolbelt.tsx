@@ -1061,6 +1061,7 @@ function CoreReactor({
   })
 
   const [hover, setHover] = useState<HoverState | null>(null)
+  const [hoverOrbit, setHoverOrbit] = useState<FilterId | null>(null)
 
   // Placement of every tool onto an orbit
   const placedNodes: PlacedNode[] = useMemo(() => {
@@ -1127,6 +1128,7 @@ function CoreReactor({
     mx.set(0)
     my.set(0)
     setHover(null)
+    setHoverOrbit(null)
   }
 
   useEffect(() => {
@@ -1205,8 +1207,19 @@ function CoreReactor({
           <span>
             <span className="text-white">3</span> orbits
           </span>
-          <span className="ml-auto hidden md:inline normal-case text-white/40 tracking-normal">
-            hover to inspect · click to filter stack
+          <span className="ml-auto hidden md:inline-flex items-center gap-2 normal-case tracking-normal">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-accent opacity-60 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">
+              interactive
+            </span>
+            <span className="text-white/40">·</span>
+            <span className="text-white/60">
+              click any <span className="text-lime">orbit</span> or{' '}
+              <span className="text-accent">node</span> to filter
+            </span>
           </span>
         </div>
 
@@ -1365,25 +1378,32 @@ function CoreReactor({
               })}
             </g>
 
-            {/* Orbit rings */}
+            {/* Orbit rings (visual) */}
             {stacks.map((s) => {
               const R = radiusForStack(s.id)
               const tok = ACCENT_TOKEN[s.accent]
               const isDim = activeStack !== 'all' && activeStack !== s.id
+              const isOrbitHover = hoverOrbit === s.id
               const dashDur =
                 s.id === 'frontend' ? '18s' : s.id === 'backend' ? '24s' : '32s'
               const dashDir =
                 s.id === 'backend' ? '-120' : '120'
               return (
-                <g key={s.id} opacity={isDim ? 0.22 : 1} pointerEvents="none">
-                  {/* soft fat glow ring */}
+                <g
+                  key={s.id}
+                  opacity={isDim ? 0.22 : 1}
+                  pointerEvents="none"
+                  style={{ transition: 'opacity 0.25s ease' }}
+                >
+                  {/* soft fat glow ring — brightens on hover */}
                   <circle
                     cx={REACTOR_CX}
                     cy={REACTOR_CY}
                     r={R}
                     fill="none"
-                    stroke={`hsl(${tok.hsl} / 0.14)`}
-                    strokeWidth="16"
+                    stroke={`hsl(${tok.hsl} / ${isOrbitHover ? 0.3 : 0.14})`}
+                    strokeWidth={isOrbitHover ? 24 : 16}
+                    style={{ transition: 'all 0.2s ease' }}
                   />
                   {/* thin base ring */}
                   <circle
@@ -1391,8 +1411,9 @@ function CoreReactor({
                     cy={REACTOR_CY}
                     r={R}
                     fill="none"
-                    stroke={`hsl(${tok.hsl} / 0.35)`}
-                    strokeWidth="1"
+                    stroke={`hsl(${tok.hsl} / ${isOrbitHover ? 0.7 : 0.35})`}
+                    strokeWidth={isOrbitHover ? 1.5 : 1}
+                    style={{ transition: 'all 0.2s ease' }}
                   />
                   {/* crisp dashed ring that scrolls */}
                   <circle
@@ -1400,9 +1421,10 @@ function CoreReactor({
                     cy={REACTOR_CY}
                     r={R}
                     fill="none"
-                    stroke={`hsl(${tok.hsl} / 0.9)`}
-                    strokeWidth="1"
+                    stroke={`hsl(${tok.hsl} / ${isOrbitHover ? 1 : 0.9})`}
+                    strokeWidth={isOrbitHover ? 1.8 : 1}
                     strokeDasharray="4 9"
+                    style={{ transition: 'stroke-width 0.2s ease' }}
                   >
                     {!reduce && (
                       <animate
@@ -1415,6 +1437,34 @@ function CoreReactor({
                     )}
                   </circle>
                 </g>
+              )
+            })}
+
+            {/* Orbit click targets — wide invisible strokes give each orbit a
+                ~44px hit zone so users can click anywhere on the ring, not
+                just the tiny dashed line. Rendered AFTER the visual rings so
+                they capture pointer events. */}
+            {stacks.map((s) => {
+              const R = radiusForStack(s.id)
+              return (
+                <circle
+                  key={`hit-${s.id}`}
+                  cx={REACTOR_CX}
+                  cy={REACTOR_CY}
+                  r={R}
+                  fill="none"
+                  stroke="transparent"
+                  strokeWidth={44}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoverOrbit(s.id as FilterId)}
+                  onMouseLeave={() => setHoverOrbit(null)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onSelectStack(s.id as FilterId)
+                  }}
+                >
+                  <title>Click to filter {s.title}</title>
+                </circle>
               )
             })}
 
@@ -1530,29 +1580,76 @@ function CoreReactor({
               </g>
             )}
 
-            {/* Ring labels at top */}
+            {/* Ring labels at top — now interactive pills with hover state
+                so it's obvious they filter the stack. */}
             {stacks.map((s) => {
               const R = radiusForStack(s.id)
               const tok = ACCENT_TOKEN[s.accent]
               const isDim = activeStack !== 'all' && activeStack !== s.id
+              const isOrbitHover = hoverOrbit === s.id
+              const isActive = activeStack === s.id
+              const labelY = REACTOR_CY - R - 14
+              const labelText = `◢ ${s.title.toUpperCase()}.ORBIT · R=${R}`
+              // Estimate pill width from label length
+              const pillW = labelText.length * 6 + 28
+              const pillH = 20
               return (
                 <g
                   key={`lbl-${s.id}`}
-                  opacity={isDim ? 0.3 : 0.95}
-                  onClick={() => onSelectStack(s.id as FilterId)}
-                  style={{ cursor: 'pointer' }}
+                  opacity={isDim ? 0.45 : 1}
+                  onMouseEnter={() => setHoverOrbit(s.id as FilterId)}
+                  onMouseLeave={() => setHoverOrbit(null)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onSelectStack(s.id as FilterId)
+                  }}
+                  style={{ cursor: 'pointer', transition: 'opacity 0.2s ease' }}
                 >
+                  {/* pill background */}
+                  <rect
+                    x={REACTOR_CX - pillW / 2}
+                    y={labelY - pillH / 2 - 2}
+                    width={pillW}
+                    height={pillH}
+                    rx={10}
+                    fill={
+                      isOrbitHover || isActive
+                        ? `hsl(${tok.hsl} / 0.22)`
+                        : 'rgba(0,0,0,0.55)'
+                    }
+                    stroke={`hsl(${tok.hsl} / ${isOrbitHover || isActive ? 0.95 : 0.55})`}
+                    strokeWidth={isOrbitHover || isActive ? 1.3 : 1}
+                    style={{ transition: 'all 0.2s ease' }}
+                  />
                   <text
                     x={REACTOR_CX}
-                    y={REACTOR_CY - R - 12}
+                    y={labelY}
                     textAnchor="middle"
+                    dominantBaseline="middle"
                     fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
                     fontSize="10"
                     letterSpacing="3"
                     fill={`hsl(${tok.hsl})`}
+                    style={{ transition: 'all 0.2s ease' }}
                   >
-                    ◢ {s.title.toUpperCase()}.ORBIT · R={R}
+                    {labelText}
                   </text>
+                  {/* "click to filter" hint — appears on hover */}
+                  {isOrbitHover && (
+                    <text
+                      x={REACTOR_CX}
+                      y={labelY + 18}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+                      fontSize="8"
+                      letterSpacing="3"
+                      fill={`hsl(${tok.hsl})`}
+                      opacity="0.75"
+                    >
+                      ▸ CLICK TO FILTER
+                    </text>
+                  )}
                 </g>
               )
             })}
@@ -1815,13 +1912,42 @@ function CoreReactor({
             </div>
             <div className="text-white/30">uptime 10y+</div>
           </div>
-          <div className="pointer-events-none absolute bottom-3 left-3 font-mono text-[9px] tracking-[0.2em] uppercase text-white/40 leading-snug">
-            <div className="flex items-center gap-1.5">
-              <span className="text-accent">▸</span>
-              <span>click any node</span>
-            </div>
-            <div className="pl-[15px] text-white/30">to isolate stack</div>
-          </div>
+          {/* Prominent interaction hint — only shows while no filter is
+              active so it disappears once the user has engaged. */}
+          <AnimatePresence>
+            {activeStack === 'all' && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.3 }}
+                className="pointer-events-none absolute bottom-3 left-3 font-mono text-[10px] leading-snug"
+              >
+                <div
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-accent/60 bg-black/70 backdrop-blur-sm"
+                  style={{
+                    boxShadow: '0 0 18px -4px hsl(var(--accent) / 0.45)',
+                  }}
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-accent opacity-70 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+                  </span>
+                  <span className="uppercase tracking-[0.22em] text-accent text-[9.5px]">
+                    tip
+                  </span>
+                  <span className="text-white/30">·</span>
+                  <span className="text-white/75 tracking-wide">
+                    click any{' '}
+                    <span className="text-lime font-semibold">orbit ring</span>{' '}
+                    or{' '}
+                    <span className="text-accent font-semibold">node</span> to
+                    filter
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div className="pointer-events-none absolute bottom-3 right-3 text-right font-mono text-[9px] tracking-[0.2em] uppercase text-white/40 leading-snug">
             <div>scanning...</div>
             <div className="tabular-nums text-white/70 text-[13px] leading-tight">
