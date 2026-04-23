@@ -1,5 +1,11 @@
-import { useEffect, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import {
   Clock,
   Coffee,
@@ -593,17 +599,107 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
   const currentProj = project(current.lng, current.lat)
   const livePlanePath = compoundArcPath(ACTIVE_EDGES, 0.32)
 
-  // Grid line positions
+  // ===== 3D mouse tilt =====
+  const cardRef = useRef<HTMLDivElement | null>(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [3, -3]), {
+    stiffness: 140,
+    damping: 20,
+  })
+  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-4, 4]), {
+    stiffness: 140,
+    damping: 20,
+  })
+
+  // ===== Live cockpit readouts (speed / altitude / heading / distance) =====
+  const [readout, setReadout] = useState({
+    spd: 864,
+    alt: 35100,
+    hdg: 292,
+    dist: 184302,
+  })
+  useEffect(() => {
+    if (reduceMotion) return
+    const t = setInterval(() => {
+      setReadout((r) => ({
+        spd: Math.round(858 + Math.sin(Date.now() / 2200) * 14 + Math.random() * 6),
+        alt: Math.round(35000 + Math.sin(Date.now() / 3000) * 220 + Math.random() * 40),
+        hdg: Math.round(((292 + Math.sin(Date.now() / 4000) * 5) + 360) % 360),
+        dist: r.dist + 1,
+      }))
+    }, 650)
+    return () => clearInterval(t)
+  }, [reduceMotion])
+
+  // ===== Grid =====
   const lngGridLines = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150]
   const latGridLines = [-60, -30, 0, 30, 60]
 
+  // ===== Starfield / twinkles (memoized for stable positions) =====
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 70 }).map((_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 50,
+        r: 0.06 + Math.random() * 0.2,
+        dur: 1.5 + Math.random() * 3.5,
+        delay: Math.random() * 5,
+      })),
+    [],
+  )
+
+  // ===== Drifting clouds =====
+  const clouds = useMemo(
+    () =>
+      Array.from({ length: 5 }).map((_, i) => ({
+        id: i,
+        y: 5 + i * 8 + (i % 2 ? 3 : -1),
+        scale: 0.5 + (i % 3) * 0.25,
+        dur: 60 + i * 14,
+        delay: -i * 12,
+        opacity: 0.14 + (i % 2) * 0.08,
+      })),
+    [],
+  )
+
+  // ===== Beacon cities (staggered ping rings) =====
+  const beaconCodes = useMemo(() => ['NYC', 'MAD', 'SYD', 'TYO', 'SIN', 'LAX'], [])
+
+  // ===== Passport stamps (recent transits) =====
+  const stamps = useMemo(
+    () => [
+      { code: 'MNL', date: 'APR 06', type: 'DEP' },
+      { code: 'TPE', date: 'APR 11', type: 'TRN' },
+      { code: 'TYO', date: 'APR 14', type: 'STY' },
+      { code: 'SEL', date: 'APR 20', type: 'TRN' },
+      { code: 'HKG', date: 'APR 23', type: 'TRN' },
+      { code: 'BKK', date: 'APR 24', type: 'NOW' },
+    ],
+    [],
+  )
+
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="relative rounded-2xl border border-border bg-background overflow-hidden shadow-[0_40px_100px_-50px_hsl(var(--accent)/0.3)]"
+      onMouseMove={(e) => {
+        if (reduceMotion) return
+        const rect = cardRef.current?.getBoundingClientRect()
+        if (!rect) return
+        mx.set((e.clientX - rect.left) / rect.width - 0.5)
+        my.set((e.clientY - rect.top) / rect.height - 0.5)
+      }}
+      onMouseLeave={() => {
+        mx.set(0)
+        my.set(0)
+      }}
+      style={{ perspective: 1600 }}
+      className="relative rounded-2xl border border-border bg-background overflow-hidden shadow-[0_40px_100px_-50px_hsl(var(--accent)/0.35)]"
     >
       {/* top window chrome */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-b border-border bg-ink text-background">
@@ -621,16 +717,20 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
               <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
             </span>
-            online
+            tracking
           </span>
-          <span className="hidden sm:inline">gmt+8</span>
+          <span className="hidden sm:inline tabular-nums text-amber/90">
+            FL{Math.round(readout.alt / 100).toString().padStart(3, '0')}
+          </span>
           <span className="hidden sm:inline text-white/30">·</span>
           <span className="tabular-nums text-white/85">{utcTime} UTC</span>
         </span>
       </div>
 
-      {/* map area */}
-      <div className="relative aspect-[16/10] md:aspect-[2/1] bg-gradient-to-br from-surface/40 via-background to-lime-soft/15 overflow-hidden">
+      {/* 3D tilted map area */}
+      <motion.div
+        style={{ rotateX: rotX, rotateY: rotY, transformStyle: 'preserve-3d' }}
+        className="relative aspect-[16/10] md:aspect-[2/1] bg-gradient-to-br from-surface/40 via-background to-lime-soft/15 overflow-hidden">
         {/* globe curvature vignette (darken corners) */}
         <div
           aria-hidden
@@ -666,7 +766,103 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
               <stop offset="85%" stopColor="hsl(var(--ink) / 0)" />
               <stop offset="100%" stopColor="hsl(var(--ink) / 0.1)" />
             </radialGradient>
+            {/* radar sweep wedge gradient (bright at cone tip, fades to edge) */}
+            <linearGradient id="radar-sweep-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.55" />
+              <stop offset="70%" stopColor="hsl(var(--accent))" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0" />
+            </linearGradient>
+            {/* reusable plane silhouette — nose pointing +X, centered at origin */}
+            <g id="plane-icon">
+              <polygon
+                points="0.8,0 0.4,0.16 0.0,0.18 -0.15,0.48 -0.32,0.48 -0.15,0.14 -0.65,0.10 -0.75,0.28 -0.88,0.28 -0.82,0 -0.88,-0.28 -0.75,-0.28 -0.65,-0.10 -0.15,-0.14 -0.32,-0.48 -0.15,-0.48 0.0,-0.18 0.4,-0.16"
+                fill="hsl(var(--amber))"
+                stroke="hsl(var(--background))"
+                strokeWidth="0.06"
+                strokeLinejoin="round"
+              />
+            </g>
+            {/* hidden reference path for mpath (plane + contrail particles follow this) */}
+            <path id="active-route-path" d={livePlanePath} fill="none" />
           </defs>
+
+          {/* ===== starfield backdrop ===== */}
+          <g pointerEvents="none">
+            {stars.map((s) => (
+              <circle
+                key={`star-${s.id}`}
+                cx={s.x}
+                cy={s.y}
+                r={s.r}
+                fill="hsl(var(--ink))"
+                opacity="0.45"
+              >
+                {!reduceMotion && (
+                  <animate
+                    attributeName="opacity"
+                    values="0.12;0.8;0.12"
+                    dur={`${s.dur}s`}
+                    begin={`${s.delay}s`}
+                    repeatCount="indefinite"
+                  />
+                )}
+              </circle>
+            ))}
+          </g>
+
+          {/* ===== shooting-star streaks ===== */}
+          {!reduceMotion && (
+            <g pointerEvents="none">
+              <line
+                x1="0"
+                y1="0"
+                x2="5"
+                y2="1.5"
+                stroke="hsl(var(--lime))"
+                strokeWidth="0.18"
+                strokeLinecap="round"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.9;0"
+                  dur="1.3s"
+                  begin="5s;21s;37s"
+                />
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  values="6 3; 80 20"
+                  dur="1.3s"
+                  begin="5s;21s;37s"
+                />
+              </line>
+              <line
+                x1="0"
+                y1="0"
+                x2="4"
+                y2="-1"
+                stroke="hsl(var(--electric))"
+                strokeWidth="0.14"
+                strokeLinecap="round"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;0.75;0"
+                  dur="1.1s"
+                  begin="14s;32s;48s"
+                />
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  values="88 14; 18 40"
+                  dur="1.1s"
+                  begin="14s;32s;48s"
+                />
+              </line>
+            </g>
+          )}
 
           {/* globe sphere overlay — subtle ring giving planetary curvature */}
           <ellipse
@@ -755,11 +951,91 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
                   cy={p.y}
                   r="0.38"
                   fill="hsl(var(--ink))"
-                  opacity="0.38"
+                  opacity="0.42"
                 />
               )
             })}
           </motion.g>
+
+          {/* ===== drifting cloud layer (passes over the globe) ===== */}
+          {!reduceMotion &&
+            clouds.map((c) => (
+              <g key={`cloud-${c.id}`} pointerEvents="none" opacity={c.opacity}>
+                <g transform={`translate(0 ${c.y}) scale(${c.scale})`}>
+                  <ellipse cx="0" cy="0" rx="3.2" ry="0.75" fill="hsl(var(--ink))" />
+                  <ellipse cx="-1.3" cy="-0.35" rx="1.4" ry="0.55" fill="hsl(var(--ink))" />
+                  <ellipse cx="1.2" cy="-0.3" rx="1.2" ry="0.5" fill="hsl(var(--ink))" />
+                  <animateTransform
+                    attributeName="transform"
+                    type="translate"
+                    values="-20 0; 130 0"
+                    dur={`${c.dur}s`}
+                    begin={`${c.delay}s`}
+                    repeatCount="indefinite"
+                  />
+                </g>
+              </g>
+            ))}
+
+          {/* ===== radar sweep at current city ===== */}
+          {!reduceMotion && (
+            <g
+              transform={`translate(${currentProj.x} ${currentProj.y})`}
+              pointerEvents="none"
+            >
+              {/* concentric range rings */}
+              <circle
+                r="4"
+                fill="none"
+                stroke="hsl(var(--accent))"
+                strokeWidth="0.08"
+                strokeDasharray="0.3 0.4"
+                opacity="0.28"
+              />
+              <circle
+                r="7.5"
+                fill="none"
+                stroke="hsl(var(--accent))"
+                strokeWidth="0.07"
+                strokeDasharray="0.3 0.4"
+                opacity="0.18"
+              />
+              <circle
+                r="11"
+                fill="none"
+                stroke="hsl(var(--accent))"
+                strokeWidth="0.06"
+                strokeDasharray="0.3 0.4"
+                opacity="0.12"
+              />
+              {/* rotating sweep cone */}
+              <g>
+                <path
+                  d="M 0 0 L 11 -1.8 A 11 11 0 0 1 11 1.8 Z"
+                  fill="url(#radar-sweep-grad)"
+                />
+                {/* bright leading edge of sweep */}
+                <line
+                  x1="0"
+                  y1="0"
+                  x2="11"
+                  y2="1.8"
+                  stroke="hsl(var(--accent))"
+                  strokeWidth="0.14"
+                  strokeLinecap="round"
+                  opacity="0.85"
+                />
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from="0"
+                  to="360"
+                  dur="6s"
+                  repeatCount="indefinite"
+                />
+              </g>
+            </g>
+          )}
 
           {/* dashed inactive routes (draw in) */}
           {ROUTE_EDGES.map(([aCode, bCode], i) => {
@@ -787,7 +1063,32 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             )
           })}
 
-          {/* active highlighted route (gradient) */}
+          {/* active highlighted route — wide glow underlay */}
+          {ACTIVE_EDGES.map(([aCode, bCode], i) => {
+            const a = CITIES[idx(aCode)]
+            const b = CITIES[idx(bCode)]
+            const d = arcPath(a, b, 0.32)
+            return (
+              <motion.path
+                key={`active-glow-${aCode}-${bCode}`}
+                d={d}
+                fill="none"
+                stroke="url(#active-route)"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                opacity="0.32"
+                initial={{ pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: reduceMotion ? 0 : 2.4,
+                  delay: reduceMotion ? 0 : 0.8 + i * 0.45,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              />
+            )
+          })}
+          {/* active highlighted route — main stroke */}
           {ACTIVE_EDGES.map(([aCode, bCode], i) => {
             const a = CITIES[idx(aCode)]
             const b = CITIES[idx(bCode)]
@@ -816,11 +1117,41 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
           {CITIES.map((c, i) => {
             const p = project(c.lng, c.lat)
             const isCurrent = !!c.current
+            const isBeacon = beaconCodes.includes(c.code)
             const dx = c.labelDx ?? 1.6
             const dy = c.labelDy ?? -1.3
             const anchor = c.labelAnchor ?? 'start'
             return (
               <g key={c.code}>
+                {/* beacon city ping (staggered) */}
+                {isBeacon && !isCurrent && !reduceMotion && (
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r="0.8"
+                    fill="none"
+                    stroke="hsl(var(--lime))"
+                    strokeWidth="0.11"
+                    opacity="0.7"
+                  >
+                    <animate
+                      attributeName="r"
+                      from="0.8"
+                      to="3"
+                      dur="3.6s"
+                      begin={`${i * 0.55}s`}
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      from="0.7"
+                      to="0"
+                      dur="3.6s"
+                      begin={`${i * 0.55}s`}
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                )}
                 {/* pulse rings on current */}
                 {isCurrent && !reduceMotion && (
                   <>
@@ -942,31 +1273,80 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             )
           })}
 
-          {/* live plane flying the active route */}
+          {/* ===== contrail — staggered particle chain BEHIND the plane ===== */}
           {!reduceMotion && (
-            <g>
-              {/* halo */}
-              <circle r="1.1" fill="hsl(var(--amber))" opacity="0.22">
-                <animateMotion
-                  dur="14s"
-                  repeatCount="indefinite"
-                  path={livePlanePath}
-                  rotate="auto"
-                />
-              </circle>
-              {/* core dot */}
-              <circle r="0.55" fill="hsl(var(--amber))">
-                <animateMotion
-                  dur="14s"
-                  repeatCount="indefinite"
-                  path={livePlanePath}
-                  rotate="auto"
-                />
-              </circle>
+            <g pointerEvents="none">
+              {[
+                { beg: -1.8, op: 0.55, r: 0.28 },
+                { beg: -1.6, op: 0.48, r: 0.25 },
+                { beg: -1.4, op: 0.4, r: 0.22 },
+                { beg: -1.2, op: 0.32, r: 0.19 },
+                { beg: -1.0, op: 0.24, r: 0.16 },
+                { beg: -0.85, op: 0.16, r: 0.13 },
+              ].map((p, i) => (
+                <circle
+                  key={`trail-${i}`}
+                  r={p.r}
+                  fill="hsl(var(--amber))"
+                  opacity={p.op}
+                >
+                  <animateMotion
+                    dur="14s"
+                    begin={`${p.beg}s`}
+                    repeatCount="indefinite"
+                  >
+                    <mpath href="#active-route-path" />
+                  </animateMotion>
+                </circle>
+              ))}
             </g>
           )}
 
-          {/* secondary ambient planes — a subset of edges, nicely spaced */}
+          {/* ===== live plane flying the active route ===== */}
+          {!reduceMotion && (
+            <g>
+              {/* pulsing halo */}
+              <circle r="1.4" fill="hsl(var(--amber))" opacity="0.22">
+                <animate
+                  attributeName="r"
+                  values="1.2;1.8;1.2"
+                  dur="1.4s"
+                  repeatCount="indefinite"
+                />
+                <animateMotion dur="14s" begin="-2s" repeatCount="indefinite">
+                  <mpath href="#active-route-path" />
+                </animateMotion>
+              </circle>
+              {/* bright core dot */}
+              <circle r="0.4" fill="hsl(var(--amber))">
+                <animateMotion dur="14s" begin="-2s" repeatCount="indefinite">
+                  <mpath href="#active-route-path" />
+                </animateMotion>
+              </circle>
+              {/* detailed plane silhouette — rotates to match heading */}
+              <g>
+                <use href="#plane-icon" />
+                <animateMotion
+                  dur="14s"
+                  begin="-2s"
+                  repeatCount="indefinite"
+                  rotate="auto"
+                >
+                  <mpath href="#active-route-path" />
+                </animateMotion>
+              </g>
+            </g>
+          )}
+          {/* reduced-motion static plane (parked at destination) */}
+          {reduceMotion && (
+            <g
+              transform={`translate(${project(CITIES[idx('LAX')].lng, CITIES[idx('LAX')].lat).x} ${project(CITIES[idx('LAX')].lng, CITIES[idx('LAX')].lat).y}) rotate(-40)`}
+            >
+              <use href="#plane-icon" />
+            </g>
+          )}
+
+          {/* ===== secondary ambient planes ===== */}
           {!reduceMotion &&
             [
               ['TPE', 'TYO'],
@@ -978,16 +1358,29 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
               const a = CITIES[idx(aCode)]
               const b = CITIES[idx(bCode)]
               const d = arcPath(a, b, 0.3)
+              const pathId = `ambient-path-${aCode}-${bCode}`
               return (
-                <g key={`ambient-${aCode}-${bCode}`} opacity="0.55">
-                  <circle r="0.36" fill="hsl(var(--lime))">
+                <g key={`ambient-${aCode}-${bCode}`} opacity="0.7">
+                  <path id={pathId} d={d} fill="none" />
+                  {/* faint halo */}
+                  <circle r="0.5" fill="hsl(var(--lime))" opacity="0.35">
                     <animateMotion
                       dur={`${10 + i * 2}s`}
                       begin={`${i * 1.5}s`}
                       repeatCount="indefinite"
-                      path={d}
-                      rotate="auto"
-                    />
+                    >
+                      <mpath href={`#${pathId}`} />
+                    </animateMotion>
+                  </circle>
+                  {/* core */}
+                  <circle r="0.28" fill="hsl(var(--lime))">
+                    <animateMotion
+                      dur={`${10 + i * 2}s`}
+                      begin={`${i * 1.5}s`}
+                      repeatCount="indefinite"
+                    >
+                      <mpath href={`#${pathId}`} />
+                    </animateMotion>
                   </circle>
                 </g>
               )
@@ -1004,19 +1397,69 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
           />
         </svg>
 
-        {/* HUD overlays */}
+        {/* ===== CRT scanlines (overlay on top of SVG) ===== */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none opacity-[0.09] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(0deg, hsl(var(--ink)) 0px, hsl(var(--ink)) 1px, transparent 1px, transparent 3px)',
+          }}
+        />
+
+        {/* ===== slow vertical scan sweep ===== */}
+        {!reduceMotion && (
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none mix-blend-screen"
+            initial={{ y: '-100%' }}
+            animate={{ y: '100%' }}
+            transition={{
+              duration: 7,
+              ease: 'linear',
+              repeat: Infinity,
+              repeatDelay: 3.5,
+            }}
+            style={{
+              background:
+                'linear-gradient(180deg, transparent 38%, hsl(var(--lime) / 0.22) 50%, transparent 62%)',
+            }}
+          />
+        )}
+
+        {/* ===== HUD corner brackets ===== */}
+        <RadarCornerBrackets />
+
+        {/* ===== HUD overlays ===== */}
+        {/* top-left: coordinates */}
         <div className="absolute top-3 left-3 md:top-4 md:left-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
           <div className="flex items-center gap-1.5">
             <Compass className="w-3 h-3 text-electric" />
             <span>
-              lat: <span className="text-ink tabular-nums">14.60°N</span>
+              lat: <span className="text-ink tabular-nums">13.75°N</span>
               <span className="mx-1 text-ink-soft/60">·</span>
-              lng: <span className="text-ink tabular-nums">120.98°E</span>
+              lng: <span className="text-ink tabular-nums">100.50°E</span>
             </span>
           </div>
         </div>
+
+        {/* top-right: live speed + altitude + uplink */}
         <div className="absolute top-3 right-3 md:top-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            <Plane className="w-3 h-3 text-amber -rotate-[22deg]" />
+            <span className="tabular-nums">
+              <span className="text-amber font-bold">SPD</span>{' '}
+              <span className="text-ink">{readout.spd}</span>
+              <span className="text-ink-soft/70">kts</span>
+            </span>
+            <span className="text-ink-soft/40">·</span>
+            <span className="tabular-nums">
+              <span className="text-amber font-bold">ALT</span>{' '}
+              <span className="text-ink">{readout.alt.toLocaleString()}</span>
+              <span className="text-ink-soft/70">ft</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 mt-0.5 justify-end">
             <Wifi className="w-3 h-3 text-lime" />
             <span>
               uplink: <span className="text-ink">5/5</span>
@@ -1025,28 +1468,45 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             </span>
           </div>
         </div>
-        <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            <span>
-              <span className="text-ink tabular-nums">{ROUTE_EDGES.length}</span>{' '}
-              routes
+
+        {/* bottom-left: compass rose + HDG + DIST */}
+        <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex items-end gap-2">
+          <CompassRose hdg={readout.hdg} reduceMotion={reduceMotion} />
+          <div className="font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              <span>
+                <span className="text-ink tabular-nums">
+                  {ROUTE_EDGES.length}
+                </span>{' '}
+                routes
+                <span className="mx-1 text-ink-soft/60">·</span>
+                <span className="text-ink tabular-nums">{CITIES.length}</span>{' '}
+                cities
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5 tabular-nums">
+              <span className="text-amber font-bold">HDG</span>
+              <span className="text-ink">
+                {readout.hdg.toString().padStart(3, '0')}°
+              </span>
               <span className="mx-1 text-ink-soft/60">·</span>
-              <span className="text-ink tabular-nums">{CITIES.length}</span>{' '}
-              cities
-            </span>
+              <span className="text-lime font-bold">DIST</span>
+              <span className="text-ink">
+                {readout.dist.toLocaleString()}mi
+              </span>
+            </div>
           </div>
         </div>
+
+        {/* bottom-right: active route */}
         <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70 text-right">
           <div className="flex items-center gap-1.5 justify-end">
             <Plane className="w-3 h-3 text-amber" />
             <span>
               active:{' '}
               {ACTIVE_EDGES.flatMap(([a, b], i) => {
-                const nodes =
-                  i === 0
-                    ? [a, b]
-                    : [b]
+                const nodes = i === 0 ? [a, b] : [b]
                 return nodes
               }).map((code, i, arr) => (
                 <span key={`${code}-${i}`}>
@@ -1056,8 +1516,14 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
               ))}
             </span>
           </div>
+          <div className="flex items-center gap-1.5 mt-0.5 justify-end text-[9px]">
+            <span className="text-ink-soft/70">etd</span>
+            <span className="tabular-nums text-ink">T-06:42</span>
+            <span className="text-ink-soft/40">·</span>
+            <span className="text-lime">cleared</span>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* bottom status strip */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 border-t border-border bg-surface/40 font-mono text-[10px] text-ink-soft">
@@ -1087,7 +1553,138 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
           <span>gate <span className="text-ink">B8</span></span>
         </span>
       </div>
+
+      {/* ===== passport stamps strip (recent transits) ===== */}
+      <PassportStampsStrip stamps={stamps} reduceMotion={reduceMotion} />
     </motion.div>
+  )
+}
+
+// ============================================================
+// RadarCornerBrackets — HUD corner brackets overlaying the map
+// ============================================================
+
+function RadarCornerBrackets() {
+  return (
+    <div aria-hidden className="absolute inset-0 pointer-events-none">
+      <span className="absolute top-1.5 left-1.5 w-3.5 h-3.5 border-l-2 border-t-2 border-accent/45" />
+      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 border-r-2 border-t-2 border-accent/45" />
+      <span className="absolute bottom-1.5 left-1.5 w-3.5 h-3.5 border-l-2 border-b-2 border-accent/45" />
+      <span className="absolute bottom-1.5 right-1.5 w-3.5 h-3.5 border-r-2 border-b-2 border-accent/45" />
+    </div>
+  )
+}
+
+// ============================================================
+// CompassRose — live heading needle with N/E/S/W markers
+// ============================================================
+
+function CompassRose({
+  hdg,
+  reduceMotion,
+}: {
+  hdg: number
+  reduceMotion: boolean
+}) {
+  return (
+    <div className="relative w-14 h-14 shrink-0 rounded-full border border-border/70 bg-background/80 backdrop-blur overflow-hidden">
+      {/* dial markings */}
+      <div aria-hidden className="absolute inset-1 rounded-full border border-border/40" />
+      <span className="absolute left-1/2 top-0.5 -translate-x-1/2 font-mono text-[8px] font-bold text-amber">
+        N
+      </span>
+      <span className="absolute right-1 top-1/2 -translate-y-1/2 font-mono text-[8px] text-ink/80">
+        E
+      </span>
+      <span className="absolute left-1/2 bottom-0.5 -translate-x-1/2 font-mono text-[8px] text-ink/80">
+        S
+      </span>
+      <span className="absolute left-1 top-1/2 -translate-y-1/2 font-mono text-[8px] text-ink/80">
+        W
+      </span>
+      {/* needle */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-0 flex items-center justify-center"
+        animate={reduceMotion ? undefined : { rotate: hdg }}
+        initial={false}
+        transition={{ type: 'spring', stiffness: 70, damping: 14 }}
+      >
+        <span className="relative block w-0.5 h-5 -translate-y-1">
+          <span className="absolute inset-0 bg-gradient-to-t from-transparent via-amber/50 to-amber rounded-full" />
+        </span>
+      </motion.div>
+      {/* center dot */}
+      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-amber" />
+    </div>
+  )
+}
+
+// ============================================================
+// PassportStampsStrip — row of stamp-style chips
+// ============================================================
+
+function PassportStampsStrip({
+  stamps,
+  reduceMotion,
+}: {
+  stamps: Array<{ code: string; date: string; type: string }>
+  reduceMotion: boolean
+}) {
+  return (
+    <div className="px-4 py-2 border-t border-border bg-background/70 font-mono text-[9.5px] text-ink-soft">
+      <div className="flex items-center gap-2">
+        <span className="shrink-0 tracking-[0.22em] uppercase text-ink-soft/80">
+          stamps.collected
+        </span>
+        <span className="flex-1 h-px bg-gradient-to-r from-border via-border to-transparent" />
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+          {stamps.map((s, i) => {
+            const isNow = s.type === 'NOW'
+            return (
+              <motion.span
+                key={`${s.code}-${i}`}
+                initial={
+                  reduceMotion
+                    ? false
+                    : { opacity: 0, rotate: -10, scale: 0.7 }
+                }
+                whileInView={
+                  reduceMotion
+                    ? undefined
+                    : { opacity: 1, rotate: i % 2 ? 2 : -2, scale: 1 }
+                }
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{
+                  delay: i * 0.08,
+                  duration: 0.5,
+                  type: 'spring',
+                  stiffness: 220,
+                  damping: 18,
+                }}
+                className={`inline-flex items-center gap-1 px-1.5 py-0.5 border rounded-[3px] tabular-nums ${
+                  isNow
+                    ? 'border-accent/60 bg-accent/10 text-accent'
+                    : 'border-ink/25 bg-background text-ink/75'
+                }`}
+                style={{ transformOrigin: 'center' }}
+              >
+                <span className="font-bold">{s.code}</span>
+                <span className="opacity-60">·</span>
+                <span>{s.date}</span>
+                <span
+                  className={`ml-0.5 text-[7.5px] ${
+                    isNow ? 'text-lime font-bold' : 'opacity-70'
+                  }`}
+                >
+                  {s.type}
+                </span>
+              </motion.span>
+            )
+          })}
+        </div>
+      </div>
+    </div>
   )
 }
 
