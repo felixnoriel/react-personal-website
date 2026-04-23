@@ -215,30 +215,11 @@ export function Intro() {
         style={{ background: spotlight }}
         className="absolute inset-0 pointer-events-none"
       />
-      <div
-        aria-hidden
-        className="absolute top-0 right-0 w-[55%] h-[55%] pointer-events-none animate-float-slow"
-        style={{
-          background:
-            'radial-gradient(ellipse at top right, hsl(var(--amber) / 0.18), transparent 60%)',
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute bottom-0 left-0 w-[45%] h-[45%] pointer-events-none animate-pulse-glow"
-        style={{
-          background:
-            'radial-gradient(ellipse at bottom left, hsl(var(--electric) / 0.1), transparent 60%)',
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute top-[30%] left-[40%] w-[30%] h-[40%] pointer-events-none animate-pulse-glow"
-        style={{
-          background:
-            'radial-gradient(circle, hsl(var(--plum) / 0.08), transparent 70%)',
-        }}
-      />
+      {/* === Aurora blobs — drifting, morphing ambient glow === */}
+      <AuroraBackdrop />
+
+      {/* === Lightning bolts — random electric arcs across the hero === */}
+      <LightningField />
 
       {/* floating micro-particles */}
       <div
@@ -917,6 +898,230 @@ function HudCorners() {
         </motion.svg>
       ))}
     </div>
+  )
+}
+
+// ============================================================
+// AuroraBackdrop — drifting, morphing blurred blobs that replace
+// the static radial gradients. Each blob has its own slow orbit,
+// scale cycle, and hue so the background feels alive without
+// being distracting. Hidden behind mix-blend-screen for a subtle
+// auroral glow.
+// ============================================================
+
+function AuroraBackdrop() {
+  const blobs = [
+    {
+      color: 'hsl(var(--accent) / 0.28)',
+      size: '48vw',
+      top: '-8%',
+      left: '55%',
+      delay: 0,
+      dur: 26,
+    },
+    {
+      color: 'hsl(var(--amber) / 0.22)',
+      size: '44vw',
+      top: '18%',
+      left: '-10%',
+      delay: 4,
+      dur: 32,
+    },
+    {
+      color: 'hsl(var(--electric) / 0.18)',
+      size: '40vw',
+      top: '52%',
+      left: '38%',
+      delay: 8,
+      dur: 30,
+    },
+    {
+      color: 'hsl(var(--lime) / 0.18)',
+      size: '36vw',
+      top: '60%',
+      left: '-6%',
+      delay: 12,
+      dur: 28,
+    },
+  ]
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen"
+      style={{ filter: 'blur(60px)' }}
+    >
+      {blobs.map((b, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            top: b.top,
+            left: b.left,
+            width: b.size,
+            height: b.size,
+            background: b.color,
+          }}
+          animate={{
+            x: [0, 40, -30, 20, 0],
+            y: [0, -25, 30, -15, 0],
+            scale: [1, 1.15, 0.9, 1.1, 1],
+          }}
+          transition={{
+            duration: b.dur,
+            delay: b.delay,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// ============================================================
+// LightningField — SVG lightning bolts that fire across the hero
+// at random intervals. Each bolt is a jagged polyline with a
+// blurred outer glow and a bright inner streak. Flashes briefly
+// then disappears. Respects reduced-motion.
+// ============================================================
+
+function LightningField() {
+  const [reduce, setReduce] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReduce(mq.matches)
+    const onChange = () => setReduce(mq.matches)
+    mq.addEventListener?.('change', onChange)
+    return () => mq.removeEventListener?.('change', onChange)
+  }, [])
+
+  const [bolts, setBolts] = useState<
+    Array<{ id: number; d: string; color: string; duration: number }>
+  >([])
+  const idRef = useRef(0)
+
+  useEffect(() => {
+    if (reduce) return
+    const spawn = () => {
+      const boltId = idRef.current++
+      const startSide = Math.random() < 0.5 ? 'left' : 'right'
+      // viewBox is 100x100 (percent-based). Pick a vertical band.
+      const bandY = 10 + Math.random() * 80
+      const x1 = startSide === 'left' ? 0 : 100
+      const x2 = startSide === 'left' ? 100 : 0
+      const segs = 6 + Math.floor(Math.random() * 3)
+      const pts: string[] = [`M ${x1} ${bandY}`]
+      for (let i = 1; i < segs; i++) {
+        const t = i / segs
+        const x = x1 + (x2 - x1) * t
+        const y = bandY + (Math.random() - 0.5) * 14
+        pts.push(`L ${x.toFixed(2)} ${y.toFixed(2)}`)
+      }
+      pts.push(`L ${x2} ${bandY}`)
+      // Occasional branching fork
+      const forkIdx = 2 + Math.floor(Math.random() * (segs - 3))
+      const baseParts = pts.slice(0, forkIdx + 1)
+      const forkBase = pts[forkIdx]
+                     .replace('M ', '')
+                     .replace('L ', '')
+                     .trim()
+                     .split(/\s+/)
+      const [fx, fy] = forkBase.map(Number)
+      const forkDx = (Math.random() - 0.5) * 30
+      const forkDy = (Math.random() - 0.5) * 20
+      baseParts.push(`M ${fx} ${fy}`)
+      baseParts.push(
+        `L ${(fx + forkDx * 0.4).toFixed(2)} ${(fy + forkDy * 0.4).toFixed(2)}`,
+      )
+      baseParts.push(
+        `L ${(fx + forkDx).toFixed(2)} ${(fy + forkDy).toFixed(2)}`,
+      )
+      const d = [...pts, ...baseParts.slice(pts.length)].join(' ')
+      // color from palette
+      const palette = [
+        'hsl(var(--electric))',
+        'hsl(var(--accent))',
+        'hsl(var(--lime))',
+        'hsl(var(--amber))',
+      ]
+      const color = palette[Math.floor(Math.random() * palette.length)]
+      const duration = 0.7 + Math.random() * 0.5
+      setBolts((prev) => [
+        ...prev.slice(-3),
+        { id: boltId, d, color, duration },
+      ])
+      setTimeout(() => {
+        setBolts((prev) => prev.filter((b) => b.id !== boltId))
+      }, (duration + 0.1) * 1000)
+    }
+    // First bolt after a beat, then irregular cadence
+    const first = setTimeout(spawn, 1500)
+    const interval = setInterval(() => {
+      // ~40% chance each tick, tick every 1.6s → ~avg 4s between bolts
+      if (Math.random() < 0.4) spawn()
+    }, 1600)
+    return () => {
+      clearTimeout(first)
+      clearInterval(interval)
+    }
+  }, [reduce])
+
+  if (reduce) return null
+
+  return (
+    <svg
+      aria-hidden
+      className="absolute inset-0 w-full h-full pointer-events-none mix-blend-screen"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      style={{ opacity: 0.7 }}
+    >
+      <defs>
+        <filter id="bolt-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.8" />
+        </filter>
+      </defs>
+      <AnimatePresence>
+        {bolts.map((b) => (
+          <motion.g
+            key={b.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0.7, 1, 0] }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: b.duration,
+              ease: 'linear',
+              times: [0, 0.05, 0.2, 0.35, 1],
+            }}
+          >
+            {/* Outer blurred glow */}
+            <motion.path
+              d={b.d}
+              fill="none"
+              stroke={b.color}
+              strokeWidth="0.9"
+              strokeOpacity="0.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#bolt-glow)"
+              vectorEffect="non-scaling-stroke"
+            />
+            {/* Inner crisp bolt */}
+            <motion.path
+              d={b.d}
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="0.25"
+              strokeOpacity="0.95"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+          </motion.g>
+        ))}
+      </AnimatePresence>
+    </svg>
   )
 }
 
