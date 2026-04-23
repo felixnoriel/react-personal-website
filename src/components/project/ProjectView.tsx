@@ -16,10 +16,19 @@ import {
   FileText,
   GitBranch,
   Layers,
+  Maximize2,
   Signal,
 } from 'lucide-react'
 import Lightbox from 'yet-another-react-lightbox'
+import Captions from 'yet-another-react-lightbox/plugins/captions'
+import Counter from 'yet-another-react-lightbox/plugins/counter'
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen'
+import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails'
+import Zoom from 'yet-another-react-lightbox/plugins/zoom'
 import 'yet-another-react-lightbox/styles.css'
+import 'yet-another-react-lightbox/plugins/captions.css'
+import 'yet-another-react-lightbox/plugins/counter.css'
+import 'yet-another-react-lightbox/plugins/thumbnails.css'
 import { StablePayBanner } from '../ui/StablePayBanner'
 import type { Image as ImageAsset, Project, Tag } from '../../types/data'
 
@@ -75,7 +84,18 @@ export function ProjectView({
   const { validGallery, hasCategories, lightboxSlides } = useMemo(() => {
     const vg = (project?.gallery ?? []).filter((img) => img.url)
     const hc = vg.some((img) => img.category)
-    const ls = vg.map((img) => ({ src: img.url, alt: img.alt || '' }))
+    const ls = vg.map((img, i) => {
+      const showAlt = !!img.alt && img.alt !== 'Default'
+      const frame = `F${(i + 1).toString().padStart(2, '0')}`
+      return {
+        src: img.url,
+        alt: img.alt || `Frame ${i + 1}`,
+        title: showAlt ? img.alt : frame,
+        description: img.category
+          ? `${frame} · ${img.category}`
+          : `${frame} · ${project?.title ?? 'gallery'}`,
+      }
+    })
     return { validGallery: vg, hasCategories: hc, lightboxSlides: ls }
   }, [project])
 
@@ -333,12 +353,49 @@ export function ProjectView({
             />
           )}
 
-          {/* Lightbox */}
+          {/* Lightbox — enhanced with thumbnails, counter, captions, zoom, fullscreen */}
           <Lightbox
             open={lightboxOpen}
             close={() => setLightboxOpen(false)}
             slides={lightboxSlides}
             index={photoIndex}
+            plugins={[Captions, Counter, Fullscreen, Thumbnails, Zoom]}
+            controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
+            animation={{ fade: 260, swipe: 320 }}
+            carousel={{ finite: false, padding: '16px', spacing: '4%' }}
+            counter={{ container: { style: { top: 16, left: 16 } } }}
+            captions={{ descriptionTextAlign: 'start', showToggle: false }}
+            thumbnails={{
+              position: 'bottom',
+              width: 128,
+              height: 72,
+              border: 1,
+              borderRadius: 8,
+              padding: 4,
+              gap: 10,
+              imageFit: 'cover',
+              showToggle: true,
+            }}
+            zoom={{
+              maxZoomPixelRatio: 3,
+              zoomInMultiplier: 1.8,
+              doubleTapDelay: 300,
+              doubleClickDelay: 300,
+              wheelZoomDistanceFactor: 120,
+              keyboardMoveDistance: 60,
+            }}
+            styles={{
+              container: { backgroundColor: 'rgba(6, 6, 17, 0.94)' },
+              button: { filter: 'drop-shadow(0 0 6px hsl(var(--accent)/0.4))' },
+              thumbnailsContainer: {
+                backgroundColor: 'rgba(6, 6, 17, 0.85)',
+                backdropFilter: 'blur(8px)',
+              },
+              thumbnail: {
+                backgroundColor: 'rgba(20, 22, 38, 0.9)',
+                borderColor: 'rgba(255, 255, 255, 0.12)',
+              },
+            }}
           />
 
           {/* ===================== FOOTER NAV ===================== */}
@@ -992,7 +1049,8 @@ function GalleryTile({
       viewport={{ once: true }}
       transition={{ duration: 0.35, delay: (frame % 8) * 0.03 }}
       onClick={() => onOpen(index)}
-      className="group relative aspect-video overflow-hidden rounded-lg border border-border bg-surface hover:border-accent/50 transition-colors text-left cursor-pointer"
+      aria-label={`Open ${img.alt || `frame ${frame}`} — image ${frame} of gallery`}
+      className="group relative aspect-video overflow-hidden rounded-lg border border-border bg-surface hover:border-accent/60 transition-colors text-left cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <img
         src={img.url}
@@ -1001,6 +1059,11 @@ function GalleryTile({
         width={400}
         height={225}
         loading="lazy"
+      />
+      {/* darken on hover to lift the expand affordance */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-ink/0 via-ink/0 to-ink/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
       />
       {/* scan overlay on hover */}
       <div
@@ -1012,6 +1075,16 @@ function GalleryTile({
       {/* frame number badge */}
       <div className="absolute top-2 left-2 font-mono text-[9px] tracking-widest uppercase px-1.5 py-0.5 rounded bg-background/85 text-ink border border-border tabular-nums">
         F{frame.toString().padStart(2, '0')}
+      </div>
+      {/* expand affordance — appears on hover, centered */}
+      <div
+        aria-hidden
+        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+      >
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-background/90 border border-accent/40 text-ink font-mono text-[10px] tracking-[0.18em] uppercase shadow-[0_6px_20px_-6px_hsl(var(--accent)/0.5)] backdrop-blur-sm scale-95 group-hover:scale-100 transition-transform">
+          <Maximize2 className="w-3 h-3 text-accent" />
+          <span>expand</span>
+        </span>
       </div>
       {/* bottom caption on hover */}
       {showAlt && (

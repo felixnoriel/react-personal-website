@@ -497,3 +497,144 @@
     animation: none !important;
   }
 }
+
+/* ================================================================
+   Lightbox — site-matching overrides (yet-another-react-lightbox)
+   Dark cockpit backdrop, mono labels, accent glow on controls,
+   HUD-styled thumbnails with lime "current" indicator.
+   ================================================================ */
+.yarl__root {
+  --yarl__color_backdrop: rgba(6, 6, 17, 0.94);
+  --yarl__color_button: rgba(255, 255, 255, 0.82);
+  --yarl__color_button_active: hsl(var(--lime));
+  --yarl__color_button_disabled: rgba(255, 255, 255, 0.25);
+  --yarl__button_filter:
+    drop-shadow(0 0 3px rgba(0, 0, 0, 0.55))
+      drop-shadow(0 0 6px hsl(var(--accent) / 0.4));
+  font-family:
+    'JetBrains Mono',
+    'SF Mono',
+    Monaco,
+    Menlo,
+    ui-monospace,
+    monospace;
+}
+
+/* Navigation arrow buttons — bigger click targets + glow on hover */
+.yarl__button {
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    opacity 160ms ease;
+}
+.yarl__button:hover,
+.yarl__button:focus-visible {
+  transform: scale(1.08);
+  filter:
+    drop-shadow(0 0 5px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 0 10px hsl(var(--lime) / 0.6));
+  color: hsl(var(--lime));
+}
+.yarl__navigation_prev,
+.yarl__navigation_next {
+  background: rgba(10, 14, 28, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 10px;
+  backdrop-filter: blur(6px);
+}
+.yarl__navigation_prev:hover,
+.yarl__navigation_next:hover {
+  background: rgba(10, 14, 28, 0.85);
+  border-color: hsl(var(--lime) / 0.65);
+}
+
+/* Counter pill — top-left */
+.yarl__counter {
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(10, 14, 28, 0.7);
+  border: 1px solid hsl(var(--lime) / 0.45);
+  padding: 6px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 8px 24px -10px rgba(0, 0, 0, 0.6);
+}
+
+/* Captions — description text block */
+.yarl__slide_description,
+.yarl__slide_title {
+  font-family: inherit;
+  color: rgba(255, 255, 255, 0.9);
+}
+.yarl__slide_title_container {
+  background: linear-gradient(
+    to top,
+    rgba(6, 6, 17, 0.85),
+    rgba(6, 6, 17, 0)
+  );
+  padding: 14px 20px 18px;
+}
+.yarl__slide_title {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+.yarl__slide_description_container {
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 6, 17, 0.85),
+    rgba(6, 6, 17, 0)
+  );
+  padding: 14px 20px 10px;
+}
+.yarl__slide_description {
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: hsl(var(--lime) / 0.9);
+}
+
+/* Thumbnails strip — HUD look, lime highlight on active */
+.yarl__thumbnails_container {
+  padding: 14px 10px 10px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.yarl__thumbnails_track {
+  gap: 10px;
+}
+.yarl__thumbnails_thumbnail {
+  border-radius: 8px !important;
+  overflow: hidden;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  opacity: 0.72;
+}
+.yarl__thumbnails_thumbnail:hover {
+  border-color: hsl(var(--lime) / 0.5) !important;
+  transform: translateY(-2px);
+  opacity: 1;
+}
+.yarl__thumbnails_thumbnail_active {
+  border-color: hsl(var(--lime)) !important;
+  box-shadow:
+    0 0 0 2px hsl(var(--lime) / 0.35),
+    0 0 12px hsl(var(--lime) / 0.5);
+  opacity: 1 !important;
+}
+
+/* Zoom cursor hint */
+.yarl__slide_image {
+  cursor: zoom-in;
+}
+.yarl__fullsize .yarl__slide_image {
+  cursor: grab;
+}

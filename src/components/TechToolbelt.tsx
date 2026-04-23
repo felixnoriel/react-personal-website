@@ -1085,31 +1085,55 @@ function CoreReactor({
   const totalNodes = placedNodes.length
   const liveNodes = placedNodes.filter((n) => n.live).length
 
-  // Star field — deterministic so SSR/CSR stays stable
+  // Star field — deterministic. Cut to 40 stars and only twinkle every
+  // third one (~14) to keep concurrent SMIL animations bounded.
   const stars = useMemo(() => {
     const rng = seededRng(0x1a2b3c)
-    return Array.from({ length: 70 }, (_, i) => ({
+    return Array.from({ length: 40 }, (_, i) => ({
       id: i,
       x: rng() * REACTOR_W,
       y: rng() * REACTOR_H,
       r: 0.35 + rng() * 1.1,
       delay: rng() * 3.2,
       dur: 2 + rng() * 2.2,
+      twinkle: i % 3 === 0,
     }))
   }, [])
 
+  // Throttle mousemove to 1 update per animation frame. Without this every
+  // pointer event triggers a spring + re-rasterization of the whole 3D-tilted
+  // SVG, which is the main source of lag on this visualization.
+  const rafRef = useRef<number | null>(null)
+  const pendingPtr = useRef<{ x: number; y: number } | null>(null)
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    mx.set((e.clientX - rect.left) / rect.width - 0.5)
-    my.set((e.clientY - rect.top) / rect.height - 0.5)
+    pendingPtr.current = { x: e.clientX, y: e.clientY }
+    if (rafRef.current !== null) return
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null
+      const p = pendingPtr.current
+      if (!p || !cardRef.current) return
+      const rect = cardRef.current.getBoundingClientRect()
+      mx.set((p.x - rect.left) / rect.width - 0.5)
+      my.set((p.y - rect.top) / rect.height - 0.5)
+    })
   }
 
   const handleMouseLeave = () => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+    }
+    pendingPtr.current = null
     mx.set(0)
     my.set(0)
     setHover(null)
   }
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
 
   const stackCount = (s: Stack) =>
     s.groups.reduce((n, g) => n + g.items.length, 0)
@@ -1272,17 +1296,15 @@ function CoreReactor({
                 />
               </linearGradient>
 
-              <filter id="node-glow" x="-60%" y="-60%" width="220%" height="220%">
-                <feGaussianBlur stdDeviation="2.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
+              {/* #node-glow filter was removed. A Gaussian blur applied to
+                  54 tool dots + 12 particles + core was being re-rasterized
+                  every tilt frame and pinning the main thread. The soft
+                  outer ring under each dot already simulates a glow. */}
             </defs>
 
-            {/* Star field */}
-            <g>
+            {/* Star field — pointer-events skipped so hit-testing on
+                mousemove doesn't walk 40 hidden elements */}
+            <g pointerEvents="none">
               {stars.map((s) => (
                 <circle
                   key={s.id}
@@ -1292,7 +1314,7 @@ function CoreReactor({
                   fill="#ffffff"
                   opacity="0.6"
                 >
-                  {!reduce && (
+                  {!reduce && s.twinkle && (
                     <animate
                       attributeName="opacity"
                       values="0.15;0.9;0.15"
@@ -1306,22 +1328,24 @@ function CoreReactor({
             </g>
 
             {/* Decorative concentric grid rings */}
-            {[70, 160, 245, 335].map((r) => (
-              <circle
-                key={r}
-                cx={REACTOR_CX}
-                cy={REACTOR_CY}
-                r={r}
-                fill="none"
-                stroke="#ffffff"
-                strokeOpacity="0.045"
-                strokeWidth="1"
-                strokeDasharray="1 5"
-              />
-            ))}
+            <g pointerEvents="none">
+              {[70, 160, 245, 335].map((r) => (
+                <circle
+                  key={r}
+                  cx={REACTOR_CX}
+                  cy={REACTOR_CY}
+                  r={r}
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeOpacity="0.045"
+                  strokeWidth="1"
+                  strokeDasharray="1 5"
+                />
+              ))}
+            </g>
 
             {/* Faint energy spokes */}
-            <g>
+            <g pointerEvents="none">
               {Array.from({ length: 24 }, (_, i) => {
                 const a = (i / 24) * Math.PI * 2
                 const x2 = REACTOR_CX + Math.cos(a) * 340
@@ -1351,7 +1375,7 @@ function CoreReactor({
               const dashDir =
                 s.id === 'backend' ? '-120' : '120'
               return (
-                <g key={s.id} opacity={isDim ? 0.22 : 1}>
+                <g key={s.id} opacity={isDim ? 0.22 : 1} pointerEvents="none">
                   {/* soft fat glow ring */}
                   <circle
                     cx={REACTOR_CX}
@@ -1394,31 +1418,49 @@ function CoreReactor({
               )
             })}
 
-            {/* Data particles flowing along each orbit */}
+            {/* Data particles flowing along each orbit. Cut 4→2 per orbit
+                (12→6 total), removed the blur filter that was recomputed per
+                frame, and painted a cheap opacity halo behind each particle
+                to preserve the glow feel. */}
             {!reduce &&
               stacks.map((s) => {
                 const tok = ACCENT_TOKEN[s.accent]
-                const count = 4
+                const count = 2
                 const dur =
                   s.id === 'frontend' ? 9 : s.id === 'backend' ? 14 : 20
                 return (
-                  <g key={`particles-${s.id}`}>
+                  <g key={`particles-${s.id}`} pointerEvents="none">
                     {Array.from({ length: count }, (_, i) => (
-                      <circle
-                        key={i}
-                        r="2.4"
-                        fill={`hsl(${tok.hsl})`}
-                        filter="url(#node-glow)"
-                      >
-                        <animateMotion
-                          dur={`${dur}s`}
-                          repeatCount="indefinite"
-                          begin={`-${(i * dur) / count}s`}
-                          rotate="auto"
+                      <g key={i}>
+                        {/* cheap static halo, travels with the particle */}
+                        <circle
+                          r="5"
+                          fill={`hsl(${tok.hsl})`}
+                          opacity="0.22"
                         >
-                          <mpath href={`#orbit-${s.id}`} />
-                        </animateMotion>
-                      </circle>
+                          <animateMotion
+                            dur={`${dur}s`}
+                            repeatCount="indefinite"
+                            begin={`-${(i * dur) / count}s`}
+                            rotate="auto"
+                          >
+                            <mpath href={`#orbit-${s.id}`} />
+                          </animateMotion>
+                        </circle>
+                        <circle
+                          r="2.4"
+                          fill={`hsl(${tok.hsl})`}
+                        >
+                          <animateMotion
+                            dur={`${dur}s`}
+                            repeatCount="indefinite"
+                            begin={`-${(i * dur) / count}s`}
+                            rotate="auto"
+                          >
+                            <mpath href={`#orbit-${s.id}`} />
+                          </animateMotion>
+                        </circle>
+                      </g>
                     ))}
                   </g>
                 )
@@ -1426,7 +1468,7 @@ function CoreReactor({
 
             {/* Radar sweep beam */}
             {!reduce && (
-              <g>
+              <g pointerEvents="none">
                 <g>
                   <polygon
                     points={`${REACTOR_CX},${REACTOR_CY} ${REACTOR_CX + 340},${REACTOR_CY - 70} ${REACTOR_CX + 340},${REACTOR_CY + 70}`}
@@ -1456,7 +1498,7 @@ function CoreReactor({
 
             {/* Expanding pulse waves from core */}
             {!reduce && (
-              <g>
+              <g pointerEvents="none">
                 {[0, 1.8, 3.6].map((delay, i) => (
                   <circle
                     key={i}
@@ -1516,7 +1558,7 @@ function CoreReactor({
             })}
 
             {/* Central core */}
-            <g>
+            <g pointerEvents="none">
               <circle
                 cx={REACTOR_CX}
                 cy={REACTOR_CY}
@@ -1543,7 +1585,6 @@ function CoreReactor({
                 cy={REACTOR_CY}
                 r="10"
                 fill="#ffffff"
-                filter="url(#node-glow)"
               >
                 {!reduce && (
                   <animate
@@ -1609,8 +1650,19 @@ function CoreReactor({
                     onClick={() => onSelectStack(n.stack.id as FilterId)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {/* live pulse aura */}
-                    {n.live && !reduce && (
+                    {/* Static "live" pip — replaces 21 per-node SMIL pulses
+                        that were running concurrently (42 animate elements). */}
+                    {n.live && (
+                      <circle
+                        cx={n.x + nr + 2.5}
+                        cy={n.y - nr - 1}
+                        r={1.6}
+                        fill="hsl(var(--lime))"
+                        opacity={isDim ? 0.3 : 0.95}
+                      />
+                    )}
+                    {/* live pulse aura — now only on the hovered node */}
+                    {n.live && !reduce && isHovered && (
                       <circle
                         cx={n.x}
                         cy={n.y}
@@ -1625,7 +1677,6 @@ function CoreReactor({
                           from={nr + 2}
                           to={nr + 18}
                           dur="2.4s"
-                          begin={`${(i % 7) * 0.25}s`}
                           repeatCount="indefinite"
                         />
                         <animate
@@ -1633,26 +1684,26 @@ function CoreReactor({
                           from="0.8"
                           to="0"
                           dur="2.4s"
-                          begin={`${(i % 7) * 0.25}s`}
                           repeatCount="indefinite"
                         />
                       </circle>
                     )}
-                    {/* outer soft ring */}
+                    {/* outer soft ring — now doubles as the glow so we can
+                        drop the expensive Gaussian blur filter from 54 dots */}
                     <circle
                       cx={n.x}
                       cy={n.y}
-                      r={nr + (isHovered ? 4 : 2)}
-                      fill={`hsl(${tok.hsl} / 0.18)`}
+                      r={nr + (isHovered ? 5 : 3)}
+                      fill={`hsl(${tok.hsl} / ${isHovered ? 0.42 : 0.28})`}
                       style={{ transition: 'all 0.2s ease' }}
                     />
-                    {/* main dot */}
+                    {/* main dot — filter removed; cost was ~54x Gaussian blur
+                        re-rasterized every tilt frame. */}
                     <circle
                       cx={n.x}
                       cy={n.y}
                       r={isHovered ? nr * 1.35 : nr}
                       fill={`hsl(${tok.hsl})`}
-                      filter="url(#node-glow)"
                       style={{ transition: 'all 0.2s ease' }}
                     />
                     {/* highlight */}
