@@ -593,8 +593,6 @@ function FloatingPlaneDecor() {
 // ============================================================
 
 function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
-  const now = useLiveTime()
-  const utcTime = now.toISOString().slice(11, 16)
   const current = CITIES.find((c) => c.current)!
   const currentProj = project(current.lng, current.lat)
   const livePlanePath = compoundArcPath(ACTIVE_EDGES, 0.32)
@@ -612,34 +610,21 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
     damping: 20,
   })
 
-  // ===== Live cockpit readouts (speed / altitude / heading / distance) =====
-  const [readout, setReadout] = useState({
-    spd: 864,
-    alt: 35100,
-    hdg: 292,
-    dist: 184302,
-  })
-  useEffect(() => {
-    if (reduceMotion) return
-    const t = setInterval(() => {
-      setReadout((r) => ({
-        spd: Math.round(858 + Math.sin(Date.now() / 2200) * 14 + Math.random() * 6),
-        alt: Math.round(35000 + Math.sin(Date.now() / 3000) * 220 + Math.random() * 40),
-        hdg: Math.round(((292 + Math.sin(Date.now() / 4000) * 5) + 360) % 360),
-        dist: r.dist + 1,
-      }))
-    }, 650)
-    return () => clearInterval(t)
-  }, [reduceMotion])
+  // NOTE: live clock + cockpit readouts are intentionally isolated into
+  // leaf subcomponents (ChromeLive, CockpitHUD, NavHUD) below. Keeping
+  // their 650ms/30s state out of this parent prevents the massive SVG
+  // tree (~600 nodes) from re-rendering every tick.
 
   // ===== Grid =====
   const lngGridLines = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150]
   const latGridLines = [-60, -30, 0, 30, 60]
 
   // ===== Starfield / twinkles (memoized for stable positions) =====
+  // 40 stars is plenty of density for twinkle effect while keeping SMIL
+  // animation count low on mobile (each star is a concurrent <animate>).
   const stars = useMemo(
     () =>
-      Array.from({ length: 70 }).map((_, i) => ({
+      Array.from({ length: 40 }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 50,
@@ -711,20 +696,7 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
         <span className="font-mono text-[10.5px] text-white/75 ml-2 truncate">
           globe.radar · live.feed · v2.{new Date().getFullYear()}
         </span>
-        <span className="ml-auto flex items-center gap-3 font-mono text-[10px] text-white/55">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
-            </span>
-            tracking
-          </span>
-          <span className="hidden sm:inline tabular-nums text-amber/90">
-            FL{Math.round(readout.alt / 100).toString().padStart(3, '0')}
-          </span>
-          <span className="hidden sm:inline text-white/30">·</span>
-          <span className="tabular-nums text-white/85">{utcTime} UTC</span>
-        </span>
+        <ChromeLive reduceMotion={reduceMotion} />
       </div>
 
       {/* 3D tilted map area */}
@@ -1278,11 +1250,9 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             <g pointerEvents="none">
               {[
                 { beg: -1.8, op: 0.55, r: 0.28 },
-                { beg: -1.6, op: 0.48, r: 0.25 },
-                { beg: -1.4, op: 0.4, r: 0.22 },
+                { beg: -1.5, op: 0.44, r: 0.24 },
                 { beg: -1.2, op: 0.32, r: 0.19 },
-                { beg: -1.0, op: 0.24, r: 0.16 },
-                { beg: -0.85, op: 0.16, r: 0.13 },
+                { beg: -0.9, op: 0.2, r: 0.15 },
               ].map((p, i) => (
                 <circle
                   key={`trail-${i}`}
@@ -1346,14 +1316,12 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             </g>
           )}
 
-          {/* ===== secondary ambient planes ===== */}
+          {/* ===== secondary ambient planes — trimmed from 5 to 3 for mobile perf ===== */}
           {!reduceMotion &&
             [
               ['TPE', 'TYO'],
-              ['SIN', 'BLI'],
               ['BLI', 'SYD'],
               ['MAD', 'BLQ'],
-              ['NYC', 'YYZ'],
             ].map(([aCode, bCode], i) => {
               const a = CITIES[idx(aCode)]
               const b = CITIES[idx(bCode)]
@@ -1444,60 +1412,14 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
         </div>
 
         {/* top-right: live speed + altitude + uplink */}
-        <div className="absolute top-3 right-3 md:top-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
-          <div className="flex items-center gap-2">
-            <Plane className="w-3 h-3 text-amber -rotate-[22deg]" />
-            <span className="tabular-nums">
-              <span className="text-amber font-bold">SPD</span>{' '}
-              <span className="text-ink">{readout.spd}</span>
-              <span className="text-ink-soft/70">kts</span>
-            </span>
-            <span className="text-ink-soft/40">·</span>
-            <span className="tabular-nums">
-              <span className="text-amber font-bold">ALT</span>{' '}
-              <span className="text-ink">{readout.alt.toLocaleString()}</span>
-              <span className="text-ink-soft/70">ft</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 mt-0.5 justify-end">
-            <Wifi className="w-3 h-3 text-lime" />
-            <span>
-              uplink: <span className="text-ink">5/5</span>
-              <span className="mx-1 text-ink-soft/60">·</span>
-              <span className="tabular-nums">18ms</span>
-            </span>
-          </div>
-        </div>
+        <CockpitHUD reduceMotion={reduceMotion} />
 
-        {/* bottom-left: compass rose + HDG + DIST */}
-        <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex items-end gap-2">
-          <CompassRose hdg={readout.hdg} reduceMotion={reduceMotion} />
-          <div className="font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              <span>
-                <span className="text-ink tabular-nums">
-                  {ROUTE_EDGES.length}
-                </span>{' '}
-                routes
-                <span className="mx-1 text-ink-soft/60">·</span>
-                <span className="text-ink tabular-nums">{CITIES.length}</span>{' '}
-                cities
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 mt-0.5 tabular-nums">
-              <span className="text-amber font-bold">HDG</span>
-              <span className="text-ink">
-                {readout.hdg.toString().padStart(3, '0')}°
-              </span>
-              <span className="mx-1 text-ink-soft/60">·</span>
-              <span className="text-lime font-bold">DIST</span>
-              <span className="text-ink">
-                {readout.dist.toLocaleString()}mi
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* bottom-left: compass rose + HDG + DIST (self-owns its 650ms tick) */}
+        <NavHUD
+          reduceMotion={reduceMotion}
+          routeCount={ROUTE_EDGES.length}
+          cityCount={CITIES.length}
+        />
 
         {/* bottom-right: active route */}
         <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70 text-right">
@@ -1682,6 +1604,144 @@ function PassportStampsStrip({
               </motion.span>
             )
           })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// ChromeLive / CockpitHUD / NavHUD — tiny leaf components that
+// own their own 650ms interval state. Extracting them out of the
+// parent FlightRadar keeps the massive SVG tree (~600 nodes) from
+// re-rendering every tick. Big perf win on mobile.
+// ============================================================
+
+function ChromeLive({ reduceMotion }: { reduceMotion: boolean }) {
+  const [state, setState] = useState(() => ({
+    alt: 35100,
+    utc: new Date().toISOString().slice(11, 16),
+  }))
+  useEffect(() => {
+    if (reduceMotion) return
+    const a = setInterval(() => {
+      setState((s) => ({
+        ...s,
+        alt: Math.round(
+          35000 + Math.sin(Date.now() / 3000) * 220 + Math.random() * 40,
+        ),
+      }))
+    }, 1200)
+    const b = setInterval(() => {
+      setState((s) => ({ ...s, utc: new Date().toISOString().slice(11, 16) }))
+    }, 30_000)
+    return () => {
+      clearInterval(a)
+      clearInterval(b)
+    }
+  }, [reduceMotion])
+  return (
+    <span className="ml-auto flex items-center gap-3 font-mono text-[10px] text-white/55">
+      <span className="inline-flex items-center gap-1.5">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+        </span>
+        tracking
+      </span>
+      <span className="hidden sm:inline tabular-nums text-amber/90">
+        FL{Math.round(state.alt / 100).toString().padStart(3, '0')}
+      </span>
+      <span className="hidden sm:inline text-white/30">·</span>
+      <span className="tabular-nums text-white/85">{state.utc} UTC</span>
+    </span>
+  )
+}
+
+function CockpitHUD({ reduceMotion }: { reduceMotion: boolean }) {
+  const [r, setR] = useState({ spd: 864, alt: 35100 })
+  useEffect(() => {
+    if (reduceMotion) return
+    const t = setInterval(() => {
+      setR({
+        spd: Math.round(
+          858 + Math.sin(Date.now() / 2200) * 14 + Math.random() * 6,
+        ),
+        alt: Math.round(
+          35000 + Math.sin(Date.now() / 3000) * 220 + Math.random() * 40,
+        ),
+      })
+    }, 900)
+    return () => clearInterval(t)
+  }, [reduceMotion])
+  return (
+    <div className="absolute top-3 right-3 md:top-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
+      <div className="flex items-center gap-2">
+        <Plane className="w-3 h-3 text-amber -rotate-[22deg]" />
+        <span className="tabular-nums">
+          <span className="text-amber font-bold">SPD</span>{' '}
+          <span className="text-ink">{r.spd}</span>
+          <span className="text-ink-soft/70">kts</span>
+        </span>
+        <span className="text-ink-soft/40">·</span>
+        <span className="tabular-nums">
+          <span className="text-amber font-bold">ALT</span>{' '}
+          <span className="text-ink">{r.alt.toLocaleString()}</span>
+          <span className="text-ink-soft/70">ft</span>
+        </span>
+      </div>
+      <div className="flex items-center gap-1.5 mt-0.5 justify-end">
+        <Wifi className="w-3 h-3 text-lime" />
+        <span>
+          uplink: <span className="text-ink">5/5</span>
+          <span className="mx-1 text-ink-soft/60">·</span>
+          <span className="tabular-nums">18ms</span>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function NavHUD({
+  reduceMotion,
+  routeCount,
+  cityCount,
+}: {
+  reduceMotion: boolean
+  routeCount: number
+  cityCount: number
+}) {
+  const [r, setR] = useState({ hdg: 292, dist: 184302 })
+  useEffect(() => {
+    if (reduceMotion) return
+    const t = setInterval(() => {
+      setR((prev) => ({
+        hdg: Math.round(((292 + Math.sin(Date.now() / 4000) * 5) + 360) % 360),
+        dist: prev.dist + 1,
+      }))
+    }, 900)
+    return () => clearInterval(t)
+  }, [reduceMotion])
+  return (
+    <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex items-end gap-2">
+      <CompassRose hdg={r.hdg} reduceMotion={reduceMotion} />
+      <div className="font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+          <span>
+            <span className="text-ink tabular-nums">{routeCount}</span> routes
+            <span className="mx-1 text-ink-soft/60">·</span>
+            <span className="text-ink tabular-nums">{cityCount}</span> cities
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 mt-0.5 tabular-nums">
+          <span className="text-amber font-bold">HDG</span>
+          <span className="text-ink">
+            {r.hdg.toString().padStart(3, '0')}°
+          </span>
+          <span className="mx-1 text-ink-soft/60">·</span>
+          <span className="text-lime font-bold">DIST</span>
+          <span className="text-ink">{r.dist.toLocaleString()}mi</span>
         </div>
       </div>
     </div>
