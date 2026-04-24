@@ -42,6 +42,10 @@ export function NodeNetwork({
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
+    // Skip on mobile (<768px). The dense web reads as visual noise on
+    // phones and crowds the hero content. Canvas is also CSS-hidden via
+    // `hidden md:block` below so no element sits in layout either.
+    if (!window.matchMedia('(min-width: 768px)').matches) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -84,14 +88,11 @@ export function NodeNetwork({
     const dotHotSprite = makeSprite(accentColor, 0.45, SPRITE_SIZE)
     const haloSprite = makeSprite(accentColor, 0.35, SPRITE_SIZE)
 
-    // Viewport-aware sizing + density. Desktop-tuned values looked
-    // anemic on mobile: too few dots, dots too small, links too thin.
-    // On narrow screens we bump radii ~2×, line width ~2×, density ~2.5×
-    // and extend link distance ~1.3× so the network reads clearly.
-    let baseR = 2.2
-    let hotExtra = 2.6
-    let linkW = 0.9
-    let link2 = linkDistance * linkDistance
+    // Desktop-only visual tuning (we've already returned above on mobile).
+    const baseR = 2.2
+    const hotExtra = 2.6
+    const linkW = 0.9
+    const link2 = linkDistance * linkDistance
 
     const resize = () => {
       const parent = canvas.parentElement
@@ -108,21 +109,9 @@ export function NodeNetwork({
       ctx.imageSmoothingEnabled = true
       ctx.imageSmoothingQuality = 'high'
 
-      const mobile = width < 768
-      // Larger dots + thicker links so the network is legible on small screens.
-      baseR = mobile ? 4.2 : 2.2
-      hotExtra = mobile ? 3.6 : 2.6
-      linkW = mobile ? 2.2 : 0.9
-      // Extend connection radius on mobile so fewer dots still link densely.
-      const effectiveLinkDistance = mobile ? linkDistance * 1.3 : linkDistance
-      link2 = effectiveLinkDistance * effectiveLinkDistance
-
-      // Bump density on mobile so the network doesn't look sparse.
-      const effectiveDensity = mobile ? density * 2.3 : density
-      const minTarget = mobile ? 32 : 24
       const target = Math.max(
-        minTarget,
-        Math.min(80, Math.round(width * height * effectiveDensity)),
+        24,
+        Math.min(80, Math.round(width * height * density)),
       )
       while (nodes.length < target) {
         nodes.push({
@@ -332,7 +321,7 @@ export function NodeNetwork({
     <canvas
       ref={canvasRef}
       aria-hidden
-      className={`absolute inset-0 pointer-events-none ${className}`}
+      className={`absolute inset-0 pointer-events-none hidden md:block ${className}`}
     />
   )
 }
