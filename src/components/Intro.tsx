@@ -1275,40 +1275,45 @@ function LightningField() {
     if (reduce) return
     const spawn = () => {
       const boltId = idRef.current++
-      const startSide = Math.random() < 0.5 ? 'left' : 'right'
-      // viewBox is 100x100 (percent-based). Pick a vertical band.
-      const bandY = 10 + Math.random() * 80
-      const x1 = startSide === 'left' ? 0 : 100
-      const x2 = startSide === 'left' ? 100 : 0
-      const segs = 6 + Math.floor(Math.random() * 3)
-      const pts: string[] = [`M ${x1} ${bandY}`]
-      for (let i = 1; i < segs; i++) {
+      // Lightning strikes top→bottom with sharp alternating zigzag — the
+      // signature shape of a real bolt. viewBox is 100x100 with
+      // preserveAspectRatio="none" so the bolt spans the full hero.
+      const startX = 18 + Math.random() * 64
+      const endX = Math.max(8, Math.min(92, startX + (Math.random() - 0.5) * 34))
+      const segs = 8 + Math.floor(Math.random() * 4)
+      const mainPts: Array<[number, number]> = []
+      for (let i = 0; i <= segs; i++) {
         const t = i / segs
-        const x = x1 + (x2 - x1) * t
-        const y = bandY + (Math.random() - 0.5) * 14
-        pts.push(`L ${x.toFixed(2)} ${y.toFixed(2)}`)
+        const baseX = startX + (endX - startX) * t
+        const baseY = -3 + 108 * t
+        // Sharp alternating lateral jitter = zigzag silhouette.
+        // Endpoints have zero jitter so start/end align cleanly off-screen.
+        const swing =
+          i === 0 || i === segs
+            ? 0
+            : (i % 2 === 0 ? 1 : -1) * (2.5 + Math.random() * 5)
+        mainPts.push([baseX + swing, baseY])
       }
-      pts.push(`L ${x2} ${bandY}`)
-      // Occasional branching fork
-      const forkIdx = 2 + Math.floor(Math.random() * (segs - 3))
-      const baseParts = pts.slice(0, forkIdx + 1)
-      const forkBase = pts[forkIdx]
-                     .replace('M ', '')
-                     .replace('L ', '')
-                     .trim()
-                     .split(/\s+/)
-      const [fx, fy] = forkBase.map(Number)
-      const forkDx = (Math.random() - 0.5) * 30
-      const forkDy = (Math.random() - 0.5) * 20
-      baseParts.push(`M ${fx} ${fy}`)
-      baseParts.push(
-        `L ${(fx + forkDx * 0.4).toFixed(2)} ${(fy + forkDy * 0.4).toFixed(2)}`,
-      )
-      baseParts.push(
-        `L ${(fx + forkDx).toFixed(2)} ${(fy + forkDy).toFixed(2)}`,
-      )
-      const d = [...pts, ...baseParts.slice(pts.length)].join(' ')
-      // color from palette
+      let d = `M ${mainPts[0][0].toFixed(1)} ${mainPts[0][1].toFixed(1)}`
+      for (let i = 1; i < mainPts.length; i++) {
+        d += ` L ${mainPts[i][0].toFixed(1)} ${mainPts[i][1].toFixed(1)}`
+      }
+      // 1-2 forks branching off a middle joint — real lightning always splits
+      const forkCount = 1 + Math.floor(Math.random() * 2)
+      for (let f = 0; f < forkCount; f++) {
+        const forkIdx = 2 + Math.floor(Math.random() * (segs - 3))
+        const [fx, fy] = mainPts[forkIdx]
+        const forkSegs = 2 + Math.floor(Math.random() * 2)
+        const forkSide = Math.random() < 0.5 ? -1 : 1
+        let cx = fx
+        let cy = fy
+        d += ` M ${cx.toFixed(1)} ${cy.toFixed(1)}`
+        for (let s = 0; s < forkSegs; s++) {
+          cx += forkSide * (3 + Math.random() * 4) * (s % 2 === 0 ? 1 : -0.6)
+          cy += 4 + Math.random() * 6
+          d += ` L ${cx.toFixed(1)} ${cy.toFixed(1)}`
+        }
+      }
       const palette = [
         'hsl(var(--electric))',
         'hsl(var(--accent))',
@@ -1316,7 +1321,7 @@ function LightningField() {
         'hsl(var(--amber))',
       ]
       const color = palette[Math.floor(Math.random() * palette.length)]
-      const duration = 0.7 + Math.random() * 0.5
+      const duration = 0.65 + Math.random() * 0.45
       setBolts((prev) => [
         ...prev.slice(-3),
         { id: boltId, d, color, duration },
