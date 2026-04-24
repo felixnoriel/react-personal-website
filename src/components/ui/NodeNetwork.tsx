@@ -49,9 +49,40 @@ export function NodeNetwork({
 
     let width = 0
     let height = 0
+    // Cap DPR at 2 — going higher hurts perf (2.25× pixel work on 3x retina)
+    // without visible crispness gain because we draw from pre-rendered sprites.
     let dpr = Math.min(window.devicePixelRatio || 1, 2)
     const nodes: Node[] = []
     const pulses: Pulse[] = []
+
+    // Pre-render dot + halo sprites once — avoids creating ~80 radial
+    // gradients per frame in the hot loop. drawImage() bilinear-samples the
+    // oversampled sprite so edges stay buttery-smooth at runtime.
+    const makeSprite = (fill: string, innerStop: number, size: number) => {
+      const off = document.createElement('canvas')
+      // Oversample the sprite internally so downscaled drawImage looks crisp.
+      const spriteDpr = Math.min(window.devicePixelRatio || 1, 2) * 2
+      off.width = size * spriteDpr
+      off.height = size * spriteDpr
+      const octx = off.getContext('2d')
+      if (octx) {
+        octx.scale(spriteDpr, spriteDpr)
+        const half = size / 2
+        const grad = octx.createRadialGradient(half, half, 0, half, half, half)
+        grad.addColorStop(0, fill)
+        grad.addColorStop(innerStop, fill)
+        grad.addColorStop(1, 'transparent')
+        octx.fillStyle = grad
+        octx.beginPath()
+        octx.arc(half, half, half, 0, Math.PI * 2)
+        octx.fill()
+      }
+      return off
+    }
+    const SPRITE_SIZE = 24
+    const dotBaseSprite = makeSprite(color, 0.45, SPRITE_SIZE)
+    const dotHotSprite = makeSprite(accentColor, 0.45, SPRITE_SIZE)
+    const haloSprite = makeSprite(accentColor, 0.35, SPRITE_SIZE)
 
     const resize = () => {
       const parent = canvas.parentElement
@@ -64,6 +95,9 @@ export function NodeNetwork({
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // Ensure max-quality smoothing for round dot edges
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
 
       const target = Math.max(24, Math.min(80, Math.round(width * height * density)))
       while (nodes.length < target) {
@@ -135,8 +169,10 @@ export function NodeNetwork({
         if (n.y > height + 10) n.y = -10
       }
 
-      // draw links
-      ctx.lineWidth = 1
+      // draw links — thin, smooth, with round caps to avoid jagged endpoints
+      ctx.lineWidth = 0.9
+      ctx.lineCap = 'round'
+      ctx.strokeStyle = color
       const link2 = linkDistance * linkDistance
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i]
@@ -146,9 +182,7 @@ export function NodeNetwork({
           const dy = a.y - b.y
           const d2 = dx * dx + dy * dy
           if (d2 < link2) {
-            const alpha = (1 - d2 / link2) * 0.45
-            ctx.strokeStyle = color
-            ctx.globalAlpha = alpha
+            ctx.globalAlpha = (1 - d2 / link2) * 0.45
             ctx.beginPath()
             ctx.moveTo(a.x, a.y)
             ctx.lineTo(b.x, b.y)
@@ -183,7 +217,7 @@ export function NodeNetwork({
         }
       }
 
-      // update + draw pulses
+      // update + draw pulses (bright head + soft-edge glow halo)
       for (let k = pulses.length - 1; k >= 0; k--) {
         const p = pulses[k]
         p.t += p.speed
@@ -199,44 +233,63 @@ export function NodeNetwork({
         }
         const x = a.x + (b.x - a.x) * p.t
         const y = a.y + (b.y - a.y) * p.t
-        // trail
-        const trail = 0.18
+        // tapered trail
+        const trail = 0.2
         const tx = a.x + (b.x - a.x) * Math.max(0, p.t - trail)
         const ty = a.y + (b.y - a.y) * Math.max(0, p.t - trail)
         const grad = ctx.createLinearGradient(tx, ty, x, y)
         grad.addColorStop(0, 'transparent')
         grad.addColorStop(1, accentColor)
         ctx.strokeStyle = grad
-        ctx.lineWidth = 1.5
+        ctx.lineWidth = 1.8
         ctx.beginPath()
         ctx.moveTo(tx, ty)
         ctx.lineTo(x, y)
         ctx.stroke()
-        ctx.fillStyle = accentColor
+        // soft outer halo — drawn from pre-rendered sprite (no per-frame gradient alloc)
+        const haloR = 5
+        ctx.drawImage(haloSprite, x - haloR, y - haloR, haloR * 2, haloR * 2)
+        // crisp white-hot core
+        ctx.fillStyle = '#ffffff'
+        ctx.globalAlpha = 0.9
         ctx.beginPath()
-        ctx.arc(x, y, 2, 0, Math.PI * 2)
+        ctx.arc(x, y, 1.4, 0, Math.PI * 2)
         ctx.fill()
+        ctx.globalAlpha = 1
       }
 
-      // draw nodes
+      // draw nodes — drawImage from pre-rendered sprites (no per-frame gradient alloc)
+      const mouseActive = mouseRef.current.active
+      const mx = mouseRef.current.x
+      const my = mouseRef.current.y
+      const mR2 = mouseRadius * mouseRadius
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
-        let r = 1.6
-        let fill = color
-        if (mouseRef.current.active) {
-          const dx = n.x - mouseRef.current.x
-          const dy = n.y - mouseRef.current.y
+        let r = 2.2
+        let sprite = dotBaseSprite
+        let isHot = false
+        if (mouseActive) {
+          const dx = n.x - mx
+          const dy = n.y - my
           const d2 = dx * dx + dy * dy
-          if (d2 < mouseRadius * mouseRadius) {
-            const t2 = 1 - d2 / (mouseRadius * mouseRadius)
-            r = 1.6 + t2 * 2.4
-            fill = accentColor
+          if (d2 < mR2) {
+            const t2 = 1 - d2 / mR2
+            r = 2.2 + t2 * 2.6
+            sprite = dotHotSprite
+            isHot = true
           }
         }
-        ctx.fillStyle = fill
-        ctx.beginPath()
-        ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
-        ctx.fill()
+        const rOuter = r * 2
+        const sz = rOuter * 2
+        ctx.drawImage(sprite, n.x - rOuter, n.y - rOuter, sz, sz)
+        if (isHot) {
+          ctx.fillStyle = '#ffffff'
+          ctx.globalAlpha = 0.6
+          ctx.beginPath()
+          ctx.arc(n.x, n.y, r * 0.4, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.globalAlpha = 1
+        }
       }
 
       rafRef.current = requestAnimationFrame(frame)
