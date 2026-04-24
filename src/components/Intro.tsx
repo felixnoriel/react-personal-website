@@ -1273,47 +1273,92 @@ function LightningField() {
 
   useEffect(() => {
     if (reduce) return
+    // Midpoint-displacement subdivision — classic "fractal lightning"
+    // algorithm. Repeatedly splits each segment and jitters the midpoint
+    // perpendicular to the segment direction. Produces the irregular,
+    // naturally-jagged silhouette that reads unmistakably as a bolt.
+    const subdivide = (
+      pts: Array<[number, number]>,
+      amount: number,
+    ): Array<[number, number]> => {
+      const out: Array<[number, number]> = []
+      for (let i = 0; i < pts.length - 1; i++) {
+        const [x1, y1] = pts[i]
+        const [x2, y2] = pts[i + 1]
+        const mx = (x1 + x2) / 2
+        const my = (y1 + y2) / 2
+        const dx = x2 - x1
+        const dy = y2 - y1
+        const len = Math.sqrt(dx * dx + dy * dy) || 1
+        // Perpendicular unit vector
+        const px = -dy / len
+        const py = dx / len
+        const jitter = (Math.random() - 0.5) * amount
+        out.push(pts[i], [mx + px * jitter, my + py * jitter])
+      }
+      out.push(pts[pts.length - 1])
+      return out
+    }
+
+    const buildBolt = (
+      start: [number, number],
+      end: [number, number],
+      levels: number,
+      startAmp: number,
+      decay: number,
+    ): Array<[number, number]> => {
+      let pts: Array<[number, number]> = [start, end]
+      let amp = startAmp
+      for (let i = 0; i < levels; i++) {
+        pts = subdivide(pts, amp)
+        amp *= decay
+      }
+      return pts
+    }
+
+    const ptsToPath = (pts: Array<[number, number]>): string => {
+      let p = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`
+      for (let i = 1; i < pts.length; i++) {
+        p += ` L ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)}`
+      }
+      return p
+    }
+
     const spawn = () => {
       const boltId = idRef.current++
-      // Lightning strikes top→bottom with sharp alternating zigzag — the
-      // signature shape of a real bolt. viewBox is 100x100 with
-      // preserveAspectRatio="none" so the bolt spans the full hero.
-      const startX = 18 + Math.random() * 64
-      const endX = Math.max(8, Math.min(92, startX + (Math.random() - 0.5) * 34))
-      const segs = 8 + Math.floor(Math.random() * 4)
-      const mainPts: Array<[number, number]> = []
-      for (let i = 0; i <= segs; i++) {
-        const t = i / segs
-        const baseX = startX + (endX - startX) * t
-        const baseY = -3 + 108 * t
-        // Sharp alternating lateral jitter = zigzag silhouette.
-        // Endpoints have zero jitter so start/end align cleanly off-screen.
-        const swing =
-          i === 0 || i === segs
-            ? 0
-            : (i % 2 === 0 ? 1 : -1) * (2.5 + Math.random() * 5)
-        mainPts.push([baseX + swing, baseY])
-      }
-      let d = `M ${mainPts[0][0].toFixed(1)} ${mainPts[0][1].toFixed(1)}`
-      for (let i = 1; i < mainPts.length; i++) {
-        d += ` L ${mainPts[i][0].toFixed(1)} ${mainPts[i][1].toFixed(1)}`
-      }
-      // 1-2 forks branching off a middle joint — real lightning always splits
-      const forkCount = 1 + Math.floor(Math.random() * 2)
+      // Bolt strikes top→bottom across full hero. viewBox 0-100 on both
+      // axes with preserveAspectRatio="none" means X scales to hero width,
+      // Y to hero height — the bolt always spans vertically edge-to-edge.
+      const startX = 20 + Math.random() * 60
+      const endX = Math.max(10, Math.min(90, startX + (Math.random() - 0.5) * 30))
+      const start: [number, number] = [startX, -4]
+      const end: [number, number] = [endX, 104]
+
+      // 5 subdivision levels → 33 segments along main trunk, with fractal
+      // jitter that halves each pass. This gives lightning its characteristic
+      // "big kinks with smaller kinks on them" look.
+      const main = buildBolt(start, end, 5, 26, 0.55)
+      let d = ptsToPath(main)
+
+      // 3-5 forks branching off different joints of the main trunk. Each
+      // fork is itself subdivided for self-similar jaggedness. This is
+      // what gives lightning its unmistakable branching silhouette.
+      const forkCount = 3 + Math.floor(Math.random() * 3)
       for (let f = 0; f < forkCount; f++) {
-        const forkIdx = 2 + Math.floor(Math.random() * (segs - 3))
-        const [fx, fy] = mainPts[forkIdx]
-        const forkSegs = 2 + Math.floor(Math.random() * 2)
+        // Avoid start/end — forks emerge from interior joints
+        const forkIdx = 4 + Math.floor(Math.random() * (main.length - 8))
+        const [fx, fy] = main[forkIdx]
         const forkSide = Math.random() < 0.5 ? -1 : 1
-        let cx = fx
-        let cy = fy
-        d += ` M ${cx.toFixed(1)} ${cy.toFixed(1)}`
-        for (let s = 0; s < forkSegs; s++) {
-          cx += forkSide * (3 + Math.random() * 4) * (s % 2 === 0 ? 1 : -0.6)
-          cy += 4 + Math.random() * 6
-          d += ` L ${cx.toFixed(1)} ${cy.toFixed(1)}`
-        }
+        const forkLen = 12 + Math.random() * 22
+        // Forks tend to continue downward + splay outward, not go back up
+        const forkEnd: [number, number] = [
+          fx + forkSide * (6 + Math.random() * 16),
+          fy + forkLen * (0.55 + Math.random() * 0.4),
+        ]
+        const fork = buildBolt([fx, fy], forkEnd, 3, 8, 0.5)
+        d += ' ' + ptsToPath(fork)
       }
+
       const palette = [
         'hsl(var(--electric))',
         'hsl(var(--accent))',
@@ -1321,7 +1366,7 @@ function LightningField() {
         'hsl(var(--amber))',
       ]
       const color = palette[Math.floor(Math.random() * palette.length)]
-      const duration = 0.65 + Math.random() * 0.45
+      const duration = 0.5 + Math.random() * 0.35
       setBolts((prev) => [
         ...prev.slice(-3),
         { id: boltId, d, color, duration },
@@ -1356,10 +1401,10 @@ function LightningField() {
     >
       <defs>
         <filter id="bolt-glow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="1.6" />
+          <feGaussianBlur stdDeviation="1.8" />
         </filter>
         <filter id="bolt-glow-soft" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" />
+          <feGaussianBlur stdDeviation="3.5" />
         </filter>
       </defs>
       <AnimatePresence>
@@ -1367,44 +1412,55 @@ function LightningField() {
           <motion.g
             key={b.id}
             initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0.4, 1, 0.8, 0] }}
+            animate={{ opacity: [0, 1, 0.5, 1, 0.85, 0] }}
             exit={{ opacity: 0 }}
             transition={{
               duration: b.duration,
               ease: 'linear',
-              times: [0, 0.04, 0.15, 0.28, 0.55, 1],
+              times: [0, 0.03, 0.12, 0.25, 0.55, 1],
             }}
           >
-            {/* Diffuse halo */}
+            {/* Diffuse outer halo — the "lit-up sky" glow */}
             <motion.path
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="3.2"
-              strokeOpacity="0.45"
+              strokeWidth="5"
+              strokeOpacity="0.55"
               strokeLinecap="round"
               strokeLinejoin="round"
               filter="url(#bolt-glow-soft)"
               vectorEffect="non-scaling-stroke"
             />
-            {/* Outer glowing bolt */}
+            {/* Mid-glow layer for extra luminosity */}
             <motion.path
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="1.6"
-              strokeOpacity="0.95"
+              strokeWidth="2.8"
+              strokeOpacity="0.85"
               strokeLinecap="round"
               strokeLinejoin="round"
               filter="url(#bolt-glow)"
               vectorEffect="non-scaling-stroke"
             />
-            {/* Inner white-hot core */}
+            {/* Bright colored outer bolt */}
+            <motion.path
+              d={b.d}
+              fill="none"
+              stroke={b.color}
+              strokeWidth="1.6"
+              strokeOpacity="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+            {/* White-hot core — bolt's brightest part */}
             <motion.path
               d={b.d}
               fill="none"
               stroke="#ffffff"
-              strokeWidth="0.5"
+              strokeWidth="0.9"
               strokeOpacity="1"
               strokeLinecap="round"
               strokeLinejoin="round"
