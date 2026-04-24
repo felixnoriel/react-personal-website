@@ -84,6 +84,12 @@ export function NodeNetwork({
     const dotHotSprite = makeSprite(accentColor, 0.45, SPRITE_SIZE)
     const haloSprite = makeSprite(accentColor, 0.35, SPRITE_SIZE)
 
+    // Viewport-aware sizing — dots and links looked thin on mobile with
+    // desktop-tuned values. Bump radius + line width on narrow screens.
+    let baseR = 2.2
+    let hotExtra = 2.6
+    let linkW = 0.9
+
     const resize = () => {
       const parent = canvas.parentElement
       if (!parent) return
@@ -98,6 +104,12 @@ export function NodeNetwork({
       // Ensure max-quality smoothing for round dot edges
       ctx.imageSmoothingEnabled = true
       ctx.imageSmoothingQuality = 'high'
+
+      // Scale visuals up for mobile so dots/links read properly on small screens.
+      const mobile = width < 768
+      baseR = mobile ? 3.0 : 2.2
+      hotExtra = mobile ? 3.2 : 2.6
+      linkW = mobile ? 1.35 : 0.9
 
       const target = Math.max(24, Math.min(80, Math.round(width * height * density)))
       while (nodes.length < target) {
@@ -170,7 +182,7 @@ export function NodeNetwork({
       }
 
       // draw links — thin, smooth, with round caps to avoid jagged endpoints
-      ctx.lineWidth = 0.9
+      ctx.lineWidth = linkW
       ctx.lineCap = 'round'
       ctx.strokeStyle = color
       const link2 = linkDistance * linkDistance
@@ -265,7 +277,7 @@ export function NodeNetwork({
       const mR2 = mouseRadius * mouseRadius
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
-        let r = 2.2
+        let r = baseR
         let sprite = dotBaseSprite
         let isHot = false
         if (mouseActive) {
@@ -274,7 +286,7 @@ export function NodeNetwork({
           const d2 = dx * dx + dy * dy
           if (d2 < mR2) {
             const t2 = 1 - d2 / mR2
-            r = 2.2 + t2 * 2.6
+            r = baseR + t2 * hotExtra
             sprite = dotHotSprite
             isHot = true
           }
