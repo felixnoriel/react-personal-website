@@ -84,11 +84,14 @@ export function NodeNetwork({
     const dotHotSprite = makeSprite(accentColor, 0.45, SPRITE_SIZE)
     const haloSprite = makeSprite(accentColor, 0.35, SPRITE_SIZE)
 
-    // Viewport-aware sizing — dots and links looked thin on mobile with
-    // desktop-tuned values. Bump radius + line width on narrow screens.
+    // Viewport-aware sizing + density. Desktop-tuned values looked
+    // anemic on mobile: too few dots, dots too small, links too thin.
+    // On narrow screens we bump radii ~2×, line width ~2×, density ~2.5×
+    // and extend link distance ~1.3× so the network reads clearly.
     let baseR = 2.2
     let hotExtra = 2.6
     let linkW = 0.9
+    let link2 = linkDistance * linkDistance
 
     const resize = () => {
       const parent = canvas.parentElement
@@ -105,13 +108,22 @@ export function NodeNetwork({
       ctx.imageSmoothingEnabled = true
       ctx.imageSmoothingQuality = 'high'
 
-      // Scale visuals up for mobile so dots/links read properly on small screens.
       const mobile = width < 768
-      baseR = mobile ? 3.0 : 2.2
-      hotExtra = mobile ? 3.2 : 2.6
-      linkW = mobile ? 1.35 : 0.9
+      // Larger dots + thicker links so the network is legible on small screens.
+      baseR = mobile ? 4.2 : 2.2
+      hotExtra = mobile ? 3.6 : 2.6
+      linkW = mobile ? 2.2 : 0.9
+      // Extend connection radius on mobile so fewer dots still link densely.
+      const effectiveLinkDistance = mobile ? linkDistance * 1.3 : linkDistance
+      link2 = effectiveLinkDistance * effectiveLinkDistance
 
-      const target = Math.max(24, Math.min(80, Math.round(width * height * density)))
+      // Bump density on mobile so the network doesn't look sparse.
+      const effectiveDensity = mobile ? density * 2.3 : density
+      const minTarget = mobile ? 32 : 24
+      const target = Math.max(
+        minTarget,
+        Math.min(80, Math.round(width * height * effectiveDensity)),
+      )
       while (nodes.length < target) {
         nodes.push({
           x: Math.random() * width,
@@ -181,11 +193,11 @@ export function NodeNetwork({
         if (n.y > height + 10) n.y = -10
       }
 
-      // draw links — thin, smooth, with round caps to avoid jagged endpoints
+      // draw links — thin, smooth, with round caps to avoid jagged endpoints.
+      // link2 is set by resize() (varies on mobile) — no need to recompute here.
       ctx.lineWidth = linkW
       ctx.lineCap = 'round'
       ctx.strokeStyle = color
-      const link2 = linkDistance * linkDistance
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i]
         for (let j = i + 1; j < nodes.length; j++) {
