@@ -18,6 +18,7 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { trackEvent } from '../utils/analytics'
+import { useFxLevel } from '../hooks/useFxLevel'
 
 // ============================================================
 // DATA — cities with real lat/lng + global flight plan
@@ -405,7 +406,15 @@ function useLiveTime() {
 // ============================================================
 
 export function NomadLife() {
+  // `reduceMotion` is the strict a11y signal — kills path animations and
+  // shows the static parked-plane fallback. `lite` is the broader "skip
+  // expensive decorative bg fx" signal — true for either reduced-motion
+  // OR sub-768px viewports. We pass both so FlightRadar can show its
+  // central plane animation on mobile (the centerpiece) while suppressing
+  // the dozens of stars / clouds / radar sweep / beacon pings around it.
   const reduceMotion = !!useReducedMotion()
+  const { isMobile } = useFxLevel()
+  const lite = reduceMotion || isMobile
   return (
     <section
       id="nomad-section"
@@ -437,7 +446,7 @@ export function NomadLife() {
 
         {/* ===================== FLIGHT RADAR ===================== */}
         <div className="mt-10 md:mt-12">
-          <FlightRadar reduceMotion={reduceMotion} />
+          <FlightRadar reduceMotion={reduceMotion} lite={lite} />
         </div>
 
         {/* ===================== BOARDING PASSES ===================== */}
@@ -552,8 +561,11 @@ function SectionDivider({ title, meta }: { title: string; meta?: string }) {
 // ============================================================
 
 function FloatingPlaneDecor() {
-  const reduceMotion = useReducedMotion()
-  if (reduceMotion) return null
+  // Two infinite framer-motion translations across the full section.
+  // Decorative-only; on mobile/reduce we skip them (the section's centerpiece
+  // is the FlightRadar card, not background plane silhouettes).
+  const { disableHeavyFx } = useFxLevel()
+  if (disableHeavyFx) return null
   return (
     <>
       <motion.span
@@ -592,12 +604,21 @@ function FloatingPlaneDecor() {
 // FlightRadar — world-map centerpiece with dotted continents
 // ============================================================
 
-function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
+function FlightRadar({
+  reduceMotion,
+  lite,
+}: {
+  reduceMotion: boolean
+  // `lite` = drop heavy decorative SVG fx (mobile or reduce-motion). The
+  // central plane animation along the active route still renders unless
+  // `reduceMotion` is set — that one is the section's whole point.
+  lite: boolean
+}) {
   const current = CITIES.find((c) => c.current)!
   const currentProj = project(current.lng, current.lat)
   const livePlanePath = compoundArcPath(ACTIVE_EDGES, 0.32)
 
-  // ===== 3D mouse tilt =====
+  // ===== 3D mouse tilt — desktop only ===
   const cardRef = useRef<HTMLDivElement | null>(null)
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
@@ -620,11 +641,14 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
   const latGridLines = [-60, -30, 0, 30, 60]
 
   // ===== Starfield / twinkles (memoized for stable positions) =====
-  // 40 stars is plenty of density for twinkle effect while keeping SMIL
-  // animation count low on mobile (each star is a concurrent <animate>).
+  // Desktop: 40 stars (each gets a concurrent SMIL <animate> opacity tween).
+  // Mobile/reduce: 12 stars and we drop the SMIL twinkle entirely below.
+  // Going from ~40 SMIL animations to 0 is the single biggest paint-cost
+  // win in this section on phones.
+  const STAR_COUNT = lite ? 12 : 40
   const stars = useMemo(
     () =>
-      Array.from({ length: 40 }).map((_, i) => ({
+      Array.from({ length: STAR_COUNT }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 50,
@@ -632,7 +656,7 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
         dur: 1.5 + Math.random() * 3.5,
         delay: Math.random() * 5,
       })),
-    [],
+    [STAR_COUNT],
   )
 
   // ===== Drifting clouds =====
@@ -673,7 +697,10 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       onMouseMove={(e) => {
-        if (reduceMotion) return
+        // Skip on lite (mobile/reduce) — phantom touchscreen mousemove
+        // events would otherwise trigger spring re-computation for a
+        // tilt the user can't perceive.
+        if (lite) return
         const rect = cardRef.current?.getBoundingClientRect()
         if (!rect) return
         mx.set((e.clientX - rect.left) / rect.width - 0.5)
@@ -696,7 +723,7 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
         <span className="font-mono text-[10.5px] text-white/75 ml-2 truncate">
           globe.radar · live.feed · v2.{new Date().getFullYear()}
         </span>
-        <ChromeLive reduceMotion={reduceMotion} />
+        <ChromeLive lite={lite} />
       </div>
 
       {/* 3D tilted map area */}
@@ -769,7 +796,7 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
                 fill="hsl(var(--ink))"
                 opacity="0.45"
               >
-                {!reduceMotion && (
+                {!lite && (
                   <animate
                     attributeName="opacity"
                     values="0.12;0.8;0.12"
@@ -783,7 +810,7 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
           </g>
 
           {/* ===== shooting-star streaks ===== */}
-          {!reduceMotion && (
+          {!lite && (
             <g pointerEvents="none">
               <line
                 x1="0"
@@ -929,8 +956,10 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             })}
           </motion.g>
 
-          {/* ===== drifting cloud layer (passes over the globe) ===== */}
-          {!reduceMotion &&
+          {/* ===== drifting cloud layer (passes over the globe) — desktop only.
+              5 SMIL animateTransform loops at 60–116s each; the slow drift
+              barely registers on a phone-sized map but still costs paint. */}
+          {!lite &&
             clouds.map((c) => (
               <g key={`cloud-${c.id}`} pointerEvents="none" opacity={c.opacity}>
                 <g transform={`translate(0 ${c.y}) scale(${c.scale})`}>
@@ -949,8 +978,11 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
               </g>
             ))}
 
-          {/* ===== radar sweep at current city ===== */}
-          {!reduceMotion && (
+          {/* ===== radar sweep at current city — desktop only.
+              Continuous 360° SMIL rotation with a gradient cone + bright
+              leading edge is GPU-cheap on desktop but on phones the
+              constant repaint costs frames during scroll. */}
+          {!lite && (
             <g
               transform={`translate(${currentProj.x} ${currentProj.y})`}
               pointerEvents="none"
@@ -1095,8 +1127,8 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             const anchor = c.labelAnchor ?? 'start'
             return (
               <g key={c.code}>
-                {/* beacon city ping (staggered) */}
-                {isBeacon && !isCurrent && !reduceMotion && (
+                {/* beacon city ping (staggered) — desktop only */}
+                {isBeacon && !isCurrent && !lite && (
                   <circle
                     cx={p.x}
                     cy={p.y}
@@ -1124,8 +1156,9 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
                     />
                   </circle>
                 )}
-                {/* pulse rings on current */}
-                {isCurrent && !reduceMotion && (
+                {/* pulse rings on current — keep on desktop only; mobile
+                    keeps the static accent dot which still reads as "here" */}
+                {isCurrent && !lite && (
                   <>
                     <circle
                       cx={p.x}
@@ -1245,8 +1278,11 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             )
           })}
 
-          {/* ===== contrail — staggered particle chain BEHIND the plane ===== */}
-          {!reduceMotion && (
+          {/* ===== contrail — staggered particle chain BEHIND the plane.
+              Desktop only: 4 SMIL animateMotion particles tracing the same
+              path. On mobile the plane itself still flies — it just doesn't
+              trail glowy dots. ===== */}
+          {!lite && (
             <g pointerEvents="none">
               {[
                 { beg: -1.8, op: 0.55, r: 0.28 },
@@ -1272,27 +1308,37 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             </g>
           )}
 
-          {/* ===== live plane flying the active route ===== */}
+          {/* ===== live plane flying the active route =====
+              Desktop: pulsing halo + bright core + detailed silhouette
+                (3 concurrent animateMotion + 1 animate on radius).
+              Mobile: just the silhouette. The plane is the section's
+                whole visual hook so we still fly it — we just stop
+                running 3 SMIL tracks for what's effectively one moving
+                point on a phone-sized map. */}
           {!reduceMotion && (
             <g>
-              {/* pulsing halo */}
-              <circle r="1.4" fill="hsl(var(--amber))" opacity="0.22">
-                <animate
-                  attributeName="r"
-                  values="1.2;1.8;1.2"
-                  dur="1.4s"
-                  repeatCount="indefinite"
-                />
-                <animateMotion dur="14s" begin="-2s" repeatCount="indefinite">
-                  <mpath href="#active-route-path" />
-                </animateMotion>
-              </circle>
-              {/* bright core dot */}
-              <circle r="0.4" fill="hsl(var(--amber))">
-                <animateMotion dur="14s" begin="-2s" repeatCount="indefinite">
-                  <mpath href="#active-route-path" />
-                </animateMotion>
-              </circle>
+              {!lite && (
+                <>
+                  {/* pulsing halo */}
+                  <circle r="1.4" fill="hsl(var(--amber))" opacity="0.22">
+                    <animate
+                      attributeName="r"
+                      values="1.2;1.8;1.2"
+                      dur="1.4s"
+                      repeatCount="indefinite"
+                    />
+                    <animateMotion dur="14s" begin="-2s" repeatCount="indefinite">
+                      <mpath href="#active-route-path" />
+                    </animateMotion>
+                  </circle>
+                  {/* bright core dot */}
+                  <circle r="0.4" fill="hsl(var(--amber))">
+                    <animateMotion dur="14s" begin="-2s" repeatCount="indefinite">
+                      <mpath href="#active-route-path" />
+                    </animateMotion>
+                  </circle>
+                </>
+              )}
               {/* detailed plane silhouette — rotates to match heading */}
               <g>
                 <use href="#plane-icon" />
@@ -1316,8 +1362,11 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
             </g>
           )}
 
-          {/* ===== secondary ambient planes — trimmed from 5 to 3 for mobile perf ===== */}
-          {!reduceMotion &&
+          {/* ===== secondary ambient planes — desktop only.
+              3 routes × 2 SMIL animateMotion (halo + core) = 6 concurrent
+              path-traversal animations. Killing these on mobile is a clean
+              win — they're tiny green dots in the periphery anyway. ===== */}
+          {!lite &&
             [
               ['TPE', 'TYO'],
               ['BLI', 'SYD'],
@@ -1375,8 +1424,11 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
           }}
         />
 
-        {/* ===== slow vertical scan sweep ===== */}
-        {!reduceMotion && (
+        {/* ===== slow vertical scan sweep — desktop only.
+            Full-height gradient div translating top→bottom on Infinity loop.
+            On mobile this triggers a full-section repaint every 10.5s
+            cycle. Skip. */}
+        {!lite && (
           <motion.div
             aria-hidden
             className="absolute inset-0 pointer-events-none mix-blend-screen"
@@ -1412,10 +1464,11 @@ function FlightRadar({ reduceMotion }: { reduceMotion: boolean }) {
         </div>
 
         {/* top-right: live speed + altitude + uplink */}
-        <CockpitHUD reduceMotion={reduceMotion} />
+        <CockpitHUD lite={lite} />
 
         {/* bottom-left: compass rose + HDG + DIST (self-owns its 650ms tick) */}
         <NavHUD
+          lite={lite}
           reduceMotion={reduceMotion}
           routeCount={ROUTE_EDGES.length}
           cityCount={CITIES.length}
@@ -1617,13 +1670,17 @@ function PassportStampsStrip({
 // re-rendering every tick. Big perf win on mobile.
 // ============================================================
 
-function ChromeLive({ reduceMotion }: { reduceMotion: boolean }) {
+function ChromeLive({ lite }: { lite: boolean }) {
+  // `lite` (mobile or reduce-motion) → freeze readouts at the initial
+  // snapshot. The 1.2s altitude tick and 30s UTC tick each fire setState
+  // which forces a re-render of the parent's chrome row; skipping them
+  // on phones removes ~60 React renders/min for no visible benefit.
   const [state, setState] = useState(() => ({
     alt: 35100,
     utc: new Date().toISOString().slice(11, 16),
   }))
   useEffect(() => {
-    if (reduceMotion) return
+    if (lite) return
     const a = setInterval(() => {
       setState((s) => ({
         ...s,
@@ -1639,7 +1696,7 @@ function ChromeLive({ reduceMotion }: { reduceMotion: boolean }) {
       clearInterval(a)
       clearInterval(b)
     }
-  }, [reduceMotion])
+  }, [lite])
   return (
     <span className="ml-auto flex items-center gap-3 font-mono text-[10px] text-white/55">
       <span className="inline-flex items-center gap-1.5">
@@ -1658,10 +1715,13 @@ function ChromeLive({ reduceMotion }: { reduceMotion: boolean }) {
   )
 }
 
-function CockpitHUD({ reduceMotion }: { reduceMotion: boolean }) {
+function CockpitHUD({ lite }: { lite: boolean }) {
+  // 900ms tick on mobile = ~67 setState/min for two integer readouts;
+  // the resulting "live" feel is invisible on phone (small text, fast
+  // scroll-past). Static is fine.
   const [r, setR] = useState({ spd: 864, alt: 35100 })
   useEffect(() => {
-    if (reduceMotion) return
+    if (lite) return
     const t = setInterval(() => {
       setR({
         spd: Math.round(
@@ -1673,7 +1733,7 @@ function CockpitHUD({ reduceMotion }: { reduceMotion: boolean }) {
       })
     }, 900)
     return () => clearInterval(t)
-  }, [reduceMotion])
+  }, [lite])
   return (
     <div className="absolute top-3 right-3 md:top-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
       <div className="flex items-center gap-2">
@@ -1703,17 +1763,22 @@ function CockpitHUD({ reduceMotion }: { reduceMotion: boolean }) {
 }
 
 function NavHUD({
+  lite,
   reduceMotion,
   routeCount,
   cityCount,
 }: {
+  lite: boolean
   reduceMotion: boolean
   routeCount: number
   cityCount: number
 }) {
+  // Same shape as CockpitHUD — `lite` freezes the tick. We still pass
+  // `reduceMotion` separately to CompassRose so the spring-rotated needle
+  // respects strict a11y intent.
   const [r, setR] = useState({ hdg: 292, dist: 184302 })
   useEffect(() => {
-    if (reduceMotion) return
+    if (lite) return
     const t = setInterval(() => {
       setR((prev) => ({
         hdg: Math.round(((292 + Math.sin(Date.now() / 4000) * 5) + 360) % 360),
@@ -1721,7 +1786,7 @@ function NavHUD({
       }))
     }, 900)
     return () => clearInterval(t)
-  }, [reduceMotion])
+  }, [lite])
   return (
     <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex items-end gap-2">
       <CompassRose hdg={r.hdg} reduceMotion={reduceMotion} />
