@@ -19,6 +19,7 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Marquee } from './ui/Marquee'
+import { useFxLevel } from '../hooks/useFxLevel'
 
 type Accent = 'accent' | 'lime' | 'electric'
 
@@ -530,15 +531,22 @@ function SkillHeatmap({
   const mx = useMotionValue(50)
   const my = useMotionValue(50)
   const bg = useMotionTemplate`radial-gradient(500px circle at ${mx}% ${my}%, hsl(var(--accent) / 0.08), transparent 50%)`
+  // Skip mousemove handler on mobile — touchscreens fire phantom mousemove
+  // events on tap that retrigger the radial-gradient repaint for nothing.
+  const { isMobile } = useFxLevel()
 
   return (
     <div
       ref={ref}
-      onMouseMove={(e) => {
-        const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        mx.set(((e.clientX - r.left) / r.width) * 100)
-        my.set(((e.clientY - r.top) / r.height) * 100)
-      }}
+      onMouseMove={
+        isMobile
+          ? undefined
+          : (e) => {
+              const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
+              mx.set(((e.clientX - r.left) / r.width) * 100)
+              my.set(((e.clientY - r.top) / r.height) * 100)
+            }
+      }
       className="relative border-b border-border bg-gradient-to-br from-background via-surface/20 to-background px-5 md:px-6 py-5 overflow-hidden"
     >
       {/* scanline overlay */}
@@ -603,7 +611,7 @@ function SkillHeatmap({
                 style={{ backgroundColor: col }}
                 aria-label={`${s.name}, ${s.years || 0} years${s.live ? ', live' : ''}`}
               >
-                {s.live && (
+                {s.live && !isMobile && (
                   <motion.span
                     aria-hidden
                     className="absolute inset-0 rounded-[4px]"
@@ -644,6 +652,10 @@ function ProcessTable({ stack, index }: { stack: Stack; index: number }) {
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const spot = useMotionTemplate`radial-gradient(500px circle at ${mx}% ${my}%, ${cls.glow}, transparent 55%)`
+  // Mobile: skip mouse spotlight (touchscreens fire phantom mousemove on tap)
+  // and skip the per-row live-shimmer infinite loop. With ~60 live rows the
+  // shimmer alone was running 60 concurrent animations every frame.
+  const { isMobile } = useFxLevel()
 
   const total = stack.groups.reduce((n, g) => n + g.items.length, 0)
   const live = stack.groups.reduce(
@@ -654,12 +666,16 @@ function ProcessTable({ stack, index }: { stack: Stack; index: number }) {
   return (
     <motion.div
       ref={ref}
-      onMouseMove={(e) => {
-        if (!ref.current) return
-        const r = ref.current.getBoundingClientRect()
-        mx.set(((e.clientX - r.left) / r.width) * 100)
-        my.set(((e.clientY - r.top) / r.height) * 100)
-      }}
+      onMouseMove={
+        isMobile
+          ? undefined
+          : (e) => {
+              if (!ref.current) return
+              const r = ref.current.getBoundingClientRect()
+              mx.set(((e.clientX - r.left) / r.width) * 100)
+              my.set(((e.clientY - r.top) / r.height) * 100)
+            }
+      }
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -739,6 +755,7 @@ function ProcessTable({ stack, index }: { stack: Stack; index: number }) {
                   accent={stack.accent}
                   pid={(gi * 100 + i + 1).toString().padStart(3, '0')}
                   rowIndex={gi * 10 + i}
+                  lite={isMobile}
                 />
               ))}
             </div>
@@ -774,11 +791,13 @@ function ProcessRow({
   accent,
   pid,
   rowIndex,
+  lite = false,
 }: {
   skill: Skill
   accent: Accent
   pid: string
   rowIndex: number
+  lite?: boolean
 }) {
   const cls = ACCENT_TOKEN[accent]
   const loadPct = Math.min((skill.years || 1) / 11, 1) * 100
@@ -846,9 +865,11 @@ function ProcessRow({
         {skill.live ? (
           <>
             <span className="relative flex h-1.5 w-1.5">
-              <span
-                className={`absolute inline-flex h-full w-full rounded-full ${cls.dot} opacity-75 animate-ping`}
-              />
+              {!lite && (
+                <span
+                  className={`absolute inline-flex h-full w-full rounded-full ${cls.dot} opacity-75 animate-ping`}
+                />
+              )}
               <span
                 className={`relative inline-flex h-1.5 w-1.5 rounded-full ${cls.dot}`}
               />
@@ -878,7 +899,7 @@ function ProcessRow({
           }}
           style={{ opacity: skill.years && skill.years >= 3 ? 1 : 0.55 }}
         />
-        {skill.live && (
+        {skill.live && !lite && (
           <motion.span
             aria-hidden
             className="absolute top-0 bottom-0 w-6 bg-gradient-to-r from-transparent via-white/40 to-transparent"

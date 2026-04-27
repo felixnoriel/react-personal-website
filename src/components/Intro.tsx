@@ -29,6 +29,7 @@ import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { MagneticButton } from './ui/MagneticButton'
 import { NodeNetwork } from './ui/NodeNetwork'
+import { useFxLevel } from '../hooks/useFxLevel'
 
 const TECH_STACK = [
   'TypeScript',
@@ -148,12 +149,15 @@ export function Intro() {
       `radial-gradient(600px circle at ${x}px ${y}px, hsl(var(--accent) / 0.14), transparent 55%)`
   )
   const [aiHover, setAiHover] = useState(false)
+  const { isMobile, reduceMotion, disableHeavyFx } = useFxLevel()
 
-  // boot-line typewriter
+  // boot-line typewriter — show fully typed instantly on mobile / reduce-motion.
+  // The 55ms cadence is satisfying on a 60Hz desktop but adds ~1.4s of
+  // useless re-renders on first paint for phone users who can't even see
+  // the cursor blink that quickly anyway.
   const [bootTyped, setBootTyped] = useState('')
   useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) {
+    if (disableHeavyFx) {
       setBootTyped(BOOT_LINE)
       return
     }
@@ -164,16 +168,22 @@ export function Intro() {
       if (i >= BOOT_LINE.length) clearInterval(t)
     }, 55)
     return () => clearInterval(t)
-  }, [])
+  }, [disableHeavyFx])
 
-  // slow frame counter for bottom HUD (10 fps is plenty)
+  // slow frame counter for bottom HUD (10 fps desktop / 5 fps mobile).
+  // Drives StabilityMeter sine wave + GlitchNum tick. Halving on mobile
+  // halves React re-renders for the HUD subtree on phones.
   const [frame, setFrame] = useState(0)
   useEffect(() => {
-    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 100)
+    if (reduceMotion) return
+    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), isMobile ? 200 : 100)
     return () => clearInterval(t)
-  }, [])
+  }, [isMobile, reduceMotion])
 
   useEffect(() => {
+    // Skip mouse-tracked spotlight on mobile — the radial-gradient repaint
+    // costs frames during scroll and there's no cursor to follow anyway.
+    if (isMobile) return
     const el = sectionRef.current
     if (!el) return
     const handler = (e: MouseEvent) => {
@@ -191,7 +201,7 @@ export function Intro() {
       el.removeEventListener('mousemove', handler)
       el.removeEventListener('mouseleave', leave)
     }
-  }, [mouseX, mouseY])
+  }, [mouseX, mouseY, isMobile])
 
   return (
     <section
@@ -221,46 +231,51 @@ export function Intro() {
       {/* === Shooting stars: bright diagonal streaks === */}
       <MeteorField />
 
-      {/* floating micro-particles */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none overflow-hidden"
-      >
-        {[
-          { left: '12%', top: '22%', size: 4, color: 'bg-accent/60', dur: 7, delay: 0 },
-          { left: '82%', top: '18%', size: 3, color: 'bg-lime/70', dur: 9, delay: 1.2 },
-          { left: '28%', top: '72%', size: 5, color: 'bg-amber/50', dur: 8, delay: 2.1 },
-          { left: '62%', top: '58%', size: 2, color: 'bg-electric/70', dur: 10, delay: 0.6 },
-          { left: '90%', top: '68%', size: 3, color: 'bg-accent/50', dur: 11, delay: 3 },
-          { left: '5%', top: '52%', size: 2, color: 'bg-lime/60', dur: 12, delay: 1.8 },
-          { left: '48%', top: '12%', size: 3, color: 'bg-amber/60', dur: 9, delay: 2.8 },
-          { left: '72%', top: '82%', size: 4, color: 'bg-accent/40', dur: 13, delay: 0.4 },
-        ].map((p, i) => (
-          <motion.span
-            key={i}
-            className={`absolute rounded-full ${p.color}`}
-            style={{
-              left: p.left,
-              top: p.top,
-              width: p.size,
-              height: p.size,
-              boxShadow: '0 0 12px currentColor',
-            }}
-            animate={{
-              y: [0, -24, 0],
-              x: [0, i % 2 === 0 ? 12 : -12, 0],
-              opacity: [0.3, 0.9, 0.3],
-              scale: [0.8, 1.2, 0.8],
-            }}
-            transition={{
-              duration: p.dur,
-              delay: p.delay,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
-      </div>
+      {/* floating micro-particles — desktop-only. 8 infinite framer-motion
+          loops compositing 4 properties each = 32 active animation tracks
+          that the browser keeps repainting. On mobile they barely register
+          visually but add real GPU load during scroll. */}
+      {!disableHeavyFx && (
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none overflow-hidden"
+        >
+          {[
+            { left: '12%', top: '22%', size: 4, color: 'bg-accent/60', dur: 7, delay: 0 },
+            { left: '82%', top: '18%', size: 3, color: 'bg-lime/70', dur: 9, delay: 1.2 },
+            { left: '28%', top: '72%', size: 5, color: 'bg-amber/50', dur: 8, delay: 2.1 },
+            { left: '62%', top: '58%', size: 2, color: 'bg-electric/70', dur: 10, delay: 0.6 },
+            { left: '90%', top: '68%', size: 3, color: 'bg-accent/50', dur: 11, delay: 3 },
+            { left: '5%', top: '52%', size: 2, color: 'bg-lime/60', dur: 12, delay: 1.8 },
+            { left: '48%', top: '12%', size: 3, color: 'bg-amber/60', dur: 9, delay: 2.8 },
+            { left: '72%', top: '82%', size: 4, color: 'bg-accent/40', dur: 13, delay: 0.4 },
+          ].map((p, i) => (
+            <motion.span
+              key={i}
+              className={`absolute rounded-full ${p.color}`}
+              style={{
+                left: p.left,
+                top: p.top,
+                width: p.size,
+                height: p.size,
+                boxShadow: '0 0 12px currentColor',
+              }}
+              animate={{
+                y: [0, -24, 0],
+                x: [0, i % 2 === 0 ? 12 : -12, 0],
+                opacity: [0.3, 0.9, 0.3],
+                scale: [0.8, 1.2, 0.8],
+              }}
+              transition={{
+                duration: p.dur,
+                delay: p.delay,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* HUD corner brackets */}
       <HudCorners />
@@ -1019,6 +1034,11 @@ type Trace = {
 }
 
 function CircuitField() {
+  // 10 traces × 2 SMIL <animateMotion> circles + 10 opacity <animate> tags =
+  // ~30 concurrent SMIL animations. SMIL is GPU-cheap on desktop but causes
+  // measurable jank on mid-range Android during scroll. Hide entirely on
+  // mobile and for prefers-reduced-motion (was previously unconditional).
+  const { disableHeavyFx } = useFxLevel()
   const traces: Trace[] = useMemo(() => {
     const palette = [
       'hsl(var(--accent))',
@@ -1047,6 +1067,8 @@ function CircuitField() {
       delay: (i * 0.7) % 5,
     }))
   }, [])
+
+  if (disableHeavyFx) return null
 
   return (
     <svg
@@ -1169,20 +1191,15 @@ type Meteor = {
 }
 
 function MeteorField() {
-  const [reduce, setReduce] = useState(false)
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduce(mq.matches)
-    const onChange = () => setReduce(mq.matches)
-    mq.addEventListener?.('change', onChange)
-    return () => mq.removeEventListener?.('change', onChange)
-  }, [])
+  // Desktop-only. Streaming geometry + state churn (spawn → setTimeout →
+  // splice) every 2.2s is wasted work on phones where the meteors are tiny
+  // and barely visible against the busy hero. Mirrors LightningField's gate.
+  const { disableHeavyFx } = useFxLevel()
   const [meteors, setMeteors] = useState<Meteor[]>([])
   const idRef = useRef(0)
 
   useEffect(() => {
-    if (reduce) return
+    if (disableHeavyFx) return
     const spawn = () => {
       const id = idRef.current++
       const palette = [
@@ -1213,9 +1230,9 @@ function MeteorField() {
       clearTimeout(first)
       clearInterval(iv)
     }
-  }, [reduce])
+  }, [disableHeavyFx])
 
-  if (reduce) return null
+  if (disableHeavyFx) return null
   return (
     <div
       aria-hidden
@@ -1256,15 +1273,11 @@ function MeteorField() {
 // ============================================================
 
 function LightningField() {
-  const [reduce, setReduce] = useState(false)
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduce(mq.matches)
-    const onChange = () => setReduce(mq.matches)
-    mq.addEventListener?.('change', onChange)
-    return () => mq.removeEventListener?.('change', onChange)
-  }, [])
+  // Lightning is desktop-only — fractal generation + 4 SVG path layers per
+  // bolt + 900ms ticker is too much for mid-range phones, and the dramatic
+  // strikes read as visual noise alongside the rest of the hero on a small
+  // screen. Falls back identically for prefers-reduced-motion.
+  const { disableHeavyFx } = useFxLevel()
 
   const [bolts, setBolts] = useState<
     Array<{ id: number; d: string; color: string; duration: number }>
@@ -1272,7 +1285,7 @@ function LightningField() {
   const idRef = useRef(0)
 
   useEffect(() => {
-    if (reduce) return
+    if (disableHeavyFx) return
     // Midpoint-displacement subdivision — classic "fractal lightning"
     // algorithm. Repeatedly splits each segment and jitters the midpoint
     // perpendicular to the segment direction. Produces the irregular,
@@ -1387,9 +1400,9 @@ function LightningField() {
       clearTimeout(first)
       clearInterval(interval)
     }
-  }, [reduce])
+  }, [disableHeavyFx])
 
-  if (reduce) return null
+  if (disableHeavyFx) return null
 
   return (
     <svg

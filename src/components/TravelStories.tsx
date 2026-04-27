@@ -12,6 +12,7 @@ import {
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BlogPost } from '../types/data'
 import { Link } from 'react-router-dom'
+import { useFxLevel } from '../hooks/useFxLevel'
 
 interface TravelStoriesProps {
   stories: BlogPost[]
@@ -174,6 +175,10 @@ function FeaturedDispatch({ post, index }: { post: BlogPost; index: number }) {
   const meta = stableMeta(post.slug)
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
+  const { isMobile } = useFxLevel()
+  // `lite` = mobile or reduce-motion. Tilt + decorative orbit get dropped;
+  // the card itself still mounts and reveals normally.
+  const lite = isMobile || reduce
 
   // Tilt on mouse move
   const mx = useMotionValue(0.5)
@@ -183,7 +188,7 @@ function FeaturedDispatch({ post, index }: { post: BlogPost; index: number }) {
   const rotY = useSpring(useTransform(mx, [0, 1], [-5, 5]), spring)
 
   const handleMove = (e: React.MouseEvent) => {
-    if (!ref.current || reduce) return
+    if (!ref.current || lite) return
     const rect = ref.current.getBoundingClientRect()
     mx.set((e.clientX - rect.left) / rect.width)
     my.set((e.clientY - rect.top) / rect.height)
@@ -293,16 +298,18 @@ function FeaturedDispatch({ post, index }: { post: BlogPost; index: number }) {
                 viewport={{ once: true }}
                 transition={{ duration: 1.8, delay: 0.3 }}
               />
-              <motion.circle
-                r="2.5"
-                fill="hsl(var(--accent))"
-                initial={{ offsetDistance: '0%' }}
-                animate={reduce ? undefined : { offsetDistance: ['0%', '100%'] }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                style={{
-                  offsetPath: "path('M 0 60 Q 100 20, 200 45 T 400 30')",
-                }}
-              />
+              {!lite && (
+                <motion.circle
+                  r="2.5"
+                  fill="hsl(var(--accent))"
+                  initial={{ offsetDistance: '0%' }}
+                  animate={{ offsetDistance: ['0%', '100%'] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                  style={{
+                    offsetPath: "path('M 0 60 Q 100 20, 200 45 T 400 30')",
+                  }}
+                />
+              )}
             </svg>
           </div>
 
@@ -448,6 +455,7 @@ function DispatchConsole({ count }: { count: number }) {
   const now = useLiveTime()
   const utc = now.toISOString().slice(11, 16) // HH:MM UTC
   const reduce = useReducedMotion()
+  const { isMobile } = useFxLevel()
 
   return (
     <div className="relative flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft mb-4">
@@ -467,9 +475,11 @@ function DispatchConsole({ count }: { count: number }) {
         <Stamp className="w-3 h-3" />
         {count} dispatches on wire
       </span>
-      {!reduce && (
+      {!reduce && !isMobile && (
         <span className="hidden md:inline-flex items-center gap-0.5">
-          {/* frequency bars */}
+          {/* frequency bars — desktop only. Wrapper was already `hidden md:`,
+              but framer-motion still ticks display:none elements on rAF, so
+              skipping the render entirely on mobile is the actual win. */}
           {Array.from({ length: 10 }).map((_, i) => (
             <motion.span
               key={i}

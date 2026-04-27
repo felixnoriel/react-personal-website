@@ -24,6 +24,7 @@ import {
   Send,
   Stamp,
 } from 'lucide-react'
+import { useFxLevel } from '../hooks/useFxLevel'
 
 // ============================================================
 // Morse code (A–Z + 0–9) — for the live callsign preview
@@ -192,7 +193,10 @@ function SignalBars({ n = 5, active = true }: { n?: number; active?: boolean }) 
 
 function Waveform({ amplitude }: { amplitude: number }) {
   const reduce = useReducedMotion()
-  const bars = 40
+  const { isMobile } = useFxLevel()
+  // Halve bar count on mobile — 40 concurrent infinite framer-motion height
+  // animations is the kind of thing phones really feel.
+  const bars = isMobile ? 20 : 40
   return (
     <div
       aria-hidden
