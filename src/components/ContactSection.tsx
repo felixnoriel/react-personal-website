@@ -1,6 +1,7 @@
 import {
   motion,
   AnimatePresence,
+  useInView,
   useReducedMotion,
   useMotionValue,
   useSpring,
@@ -163,26 +164,40 @@ function Postmark({
 
 function SignalBars({ n = 5, active = true }: { n?: number; active?: boolean }) {
   const reduce = useReducedMotion()
+  const ref = useRef<HTMLSpanElement>(null)
+  // Pause the infinite animation entirely when off-screen. With several
+  // SignalBars elements scattered through the page (each running 5 infinite
+  // height tweens), keeping them ticking when invisible is wasted CPU.
+  const inView = useInView(ref, { amount: 0, margin: '120px' })
+  const animateNow = active && !reduce && inView
   return (
-    <span className="inline-flex items-end gap-[2px] h-3">
-      {Array.from({ length: n }).map((_, i) => (
-        <motion.span
-          key={i}
-          className="block w-[3px] bg-[hsl(var(--lime))] rounded-sm"
-          animate={
-            active && !reduce
-              ? { height: [4 + i * 2, 8 + i * 2, 4 + i * 2] }
-              : { height: 4 + i * 2 }
-          }
-          transition={{
-            duration: 1.2 + (i % 3) * 0.2,
-            repeat: Infinity,
-            delay: i * 0.1,
-            ease: 'easeInOut',
-          }}
-          style={{ height: 4 + i * 2 }}
-        />
-      ))}
+    <span ref={ref} className="inline-flex items-end gap-[2px] h-3">
+      {Array.from({ length: n }).map((_, i) => {
+        const baseH = 4 + i * 2
+        if (!animateNow) {
+          return (
+            <span
+              key={i}
+              className="block w-[3px] bg-[hsl(var(--lime))] rounded-sm"
+              style={{ height: baseH }}
+            />
+          )
+        }
+        return (
+          <motion.span
+            key={i}
+            className="block w-[3px] bg-[hsl(var(--lime))] rounded-sm"
+            animate={{ height: [baseH, baseH + 4, baseH] }}
+            transition={{
+              duration: 1.2 + (i % 3) * 0.2,
+              repeat: Infinity,
+              delay: i * 0.1,
+              ease: 'easeInOut',
+            }}
+            style={{ height: baseH }}
+          />
+        )
+      })}
     </span>
   )
 }
@@ -194,11 +209,22 @@ function SignalBars({ n = 5, active = true }: { n?: number; active?: boolean }) 
 function Waveform({ amplitude }: { amplitude: number }) {
   const reduce = useReducedMotion()
   const { isMobile } = useFxLevel()
+  const ref = useRef<HTMLDivElement>(null)
+  // Pause the infinite per-bar height animations when off-screen. The
+  // contact form sits at the bottom of the page; keeping 20 (mobile) /
+  // 40 (desktop) concurrent infinite tweens running while the user is
+  // reading the hero is wasted CPU on the main thread. We render plain
+  // <span>s (no framer-motion track at all) when off-screen — passing
+  // a static `animate` value to <motion.span> doesn't actually stop the
+  // WAAPI track when `transition.repeat` is Infinity.
+  const inView = useInView(ref, { amount: 0, margin: '160px' })
+  const animateNow = !reduce && inView
   // Halve bar count on mobile — 40 concurrent infinite framer-motion height
   // animations is the kind of thing phones really feel.
   const bars = isMobile ? 20 : 40
   return (
     <div
+      ref={ref}
       aria-hidden
       className="flex items-center gap-[2px] h-10"
       style={{ width: '100%' }}
@@ -207,19 +233,24 @@ function Waveform({ amplitude }: { amplitude: number }) {
         const baseH = 3 + ((i * 7) % 4)
         const boost = amplitude * (6 + ((i * 13) % 14))
         const maxH = Math.min(36, baseH + boost)
+        if (!animateNow) {
+          return (
+            <span
+              key={i}
+              className="block flex-1 bg-[hsl(var(--accent))] rounded-full origin-center"
+              style={{ minWidth: 2, height: baseH, opacity: 0.5 }}
+            />
+          )
+        }
         return (
           <motion.span
             key={i}
             className="block flex-1 bg-[hsl(var(--accent))] rounded-full origin-center"
             style={{ minWidth: 2 }}
-            animate={
-              reduce
-                ? { height: baseH }
-                : {
-                    height: [baseH, maxH, baseH],
-                    opacity: [0.45, 0.9, 0.45],
-                  }
-            }
+            animate={{
+              height: [baseH, maxH, baseH],
+              opacity: [0.45, 0.9, 0.45],
+            }}
             transition={{
               duration: 0.6 + (i % 5) * 0.08,
               repeat: Infinity,

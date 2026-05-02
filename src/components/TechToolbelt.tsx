@@ -3,7 +3,6 @@ import {
   motion,
   useMotionTemplate,
   useMotionValue,
-  useReducedMotion,
   useSpring,
   useTransform,
 } from 'framer-motion'
@@ -1064,7 +1063,12 @@ function CoreReactor({
   onSelectStack: (id: FilterId) => void
   uptime: number
 }) {
-  const reduce = useReducedMotion()
+  // `reduce` here means "drop heavy decorative animations" — widened from
+  // strict prefers-reduced-motion to ALSO include mobile. The orbital reactor
+  // SVG runs ~38 SMIL animations (twinkling stars, orbit particles, halos);
+  // none of them carry signal — they're decorative. Freezing on mobile
+  // recovers a lot of frame budget.
+  const { disableHeavyFx: reduce } = useFxLevel()
   const cardRef = useRef<HTMLDivElement>(null)
 
   // Parallax 3D tilt
