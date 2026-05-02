@@ -526,6 +526,30 @@
   }
 }
 
+/* ============================================================
+   content-visibility: auto for below-the-fold sections
+   ------------------------------------------------------------
+   The browser skips layout, paint, and rendering for any section
+   that is currently far from the viewport. This is the single
+   biggest scroll-cost win on mobile: while the user is reading
+   the hero, the FlightRadar's 250+ globe dots, the CoreReactor's
+   3 orbit rings + 56 nodes, the career timeline, and the projects
+   grid all stop participating in layout/paint entirely.
+
+   contain-intrinsic-size hints the section's expected height so
+   the scrollbar geometry stays stable before the content has
+   actually been rendered. We err on the larger side per section
+   to avoid scroll snap-back.
+
+   #hero is intentionally excluded — it's always above the fold
+   on first paint, and its NodeNetwork SVG would briefly
+   un-paint during early scroll if we let it skip-render.
+   ============================================================ */
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1800px;
+}
+
 /* ================================================================
    Lightbox — site-matching overrides (yet-another-react-lightbox)
    Dark cockpit backdrop, mono labels, accent glow on controls,
