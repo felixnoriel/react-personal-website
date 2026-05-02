@@ -149,7 +149,7 @@ export function Intro() {
       `radial-gradient(600px circle at ${x}px ${y}px, hsl(var(--accent) / 0.14), transparent 55%)`
   )
   const [aiHover, setAiHover] = useState(false)
-  const { isMobile, reduceMotion, disableHeavyFx } = useFxLevel()
+  const { isMobile, disableHeavyFx } = useFxLevel()
 
   // boot-line typewriter — show fully typed instantly on mobile / reduce-motion.
   // The 55ms cadence is satisfying on a 60Hz desktop but adds ~1.4s of
@@ -170,15 +170,19 @@ export function Intro() {
     return () => clearInterval(t)
   }, [disableHeavyFx])
 
-  // slow frame counter for bottom HUD (10 fps desktop / 5 fps mobile).
-  // Drives StabilityMeter sine wave + GlitchNum tick. Halving on mobile
-  // halves React re-renders for the HUD subtree on phones.
+  // Slow frame counter for bottom HUD. Drives StabilityMeter sine wave +
+  // GlitchNum tick. On mobile we freeze it entirely — the SMIL/decorative
+  // animations it feeds are already gated to off via `disableHeavyFx`, so
+  // the only thing this would still drive is the FPS/iter readout in the
+  // meta strip, which mobile users won't notice if it stays static. Killing
+  // the interval kills 5 React re-renders per second of the entire Intro
+  // subtree, which is the single biggest gain on phones.
   const [frame, setFrame] = useState(0)
   useEffect(() => {
-    if (reduceMotion) return
-    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), isMobile ? 200 : 100)
+    if (disableHeavyFx) return
+    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 100)
     return () => clearInterval(t)
-  }, [isMobile, reduceMotion])
+  }, [disableHeavyFx])
 
   useEffect(() => {
     // Skip mouse-tracked spotlight on mobile — the radial-gradient repaint
@@ -925,6 +929,10 @@ function HudCorners() {
 // ============================================================
 
 function DotSubstrate() {
+  // Skip the entire 30-dot twinkle layer (60 concurrent SMIL animations) on
+  // mobile / reduce-motion. The base dot grid pattern below is static and
+  // carries the visual; the colored twinkles are pure decoration.
+  const { disableHeavyFx } = useFxLevel()
   // Deterministic twinkle positions — stable across renders.
   const twinkles = useMemo(() => {
     const palette = [
@@ -982,37 +990,41 @@ function DotSubstrate() {
         <rect width="100%" height="100%" fill="url(#dot-substrate-accent)" />
       </svg>
 
-      {/* Twinkle layer — colored accent dots that fade in/out */}
-      <svg
-        aria-hidden
-        className="absolute inset-0 w-full h-full pointer-events-none"
-      >
-        {twinkles.map((t, i) => (
-          <circle
-            key={`twinkle-${i}`}
-            cx={`${t.x}%`}
-            cy={`${t.y}%`}
-            r={t.maxR}
-            fill={t.color}
-            opacity="0"
-          >
-            <animate
-              attributeName="opacity"
-              values="0;0.85;0"
-              dur={`${t.dur}s`}
-              begin={`${t.delay}s`}
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="r"
-              values={`0.8;${t.maxR};0.8`}
-              dur={`${t.dur}s`}
-              begin={`${t.delay}s`}
-              repeatCount="indefinite"
-            />
-          </circle>
-        ))}
-      </svg>
+      {/* Twinkle layer — colored accent dots that fade in/out.
+          Mobile / reduce-motion: not rendered (60 SMIL animations of work
+          for a layer most users won't notice missing). */}
+      {!disableHeavyFx && (
+        <svg
+          aria-hidden
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        >
+          {twinkles.map((t, i) => (
+            <circle
+              key={`twinkle-${i}`}
+              cx={`${t.x}%`}
+              cy={`${t.y}%`}
+              r={t.maxR}
+              fill={t.color}
+              opacity="0"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;0.85;0"
+                dur={`${t.dur}s`}
+                begin={`${t.delay}s`}
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="r"
+                values={`0.8;${t.maxR};0.8`}
+                dur={`${t.dur}s`}
+                begin={`${t.delay}s`}
+                repeatCount="indefinite"
+              />
+            </circle>
+          ))}
+        </svg>
+      )}
     </>
   )
 }
@@ -1495,15 +1507,12 @@ function LightningField() {
 // ============================================================
 
 function ShipEngine({ frame }: { frame: number }) {
-  const [reduce, setReduce] = useState(false)
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduce(mq.matches)
-    const onChange = () => setReduce(mq.matches)
-    mq.addEventListener?.('change', onChange)
-    return () => mq.removeEventListener?.('change', onChange)
-  }, [])
+  // `reduce` here is intentionally widened to "lite" semantics: drop heavy
+  // decorative work on either prefers-reduced-motion OR mobile viewport.
+  // The IDE scene below has ~80 SMIL animations + a 3D-tilt spotlight that
+  // are pure decoration; on a phone they crater scroll FPS. We keep the
+  // static scene + chip stream, just freeze the loops.
+  const { disableHeavyFx: reduce } = useFxLevel()
 
   // Rolling shipped-artifacts queue. Each has a unique uid so
   // AnimatePresence can track enter/exit reliably.
