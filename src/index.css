@@ -498,6 +498,58 @@
   }
 }
 
+/* ============================================================
+   Mobile decorative-animation budget
+   ------------------------------------------------------------
+   Pages have ~30+ `animate-ping` halos and ~17 `animate-pulse`
+   pulses sprinkled across "live" indicators, status dots, etc.
+   On desktop they're cheap; on a phone they each repaint every
+   tick and add up. The static dot underneath each ping/pulse
+   is what carries the actual "this is live" signal — the halo
+   is just decoration. Drop the halos on phones.
+
+   Scoped under `.animate-pulse` we keep some intentional uses
+   on top-level loaders by adding `motion-safe-mobile` opt-out
+   classes — but every current home-page use of these is purely
+   decorative, so a blanket gate is the right tradeoff.
+   ============================================================ */
+@media (max-width: 767px) {
+  .animate-ping,
+  .animate-pulse-glow,
+  .animate-float-slow,
+  .animate-gradient,
+  .gradient-text-flow,
+  .glitch-pulse,
+  .glitch-crazy,
+  .bg-scanlines {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   content-visibility: auto for below-the-fold sections
+   ------------------------------------------------------------
+   The browser skips layout, paint, and rendering for any section
+   that is currently far from the viewport. This is the single
+   biggest scroll-cost win on mobile: while the user is reading
+   the hero, the FlightRadar's 250+ globe dots, the CoreReactor's
+   3 orbit rings + 56 nodes, the career timeline, and the projects
+   grid all stop participating in layout/paint entirely.
+
+   contain-intrinsic-size hints the section's expected height so
+   the scrollbar geometry stays stable before the content has
+   actually been rendered. We err on the larger side per section
+   to avoid scroll snap-back.
+
+   #hero is intentionally excluded — it's always above the fold
+   on first paint, and its NodeNetwork SVG would briefly
+   un-paint during early scroll if we let it skip-render.
+   ============================================================ */
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1800px;
+}
+
 /* ================================================================
    Lightbox — site-matching overrides (yet-another-react-lightbox)
    Dark cockpit backdrop, mono labels, accent glow on controls,
