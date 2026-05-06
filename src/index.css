@@ -499,6 +499,72 @@
 }
 
 /* ============================================================
+   CursorAura — pure CSS cursor halo + click pulse
+   ------------------------------------------------------------
+   Both effects run entirely on the GPU compositor:
+     - The halo is a fixed-position div with a static radial
+       gradient. JS only writes its `transform` (translate3d)
+       inside an rAF-coalesced mousemove handler — zero raster.
+     - The pulse is a div injected on mousedown, animated via
+       these keyframes, and removed on `animationend`. The main
+       thread does one createElement + appendChild per click,
+       no per-frame work after that.
+   ============================================================ */
+.cursor-aura-halo {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle at center,
+    hsl(var(--accent) / 0.22),
+    hsl(var(--accent) / 0.08) 45%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transition: opacity 0.18s ease-out;
+  /* Hint to the compositor that transform changes constantly so it
+     promotes this element to its own GPU layer up-front. */
+  will-change: transform;
+}
+.cursor-aura-pulse {
+  position: fixed;
+  pointer-events: none;
+  z-index: 40;
+  /* Anchored at center via translate(-50%, -50%) so left/top match
+     the click point exactly. Width/height are animated via the
+     keyframes below. */
+  transform: translate(-50%, -50%);
+  border: 2px solid hsl(var(--accent) / 0.85);
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  opacity: 0.85;
+  animation: cursor-aura-pulse 600ms cubic-bezier(0, 0, 0.2, 1) forwards;
+  /* GPU promotion — keeps the expanding ring in its own layer so
+     the compositor doesn't repaint everything underneath it. */
+  will-change: width, height, opacity;
+}
+@keyframes cursor-aura-pulse {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.85;
+    border-width: 2px;
+  }
+  100% {
+    width: 280px;
+    height: 280px;
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-aura-halo,
+  .cursor-aura-pulse {
+    display: none !important;
+  }
+}
+
+/* ============================================================
    Mobile decorative-animation budget
    ------------------------------------------------------------
    Pages have ~30+ `animate-ping` halos and ~17 `animate-pulse`

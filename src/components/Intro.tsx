@@ -215,17 +215,13 @@ export function Intro() {
   const SPOTLIGHT_R = 600
   const spotlightX = useTransform(smoothX, (x) => x - SPOTLIGHT_R)
   const spotlightY = useTransform(smoothY, (y) => y - SPOTLIGHT_R)
-  // Normalized cursor position (-1..1) for the H1 3D parallax tilt. We
-  // route through softer springs than the spotlight so the headline doesn't
-  // jitter on micro-movements; the tilt should feel like floating, not
-  // tracking. Smoothed values are then mapped to small rotateX/rotateY
-  // angles via useTransform.
-  const tiltMx = useMotionValue(0)
-  const tiltMy = useMotionValue(0)
-  const tiltMxSmooth = useSpring(tiltMx, { damping: 22, stiffness: 90, mass: 0.6 })
-  const tiltMySmooth = useSpring(tiltMy, { damping: 22, stiffness: 90, mass: 0.6 })
-  const headlineRotY = useTransform(tiltMxSmooth, [-1, 1], [-5, 5])
-  const headlineRotX = useTransform(tiltMySmooth, [-1, 1], [4, -4])
+  // Headline 3D parallax tilt removed in this iteration — was driven by
+  // a useSpring → useTransform chain on the cursor's normalized position,
+  // which kept the main thread doing per-frame spring computation while
+  // the springs settled (~250-400ms after every cursor pause). Combined
+  // with everything else on the hero, that was a source of click-time
+  // main-thread contention. The headline still has its mount-time entrance
+  // animation; only the continuous cursor-tracking tilt is gone.
   const [aiHover, setAiHover] = useState(false)
   const { reduceMotion, isMobile, disableHeavyFx } = useFxLevel()
 
@@ -285,8 +281,6 @@ export function Intro() {
       pending = null
       mouseX.set(localX)
       mouseY.set(localY)
-      tiltMx.set((localX / rect.width) * 2 - 1)
-      tiltMy.set((localY / rect.height) * 2 - 1)
     }
     const handler = (e: MouseEvent) => {
       pending = { x: e.clientX, y: e.clientY }
@@ -300,8 +294,6 @@ export function Intro() {
       }
       mouseX.set(-400)
       mouseY.set(-400)
-      tiltMx.set(0)
-      tiltMy.set(0)
     }
     el.addEventListener('mousemove', handler)
     el.addEventListener('mouseleave', leave)
@@ -310,7 +302,7 @@ export function Intro() {
       el.removeEventListener('mousemove', handler)
       el.removeEventListener('mouseleave', leave)
     }
-  }, [mouseX, mouseY, tiltMx, tiltMy, isMobile])
+  }, [mouseX, mouseY, isMobile])
 
   return (
     <section
@@ -480,16 +472,7 @@ export function Intro() {
             </div>
 
             <motion.h1
-              className="font-display text-[clamp(2.5rem,6.2vw,5.25rem)] leading-[0.98] tracking-tighter text-ink font-bold mb-8 text-balance [transform-style:preserve-3d] will-change-transform"
-              style={
-                disableHeavyFx
-                  ? undefined
-                  : {
-                      rotateX: headlineRotX,
-                      rotateY: headlineRotY,
-                      transformPerspective: 1000,
-                    }
-              }
+              className="font-display text-[clamp(2.5rem,6.2vw,5.25rem)] leading-[0.98] tracking-tighter text-ink font-bold mb-8 text-balance"
             >
               <span className="whitespace-nowrap">
                 <span className="italic font-extrabold text-accent text-glow-accent">
@@ -1760,20 +1743,15 @@ function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean
   const iter = 2847 + Math.floor(frame / 12)
   const shippedToday = 7 + (uidRef.current - 5)
 
-  // === 3D tilt on cursor ===
+  // 3D-tilt-on-cursor REMOVED. Was driven by useSpring(useTransform(my))
+  // → rotateX/rotateY. The continuous spring computation while the
+  // springs settled (every cursor pause re-engaged them) was a real
+  // main-thread cost that compounded with everything else on the hero
+  // and produced the perceptible click hangs the user reported. mx/my
+  // remain — they still drive the GPU-translated inner spotlight below.
   const cardRef = useRef<HTMLDivElement | null>(null)
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
-  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), {
-    stiffness: 140,
-    damping: 22,
-    mass: 0.6,
-  })
-  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), {
-    stiffness: 140,
-    damping: 22,
-    mass: 0.6,
-  })
   // Cursor-tracking inner spotlight: was a `radial-gradient(... at X% Y%)`
   // background driven by a useTransform that returned a fresh CSS string
   // every spring tick. That re-rasterized the 600px gradient AND composited
@@ -1847,14 +1825,9 @@ function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean
         />
       </AnimatePresence>
 
-      <motion.div
+      <div
         ref={cardRef}
         className="relative rounded-2xl border border-border bg-background overflow-hidden shadow-[0_30px_80px_-30px_hsl(var(--ink)/0.35)]"
-        style={{
-          rotateX: reduce ? 0 : rotX,
-          rotateY: reduce ? 0 : rotY,
-          transformStyle: 'preserve-3d',
-        }}
       >
         {/* Cursor-tracking spotlight — fixed-size pre-rasterized gradient,
             translated via GPU transform (x/y motion values). ZERO repaint
@@ -2012,7 +1985,7 @@ function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean
             127.0.0.1
           </span>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
