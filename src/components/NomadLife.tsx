@@ -1158,9 +1158,12 @@ function FlightRadar({
                     />
                   </circle>
                 )}
-                {/* pulse rings on current — keep on desktop only; mobile
-                    keeps the static accent dot which still reads as "here" */}
-                {isCurrent && !lite && (
+                {/* pulse rings on current city — kept on mobile too. It's
+                    a single beacon location with 4 SMIL animations total
+                    (two concentric rings × r+opacity), GPU-composited and
+                    visually crucial for "you are here" signal. We only
+                    suppress on prefers-reduced-motion. */}
+                {isCurrent && !reduceMotion && (
                   <>
                     <circle
                       cx={p.x}

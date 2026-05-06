@@ -524,6 +524,16 @@
   .bg-scanlines {
     animation: none !important;
   }
+  /* Per-element opt-back-in: a few hand-picked "live" indicators
+     (status pill halo, current-city beacon) keep their ping/pulse on
+     mobile so the page doesn't feel completely static. CSS-only,
+     GPU-composited — cheap when limited to a couple of elements. */
+  .motion-safe-mobile.animate-ping {
+    animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+  }
+  .motion-safe-mobile.animate-pulse-glow {
+    animation: pulse-glow 4.5s ease-in-out infinite !important;
+  }
 }
 
 /* ============================================================

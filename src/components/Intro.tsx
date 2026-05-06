@@ -23,7 +23,7 @@ import {
   Zap,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
@@ -282,16 +282,18 @@ export function Intro() {
       className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-background"
     >
       {/* crisp SVG dot substrate (replaces pixelated CSS radial-gradient) */}
-      <DotSubstrate />
+      <DotSubstrate paused={!heroInView} />
       {/* faint scan lines */}
       <div
         aria-hidden
         className="absolute inset-0 bg-scanlines opacity-[0.15] pointer-events-none mix-blend-multiply"
       />
-      {/* slow color-cycling aurora bloom — desktop-only ambient wash that
-          ebbs through the brand palette. Skipped when scrolled out so the
-          two infinite framer-motion tracks stop ticking offscreen. */}
-      {!disableHeavyFx && heroInView && <AuroraBloom />}
+      {/* slow color-cycling aurora bloom — ambient wash that ebbs through
+          the brand palette. Mobile gets a "lite" single-blob version
+          (no mix-blend-screen) so phones still feel alive without paying
+          the GPU compositor cost of two blended layers. Skipped while
+          scrolled out so framer-motion tracks stop ticking offscreen. */}
+      {!reduceMotion && heroInView && <AuroraBloom lite={isMobile} />}
       <NodeNetwork
         className="opacity-[0.55]"
         density={0.00006}
@@ -315,13 +317,13 @@ export function Intro() {
         className="absolute top-0 left-0 pointer-events-none"
       />
       {/* === Circuit-board energy grid: glowing traces pulse with energy === */}
-      <CircuitField />
+      <CircuitField paused={!heroInView} />
 
       {/* === Lightning bolts: dramatic electric arcs fire across the hero === */}
-      <LightningField />
+      <LightningField paused={!heroInView} />
 
       {/* === Shooting stars: bright diagonal streaks === */}
-      <MeteorField />
+      <MeteorField paused={!heroInView} />
 
       {/* === Cursor aura: comet trail + click shockwaves + soft halo === */}
       <CursorAura className="z-[5]" paused={!heroInView} />
@@ -411,7 +413,7 @@ export function Intro() {
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-lime/40 bg-lime/10 text-ink"
               >
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
+                  <span className="motion-safe-mobile absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-lime" />
                 </span>
                 <span className="font-mono text-[11px] tracking-wide">status: available</span>
@@ -1020,16 +1022,40 @@ function HudCorners() {
 }
 
 // ============================================================
-// AuroraBloom — two large, slow-drifting radial blooms in the
-// brand palette. The radial gradients have soft transparent stops
-// already, so the prior `filter: blur()` was just compounding the
-// softness at huge GPU cost (large blur radii + mix-blend-screen
-// over 60% viewport areas was the single biggest desktop hot spot).
-// Now: gradients only, transform/opacity-only motion, will-change
-// hint to keep each blob on its own compositor layer.
+// AuroraBloom — slow-drifting radial blooms in the brand palette.
+//
+// Desktop: two blobs, mix-blend-screen, full transform+opacity drift.
+// Mobile (lite): one blob, no mix-blend (it's a non-trivial GPU cost
+// on lower-end phones), softer gradient, simple opacity-and-translate.
+// Both modes use will-change to keep each blob on its own compositor
+// layer. The radial gradient is rasterized once per layer and just
+// translated/scaled by the GPU each frame.
 // ============================================================
 
-function AuroraBloom() {
+const AuroraBloom = memo(function AuroraBloom({ lite = false }: { lite?: boolean }) {
+  if (lite) {
+    return (
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+      >
+        <motion.div
+          className="absolute -top-1/4 -left-1/4 w-[100%] h-[100%] rounded-full"
+          style={{
+            background:
+              'radial-gradient(closest-side, hsl(var(--accent) / 0.22), transparent 75%)',
+            willChange: 'transform, opacity',
+          }}
+          animate={{
+            x: ['0%', '6%', '0%'],
+            y: ['0%', '-4%', '0%'],
+            opacity: [0.5, 0.7, 0.5],
+          }}
+          transition={{ duration: 40, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </div>
+    )
+  }
   return (
     <div
       aria-hidden
@@ -1067,7 +1093,7 @@ function AuroraBloom() {
       />
     </div>
   )
-}
+})
 
 // ============================================================
 // DotSubstrate — crisp, anti-aliased dot grid that replaces the
@@ -1077,11 +1103,13 @@ function AuroraBloom() {
 // cluttering the grid.
 // ============================================================
 
-function DotSubstrate() {
+const DotSubstrate = memo(function DotSubstrate({ paused = false }: { paused?: boolean }) {
   // Skip the entire 30-dot twinkle layer (60 concurrent SMIL animations) on
-  // mobile / reduce-motion. The base dot grid pattern below is static and
-  // carries the visual; the colored twinkles are pure decoration.
+  // mobile / reduce-motion / when scrolled offscreen (paused). The base dot
+  // grid pattern below is static and carries the visual; the colored twinkles
+  // are pure decoration.
   const { disableHeavyFx } = useFxLevel()
+  const skipTwinkles = disableHeavyFx || paused
   // Deterministic twinkle positions — stable across renders.
   const twinkles = useMemo(() => {
     const palette = [
@@ -1140,9 +1168,9 @@ function DotSubstrate() {
       </svg>
 
       {/* Twinkle layer — colored accent dots that fade in/out.
-          Mobile / reduce-motion: not rendered (60 SMIL animations of work
-          for a layer most users won't notice missing). */}
-      {!disableHeavyFx && (
+          Mobile / reduce-motion / offscreen: not rendered (60 SMIL animations
+          of work for a layer most users won't notice missing). */}
+      {!skipTwinkles && (
         <svg
           aria-hidden
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1176,7 +1204,7 @@ function DotSubstrate() {
       )}
     </>
   )
-}
+})
 
 // ============================================================
 // CircuitField — animated SVG circuit-board traces across the hero.
@@ -1194,11 +1222,11 @@ type Trace = {
   delay: number
 }
 
-function CircuitField() {
+const CircuitField = memo(function CircuitField({ paused = false }: { paused?: boolean }) {
   // 10 traces × 2 SMIL <animateMotion> circles + 10 opacity <animate> tags =
   // ~30 concurrent SMIL animations. SMIL is GPU-cheap on desktop but causes
   // measurable jank on mid-range Android during scroll. Hide entirely on
-  // mobile and for prefers-reduced-motion (was previously unconditional).
+  // mobile, for prefers-reduced-motion, or when scrolled offscreen.
   const { disableHeavyFx } = useFxLevel()
   const traces: Trace[] = useMemo(() => {
     const palette = [
@@ -1229,7 +1257,7 @@ function CircuitField() {
     }))
   }, [])
 
-  if (disableHeavyFx) return null
+  if (disableHeavyFx || paused) return null
 
   return (
     <svg
@@ -1334,7 +1362,7 @@ function CircuitField() {
       })}
     </svg>
   )
-}
+})
 
 // ============================================================
 // MeteorField — diagonal shooting-star streaks that fire across
@@ -1351,16 +1379,17 @@ type Meteor = {
   length: number
 }
 
-function MeteorField() {
+const MeteorField = memo(function MeteorField({ paused = false }: { paused?: boolean }) {
   // Desktop-only. Streaming geometry + state churn (spawn → setTimeout →
   // splice) every 2.2s is wasted work on phones where the meteors are tiny
   // and barely visible against the busy hero. Mirrors LightningField's gate.
+  // Also paused when the hero is scrolled offscreen.
   const { disableHeavyFx } = useFxLevel()
   const [meteors, setMeteors] = useState<Meteor[]>([])
   const idRef = useRef(0)
 
   useEffect(() => {
-    if (disableHeavyFx) return
+    if (disableHeavyFx || paused) return
     const spawn = () => {
       const id = idRef.current++
       const palette = [
@@ -1391,9 +1420,9 @@ function MeteorField() {
       clearTimeout(first)
       clearInterval(iv)
     }
-  }, [disableHeavyFx])
+  }, [disableHeavyFx, paused])
 
-  if (disableHeavyFx) return null
+  if (disableHeavyFx || paused) return null
   return (
     <div
       aria-hidden
@@ -1424,7 +1453,7 @@ function MeteorField() {
       ))}
     </div>
   )
-}
+})
 
 // ============================================================
 // LightningField — SVG lightning bolts that fire across the hero
@@ -1433,11 +1462,12 @@ function MeteorField() {
 // then disappears. Respects reduced-motion.
 // ============================================================
 
-function LightningField() {
+const LightningField = memo(function LightningField({ paused = false }: { paused?: boolean }) {
   // Lightning is desktop-only — fractal generation + 4 SVG path layers per
   // bolt + 900ms ticker is too much for mid-range phones, and the dramatic
   // strikes read as visual noise alongside the rest of the hero on a small
-  // screen. Falls back identically for prefers-reduced-motion.
+  // screen. Falls back identically for prefers-reduced-motion or when
+  // scrolled offscreen.
   const { disableHeavyFx } = useFxLevel()
 
   const [bolts, setBolts] = useState<
@@ -1446,7 +1476,7 @@ function LightningField() {
   const idRef = useRef(0)
 
   useEffect(() => {
-    if (disableHeavyFx) return
+    if (disableHeavyFx || paused) return
     // Midpoint-displacement subdivision — classic "fractal lightning"
     // algorithm. Repeatedly splits each segment and jitters the midpoint
     // perpendicular to the segment direction. Produces the irregular,
@@ -1561,9 +1591,9 @@ function LightningField() {
       clearTimeout(first)
       clearInterval(interval)
     }
-  }, [disableHeavyFx])
+  }, [disableHeavyFx, paused])
 
-  if (disableHeavyFx) return null
+  if (disableHeavyFx || paused) return null
 
   return (
     <svg
@@ -1645,7 +1675,7 @@ function LightningField() {
       </AnimatePresence>
     </svg>
   )
-}
+})
 
 // ============================================================
 // ShipEngine — the live console on the right.

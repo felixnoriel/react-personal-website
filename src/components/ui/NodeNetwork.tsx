@@ -191,11 +191,21 @@ export function NodeNetwork({
         if (n.y > height + 10) n.y = -10
       }
 
-      // draw links — thin, smooth, with round caps to avoid jagged endpoints.
-      // link2 is set by resize() (varies on mobile) — no need to recompute here.
+      // draw links — batched into 4 alpha buckets so we issue 4 stroke calls
+      // per frame instead of (typical) 60–120. The previous code did
+      // beginPath + moveTo + lineTo + stroke + globalAlpha-set per link;
+      // canvas state changes between strokes are surprisingly costly. With
+      // 4 buckets the alpha ramp still reads as continuous, but the per-frame
+      // cost drops from O(linkCount) state changes to O(1).
       ctx.lineWidth = linkW
       ctx.lineCap = 'round'
       ctx.strokeStyle = color
+      // Bucket 0: closest links (full alpha), 3: faintest. Each bucket is
+      // a single Path2D that accumulates moveTo/lineTo and is stroked once.
+      const bucket0 = new Path2D()
+      const bucket1 = new Path2D()
+      const bucket2 = new Path2D()
+      const bucket3 = new Path2D()
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i]
         for (let j = i + 1; j < nodes.length; j++) {
@@ -204,14 +214,28 @@ export function NodeNetwork({
           const dy = a.y - b.y
           const d2 = dx * dx + dy * dy
           if (d2 < link2) {
-            ctx.globalAlpha = (1 - d2 / link2) * 0.45
-            ctx.beginPath()
-            ctx.moveTo(a.x, a.y)
-            ctx.lineTo(b.x, b.y)
-            ctx.stroke()
+            const closeness = 1 - d2 / link2 // 1 = touching, 0 = at link2
+            const target =
+              closeness > 0.75
+                ? bucket0
+                : closeness > 0.5
+                  ? bucket1
+                  : closeness > 0.25
+                    ? bucket2
+                    : bucket3
+            target.moveTo(a.x, a.y)
+            target.lineTo(b.x, b.y)
           }
         }
       }
+      ctx.globalAlpha = 0.4
+      ctx.stroke(bucket0)
+      ctx.globalAlpha = 0.3
+      ctx.stroke(bucket1)
+      ctx.globalAlpha = 0.18
+      ctx.stroke(bucket2)
+      ctx.globalAlpha = 0.08
+      ctx.stroke(bucket3)
       ctx.globalAlpha = 1
 
       // emit pulses occasionally
