@@ -19,6 +19,7 @@ import type { LucideIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Marquee } from './ui/Marquee'
 import { useFxLevel } from '../hooks/useFxLevel'
+import { useInViewObserver } from '../hooks/useDetailPage'
 
 type Accent = 'accent' | 'lime' | 'electric'
 
@@ -246,11 +247,17 @@ function makeSparklinePath(name: string, width: number, height: number): string 
 export function TechToolbelt() {
   const [filter, setFilter] = useState<FilterId>('all')
   const [uptime, setUptime] = useState(0)
+  // Halt the uptime ticker when scrolled offscreen — the readout isn't
+  // visible anyway, and the setState forces a re-render of the entire
+  // section's complex skill grid + process tables.
+  const sectionRef = useRef<HTMLElement>(null)
+  const inView = useInViewObserver(sectionRef)
 
   useEffect(() => {
+    if (!inView) return
     const t = setInterval(() => setUptime((n) => n + 1), 1000)
     return () => clearInterval(t)
-  }, [])
+  }, [inView])
 
   const allSkills = useMemo(() => {
     const out: Array<Skill & { stack: Stack; group: string; pid: string }> = []
@@ -299,6 +306,7 @@ export function TechToolbelt() {
 
   return (
     <section
+      ref={sectionRef}
       id="skills-section"
       className="relative py-28 md:py-36 bg-surface scroll-mt-20 border-y border-border overflow-hidden"
     >

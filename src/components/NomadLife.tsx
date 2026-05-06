@@ -19,6 +19,7 @@ import type { LucideIcon } from 'lucide-react'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { trackEvent } from '../utils/analytics'
 import { useFxLevel } from '../hooks/useFxLevel'
+import { useInViewObserver } from '../hooks/useDetailPage'
 
 // ============================================================
 // DATA — cities with real lat/lng + global flight plan
@@ -415,8 +416,16 @@ export function NomadLife() {
   const reduceMotion = !!useReducedMotion()
   const { isMobile } = useFxLevel()
   const lite = reduceMotion || isMobile
+  // Observe section visibility so we can halt the heavy 0.9s/1.2s readout
+  // intervals (ChromeLive/CockpitHUD/NavHUD) when the user has scrolled
+  // away. Each interval re-renders the FlightRadar SVG tree; pausing
+  // them while offscreen is the biggest remaining JS-cost win on Home.
+  const sectionRef = useRef<HTMLElement>(null)
+  const inView = useInViewObserver(sectionRef)
+  const paused = !inView
   return (
     <section
+      ref={sectionRef}
       id="nomad-section"
       className="relative py-24 md:py-32 bg-background scroll-mt-20 overflow-hidden border-y border-border"
     >
@@ -446,7 +455,7 @@ export function NomadLife() {
 
         {/* ===================== FLIGHT RADAR ===================== */}
         <div className="mt-10 md:mt-12">
-          <FlightRadar reduceMotion={reduceMotion} lite={lite} />
+          <FlightRadar reduceMotion={reduceMotion} lite={lite} paused={paused} />
         </div>
 
         {/* ===================== BOARDING PASSES ===================== */}
@@ -609,12 +618,16 @@ function FloatingPlaneDecor() {
 function FlightRadar({
   reduceMotion,
   lite,
+  paused = false,
 }: {
   reduceMotion: boolean
   // `lite` = drop heavy decorative SVG fx (mobile or reduce-motion). The
   // central plane animation along the active route still renders unless
   // `reduceMotion` is set — that one is the section's whole point.
   lite: boolean
+  // `paused` = section is offscreen; halt all internal setIntervals so we
+  // don't fire 67 setStates/min into a hidden subtree.
+  paused?: boolean
 }) {
   const current = CITIES.find((c) => c.current)!
   const currentProj = project(current.lng, current.lat)
@@ -725,7 +738,7 @@ function FlightRadar({
         <span className="font-mono text-[10.5px] text-white/75 ml-2 truncate">
           globe.radar · live.feed · v2.{new Date().getFullYear()}
         </span>
-        <ChromeLive lite={lite} />
+        <ChromeLive lite={lite} paused={paused} />
       </div>
 
       {/* 3D tilted map area */}
@@ -1469,11 +1482,12 @@ function FlightRadar({
         </div>
 
         {/* top-right: live speed + altitude + uplink */}
-        <CockpitHUD lite={lite} />
+        <CockpitHUD lite={lite} paused={paused} />
 
         {/* bottom-left: compass rose + HDG + DIST (self-owns its 650ms tick) */}
         <NavHUD
           lite={lite}
+          paused={paused}
           reduceMotion={reduceMotion}
           routeCount={ROUTE_EDGES.length}
           cityCount={CITIES.length}
@@ -1675,17 +1689,17 @@ function PassportStampsStrip({
 // re-rendering every tick. Big perf win on mobile.
 // ============================================================
 
-function ChromeLive({ lite }: { lite: boolean }) {
+function ChromeLive({ lite, paused = false }: { lite: boolean; paused?: boolean }) {
   // `lite` (mobile or reduce-motion) → freeze readouts at the initial
-  // snapshot. The 1.2s altitude tick and 30s UTC tick each fire setState
-  // which forces a re-render of the parent's chrome row; skipping them
-  // on phones removes ~60 React renders/min for no visible benefit.
+  // snapshot. `paused` adds offscreen-pause for desktop. Either one halts
+  // the 1.2s + 30s setIntervals, removing ~50 setStates/min when the
+  // section isn't being looked at.
   const [state, setState] = useState(() => ({
     alt: 35100,
     utc: new Date().toISOString().slice(11, 16),
   }))
   useEffect(() => {
-    if (lite) return
+    if (lite || paused) return
     const a = setInterval(() => {
       setState((s) => ({
         ...s,
@@ -1701,7 +1715,7 @@ function ChromeLive({ lite }: { lite: boolean }) {
       clearInterval(a)
       clearInterval(b)
     }
-  }, [lite])
+  }, [lite, paused])
   return (
     <span className="ml-auto flex items-center gap-3 font-mono text-[10px] text-white/55">
       <span className="inline-flex items-center gap-1.5">
@@ -1720,13 +1734,12 @@ function ChromeLive({ lite }: { lite: boolean }) {
   )
 }
 
-function CockpitHUD({ lite }: { lite: boolean }) {
-  // 900ms tick on mobile = ~67 setState/min for two integer readouts;
-  // the resulting "live" feel is invisible on phone (small text, fast
-  // scroll-past). Static is fine.
+function CockpitHUD({ lite, paused = false }: { lite: boolean; paused?: boolean }) {
+  // 900ms tick on mobile = ~67 setState/min for two integer readouts.
+  // `lite` freezes on mobile; `paused` freezes when desktop scrolls away.
   const [r, setR] = useState({ spd: 864, alt: 35100 })
   useEffect(() => {
-    if (lite) return
+    if (lite || paused) return
     const t = setInterval(() => {
       setR({
         spd: Math.round(
@@ -1738,7 +1751,7 @@ function CockpitHUD({ lite }: { lite: boolean }) {
       })
     }, 900)
     return () => clearInterval(t)
-  }, [lite])
+  }, [lite, paused])
   return (
     <div className="absolute top-3 right-3 md:top-4 md:right-4 font-mono text-[10px] text-ink-soft bg-background/75 backdrop-blur px-2 py-1 rounded border border-border/70">
       <div className="flex items-center gap-2">
@@ -1769,21 +1782,23 @@ function CockpitHUD({ lite }: { lite: boolean }) {
 
 function NavHUD({
   lite,
+  paused = false,
   reduceMotion,
   routeCount,
   cityCount,
 }: {
   lite: boolean
+  paused?: boolean
   reduceMotion: boolean
   routeCount: number
   cityCount: number
 }) {
-  // Same shape as CockpitHUD — `lite` freezes the tick. We still pass
-  // `reduceMotion` separately to CompassRose so the spring-rotated needle
-  // respects strict a11y intent.
+  // Same shape as CockpitHUD — `lite` or `paused` (offscreen) freezes the
+  // tick. We still pass `reduceMotion` separately to CompassRose so the
+  // spring-rotated needle respects strict a11y intent.
   const [r, setR] = useState({ hdg: 292, dist: 184302 })
   useEffect(() => {
-    if (lite) return
+    if (lite || paused) return
     const t = setInterval(() => {
       setR((prev) => ({
         hdg: Math.round(((292 + Math.sin(Date.now() / 4000) * 5) + 360) % 360),
@@ -1791,7 +1806,7 @@ function NavHUD({
       }))
     }, 900)
     return () => clearInterval(t)
-  }, [lite])
+  }, [lite, paused])
   return (
     <div className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex items-end gap-2">
       <CompassRose hdg={r.hdg} reduceMotion={reduceMotion} />

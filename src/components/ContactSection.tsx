@@ -55,12 +55,13 @@ function toMorse(s: string): string {
 // Live time (BKK · UTC+7) — ticks every second so seconds move too
 // ============================================================
 
-function useLiveTime() {
+function useLiveTime(active: boolean = true) {
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
+    if (!active) return
     const id = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(id)
-  }, [])
+  }, [active])
   return now
 }
 
@@ -507,7 +508,12 @@ type Status = 'idle' | 'encoding' | 'transmitting' | 'delivered'
 
 export function ContactSection() {
   const reduce = useReducedMotion()
-  const now = useLiveTime()
+  // Halt the 1s clock tick when the section is offscreen — the readout
+  // only matters when it's being looked at, and the setState forces a
+  // full re-render of the contact form chrome each second.
+  const sectionRef = useRef<HTMLElement>(null)
+  const sectionInView = useInView(sectionRef, { amount: 0, margin: '120px' })
+  const now = useLiveTime(sectionInView)
   const bkkTime = getBkkTime(now)
 
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
@@ -587,6 +593,7 @@ export function ContactSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="contact-section"
       className="relative py-28 md:py-36 bg-background scroll-mt-20 overflow-hidden"
     >

@@ -3,6 +3,45 @@ import type { RefObject } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 /**
+ * useInViewObserver — minimal IntersectionObserver wrapper that returns
+ * a boolean for "is this element currently in (or near) the viewport".
+ *
+ * Use this to gate continuous work (setIntervals, infinite framer-motion
+ * loops, etc.) inside non-hero page sections so they halt while the user
+ * has scrolled away. `content-visibility: auto` skips paint but not
+ * script — JS animations otherwise tick at full speed offscreen.
+ *
+ * Default `rootMargin: '120px'` keeps work running through small over-
+ * scroll bounces without thrashing setup/teardown on every scroll tick.
+ *
+ * Initial value is `true` so first-render setup actually runs (the
+ * observer fires async after mount; if we started false, dependent
+ * effects would no-op until the first IO callback).
+ */
+export function useInViewObserver(
+  ref: RefObject<Element | null>,
+  options?: { rootMargin?: string; threshold?: number },
+): boolean {
+  const [inView, setInView] = useState(true)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) setInView(e.isIntersecting)
+      },
+      {
+        rootMargin: options?.rootMargin ?? '120px',
+        threshold: options?.threshold ?? 0,
+      },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [ref, options?.rootMargin, options?.threshold])
+  return inView
+}
+
+/**
  * useReadingMinutes — estimate read time from HTML content.
  * Strips tags, counts words, divides by 220wpm (typical mid-tier reader
  * for technical content), rounds up, floors at 1.
