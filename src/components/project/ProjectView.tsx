@@ -15,8 +15,10 @@ import {
   Cpu,
   FileText,
   GitBranch,
+  Image as ImageIcon,
   Layers,
   Maximize2,
+  Network,
   Signal,
 } from 'lucide-react'
 import Lightbox from 'yet-another-react-lightbox'
@@ -150,7 +152,11 @@ export function ProjectView({
         style={{ scaleX }}
       />
 
-      <section className="relative overflow-hidden bg-background">
+      {/* overflow-x-clip (not overflow-hidden) — `overflow-hidden` would
+          establish a scrolling context that breaks `position: sticky` on
+          the SubNav inside. `overflow-x-clip` clips horizontal bleed
+          without that side effect. */}
+      <section className="relative overflow-x-clip bg-background">
         {/* ambient glows */}
         <div
           aria-hidden
@@ -312,18 +318,49 @@ export function ProjectView({
             </div>
           </motion.header>
 
+          {/* ===================== INLINE GALLERY PREVIEW STRIP =====================
+              4-image strip near the top so visitors see the visuals before
+              committing to the long docs scroll. Tapping any thumbnail jumps
+              to the full gallery and opens the lightbox at that index. */}
+          {validGallery.length > 0 && (
+            <GalleryPreviewStrip
+              gallery={validGallery}
+              onOpen={(i) => {
+                setPhotoIndex(i)
+                setLightboxOpen(true)
+              }}
+            />
+          )}
+
+          {/* ===================== STICKY SUB-NAV =====================
+              Quick-jump pills (Overview / Stack / Gallery / Related) that
+              stick to the top once scrolled past the breadcrumb. Hides
+              its sticky behavior on small screens where the available
+              vertical space is too tight; still functional as a static
+              row above the hero console. */}
+          <SubNav
+            hasGallery={validGallery.length > 0}
+            hasStack={Boolean(project.tags && project.tags.length > 0)}
+            hasRelated={otherProjects.length > 0}
+          />
+
           {/* ===================== HERO CONSOLE ===================== */}
           <MissionConsole project={project} hash={hash} />
 
-          {/* ===================== MAIN + SIDEBAR ===================== */}
+          {/* ===================== MAIN + SIDEBAR =====================
+              Mobile order: sidebar first (so the stack matrix + related
+              missions are immediately visible without scrolling past 3000px
+              of docs). Desktop order: docs left (8 cols) + sidebar right
+              (4 cols, sticky so it stays in view while the user reads). */}
           <div className="mt-12 md:mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
             {/* Main */}
             <motion.div
+              id="overview"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.6 }}
-              className="lg:col-span-8"
+              className="lg:col-span-8 order-2 lg:order-1 scroll-mt-[140px]"
             >
               <DocsWindow
                 slug={project.slug}
@@ -332,12 +369,14 @@ export function ProjectView({
               />
             </motion.div>
 
-            {/* Sidebar */}
-            <div className="lg:col-span-4">
-              <ProjectSidebar
-                project={project}
-                otherProjects={otherProjects}
-              />
+            {/* Sidebar — sticky on desktop */}
+            <div className="lg:col-span-4 order-1 lg:order-2">
+              <div className="lg:sticky lg:top-24">
+                <ProjectSidebar
+                  project={project}
+                  otherProjects={otherProjects}
+                />
+              </div>
             </div>
           </div>
 
@@ -672,10 +711,12 @@ function ProjectSidebar({
       {/* STACK MATRIX */}
       {project.tags && project.tags.length > 0 && (
         <motion.div
+          id="stack"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
+          className="scroll-mt-[140px]"
         >
           <StackMatrix tags={project.tags} />
         </motion.div>
@@ -684,10 +725,12 @@ function ProjectSidebar({
       {/* SWITCH MISSION */}
       {otherProjects.length > 0 && (
         <motion.div
+          id="related"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
+          className="scroll-mt-[140px]"
         >
           <SwitchMission otherProjects={otherProjects} />
         </motion.div>
@@ -925,11 +968,12 @@ function GallerySection({
 }) {
   return (
     <motion.div
+      id="gallery"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 0.6 }}
-      className="mt-16 md:mt-24"
+      className="mt-16 md:mt-24 scroll-mt-[140px]"
     >
       {/* Gallery top chrome */}
       <div className="mb-8 flex flex-wrap items-center gap-3">
@@ -966,45 +1010,118 @@ function CategoryGallery({
   validGallery: ImageAsset[]
   onOpen: (index: number) => void
 }) {
-  const grouped = validGallery.reduce<
-    Record<string, Array<{ img: ImageAsset; index: number }>>
-  >((acc, img, index) => {
-    const category = img.category || 'Other'
-    if (!acc[category]) acc[category] = []
-    acc[category].push({ img, index })
-    return acc
-  }, {})
+  // Group + preserve original ordering across categories so the lightbox
+  // index still maps to the full validGallery array.
+  const grouped = useMemo(() => {
+    return validGallery.reduce<
+      Record<string, Array<{ img: ImageAsset; index: number }>>
+    >((acc, img, index) => {
+      const category = img.category || 'Other'
+      if (!acc[category]) acc[category] = []
+      acc[category].push({ img, index })
+      return acc
+    }, {})
+  }, [validGallery])
+
+  const categories = Object.keys(grouped)
+  // "all" is the default tab — shows the entire gallery in one grid. Each
+  // category is also browsable individually via the tab strip. This cuts
+  // ~60% of the vertical footprint on mobile vs the previous stacked layout
+  // and turns category browsing into a one-tap action.
+  const [activeTab, setActiveTab] = useState<string>('all')
+
+  const visible: Array<{ img: ImageAsset; index: number }> =
+    activeTab === 'all'
+      ? validGallery.map((img, index) => ({ img, index }))
+      : grouped[activeTab] ?? []
 
   return (
-    <div className="space-y-12">
-      {Object.entries(grouped).map(([category, items]) => {
-        const slug = category.toLowerCase().replace(/\s+/g, '_')
-        return (
-          <div key={category}>
-            {/* category header */}
-            <div className="mb-4 flex items-center gap-3 font-mono text-[11px] tracking-[0.22em] uppercase text-ink-soft">
-              <span className="text-accent">&gt;</span>
-              <span className="text-ink">log.{slug}</span>
-              <span className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
-              <span className="tabular-nums text-ink-soft">
-                {items.length.toString().padStart(2, '0')}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {items.map((item, i) => (
-                <GalleryTile
-                  key={item.index}
-                  img={item.img}
-                  index={item.index}
-                  frame={i + 1}
-                  onOpen={onOpen}
-                />
-              ))}
-            </div>
-          </div>
-        )
-      })}
+    <div>
+      {/* Tab strip */}
+      <div
+        role="tablist"
+        aria-label="Gallery categories"
+        className="mb-5 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none"
+      >
+        <GalleryTab
+          id="all"
+          label="all"
+          count={validGallery.length}
+          active={activeTab === 'all'}
+          onClick={() => setActiveTab('all')}
+        />
+        {categories.map((category) => {
+          const slug = category.toLowerCase().replace(/\s+/g, '_')
+          return (
+            <GalleryTab
+              key={category}
+              id={slug}
+              label={`log.${slug}`}
+              count={grouped[category].length}
+              active={activeTab === category}
+              onClick={() => setActiveTab(category)}
+            />
+          )
+        })}
+      </div>
+      {/* Active grid */}
+      <motion.div
+        key={activeTab}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+      >
+        {visible.map((item, i) => (
+          <GalleryTile
+            key={item.index}
+            img={item.img}
+            index={item.index}
+            frame={i + 1}
+            onOpen={onOpen}
+          />
+        ))}
+      </motion.div>
     </div>
+  )
+}
+
+function GalleryTab({
+  id,
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  id: string
+  label: string
+  count: number
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      aria-controls={`gallery-panel-${id}`}
+      onClick={onClick}
+      className={`group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10.5px] tracking-[0.18em] uppercase whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 ${
+        active
+          ? 'bg-accent/10 border border-accent/40 text-ink'
+          : 'border border-border bg-surface/40 text-ink-soft hover:text-ink hover:border-accent/30 hover:bg-surface'
+      }`}
+    >
+      <span className={active ? 'text-accent' : 'text-ink-soft/70'}>›</span>
+      <span>{label}</span>
+      <span
+        className={`tabular-nums text-[9.5px] ${
+          active ? 'text-accent' : 'text-ink-soft/60'
+        }`}
+      >
+        {count.toString().padStart(2, '0')}
+      </span>
+    </button>
   )
 }
 
@@ -1220,5 +1337,157 @@ function HudCorners({
         </svg>
       ))}
     </div>
+  )
+}
+
+// ============================================================
+// SubNav — sticky quick-jump pills (Overview / Stack / Gallery / Related)
+// Becomes sticky once scrolled past so users can leap between sections
+// from anywhere on the page. Uses anchor scrolling with `scroll-mt-*`
+// on the targets so the sticky bar doesn't cover the heading.
+// ============================================================
+
+function SubNav({
+  hasGallery,
+  hasStack,
+  hasRelated,
+}: {
+  hasGallery: boolean
+  hasStack: boolean
+  hasRelated: boolean
+}) {
+  const items: Array<{ id: string; label: string; icon: ReactNode; show: boolean }> = [
+    { id: 'overview', label: 'overview', icon: <FileText className="w-3 h-3" />, show: true },
+    { id: 'stack', label: 'stack', icon: <Layers className="w-3 h-3" />, show: hasStack },
+    { id: 'gallery', label: 'gallery', icon: <ImageIcon className="w-3 h-3" />, show: hasGallery },
+    { id: 'related', label: 'related', icon: <Network className="w-3 h-3" />, show: hasRelated },
+  ]
+  const handleJump = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // Update the URL hash so the back button + share-link work
+    if (history.replaceState) history.replaceState(null, '', `#${id}`)
+  }
+  return (
+    // top-[76px]: site header is `nav.fixed top-0` 65px tall; this puts the
+    // sub-nav just below it with a small gap. z-30 sits above content but
+    // below the site header (z-50) and the scroll progress bar (z-60).
+    <div className="sticky top-[76px] z-30 mb-8 -mx-1 md:mx-0">
+      <nav
+        aria-label="Section navigation"
+        className="flex items-center gap-1.5 overflow-x-auto px-1 md:px-1.5 py-1.5 rounded-full border border-border bg-background/85 backdrop-blur-md shadow-[0_8px_30px_-16px_hsl(var(--ink)/0.18)] scrollbar-none"
+      >
+        {items
+          .filter((it) => it.show)
+          .map((it, i) => (
+            <a
+              key={it.id}
+              href={`#${it.id}`}
+              onClick={handleJump(it.id)}
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink-soft hover:text-ink hover:bg-surface/70 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+            >
+              <span className="text-accent shrink-0">{it.icon}</span>
+              <span>{it.label}</span>
+              {i === 0 && (
+                <span className="ml-1 text-ink-soft/40 hidden sm:inline">›</span>
+              )}
+            </a>
+          ))}
+      </nav>
+    </div>
+  )
+}
+
+// ============================================================
+// GalleryPreviewStrip — 4-image teaser shown right after the hero
+// header. Lets visitors see the visuals immediately + jump straight
+// into the lightbox at any frame they tap. The full categorized
+// gallery still lives further down (#gallery anchor).
+// ============================================================
+
+function GalleryPreviewStrip({
+  gallery,
+  onOpen,
+}: {
+  gallery: ImageAsset[]
+  onOpen: (index: number) => void
+}) {
+  // Pick the first 4 images, but if there are categories, take 1-2 from
+  // each so the strip teases the variety. Cap at 4 to keep the strip tight.
+  const teasers = useMemo(() => {
+    if (gallery.length <= 4) return gallery.map((img, i) => ({ img, originalIndex: i }))
+    const byCategory = new Map<string, Array<{ img: ImageAsset; originalIndex: number }>>()
+    gallery.forEach((img, i) => {
+      const cat = img.category || 'Other'
+      if (!byCategory.has(cat)) byCategory.set(cat, [])
+      byCategory.get(cat)!.push({ img, originalIndex: i })
+    })
+    const out: Array<{ img: ImageAsset; originalIndex: number }> = []
+    const buckets = Array.from(byCategory.values())
+    let row = 0
+    while (out.length < 4 && buckets.some((b) => b[row])) {
+      for (const b of buckets) {
+        if (out.length >= 4) break
+        if (b[row]) out.push(b[row])
+      }
+      row++
+    }
+    return out.slice(0, 4)
+  }, [gallery])
+
+  if (teasers.length === 0) return null
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.15 }}
+      className="mt-8 mb-4"
+    >
+      <div className="mb-3 flex items-center gap-3 font-mono text-[10.5px] tracking-[0.22em] uppercase text-ink-soft">
+        <ImageIcon className="w-3 h-3 text-accent" />
+        <span className="text-ink">preview.frames</span>
+        <span className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+        <a
+          href="#gallery"
+          onClick={(e) => {
+            e.preventDefault()
+            const el = document.getElementById('gallery')
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }}
+          className="inline-flex items-center gap-1 text-ink-soft hover:text-accent transition-colors normal-case tracking-normal text-[11px]"
+        >
+          <span>view all {gallery.length}</span>
+          <ChevronRight className="w-3 h-3" />
+        </a>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        {teasers.map(({ img, originalIndex }) => (
+          <button
+            key={originalIndex}
+            type="button"
+            onClick={() => onOpen(originalIndex)}
+            aria-label={`Open ${img.alt || 'image'} in lightbox`}
+            className="group relative aspect-video overflow-hidden rounded-lg border border-border bg-surface hover:border-accent/60 transition-colors cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+          >
+            <img
+              src={img.url}
+              alt={img.alt || ''}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+            />
+            {img.category && (
+              <span className="absolute top-1.5 left-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono tracking-[0.18em] uppercase bg-background/80 backdrop-blur text-ink-soft border border-border">
+                {img.category}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+    </motion.div>
   )
 }
