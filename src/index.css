@@ -525,6 +525,24 @@
      promotes this element to its own GPU layer up-front. */
   will-change: transform;
 }
+
+/* Bright comet head — sits at cursor position above the soft halo.
+   Pre-rasterized white-hot radial gradient. Only its transform changes,
+   so the browser composites it cheaply on every cursor frame. */
+.cursor-aura-head {
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.95),
+    hsl(var(--accent) / 0.85) 35%,
+    hsl(var(--accent) / 0.3) 65%,
+    transparent 80%
+  );
+  border-radius: 50%;
+  transition: opacity 0.18s ease-out;
+  will-change: transform;
+}
 .cursor-aura-pulse {
   position: fixed;
   pointer-events: none;
@@ -559,36 +577,42 @@
 }
 
 /* Trail particle — emitted by CursorAura on cursor move (throttled to
-   ~25/sec). Hue comes from the inline `--cursor-hue` custom property
+   ~55/sec). Hue comes from the inline `--cursor-hue` custom property
    so colors cycle through the brand palette and a long gesture leaves
-   a rainbow ribbon. The keyframe scales + fades the dot over 500ms,
-   then animationend removes it from the DOM. Compositor handles all
-   of the actual animation work. */
+   a rainbow comet ribbon. Lifetime is 1100ms with a hold-then-fade
+   shape: scale stays close to full size for the first ~30% of the
+   animation (so the trail reads as a continuous ribbon, not a sparse
+   dot stream), then tapers to zero. Compositor handles everything. */
 .cursor-aura-trail {
   position: fixed;
   pointer-events: none;
   z-index: 39; /* under the halo (z-40) so the halo always reads as the head */
   transform: translate(-50%, -50%);
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: hsl(var(--cursor-hue, 325) 90% 65% / 0.9);
-  filter: blur(2px);
-  animation: cursor-aura-trail 500ms cubic-bezier(0, 0, 0.2, 1) forwards;
+  background: hsl(var(--cursor-hue, 325) 92% 65% / 0.95);
+  filter: blur(3px);
+  animation: cursor-aura-trail 1100ms cubic-bezier(0.22, 0.6, 0.36, 1) forwards;
   will-change: transform, opacity;
 }
 @keyframes cursor-aura-trail {
   0% {
     transform: translate(-50%, -50%) scale(1);
+    opacity: 0.95;
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(0.95);
     opacity: 0.85;
   }
   100% {
-    transform: translate(-50%, -50%) scale(0.2);
+    transform: translate(-50%, -50%) scale(0.15);
     opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .cursor-aura-halo,
+  .cursor-aura-head,
   .cursor-aura-pulse,
   .cursor-aura-trail {
     display: none !important;

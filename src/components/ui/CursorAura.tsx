@@ -44,6 +44,7 @@ const HUES = [325, 145, 200, 38]
  */
 export function CursorAura({ className = '' }: CursorAuraProps) {
   const haloRef = useRef<HTMLDivElement>(null)
+  const headRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -52,22 +53,27 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     if (!window.matchMedia('(min-width: 768px)').matches) return
 
     const halo = haloRef.current
-    if (!halo) return
+    const head = headRef.current
+    if (!halo || !head) return
 
     // ── Halo: GPU-translate-only position update ────────────────────────
     let rafId: number | null = null
     let lastX = -9999
     let lastY = -9999
     let visible = false
-    // Trail throttling state — emit at most one particle per 40ms, and
-    // only when the cursor has moved ≥ MIN_MOVE_PX since the last emit.
-    // Worst-case active-particle budget: 500ms / 40ms = ~12 particles.
+    // Trail throttling state — emits one particle per ~18ms (~55/sec)
+    // when the cursor moves ≥ 3px since the last emit. Combined with the
+    // 1100ms keyframe lifetime in .cursor-aura-trail, that gives ~60 dots
+    // in flight at once during a fast gesture, which overlap heavily
+    // (each is blurred) and read as a continuous comet ribbon — the
+    // "shooting cursor" feel from the earlier canvas trail, but built
+    // entirely on CSS keyframes so the main thread stays free.
     let lastTrailT = 0
     let lastTrailX = -9999
     let lastTrailY = -9999
     let trailHueIdx = 0
-    const TRAIL_THROTTLE_MS = 40
-    const MIN_MOVE_PX_SQ = 25 // (5px)²
+    const TRAIL_THROTTLE_MS = 18
+    const MIN_MOVE_PX_SQ = 9 // (3px)²
 
     const onMove = (e: MouseEvent) => {
       lastX = e.clientX
@@ -94,17 +100,22 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
         const cleanupDot = () => dot.remove()
         dot.addEventListener('animationend', cleanupDot, { once: true })
         // Fallback if animationend never fires (tab-backgrounded mid-anim).
-        window.setTimeout(cleanupDot, 600)
+        window.setTimeout(cleanupDot, 1200)
         document.body.appendChild(dot)
       }
 
       if (rafId !== null) return
       rafId = requestAnimationFrame(() => {
         rafId = null
-        // translate3d hints at GPU compositing.
-        halo.style.transform = `translate3d(${lastX}px, ${lastY}px, 0) translate(-50%, -50%)`
+        // translate3d hints at GPU compositing. Both the halo and the
+        // bright "head" dot share the cursor position; updating both
+        // in the same rAF keeps them perfectly in sync.
+        const t = `translate3d(${lastX}px, ${lastY}px, 0) translate(-50%, -50%)`
+        halo.style.transform = t
+        head.style.transform = t
         if (!visible) {
           halo.style.opacity = '1'
+          head.style.opacity = '1'
           visible = true
         }
       })
@@ -112,6 +123,7 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     const onDocLeave = (e: MouseEvent) => {
       if (e.relatedTarget == null) {
         halo.style.opacity = '0'
+        head.style.opacity = '0'
         visible = false
       }
     }
@@ -143,11 +155,22 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
   }, [])
 
   return (
-    <div
-      ref={haloRef}
-      aria-hidden
-      className={`cursor-aura-halo fixed top-0 left-0 pointer-events-none hidden md:block z-40 ${className}`}
-      style={{ opacity: 0, transform: 'translate3d(-9999px, -9999px, 0)' }}
-    />
+    <>
+      {/* Soft accent-color halo — the "lit-up sky" around the cursor. */}
+      <div
+        ref={haloRef}
+        aria-hidden
+        className={`cursor-aura-halo fixed top-0 left-0 pointer-events-none hidden md:block z-40 ${className}`}
+        style={{ opacity: 0, transform: 'translate3d(-9999px, -9999px, 0)' }}
+      />
+      {/* Bright comet head — small white-hot dot at the cursor position
+          that gives the "shooting" tip feel. Sits above the halo. */}
+      <div
+        ref={headRef}
+        aria-hidden
+        className="cursor-aura-head fixed top-0 left-0 pointer-events-none hidden md:block z-40"
+        style={{ opacity: 0, transform: 'translate3d(-9999px, -9999px, 0)' }}
+      />
+    </>
   )
 }
