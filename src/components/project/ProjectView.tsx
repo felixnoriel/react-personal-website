@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
   motion,
@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Code2,
   Cpu,
   FileText,
@@ -21,6 +22,13 @@ import {
   Network,
   Signal,
 } from 'lucide-react'
+import { BackToTop } from '../ui/page/BackToTop'
+import { SubNav, type SubNavItem } from '../ui/page/SubNav'
+import {
+  useKeyboardNav,
+  useProseAnchors,
+  useReadingMinutes,
+} from '../../hooks/useDetailPage'
 import Lightbox from 'yet-another-react-lightbox'
 import Captions from 'yet-another-react-lightbox/plugins/captions'
 import Counter from 'yet-another-react-lightbox/plugins/counter'
@@ -100,6 +108,13 @@ export function ProjectView({
     })
     return { validGallery: vg, hasCategories: hc, lightboxSlides: ls }
   }, [project])
+
+  const readingMinutes = useReadingMinutes(project?.content)
+  useKeyboardNav({
+    prevHref: prev ? `/projects/${prev.slug}` : null,
+    nextHref: next ? `/projects/${next.slug}` : null,
+    indexHref: '/projects',
+  })
 
   if (!project) {
     return (
@@ -315,6 +330,12 @@ export function ProjectView({
                   </span>
                 </span>
               )}
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border bg-surface/60">
+                <Clock className="w-3 h-3 text-lime" />
+                <span className="text-ink-soft">read</span>
+                <span className="text-ink-soft/50">=</span>
+                <span className="text-ink tabular-nums">~{readingMinutes} min</span>
+              </span>
             </div>
           </motion.header>
 
@@ -333,19 +354,39 @@ export function ProjectView({
           )}
 
           {/* ===================== STICKY SUB-NAV =====================
-              Quick-jump pills (Overview / Stack / Gallery / Related) that
-              stick to the top once scrolled past the breadcrumb. Hides
-              its sticky behavior on small screens where the available
-              vertical space is too tight; still functional as a static
-              row above the hero console. */}
+              Quick-jump pills that stick to the top once scrolled past
+              the breadcrumb. Smooth-scrolls to the corresponding section
+              and updates the URL hash. The IntersectionObserver inside
+              SubNav keeps the active pill in sync as you scroll. */}
           <SubNav
-            hasGallery={validGallery.length > 0}
-            hasStack={Boolean(project.tags && project.tags.length > 0)}
-            hasRelated={otherProjects.length > 0}
+            items={[
+              { id: 'overview', label: 'overview', icon: <FileText className="w-3 h-3" /> },
+              ...(project.tags && project.tags.length > 0
+                ? [{ id: 'stack', label: 'stack', icon: <Layers className="w-3 h-3" /> }]
+                : []),
+              ...(validGallery.length > 0
+                ? [{ id: 'gallery', label: 'gallery', icon: <ImageIcon className="w-3 h-3" /> }]
+                : []),
+              ...(otherProjects.length > 0
+                ? [{ id: 'related', label: 'related', icon: <Network className="w-3 h-3" /> }]
+                : []),
+            ] as SubNavItem[]}
+            underlineLayoutId="project-subnav-underline"
           />
 
           {/* ===================== HERO CONSOLE ===================== */}
-          <MissionConsole project={project} hash={hash} />
+          <MissionConsole
+            project={project}
+            hash={hash}
+            onOpen={
+              validGallery.length > 0
+                ? () => {
+                    setPhotoIndex(0)
+                    setLightboxOpen(true)
+                  }
+                : undefined
+            }
+          />
 
           {/* ===================== MAIN + SIDEBAR =====================
               Mobile order: sidebar first (so the stack matrix + related
@@ -369,9 +410,12 @@ export function ProjectView({
               />
             </motion.div>
 
-            {/* Sidebar — sticky on desktop */}
+            {/* Sidebar — sticky on desktop. Max-height + overflow-y-auto
+                handle the case where the sidebar is taller than the
+                visible viewport (smaller laptops, lots of tags), so the
+                bottom cards stay reachable via internal scroll. */}
             <div className="lg:col-span-4 order-1 lg:order-2">
-              <div className="lg:sticky lg:top-24">
+              <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 [scrollbar-width:thin] [scrollbar-color:hsl(var(--border))_transparent]">
                 <ProjectSidebar
                   project={project}
                   otherProjects={otherProjects}
@@ -441,6 +485,11 @@ export function ProjectView({
           <FooterNav prev={prev} next={next} />
         </div>
       </section>
+
+      {/* Floating back-to-top — shows after scrolling past 1500px so it
+          doesn't compete with the hero. Especially valuable on mobile
+          where pages run 7000–8000px tall. */}
+      <BackToTop />
     </>
   )
 }
@@ -452,9 +501,14 @@ export function ProjectView({
 function MissionConsole({
   project,
   hash,
+  onOpen,
 }: {
   project: Project
   hash: string
+  /** Click-to-open: opens the gallery lightbox at frame 0 when set.
+   *  Skipped for the StablePay interactive banner (clicking that would
+   *  close out of the actual interactive demo). */
+  onOpen?: () => void
 }) {
   const mx = useMotionValue(50)
   const my = useMotionValue(50)
@@ -502,14 +556,34 @@ function MissionConsole({
         </span>
       </div>
 
-      {/* image area */}
+      {/* image area — clickable when a gallery exists (opens lightbox at
+          frame 0). For the StablePay interactive banner we keep it as a
+          plain div so clicks land on the embedded interactive UI. */}
       <div
+        role={onOpen && !isStable ? 'button' : undefined}
+        tabIndex={onOpen && !isStable ? 0 : undefined}
+        aria-label={onOpen && !isStable ? 'Open gallery in lightbox' : undefined}
+        onClick={onOpen && !isStable ? onOpen : undefined}
+        onKeyDown={
+          onOpen && !isStable
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onOpen()
+                }
+              }
+            : undefined
+        }
         onMouseMove={(e) => {
           const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
           mx.set(((e.clientX - r.left) / r.width) * 100)
           my.set(((e.clientY - r.top) / r.height) * 100)
         }}
-        className="relative aspect-[16/9] md:aspect-[2/1] bg-surface"
+        className={`relative aspect-[16/9] md:aspect-[2/1] bg-surface ${
+          onOpen && !isStable
+            ? 'cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+            : ''
+        }`}
       >
         {isStable ? (
           <StablePayBanner />
@@ -623,6 +697,11 @@ function DocsWindow({
   hash: string
   content: string
 }) {
+  const proseRef = useRef<HTMLDivElement>(null)
+  // Augment the rendered prose's h2/h3 with `id` + a hover-reveal anchor
+  // link so readers can deep-link to subsections (#architecture etc.).
+  useProseAnchors(proseRef, [content, slug])
+
   return (
     <div className="rounded-2xl border border-border bg-background overflow-hidden shadow-[0_20px_60px_-30px_hsl(var(--ink)/0.25)]">
       {/* header */}
@@ -665,6 +744,7 @@ function DocsWindow({
           </div>
           {/* prose content */}
           <div
+            ref={proseRef}
             className="prose prose-lg max-w-none prose-headings:font-display prose-headings:tracking-tight prose-headings:text-ink prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-ink prose-code:text-accent prose-code:font-mono prose-code:text-[0.9em] prose-code:before:content-[''] prose-code:after:content-['']"
             dangerouslySetInnerHTML={{ __html: content }}
           />
@@ -1341,65 +1421,6 @@ function HudCorners({
 }
 
 // ============================================================
-// SubNav — sticky quick-jump pills (Overview / Stack / Gallery / Related)
-// Becomes sticky once scrolled past so users can leap between sections
-// from anywhere on the page. Uses anchor scrolling with `scroll-mt-*`
-// on the targets so the sticky bar doesn't cover the heading.
-// ============================================================
-
-function SubNav({
-  hasGallery,
-  hasStack,
-  hasRelated,
-}: {
-  hasGallery: boolean
-  hasStack: boolean
-  hasRelated: boolean
-}) {
-  const items: Array<{ id: string; label: string; icon: ReactNode; show: boolean }> = [
-    { id: 'overview', label: 'overview', icon: <FileText className="w-3 h-3" />, show: true },
-    { id: 'stack', label: 'stack', icon: <Layers className="w-3 h-3" />, show: hasStack },
-    { id: 'gallery', label: 'gallery', icon: <ImageIcon className="w-3 h-3" />, show: hasGallery },
-    { id: 'related', label: 'related', icon: <Network className="w-3 h-3" />, show: hasRelated },
-  ]
-  const handleJump = (id: string) => (e: React.MouseEvent) => {
-    e.preventDefault()
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    // Update the URL hash so the back button + share-link work
-    if (history.replaceState) history.replaceState(null, '', `#${id}`)
-  }
-  return (
-    // top-[76px]: site header is `nav.fixed top-0` 65px tall; this puts the
-    // sub-nav just below it with a small gap. z-30 sits above content but
-    // below the site header (z-50) and the scroll progress bar (z-60).
-    <div className="sticky top-[76px] z-30 mb-8 -mx-1 md:mx-0">
-      <nav
-        aria-label="Section navigation"
-        className="flex items-center gap-1.5 overflow-x-auto px-1 md:px-1.5 py-1.5 rounded-full border border-border bg-background/85 backdrop-blur-md shadow-[0_8px_30px_-16px_hsl(var(--ink)/0.18)] scrollbar-none"
-      >
-        {items
-          .filter((it) => it.show)
-          .map((it, i) => (
-            <a
-              key={it.id}
-              href={`#${it.id}`}
-              onClick={handleJump(it.id)}
-              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink-soft hover:text-ink hover:bg-surface/70 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
-            >
-              <span className="text-accent shrink-0">{it.icon}</span>
-              <span>{it.label}</span>
-              {i === 0 && (
-                <span className="ml-1 text-ink-soft/40 hidden sm:inline">›</span>
-              )}
-            </a>
-          ))}
-      </nav>
-    </div>
-  )
-}
-
-// ============================================================
 // GalleryPreviewStrip — 4-image teaser shown right after the hero
 // header. Lets visitors see the visuals immediately + jump straight
 // into the lightbox at any frame they tap. The full categorized
@@ -1491,3 +1512,4 @@ function GalleryPreviewStrip({
     </motion.div>
   )
 }
+

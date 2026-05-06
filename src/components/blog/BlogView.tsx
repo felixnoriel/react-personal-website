@@ -8,14 +8,23 @@ import {
   Clock,
   Compass,
   Facebook,
+  FileText,
   Linkedin,
   MapPin,
   Plane,
   Radio,
+  Share2,
   Stamp,
   Twitter,
 } from 'lucide-react'
 import type { BlogPost } from '../../types/data'
+import { BackToTop } from '../ui/page/BackToTop'
+import { SubNav, type SubNavItem } from '../ui/page/SubNav'
+import {
+  useKeyboardNav,
+  useProseAnchors,
+  useReadingMinutes,
+} from '../../hooks/useDetailPage'
 
 interface BlogViewProps {
   blog: BlogPost | null
@@ -177,7 +186,13 @@ function FlightProgress() {
 // Hero cover
 // ============================================================
 
-function DispatchHero({ blog }: { blog: BlogPost }) {
+function DispatchHero({
+  blog,
+  readingMinutes,
+}: {
+  blog: BlogPost
+  readingMinutes: number
+}) {
   const meta = stableMeta(blog.slug)
   const reduce = useReducedMotion()
   const now = useLiveTime()
@@ -233,8 +248,7 @@ function DispatchHero({ blog }: { blog: BlogPost }) {
             {meta.code} · {meta.lat}° {meta.lng}°
           </Stamp3D>
           <Stamp3D color="lime">
-            <Clock className="w-3 h-3" />
-            {meta.readMin} min read
+            <Clock className="w-3 h-3" />~{readingMinutes} min read
           </Stamp3D>
         </motion.div>
 
@@ -336,10 +350,18 @@ function DispatchHero({ blog }: { blog: BlogPost }) {
 // Metadata sidebar
 // ============================================================
 
-function FieldNotesSidebar({ blog }: { blog: BlogPost }) {
+function FieldNotesSidebar({
+  blog,
+  readingMinutes,
+}: {
+  blog: BlogPost
+  readingMinutes: number
+}) {
   const meta = stableMeta(blog.slug)
   return (
-    <aside className="lg:sticky lg:top-24 space-y-5">
+    // max-h + overflow-y-auto so the sticky sidebar doesn't trap content
+    // off-screen on shorter viewports (laptops, small monitors).
+    <aside className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 space-y-5 [scrollbar-width:thin] [scrollbar-color:hsl(var(--ink)/0.15)_transparent]">
       {/* Dispatch slate */}
       <div className="relative rounded-2xl border-2 border-ink/10 bg-card p-5 shadow-warm">
         <Tape className="-top-2 left-6 -rotate-6" />
@@ -372,7 +394,7 @@ function FieldNotesSidebar({ blog }: { blog: BlogPost }) {
           </div>
           <div className="flex justify-between gap-3">
             <dt>read</dt>
-            <dd className="text-ink normal-case tracking-tight">{meta.readMin} min</dd>
+            <dd className="text-ink normal-case tracking-tight">~{readingMinutes} min</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt>wx</dt>
@@ -466,6 +488,19 @@ function SharePost({ blog }: { blog: BlogPost }) {
 
 export function BlogView({ blog }: BlogViewProps) {
   const contentRef = useRef<HTMLDivElement>(null)
+  // Real reading-time estimate from the post's content (was previously a
+  // pseudo-random value derived from the slug hash).
+  const readingMinutes = useReadingMinutes(blog?.content)
+  // Augment h2/h3 in the prose with anchor links for deep-linking.
+  useProseAnchors(contentRef, [blog?.content])
+  // Page-level keyboard shortcuts (Esc → back to /blog, gg → top).
+  // Prev/next not wired here — BlogDetail doesn't currently pass siblings;
+  // could be added later if the page begins receiving them.
+  useKeyboardNav({
+    prevHref: null,
+    nextHref: null,
+    indexHref: '/blog',
+  })
 
   if (!blog) {
     return (
@@ -490,19 +525,34 @@ export function BlogView({ blog }: BlogViewProps) {
   return (
     <article className="relative">
       <FlightProgress />
-      <DispatchHero blog={blog} />
+      <DispatchHero blog={blog} readingMinutes={readingMinutes} />
 
       {/* Body */}
       <section className="relative bg-background">
         <div className="container mx-auto max-w-7xl px-4 py-16 md:py-20">
+          {/* Sticky sub-nav: jump between transcript / field notes / share */}
+          <SubNav
+            items={[
+              { id: 'transcript', label: 'transcript', icon: <FileText className="w-3 h-3" /> },
+              { id: 'field-notes', label: 'field notes', icon: <Stamp className="w-3 h-3" /> },
+              { id: 'share', label: 'share', icon: <Share2 className="w-3 h-3" /> },
+            ] as SubNavItem[]}
+            underlineLayoutId="blog-subnav-underline"
+          />
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
             {/* Sidebar */}
-            <div className="lg:col-span-4 xl:col-span-3 order-2 lg:order-1">
-              <FieldNotesSidebar blog={blog} />
+            <div
+              id="field-notes"
+              className="lg:col-span-4 xl:col-span-3 order-2 lg:order-1 scroll-mt-[140px]"
+            >
+              <FieldNotesSidebar blog={blog} readingMinutes={readingMinutes} />
             </div>
 
             {/* Prose */}
-            <div className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2">
+            <div
+              id="transcript"
+              className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2 scroll-mt-[140px]"
+            >
               {/* Notebook header */}
               <div className="flex items-center gap-3 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft mb-8">
                 <span className="w-10 h-px bg-ink/25" />
@@ -537,7 +587,9 @@ export function BlogView({ blog }: BlogViewProps) {
                 </span>
               </div>
 
-              <SharePost blog={blog} />
+              <div id="share" className="scroll-mt-[140px]">
+                <SharePost blog={blog} />
+              </div>
 
               {/* Return */}
               <div className="mt-12">
@@ -553,6 +605,8 @@ export function BlogView({ blog }: BlogViewProps) {
           </div>
         </div>
       </section>
+      {/* Floating back-to-top — appears once you've scrolled past the hero. */}
+      <BackToTop />
     </article>
   )
 }
