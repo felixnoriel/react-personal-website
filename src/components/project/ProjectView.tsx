@@ -22,7 +22,6 @@ import {
   Network,
   Signal,
 } from 'lucide-react'
-import { BackToTop } from '../ui/page/BackToTop'
 import { SubNav, type SubNavItem } from '../ui/page/SubNav'
 import {
   useKeyboardNav,
@@ -485,11 +484,7 @@ export function ProjectView({
           <FooterNav prev={prev} next={next} />
         </div>
       </section>
-
-      {/* Floating back-to-top — shows after scrolling past 1500px so it
-          doesn't compete with the hero. Especially valuable on mobile
-          where pages run 7000–8000px tall. */}
-      <BackToTop />
+      {/* Back-to-top + global gg shortcut now live in MainLayout. */}
     </>
   )
 }

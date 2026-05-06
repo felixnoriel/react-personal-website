@@ -11,7 +11,6 @@ import {
   MapPin,
 } from 'lucide-react'
 import { ProjectList } from '../project/ProjectList'
-import { BackToTop } from '../ui/page/BackToTop'
 import { SubNav, type SubNavItem } from '../ui/page/SubNav'
 import {
   useKeyboardNav,
@@ -229,8 +228,7 @@ export function CareerView({ experience, projects }: CareerViewProps) {
           <ProjectList projects={projects} viewType="career" />
         </section>
       )}
-
-      <BackToTop />
+      {/* Back-to-top + global gg shortcut now live in MainLayout. */}
     </article>
   )
 }

@@ -18,7 +18,6 @@ import {
   Twitter,
 } from 'lucide-react'
 import type { BlogPost } from '../../types/data'
-import { BackToTop } from '../ui/page/BackToTop'
 import { SubNav, type SubNavItem } from '../ui/page/SubNav'
 import {
   useKeyboardNav,
@@ -605,8 +604,7 @@ export function BlogView({ blog }: BlogViewProps) {
           </div>
         </div>
       </section>
-      {/* Floating back-to-top — appears once you've scrolled past the hero. */}
-      <BackToTop />
+      {/* Back-to-top + global gg shortcut now live in MainLayout. */}
     </article>
   )
 }
