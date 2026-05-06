@@ -113,13 +113,29 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       if (ripples.length > 6) ripples.shift()
     }
 
+    // Clear in-flight click ripples on significant scroll. Many hero buttons
+    // (e.g. "See selected work") smooth-scroll the page on click. Without
+    // this, the chromatic ring would keep expanding on the fixed-position
+    // canvas while the page slides under it — looking like a "stuck"
+    // artifact mid-page rather than feedback for the click that triggered
+    // the scroll. Threshold of 30px ignores minor scroll jitter.
+    let lastScrollY = window.scrollY
+    const onScroll = () => {
+      const dy = Math.abs(window.scrollY - lastScrollY)
+      if (dy > 30 && ripples.length > 0) ripples.length = 0
+      lastScrollY = window.scrollY
+    }
     window.addEventListener('mousemove', onMove, { passive: true })
     window.addEventListener('mousedown', onDown, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
     document.documentElement.addEventListener('mouseout', onDocLeave)
 
     const TRAIL_FADE_MS = 700
-    const RIPPLE_MS = 1500
-    const RIPPLE_MAX_R = 320
+    // Faster, smaller ripple so click feedback feels like a tap not a
+    // shockwave. With this lifetime + radius, the ripple is mostly done
+    // before any post-click scroll-into-view animation completes.
+    const RIPPLE_MS = 900
+    const RIPPLE_MAX_R = 180
 
     const frame = (now: number) => {
       // Expire old data first so the idle check below sees the truth.
@@ -224,36 +240,38 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
         const radius = eased * RIPPLE_MAX_R
         const alpha = (1 - t) ** 1.5
 
-        // Three offset rings — cyan/magenta/yellow-ish split for chromatic
-        // aberration feel. Offsets are radial (different radii per channel).
-        const offsets = [-7, 0, 7]
+        // Three offset rings — chromatic aberration. Smaller offsets (±3
+        // vs the previous ±7) so the rings read as one slightly-soft ring
+        // rather than three discrete colored arcs that band-stripe across
+        // the page when the ripple is mid-life.
+        const offsets = [-3, 0, 3]
         const hues = [
-          (r.hue + 70) % 360,
+          (r.hue + 50) % 360,
           r.hue,
-          (r.hue - 70 + 360) % 360,
+          (r.hue - 50 + 360) % 360,
         ]
-        ctx.lineWidth = 1.4
+        ctx.lineWidth = 1.2
         for (let i = 0; i < 3; i++) {
-          ctx.strokeStyle = `hsla(${hues[i]}, 92%, 68%, ${alpha * (i === 1 ? 0.95 : 0.55)})`
+          ctx.strokeStyle = `hsla(${hues[i]}, 90%, 68%, ${alpha * (i === 1 ? 0.85 : 0.4)})`
           ctx.beginPath()
           ctx.arc(r.x, r.y, Math.max(0, radius + offsets[i]), 0, Math.PI * 2)
           ctx.stroke()
         }
         // Soft wide bloom along the front of the ring
-        ctx.strokeStyle = `hsla(${r.hue}, 100%, 80%, ${alpha * 0.35})`
-        ctx.lineWidth = 14
+        ctx.strokeStyle = `hsla(${r.hue}, 100%, 80%, ${alpha * 0.22})`
+        ctx.lineWidth = 10
         ctx.beginPath()
         ctx.arc(r.x, r.y, radius, 0, Math.PI * 2)
         ctx.stroke()
 
-        // Pinch-flash inner core for the first ~120ms
-        if (age < 120) {
-          const flashAlpha = 1 - age / 120
-          const flash = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, 30)
-          flash.addColorStop(0, `hsla(${r.hue}, 100%, 90%, ${flashAlpha * 0.9})`)
+        // Pinch-flash inner core for the first ~90ms
+        if (age < 90) {
+          const flashAlpha = 1 - age / 90
+          const flash = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, 24)
+          flash.addColorStop(0, `hsla(${r.hue}, 100%, 90%, ${flashAlpha * 0.85})`)
           flash.addColorStop(1, 'transparent')
           ctx.fillStyle = flash
-          ctx.fillRect(r.x - 30, r.y - 30, 60, 60)
+          ctx.fillRect(r.x - 24, r.y - 24, 48, 48)
         }
       }
 
@@ -266,6 +284,7 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('scroll', onScroll)
       document.documentElement.removeEventListener('mouseout', onDocLeave)
     }
   }, [])
