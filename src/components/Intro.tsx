@@ -310,18 +310,19 @@ export function Intro() {
       className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-background"
     >
       {/* crisp SVG dot substrate (replaces pixelated CSS radial-gradient) */}
-      <DotSubstrate paused={!heroInView} />
+      <DotSubstrate />
       {/* faint scan lines */}
       <div
         aria-hidden
         className="absolute inset-0 bg-scanlines opacity-[0.15] pointer-events-none mix-blend-multiply"
       />
-      {/* slow color-cycling aurora bloom — ambient wash that ebbs through
-          the brand palette. Mobile gets a "lite" single-blob version
-          (no mix-blend-screen) so phones still feel alive without paying
-          the GPU compositor cost of two blended layers. Skipped while
-          scrolled out so framer-motion tracks stop ticking offscreen. */}
-      {!reduceMotion && heroInView && <AuroraBloom lite={isMobile} />}
+      {/* slow color-cycling aurora bloom — ambient wash through the brand
+          palette. Stays mounted regardless of scroll position; content-
+          visibility:auto on the section already skips paint when offscreen,
+          and tearing the framer-motion tracks down + back up on every
+          scroll-past makes click-driven smooth-scrolls feel frozen as
+          React unmounts/remounts cascade with the scroll animation. */}
+      {!reduceMotion && <AuroraBloom lite={isMobile} />}
       <NodeNetwork
         className="opacity-[0.55]"
         density={0.00006}
@@ -344,14 +345,19 @@ export function Intro() {
         }}
         className="absolute top-0 left-0 pointer-events-none"
       />
-      {/* === Circuit-board energy grid: glowing traces pulse with energy === */}
-      <CircuitField paused={!heroInView} />
+      {/* === Circuit-board energy grid: glowing traces pulse with energy ===
+          Stays mounted regardless of scroll. Reverted from `paused={!heroInView}`
+          because tearing down ~30 SMIL <animate> nodes during a click-triggered
+          smooth-scroll synchronously stalled the main thread for the duration
+          of the scroll animation — the page felt frozen. content-visibility:
+          auto already skips paint when offscreen. */}
+      <CircuitField />
 
       {/* === Lightning bolts: dramatic electric arcs fire across the hero === */}
-      <LightningField paused={!heroInView} />
+      <LightningField />
 
       {/* === Shooting stars: bright diagonal streaks === */}
-      <MeteorField paused={!heroInView} />
+      <MeteorField />
 
       {/* floating micro-particles — desktop-only. Halved from 8 to 4 and
           dropped the box-shadow glow (which forces a paint-area expansion)
