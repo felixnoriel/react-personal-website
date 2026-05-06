@@ -1774,9 +1774,19 @@ function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean
     damping: 22,
     mass: 0.6,
   })
-  const glowBg = useTransform([mx, my] as never, ([x, y]: number[]) =>
-    `radial-gradient(600px circle at ${50 + x * 80}% ${50 + y * 80}%, hsl(var(--accent) / 0.35), transparent 55%)`,
-  )
+  // Cursor-tracking inner spotlight: was a `radial-gradient(... at X% Y%)`
+  // background driven by a useTransform that returned a fresh CSS string
+  // every spring tick. That re-rasterized the 600px gradient AND composited
+  // it with `mix-blend-plus-lighter` over the 80-SMIL-animation SVG below
+  // it on every frame, blocking the main thread for the duration of the
+  // tilt-spring settle — e.g. for ~300ms after every click on ship.engine.
+  // Now: pre-rasterized fixed-size gradient div, translated via GPU
+  // transform on x/y motion values. Same visual, compositor-only update.
+  // Range: mx/my are -0.5..+0.5, so glow center moves ±320px from card
+  // center along each axis (matches the prior ±80% behaviour for a
+  // typical ~400px-wide card).
+  const glowTx = useTransform(mx, (x) => x * 320)
+  const glowTy = useTransform(my, (y) => y * 320)
   const rafRef = useRef<number | null>(null)
   const pendingPtr = useRef<{ x: number; y: number } | null>(null)
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -1846,13 +1856,35 @@ function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Cursor-tracking spotlight */}
+        {/* Cursor-tracking spotlight — fixed-size pre-rasterized gradient,
+            translated via GPU transform (x/y motion values). ZERO repaint
+            per cursor frame, just a compositor matrix update. See comment
+            on glowTx/glowTy for why this beats the old radial-gradient bg. */}
         {!reduce && (
-          <motion.div
+          <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-[5] opacity-[0.35] mix-blend-plus-lighter"
-            style={{ background: glowBg }}
-          />
+            className="pointer-events-none absolute inset-0 z-[5] overflow-hidden"
+          >
+            <motion.div
+              className="absolute opacity-[0.35] mix-blend-plus-lighter"
+              style={{
+                // Center the 600px div on the parent's center via margin
+                // offsets, so framer-motion's x/y on `transform` doesn't
+                // fight a Tailwind translate utility.
+                left: '50%',
+                top: '50%',
+                marginLeft: -300,
+                marginTop: -300,
+                x: glowTx,
+                y: glowTy,
+                width: 600,
+                height: 600,
+                background:
+                  'radial-gradient(circle at center, hsl(var(--accent) / 0.55), transparent 55%)',
+                willChange: 'transform',
+              }}
+            />
+          </div>
         )}
         {/* Title bar */}
         <div className="relative flex items-center gap-2 px-4 py-2.5 border-b border-border bg-ink text-background">
