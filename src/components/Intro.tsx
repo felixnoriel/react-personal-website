@@ -160,14 +160,6 @@ export function Intro() {
   const tiltMySmooth = useSpring(tiltMy, { damping: 22, stiffness: 90, mass: 0.6 })
   const headlineRotY = useTransform(tiltMxSmooth, [-1, 1], [-5, 5])
   const headlineRotX = useTransform(tiltMySmooth, [-1, 1], [4, -4])
-  // Drop-shadow direction tracks the tilt — the headline appears to cast a
-  // glow onto the page from the same direction it's "leaning" toward,
-  // selling the 3D parallax illusion.
-  const headlineFilter = useTransform(
-    [tiltMxSmooth, tiltMySmooth],
-    ([mx, my]) =>
-      `drop-shadow(${(mx as number) * 12}px ${(my as number) * 8}px 24px hsl(var(--accent) / 0.35))`,
-  )
   const [aiHover, setAiHover] = useState(false)
   const { reduceMotion, isMobile, disableHeavyFx } = useFxLevel()
 
@@ -195,16 +187,14 @@ export function Intro() {
   }, [reduceMotion, isMobile])
 
   // Slow frame counter for bottom HUD. Drives StabilityMeter sine wave +
-  // GlitchNum tick. On mobile we freeze it entirely — the SMIL/decorative
-  // animations it feeds are already gated to off via `disableHeavyFx`, so
-  // the only thing this would still drive is the FPS/iter readout in the
-  // meta strip, which mobile users won't notice if it stays static. Killing
-  // the interval kills 5 React re-renders per second of the entire Intro
-  // subtree, which is the single biggest gain on phones.
+  // GlitchNum tick. On mobile we freeze it entirely. On desktop we run at
+  // 4Hz (was 10Hz) — that still feels alive but cuts the per-second
+  // re-renders of the whole Intro subtree by 60%, which has a real impact
+  // on cursor responsiveness with this many decorative children.
   const [frame, setFrame] = useState(0)
   useEffect(() => {
     if (disableHeavyFx) return
-    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 100)
+    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 250)
     return () => clearInterval(t)
   }, [disableHeavyFx])
 
@@ -214,17 +204,34 @@ export function Intro() {
     if (isMobile) return
     const el = sectionRef.current
     if (!el) return
-    const handler = (e: MouseEvent) => {
+    // rAF-coalesce mousemove — at 60Hz native pointer events can fire
+    // ~120Hz on high-rate mice, and each one runs four motion-value sets
+    // that ripple through useSpring + useTransform consumers. Coalescing
+    // to one update per frame caps that work to display refresh.
+    let pending: { x: number; y: number } | null = null
+    let rafId: number | null = null
+    const flush = () => {
+      rafId = null
+      if (!pending) return
       const rect = el.getBoundingClientRect()
-      const localX = e.clientX - rect.left
-      const localY = e.clientY - rect.top
+      const localX = pending.x - rect.left
+      const localY = pending.y - rect.top
+      pending = null
       mouseX.set(localX)
       mouseY.set(localY)
-      // Normalized -1..1 for the 3D headline tilt.
       tiltMx.set((localX / rect.width) * 2 - 1)
       tiltMy.set((localY / rect.height) * 2 - 1)
     }
+    const handler = (e: MouseEvent) => {
+      pending = { x: e.clientX, y: e.clientY }
+      if (rafId === null) rafId = requestAnimationFrame(flush)
+    }
     const leave = () => {
+      pending = null
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+        rafId = null
+      }
       mouseX.set(-400)
       mouseY.set(-400)
       tiltMx.set(0)
@@ -233,6 +240,7 @@ export function Intro() {
     el.addEventListener('mousemove', handler)
     el.addEventListener('mouseleave', leave)
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId)
       el.removeEventListener('mousemove', handler)
       el.removeEventListener('mouseleave', leave)
     }
@@ -255,7 +263,7 @@ export function Intro() {
           ebbs through the brand palette. Sits below the spotlight so it
           tints the whole stage rather than overpowering it. */}
       {!disableHeavyFx && <AuroraBloom />}
-      <NodeNetwork className="opacity-[0.55]" />
+      <NodeNetwork className="opacity-[0.55]" density={0.00006} linkDistance={130} />
       <motion.div
         aria-hidden
         style={{ background: spotlight }}
@@ -273,24 +281,22 @@ export function Intro() {
       {/* === Cursor aura: comet trail + click shockwaves + soft halo === */}
       <CursorAura className="z-[5]" />
 
-      {/* floating micro-particles — desktop-only. 8 infinite framer-motion
-          loops compositing 4 properties each = 32 active animation tracks
-          that the browser keeps repainting. On mobile they barely register
-          visually but add real GPU load during scroll. */}
+      {/* floating micro-particles — desktop-only. Halved from 8 to 4 and
+          dropped the box-shadow glow (which forces a paint-area expansion)
+          plus the scale axis. Result: 4 elements × 2 animated transform
+          channels (x/y) + opacity = 12 tracks instead of 32. Visually
+          still alive thanks to AuroraBloom + CursorAura carrying the
+          ambient atmosphere. */}
       {!disableHeavyFx && (
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none overflow-hidden"
         >
           {[
-            { left: '12%', top: '22%', size: 4, color: 'bg-accent/60', dur: 7, delay: 0 },
-            { left: '82%', top: '18%', size: 3, color: 'bg-lime/70', dur: 9, delay: 1.2 },
-            { left: '28%', top: '72%', size: 5, color: 'bg-amber/50', dur: 8, delay: 2.1 },
-            { left: '62%', top: '58%', size: 2, color: 'bg-electric/70', dur: 10, delay: 0.6 },
-            { left: '90%', top: '68%', size: 3, color: 'bg-accent/50', dur: 11, delay: 3 },
-            { left: '5%', top: '52%', size: 2, color: 'bg-lime/60', dur: 12, delay: 1.8 },
-            { left: '48%', top: '12%', size: 3, color: 'bg-amber/60', dur: 9, delay: 2.8 },
-            { left: '72%', top: '82%', size: 4, color: 'bg-accent/40', dur: 13, delay: 0.4 },
+            { left: '14%', top: '28%', size: 4, color: 'bg-accent/60', dur: 9, delay: 0 },
+            { left: '82%', top: '20%', size: 3, color: 'bg-lime/70', dur: 11, delay: 1.6 },
+            { left: '28%', top: '74%', size: 4, color: 'bg-amber/55', dur: 10, delay: 2.4 },
+            { left: '74%', top: '78%', size: 3, color: 'bg-electric/65', dur: 12, delay: 0.8 },
           ].map((p, i) => (
             <motion.span
               key={i}
@@ -300,13 +306,12 @@ export function Intro() {
                 top: p.top,
                 width: p.size,
                 height: p.size,
-                boxShadow: '0 0 12px currentColor',
+                willChange: 'transform, opacity',
               }}
               animate={{
-                y: [0, -24, 0],
-                x: [0, i % 2 === 0 ? 12 : -12, 0],
-                opacity: [0.3, 0.9, 0.3],
-                scale: [0.8, 1.2, 0.8],
+                y: [0, -22, 0],
+                x: [0, i % 2 === 0 ? 10 : -10, 0],
+                opacity: [0.35, 0.85, 0.35],
               }}
               transition={{
                 duration: p.dur,
@@ -396,7 +401,6 @@ export function Intro() {
                       rotateX: headlineRotX,
                       rotateY: headlineRotY,
                       transformPerspective: 1000,
-                      filter: headlineFilter,
                     }
               }
             >
@@ -971,11 +975,13 @@ function HudCorners() {
 }
 
 // ============================================================
-// AuroraBloom — three large, slow-drifting radial blooms in the
-// brand palette. Each blob translates + scales + cycles opacity on
-// long durations (24–34s) and the trio is wrapped in `mix-blend-screen`
-// so they additively tint the whole hero rather than block content.
-// Cheap: three transform/opacity-only motion tracks, all GPU-composited.
+// AuroraBloom — two large, slow-drifting radial blooms in the
+// brand palette. The radial gradients have soft transparent stops
+// already, so the prior `filter: blur()` was just compounding the
+// softness at huge GPU cost (large blur radii + mix-blend-screen
+// over 60% viewport areas was the single biggest desktop hot spot).
+// Now: gradients only, transform/opacity-only motion, will-change
+// hint to keep each blob on its own compositor layer.
 // ============================================================
 
 function AuroraBloom() {
@@ -985,49 +991,34 @@ function AuroraBloom() {
       className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen"
     >
       <motion.div
-        className="absolute -top-1/4 -left-1/4 w-[70%] h-[70%] rounded-full"
+        className="absolute -top-1/4 -left-1/4 w-[80%] h-[80%] rounded-full"
         style={{
           background:
-            'radial-gradient(closest-side, hsl(var(--accent) / 0.42), transparent 70%)',
-          filter: 'blur(64px)',
+            'radial-gradient(closest-side, hsl(var(--accent) / 0.36), transparent 75%)',
+          willChange: 'transform, opacity',
         }}
         animate={{
-          x: ['0%', '12%', '-6%', '0%'],
-          y: ['0%', '-8%', '10%', '0%'],
-          scale: [1, 1.15, 0.95, 1],
-          opacity: [0.55, 0.85, 0.65, 0.55],
+          x: ['0%', '10%', '-4%', '0%'],
+          y: ['0%', '-6%', '8%', '0%'],
+          scale: [1, 1.12, 0.96, 1],
+          opacity: [0.55, 0.8, 0.65, 0.55],
         }}
-        transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[10%] -right-1/4 w-[60%] h-[60%] rounded-full"
+        className="absolute top-[5%] -right-1/4 w-[70%] h-[70%] rounded-full"
         style={{
           background:
-            'radial-gradient(closest-side, hsl(var(--lime) / 0.35), transparent 70%)',
-          filter: 'blur(64px)',
+            'radial-gradient(closest-side, hsl(var(--lime) / 0.3), transparent 75%)',
+          willChange: 'transform, opacity',
         }}
         animate={{
-          x: ['0%', '-10%', '8%', '0%'],
-          y: ['0%', '12%', '-6%', '0%'],
-          scale: [1, 0.92, 1.18, 1],
-          opacity: [0.45, 0.75, 0.5, 0.45],
-        }}
-        transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
-      />
-      <motion.div
-        className="absolute -bottom-[20%] left-[20%] w-[55%] h-[55%] rounded-full"
-        style={{
-          background:
-            'radial-gradient(closest-side, hsl(var(--electric) / 0.32), transparent 70%)',
-          filter: 'blur(72px)',
-        }}
-        animate={{
-          x: ['0%', '8%', '-12%', '0%'],
-          y: ['0%', '-10%', '6%', '0%'],
-          scale: [1, 1.1, 0.88, 1],
+          x: ['0%', '-8%', '6%', '0%'],
+          y: ['0%', '10%', '-4%', '0%'],
+          scale: [1, 0.94, 1.14, 1],
           opacity: [0.4, 0.7, 0.5, 0.4],
         }}
-        transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut', delay: 8 }}
+        transition={{ duration: 36, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
       />
     </div>
   )

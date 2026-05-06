@@ -42,19 +42,27 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
 
     let width = 0
     let height = 0
-    let dpr = Math.min(window.devicePixelRatio || 1, 2)
+    // Cap DPR at 1.5 instead of the usual 2 — the trail/ripple visuals are
+    // soft, glow-driven, and don't reward extra subpixel detail. Halving
+    // the pixel budget on a 3x retina cuts ~55% of the per-frame fill cost.
+    let dpr = Math.min(window.devicePixelRatio || 1, 1.5)
 
     const trail: TrailPoint[] = []
     const ripples: Ripple[] = []
     const mouse = { x: -9999, y: -9999, active: false }
     let clickHueIdx = 0
+    // Track whether the canvas currently has anything painted. Lets us
+    // skip the entire clear/draw pipeline on idle frames (no cursor in
+    // section + no live trail + no live ripples) — by far the most
+    // common state, since the cursor sits still on text most of the time.
+    let lastFrameDirty = false
 
     const resize = () => {
       const parent = canvas.parentElement
       if (!parent) return
       width = parent.clientWidth
       height = parent.clientHeight
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = Math.floor(width * dpr)
       canvas.height = Math.floor(height * dpr)
       canvas.style.width = `${width}px`
@@ -66,6 +74,8 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     resize()
     const ro = new ResizeObserver(resize)
     if (canvas.parentElement) ro.observe(canvas.parentElement)
+
+    const HALO_R = 100
 
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
@@ -105,11 +115,33 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     const RIPPLE_MAX_R = 320
 
     const frame = (now: number) => {
-      ctx.clearRect(0, 0, width, height)
+      // Expire old data first so the idle check below sees the truth.
+      while (trail.length && now - trail[0].t > TRAIL_FADE_MS) trail.shift()
+      for (let k = ripples.length - 1; k >= 0; k--) {
+        if (now - ripples[k].t > RIPPLE_MS) ripples.splice(k, 1)
+      }
 
-      // 1. Soft cursor halo
+      // Idle fast-path: when there's nothing to draw, skip clear+draw
+      // entirely. We still queue the next rAF so a future mousemove or
+      // click wakes the loop. This is a huge win during reading/scrolling
+      // — most of the time the user isn't waving their cursor around.
+      const idle =
+        !mouse.active && trail.length === 0 && ripples.length === 0
+      if (idle) {
+        if (lastFrameDirty) {
+          ctx.clearRect(0, 0, width, height)
+          lastFrameDirty = false
+        }
+        rafRef.current = requestAnimationFrame(frame)
+        return
+      }
+
+      ctx.clearRect(0, 0, width, height)
+      lastFrameDirty = true
+
+      // 1. Soft cursor halo — only allocates a gradient when the cursor is
+      // actually in the section (idle path above already returned otherwise).
       if (mouse.active) {
-        const haloR = 110
         const baseHue = HUES[clickHueIdx % HUES.length]
         const grad = ctx.createRadialGradient(
           mouse.x,
@@ -117,17 +149,16 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
           0,
           mouse.x,
           mouse.y,
-          haloR,
+          HALO_R,
         )
         grad.addColorStop(0, `hsla(${baseHue}, 85%, 65%, 0.22)`)
         grad.addColorStop(0.45, `hsla(${baseHue}, 85%, 55%, 0.08)`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
-        ctx.fillRect(mouse.x - haloR, mouse.y - haloR, haloR * 2, haloR * 2)
+        ctx.fillRect(mouse.x - HALO_R, mouse.y - HALO_R, HALO_R * 2, HALO_R * 2)
       }
 
-      // 2. Comet trail — drop expired points, then stroke fading segments
-      while (trail.length && now - trail[0].t > TRAIL_FADE_MS) trail.shift()
+      // 2. Comet trail — stroke fading segments
 
       if (trail.length >= 2) {
         for (let i = 1; i < trail.length; i++) {
