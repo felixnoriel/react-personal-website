@@ -6,7 +6,6 @@ import { MainLayout } from './components/layout/MainLayout'
 import { ScrollToTop } from './components/ScrollToTop'
 import { CommandPalette } from './components/ui/CommandPalette'
 import { ScrollHUD } from './components/ui/ScrollHUD'
-import { TechCursor } from './components/ui/TechCursor'
 import { BootLoader } from './components/ui/BootLoader'
 
 // Lazy Load Pages
@@ -77,7 +76,6 @@ function App() {
             <ScrollToTop />
             <CommandPalette />
             <ScrollHUD />
-            <TechCursor />
             <MainLayout>
               <Suspense
                 fallback={
