@@ -155,14 +155,43 @@ export function Intro() {
   useEffect(() => {
     const el = sectionRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
+    // Asymmetric debounce: pause cascade is delayed by 450ms so it doesn't
+    // run during the smooth-scroll-into-view triggered by hero CTAs (which
+    // typically takes ~300-600ms). Resume is immediate.
+    //
+    // Without this, clicking "See selected work" → smooth-scroll fires →
+    // IO callback fires mid-scroll → setHeroInView(false) → React unmounts
+    // CircuitField/LightningField/MeteorField/AuroraBloom and tears down
+    // their effects (cancelAnimationFrame, clearInterval, ResizeObserver
+    // disconnect) all in one render. That cleanup cascade competes with
+    // the smooth-scroll on the main thread, making the page feel frozen
+    // for the duration of the click → scroll transition.
+    let pauseTimer: ReturnType<typeof setTimeout> | null = null
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) setHeroInView(e.isIntersecting)
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            if (pauseTimer) {
+              clearTimeout(pauseTimer)
+              pauseTimer = null
+            }
+            setHeroInView(true)
+          } else {
+            if (pauseTimer) clearTimeout(pauseTimer)
+            pauseTimer = setTimeout(() => {
+              setHeroInView(false)
+              pauseTimer = null
+            }, 450)
+          }
+        }
       },
       { rootMargin: '60px' },
     )
     io.observe(el)
-    return () => io.disconnect()
+    return () => {
+      if (pauseTimer) clearTimeout(pauseTimer)
+      io.disconnect()
+    }
   }, [])
   const mouseX = useMotionValue(-400)
   const mouseY = useMotionValue(-400)

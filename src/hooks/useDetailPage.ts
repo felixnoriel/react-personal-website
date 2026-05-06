@@ -11,6 +11,14 @@ import { useNavigate } from 'react-router-dom'
  * has scrolled away. `content-visibility: auto` skips paint but not
  * script — JS animations otherwise tick at full speed offscreen.
  *
+ * **Asymmetric debounce**: going-out-of-view is delayed by `pauseDelay`
+ * (default 400ms), going-back-into-view is immediate. This prevents the
+ * cascade of cleanup work (clearInterval, useEffect tear-downs, framer-
+ * motion teardowns) from competing with smooth-scroll-into-view animations
+ * triggered by hero CTAs. By the time the deferred pause fires, the scroll
+ * has settled and the main thread is free to absorb the cleanup work
+ * without making the page feel frozen.
+ *
  * Default `rootMargin: '120px'` keeps work running through small over-
  * scroll bounces without thrashing setup/teardown on every scroll tick.
  *
@@ -20,15 +28,37 @@ import { useNavigate } from 'react-router-dom'
  */
 export function useInViewObserver(
   ref: RefObject<Element | null>,
-  options?: { rootMargin?: string; threshold?: number },
+  options?: { rootMargin?: string; threshold?: number; pauseDelay?: number },
 ): boolean {
   const [inView, setInView] = useState(true)
   useEffect(() => {
     const el = ref.current
     if (!el || typeof IntersectionObserver === 'undefined') return
+    const pauseDelay = options?.pauseDelay ?? 400
+    let pauseTimer: ReturnType<typeof setTimeout> | null = null
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) setInView(e.isIntersecting)
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            // Resume immediately when the section comes (back) into view.
+            if (pauseTimer) {
+              clearTimeout(pauseTimer)
+              pauseTimer = null
+            }
+            setInView(true)
+          } else {
+            // Defer pause: smooth-scroll-into-view animations triggered by
+            // hero buttons typically settle within 300-600ms; running the
+            // pause cascade DURING that window makes the page feel frozen
+            // because each section's cleanup work (clearInterval, etc.)
+            // competes with the scroll animation on the main thread.
+            if (pauseTimer) clearTimeout(pauseTimer)
+            pauseTimer = setTimeout(() => {
+              setInView(false)
+              pauseTimer = null
+            }, pauseDelay)
+          }
+        }
       },
       {
         rootMargin: options?.rootMargin ?? '120px',
@@ -36,8 +66,11 @@ export function useInViewObserver(
       },
     )
     io.observe(el)
-    return () => io.disconnect()
-  }, [ref, options?.rootMargin, options?.threshold])
+    return () => {
+      if (pauseTimer) clearTimeout(pauseTimer)
+      io.disconnect()
+    }
+  }, [ref, options?.rootMargin, options?.threshold, options?.pauseDelay])
   return inView
 }
 
