@@ -5,7 +5,6 @@ interface CursorAuraProps {
 }
 
 type TrailPoint = { x: number; y: number; t: number }
-type Ripple = { x: number; y: number; t: number; hue: number }
 
 // Brand-palette HSL hues — the trail color-cycles through these so a long
 // gesture leaves a rainbow ribbon rather than a monochrome streak.
@@ -13,7 +12,7 @@ const HUES = [325, 145, 200, 38]
 
 /**
  * CursorAura — site-wide desktop canvas effect that follows the cursor
- * across every page. Three layered effects on a single rAF + single
+ * across every page. Two layered effects on a single rAF + single
  * fixed-position canvas:
  *
  *   1. Comet trail: a gradient-stroked ribbon traces recent cursor positions,
@@ -21,19 +20,22 @@ const HUES = [325, 145, 200, 38]
  *      paint a rainbow streak.
  *   2. Soft halo: a radial-gradient bloom under the cursor head, like the
  *      cursor itself is emitting light into the page.
- *   3. Click shockwaves: each mousedown spawns a chromatic ring that grows
- *      and fades — three offset rings (R/G/B-style) for a holo aberration
- *      look, plus a soft inner glow.
+ *
+ * Click ripples were removed in this iteration: they spawned heavy stroke
+ * + radial-gradient draws that, under repeated rapid clicks, made the page
+ * feel frozen for the duration of the ripple animation. The visual loss
+ * is small — clicks already get OS-level button-press feedback and the
+ * trail head naturally pulses on the click position because mousedown is
+ * always preceded by mousemove that updates the trail.
  *
  * The canvas is `position: fixed; inset: 0` so it covers the viewport and
  * doesn't move with scroll. Listeners are on `window` so the effect tracks
  * the cursor regardless of which element it's hovering. `pointer-events: none`
  * keeps the canvas out of hit-testing — it's purely visual.
  *
- * Idle-skip pattern: when there's no live trail, no live ripples, and the
- * mouse isn't in the document, we skip the entire clear+draw pipeline and
- * just queue the next rAF. The browser's tab-visibility throttling handles
- * the "tab hidden" case automatically.
+ * Idle-skip pattern: when there's no live trail and the mouse isn't in
+ * the document, we skip the entire clear+draw pipeline and just queue
+ * the next rAF.
  *
  * Skipped on mobile (touch has no hover cursor) and on prefers-reduced-motion.
  */
@@ -59,13 +61,15 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     let dpr = Math.min(window.devicePixelRatio || 1, 1.5)
 
     const trail: TrailPoint[] = []
-    const ripples: Ripple[] = []
     const mouse = { x: -9999, y: -9999, active: false }
-    let clickHueIdx = 0
+    // hue cycles purely on resize / re-mount now (not per click) — keeps
+    // the trail color shifting subtly without burning frame time on
+    // click-spawned ripples that the user perceived as "click hangs".
+    const baseHueIdx = 0
     // Track whether the canvas currently has anything painted. Lets us
     // skip the entire clear/draw pipeline on idle frames (no cursor active +
-    // no live trail + no live ripples) — by far the most common state,
-    // since the cursor sits still on text most of the time.
+    // no live trail) — by far the most common state, since the cursor
+    // sits still on text most of the time.
     let lastFrameDirty = false
 
     const resize = () => {
@@ -106,37 +110,17 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     const onDocLeave = (e: MouseEvent) => {
       if (e.relatedTarget == null) mouse.active = false
     }
-    const onDown = (e: MouseEvent) => {
-      const hue = HUES[clickHueIdx % HUES.length]
-      clickHueIdx++
-      ripples.push({ x: e.clientX, y: e.clientY, t: performance.now(), hue })
-      if (ripples.length > 6) ripples.shift()
-    }
 
     window.addEventListener('mousemove', onMove, { passive: true })
-    window.addEventListener('mousedown', onDown, { passive: true })
     document.documentElement.addEventListener('mouseout', onDocLeave)
 
     const TRAIL_FADE_MS = 700
-    // Faster, smaller ripple so click feedback feels like a tap not a
-    // shockwave. With this lifetime + radius, the ripple is mostly done
-    // before any post-click scroll-into-view animation completes.
-    const RIPPLE_MS = 900
-    const RIPPLE_MAX_R = 180
 
     const frame = (now: number) => {
-      // Expire old data first so the idle check below sees the truth.
       while (trail.length && now - trail[0].t > TRAIL_FADE_MS) trail.shift()
-      for (let k = ripples.length - 1; k >= 0; k--) {
-        if (now - ripples[k].t > RIPPLE_MS) ripples.splice(k, 1)
-      }
 
-      // Idle fast-path: when there's nothing to draw, skip clear+draw
-      // entirely. We still queue the next rAF so a future mousemove or
-      // click wakes the loop. This is a huge win during reading/scrolling
-      // — most of the time the user isn't waving their cursor around.
-      const idle =
-        !mouse.active && trail.length === 0 && ripples.length === 0
+      // Idle fast-path: nothing to draw → skip clear+draw entirely.
+      const idle = !mouse.active && trail.length === 0
       if (idle) {
         if (lastFrameDirty) {
           ctx.clearRect(0, 0, width, height)
@@ -152,7 +136,7 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       // 1. Soft cursor halo — only allocates a gradient when the cursor is
       // actually on the page (idle path above already returned otherwise).
       if (mouse.active) {
-        const baseHue = HUES[clickHueIdx % HUES.length]
+        const baseHue = HUES[baseHueIdx]
         const grad = ctx.createRadialGradient(
           mouse.x,
           mouse.y,
@@ -176,8 +160,8 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
           const ageMax = Math.max(now - a.t, now - b.t)
           const alpha = 1 - ageMax / TRAIL_FADE_MS
           if (alpha <= 0) continue
-          const hueA = HUES[(clickHueIdx + i) % HUES.length]
-          const hueB = HUES[(clickHueIdx + i + 1) % HUES.length]
+          const hueA = HUES[(baseHueIdx + i) % HUES.length]
+          const hueB = HUES[(baseHueIdx + i + 1) % HUES.length]
 
           // Outer wide glow
           ctx.strokeStyle = `hsla(${hueA}, 90%, 60%, ${alpha * 0.32})`
@@ -197,7 +181,7 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
         }
         // White-hot head
         const head = trail[trail.length - 1]
-        const hue = HUES[clickHueIdx % HUES.length]
+        const hue = HUES[baseHueIdx]
         const headR = 14
         const headGrad = ctx.createRadialGradient(
           head.x,
@@ -214,54 +198,6 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
         ctx.fillRect(head.x - headR, head.y - headR, headR * 2, headR * 2)
       }
 
-      // 3. Click shockwaves — chromatic concentric rings + inner glow
-      for (let k = ripples.length - 1; k >= 0; k--) {
-        const r = ripples[k]
-        const age = now - r.t
-        if (age > RIPPLE_MS) {
-          ripples.splice(k, 1)
-          continue
-        }
-        const t = age / RIPPLE_MS
-        const eased = 1 - (1 - t) ** 3 // easeOutCubic
-        const radius = eased * RIPPLE_MAX_R
-        const alpha = (1 - t) ** 1.5
-
-        // Three offset rings — chromatic aberration. Smaller offsets (±3
-        // vs the previous ±7) so the rings read as one slightly-soft ring
-        // rather than three discrete colored arcs that band-stripe across
-        // the page when the ripple is mid-life.
-        const offsets = [-3, 0, 3]
-        const hues = [
-          (r.hue + 50) % 360,
-          r.hue,
-          (r.hue - 50 + 360) % 360,
-        ]
-        ctx.lineWidth = 1.2
-        for (let i = 0; i < 3; i++) {
-          ctx.strokeStyle = `hsla(${hues[i]}, 90%, 68%, ${alpha * (i === 1 ? 0.85 : 0.4)})`
-          ctx.beginPath()
-          ctx.arc(r.x, r.y, Math.max(0, radius + offsets[i]), 0, Math.PI * 2)
-          ctx.stroke()
-        }
-        // Soft wide bloom along the front of the ring
-        ctx.strokeStyle = `hsla(${r.hue}, 100%, 80%, ${alpha * 0.22})`
-        ctx.lineWidth = 10
-        ctx.beginPath()
-        ctx.arc(r.x, r.y, radius, 0, Math.PI * 2)
-        ctx.stroke()
-
-        // Pinch-flash inner core for the first ~90ms
-        if (age < 90) {
-          const flashAlpha = 1 - age / 90
-          const flash = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, 24)
-          flash.addColorStop(0, `hsla(${r.hue}, 100%, 90%, ${flashAlpha * 0.85})`)
-          flash.addColorStop(1, 'transparent')
-          ctx.fillStyle = flash
-          ctx.fillRect(r.x - 24, r.y - 24, 48, 48)
-        }
-      }
-
       rafRef.current = requestAnimationFrame(frame)
     }
     rafRef.current = requestAnimationFrame(frame)
@@ -270,7 +206,6 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mousedown', onDown)
       document.documentElement.removeEventListener('mouseout', onDocLeave)
     }
   }, [])

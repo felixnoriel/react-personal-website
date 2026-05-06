@@ -1669,8 +1669,8 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="14"
-              strokeOpacity="0.5"
+              strokeWidth="28"
+              strokeOpacity="0.45"
               strokeLinecap="round"
               strokeLinejoin="round"
               filter="url(#bolt-glow-soft)"
@@ -1681,7 +1681,7 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="8"
+              strokeWidth="16"
               strokeOpacity="0.85"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -1693,7 +1693,7 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="4.5"
+              strokeWidth="9"
               strokeOpacity="1"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -1704,7 +1704,7 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke="#ffffff"
-              strokeWidth="2.5"
+              strokeWidth="5"
               strokeOpacity="1"
               strokeLinecap="round"
               strokeLinejoin="round"
