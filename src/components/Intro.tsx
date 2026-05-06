@@ -27,6 +27,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
+import { CursorAura } from './ui/CursorAura'
 import { MagneticButton } from './ui/MagneticButton'
 import { NodeNetwork } from './ui/NodeNetwork'
 import { useFxLevel } from '../hooks/useFxLevel'
@@ -148,6 +149,25 @@ export function Intro() {
     ([x, y]) =>
       `radial-gradient(600px circle at ${x}px ${y}px, hsl(var(--accent) / 0.14), transparent 55%)`
   )
+  // Normalized cursor position (-1..1) for the H1 3D parallax tilt. We
+  // route through softer springs than the spotlight so the headline doesn't
+  // jitter on micro-movements; the tilt should feel like floating, not
+  // tracking. Smoothed values are then mapped to small rotateX/rotateY
+  // angles via useTransform.
+  const tiltMx = useMotionValue(0)
+  const tiltMy = useMotionValue(0)
+  const tiltMxSmooth = useSpring(tiltMx, { damping: 22, stiffness: 90, mass: 0.6 })
+  const tiltMySmooth = useSpring(tiltMy, { damping: 22, stiffness: 90, mass: 0.6 })
+  const headlineRotY = useTransform(tiltMxSmooth, [-1, 1], [-5, 5])
+  const headlineRotX = useTransform(tiltMySmooth, [-1, 1], [4, -4])
+  // Drop-shadow direction tracks the tilt — the headline appears to cast a
+  // glow onto the page from the same direction it's "leaning" toward,
+  // selling the 3D parallax illusion.
+  const headlineFilter = useTransform(
+    [tiltMxSmooth, tiltMySmooth],
+    ([mx, my]) =>
+      `drop-shadow(${(mx as number) * 12}px ${(my as number) * 8}px 24px hsl(var(--accent) / 0.35))`,
+  )
   const [aiHover, setAiHover] = useState(false)
   const { reduceMotion, isMobile, disableHeavyFx } = useFxLevel()
 
@@ -196,12 +216,19 @@ export function Intro() {
     if (!el) return
     const handler = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect()
-      mouseX.set(e.clientX - rect.left)
-      mouseY.set(e.clientY - rect.top)
+      const localX = e.clientX - rect.left
+      const localY = e.clientY - rect.top
+      mouseX.set(localX)
+      mouseY.set(localY)
+      // Normalized -1..1 for the 3D headline tilt.
+      tiltMx.set((localX / rect.width) * 2 - 1)
+      tiltMy.set((localY / rect.height) * 2 - 1)
     }
     const leave = () => {
       mouseX.set(-400)
       mouseY.set(-400)
+      tiltMx.set(0)
+      tiltMy.set(0)
     }
     el.addEventListener('mousemove', handler)
     el.addEventListener('mouseleave', leave)
@@ -209,7 +236,7 @@ export function Intro() {
       el.removeEventListener('mousemove', handler)
       el.removeEventListener('mouseleave', leave)
     }
-  }, [mouseX, mouseY, isMobile])
+  }, [mouseX, mouseY, tiltMx, tiltMy, isMobile])
 
   return (
     <section
@@ -224,6 +251,10 @@ export function Intro() {
         aria-hidden
         className="absolute inset-0 bg-scanlines opacity-[0.15] pointer-events-none mix-blend-multiply"
       />
+      {/* slow color-cycling aurora bloom — desktop-only ambient wash that
+          ebbs through the brand palette. Sits below the spotlight so it
+          tints the whole stage rather than overpowering it. */}
+      {!disableHeavyFx && <AuroraBloom />}
       <NodeNetwork className="opacity-[0.55]" />
       <motion.div
         aria-hidden
@@ -238,6 +269,9 @@ export function Intro() {
 
       {/* === Shooting stars: bright diagonal streaks === */}
       <MeteorField />
+
+      {/* === Cursor aura: comet trail + click shockwaves + soft halo === */}
+      <CursorAura className="z-[5]" />
 
       {/* floating micro-particles — desktop-only. 8 infinite framer-motion
           loops compositing 4 properties each = 32 active animation tracks
@@ -353,7 +387,19 @@ export function Intro() {
               </motion.div>
             </div>
 
-            <h1 className="font-display text-[clamp(2.5rem,6.2vw,5.25rem)] leading-[0.98] tracking-tighter text-ink font-bold mb-8 text-balance">
+            <motion.h1
+              className="font-display text-[clamp(2.5rem,6.2vw,5.25rem)] leading-[0.98] tracking-tighter text-ink font-bold mb-8 text-balance [transform-style:preserve-3d] will-change-transform"
+              style={
+                disableHeavyFx
+                  ? undefined
+                  : {
+                      rotateX: headlineRotX,
+                      rotateY: headlineRotY,
+                      transformPerspective: 1000,
+                      filter: headlineFilter,
+                    }
+              }
+            >
               <span className="whitespace-nowrap">
                 <span className="italic font-extrabold text-accent text-glow-accent">
                   Product
@@ -526,7 +572,7 @@ export function Intro() {
                   {i < TAGLINE_WORDS.length - 1 ? ' ' : ''}
                 </span>
               ))}
-            </h1>
+            </motion.h1>
 
             <WhoamiTerminal />
 
@@ -920,6 +966,69 @@ function HudCorners() {
           />
         </motion.svg>
       ))}
+    </div>
+  )
+}
+
+// ============================================================
+// AuroraBloom — three large, slow-drifting radial blooms in the
+// brand palette. Each blob translates + scales + cycles opacity on
+// long durations (24–34s) and the trio is wrapped in `mix-blend-screen`
+// so they additively tint the whole hero rather than block content.
+// Cheap: three transform/opacity-only motion tracks, all GPU-composited.
+// ============================================================
+
+function AuroraBloom() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen"
+    >
+      <motion.div
+        className="absolute -top-1/4 -left-1/4 w-[70%] h-[70%] rounded-full"
+        style={{
+          background:
+            'radial-gradient(closest-side, hsl(var(--accent) / 0.42), transparent 70%)',
+          filter: 'blur(64px)',
+        }}
+        animate={{
+          x: ['0%', '12%', '-6%', '0%'],
+          y: ['0%', '-8%', '10%', '0%'],
+          scale: [1, 1.15, 0.95, 1],
+          opacity: [0.55, 0.85, 0.65, 0.55],
+        }}
+        transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute top-[10%] -right-1/4 w-[60%] h-[60%] rounded-full"
+        style={{
+          background:
+            'radial-gradient(closest-side, hsl(var(--lime) / 0.35), transparent 70%)',
+          filter: 'blur(64px)',
+        }}
+        animate={{
+          x: ['0%', '-10%', '8%', '0%'],
+          y: ['0%', '12%', '-6%', '0%'],
+          scale: [1, 0.92, 1.18, 1],
+          opacity: [0.45, 0.75, 0.5, 0.45],
+        }}
+        transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+      />
+      <motion.div
+        className="absolute -bottom-[20%] left-[20%] w-[55%] h-[55%] rounded-full"
+        style={{
+          background:
+            'radial-gradient(closest-side, hsl(var(--electric) / 0.32), transparent 70%)',
+          filter: 'blur(72px)',
+        }}
+        animate={{
+          x: ['0%', '8%', '-12%', '0%'],
+          y: ['0%', '-10%', '6%', '0%'],
+          scale: [1, 1.1, 0.88, 1],
+          opacity: [0.4, 0.7, 0.5, 0.4],
+        }}
+        transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut', delay: 8 }}
+      />
     </div>
   )
 }
