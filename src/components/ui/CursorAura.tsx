@@ -2,11 +2,6 @@ import { useEffect, useRef } from 'react'
 
 interface CursorAuraProps {
   className?: string
-  /** When true, the rAF loop is canceled and listeners detached. Used by
-   *  the parent (Intro) to suspend all work while the hero is scrolled
-   *  off — otherwise the rAF keeps clearing and (sometimes) drawing
-   *  a canvas the user can't see. */
-  paused?: boolean
 }
 
 type TrailPoint = { x: number; y: number; t: number }
@@ -17,8 +12,9 @@ type Ripple = { x: number; y: number; t: number; hue: number }
 const HUES = [325, 145, 200, 38]
 
 /**
- * CursorAura — desktop-only canvas effect that gives the hero an alive,
- * tactile feel. Three layered effects on a single rAF + single canvas:
+ * CursorAura — site-wide desktop canvas effect that follows the cursor
+ * across every page. Three layered effects on a single rAF + single
+ * fixed-position canvas:
  *
  *   1. Comet trail: a gradient-stroked ribbon traces recent cursor positions,
  *      fading by age. Color cycles through the brand palette so fast gestures
@@ -29,9 +25,19 @@ const HUES = [325, 145, 200, 38]
  *      and fades — three offset rings (R/G/B-style) for a holo aberration
  *      look, plus a soft inner glow.
  *
+ * The canvas is `position: fixed; inset: 0` so it covers the viewport and
+ * doesn't move with scroll. Listeners are on `window` so the effect tracks
+ * the cursor regardless of which element it's hovering. `pointer-events: none`
+ * keeps the canvas out of hit-testing — it's purely visual.
+ *
+ * Idle-skip pattern: when there's no live trail, no live ripples, and the
+ * mouse isn't in the document, we skip the entire clear+draw pipeline and
+ * just queue the next rAF. The browser's tab-visibility throttling handles
+ * the "tab hidden" case automatically.
+ *
  * Skipped on mobile (touch has no hover cursor) and on prefers-reduced-motion.
  */
-export function CursorAura({ className = '', paused = false }: CursorAuraProps) {
+export function CursorAura({ className = '' }: CursorAuraProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number | null>(null)
 
@@ -39,10 +45,6 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
     if (!window.matchMedia('(min-width: 768px)').matches) return
-    // When the parent says we're offscreen, skip setup entirely. Cleanup
-    // from the previous run already canceled rAF + detached listeners,
-    // so the entire effect goes silent until paused flips back to false.
-    if (paused) return
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -61,16 +63,15 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
     const mouse = { x: -9999, y: -9999, active: false }
     let clickHueIdx = 0
     // Track whether the canvas currently has anything painted. Lets us
-    // skip the entire clear/draw pipeline on idle frames (no cursor in
-    // section + no live trail + no live ripples) — by far the most
-    // common state, since the cursor sits still on text most of the time.
+    // skip the entire clear/draw pipeline on idle frames (no cursor active +
+    // no live trail + no live ripples) — by far the most common state,
+    // since the cursor sits still on text most of the time.
     let lastFrameDirty = false
 
     const resize = () => {
-      const parent = canvas.parentElement
-      if (!parent) return
-      width = parent.clientWidth
-      height = parent.clientHeight
+      // Site-wide canvas — sizes to the viewport, not a parent element.
+      width = window.innerWidth
+      height = window.innerHeight
       dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = Math.floor(width * dpr)
       canvas.height = Math.floor(height * dpr)
@@ -81,15 +82,14 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
       ctx.lineJoin = 'round'
     }
     resize()
-    const ro = new ResizeObserver(resize)
-    if (canvas.parentElement) ro.observe(canvas.parentElement)
+    window.addEventListener('resize', resize)
 
     const HALO_R = 100
 
     const onMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      mouse.x = e.clientX - rect.left
-      mouse.y = e.clientY - rect.top
+      // Canvas is fixed at viewport (0,0), so clientX/Y maps directly.
+      mouse.x = e.clientX
+      mouse.y = e.clientY
       mouse.active = true
       const now = performance.now()
       const last = trail[trail.length - 1]
@@ -100,24 +100,22 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
         if (trail.length > 36) trail.shift()
       }
     }
-    const onLeave = () => {
-      mouse.active = false
+    // mouseout on documentElement with relatedTarget=null = cursor left the
+    // window entirely. We use that as the "halo off" signal so the halo
+    // doesn't linger at the page edge after the cursor goes to chrome.
+    const onDocLeave = (e: MouseEvent) => {
+      if (e.relatedTarget == null) mouse.active = false
     }
     const onDown = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      if (x < 0 || y < 0 || x > width || y > height) return
       const hue = HUES[clickHueIdx % HUES.length]
       clickHueIdx++
-      ripples.push({ x, y, t: performance.now(), hue })
+      ripples.push({ x: e.clientX, y: e.clientY, t: performance.now(), hue })
       if (ripples.length > 6) ripples.shift()
     }
 
-    const host = canvas.parentElement ?? canvas
-    host.addEventListener('mousemove', onMove)
-    host.addEventListener('mouseleave', onLeave)
-    host.addEventListener('mousedown', onDown)
+    window.addEventListener('mousemove', onMove, { passive: true })
+    window.addEventListener('mousedown', onDown, { passive: true })
+    document.documentElement.addEventListener('mouseout', onDocLeave)
 
     const TRAIL_FADE_MS = 700
     const RIPPLE_MS = 1500
@@ -149,7 +147,7 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
       lastFrameDirty = true
 
       // 1. Soft cursor halo — only allocates a gradient when the cursor is
-      // actually in the section (idle path above already returned otherwise).
+      // actually on the page (idle path above already returned otherwise).
       if (mouse.active) {
         const baseHue = HUES[clickHueIdx % HUES.length]
         const grad = ctx.createRadialGradient(
@@ -168,7 +166,6 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
       }
 
       // 2. Comet trail — stroke fading segments
-
       if (trail.length >= 2) {
         for (let i = 1; i < trail.length; i++) {
           const a = trail[i - 1]
@@ -266,18 +263,18 @@ export function CursorAura({ className = '', paused = false }: CursorAuraProps) 
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      ro.disconnect()
-      host.removeEventListener('mousemove', onMove)
-      host.removeEventListener('mouseleave', onLeave)
-      host.removeEventListener('mousedown', onDown)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mousedown', onDown)
+      document.documentElement.removeEventListener('mouseout', onDocLeave)
     }
-  }, [paused])
+  }, [])
 
   return (
     <canvas
       ref={canvasRef}
       aria-hidden
-      className={`absolute inset-0 pointer-events-none hidden md:block ${className}`}
+      className={`fixed inset-0 pointer-events-none hidden md:block z-40 ${className}`}
     />
   )
 }

@@ -27,7 +27,6 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
-import { CursorAura } from './ui/CursorAura'
 import { MagneticButton } from './ui/MagneticButton'
 import { NodeNetwork } from './ui/NodeNetwork'
 import { useFxLevel } from '../hooks/useFxLevel'
@@ -324,9 +323,6 @@ export function Intro() {
 
       {/* === Shooting stars: bright diagonal streaks === */}
       <MeteorField paused={!heroInView} />
-
-      {/* === Cursor aura: comet trail + click shockwaves + soft halo === */}
-      <CursorAura className="z-[5]" paused={!heroInView} />
 
       {/* floating micro-particles — desktop-only. Halved from 8 to 4 and
           dropped the box-shadow glow (which forces a paint-area expansion)
