@@ -23,10 +23,11 @@ import {
   Zap,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
+import { CursorAura } from './ui/CursorAura'
 import { MagneticButton } from './ui/MagneticButton'
 import { NodeNetwork } from './ui/NodeNetwork'
 import { useFxLevel } from '../hooks/useFxLevel'
@@ -139,50 +140,92 @@ export function Intro() {
   }
 
   const sectionRef = useRef<HTMLElement>(null)
+  // Hand-rolled IntersectionObserver for "is the hero in view" — this gates
+  // every continuous animation in the section. Once the user scrolls past,
+  // rAFs/intervals/SMIL all keep ticking full speed (content-visibility:auto
+  // skips paint, not script), so pausing them recovers a huge chunk of
+  // mid-scroll lag.
+  //
+  // Initial value MUST be `true` rather than `false` — the section is at
+  // the top of the document and is in view on first render. If we started
+  // at false, the rAFs in CursorAura/NodeNetwork would fail their setup
+  // (paused=true gate), and we'd have to wait for IO to fire before they
+  // run. Starting true means they set up immediately; if the user already
+  // scrolled past on initial load, IO fires and pauses them within a frame.
+  const [heroInView, setHeroInView] = useState(true)
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) setHeroInView(e.isIntersecting)
+      },
+      { rootMargin: '60px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
   const mouseX = useMotionValue(-400)
   const mouseY = useMotionValue(-400)
   const smoothX = useSpring(mouseX, { damping: 20, stiffness: 120 })
   const smoothY = useSpring(mouseY, { damping: 20, stiffness: 120 })
-  const spotlight = useTransform(
-    [smoothX, smoothY],
-    ([x, y]) =>
-      `radial-gradient(600px circle at ${x}px ${y}px, hsl(var(--accent) / 0.14), transparent 55%)`
-  )
+  // Spotlight is positioned via transform on a fixed-size pre-rasterized
+  // radial-gradient div, NOT by moving a `radial-gradient(... at Xpx Ypx)`
+  // background. The latter forces a full re-rasterization of the whole
+  // bg every frame; the former is a single GPU compositor translate.
+  // SPOTLIGHT_R is the visible radius — the div is 2*R wide so the gradient
+  // fully covers when centered. We translate by `-R` so cursor sits at center.
+  const SPOTLIGHT_R = 600
+  const spotlightX = useTransform(smoothX, (x) => x - SPOTLIGHT_R)
+  const spotlightY = useTransform(smoothY, (y) => y - SPOTLIGHT_R)
+  // Normalized cursor position (-1..1) for the H1 3D parallax tilt. We
+  // route through softer springs than the spotlight so the headline doesn't
+  // jitter on micro-movements; the tilt should feel like floating, not
+  // tracking. Smoothed values are then mapped to small rotateX/rotateY
+  // angles via useTransform.
+  const tiltMx = useMotionValue(0)
+  const tiltMy = useMotionValue(0)
+  const tiltMxSmooth = useSpring(tiltMx, { damping: 22, stiffness: 90, mass: 0.6 })
+  const tiltMySmooth = useSpring(tiltMy, { damping: 22, stiffness: 90, mass: 0.6 })
+  const headlineRotY = useTransform(tiltMxSmooth, [-1, 1], [-5, 5])
+  const headlineRotX = useTransform(tiltMySmooth, [-1, 1], [4, -4])
   const [aiHover, setAiHover] = useState(false)
-  const { isMobile, disableHeavyFx } = useFxLevel()
+  const { reduceMotion, isMobile, disableHeavyFx } = useFxLevel()
 
-  // boot-line typewriter — show fully typed instantly on mobile / reduce-motion.
-  // The 55ms cadence is satisfying on a 60Hz desktop but adds ~1.4s of
-  // useless re-renders on first paint for phone users who can't even see
-  // the cursor blink that quickly anyway.
+  // boot-line typewriter — a one-shot intro flourish, finite by construction.
+  // Reduce-motion users get the line instantly. Mobile keeps the typewriter
+  // but at a slower 100ms cadence (vs 55ms desktop) — fewer re-renders, still
+  // feels alive. Cost is bounded: the interval clears as soon as the line
+  // finishes, and the heavy children of <Intro> (DotSubstrate, CircuitField,
+  // MeteorField, LightningField) all return null on mobile, so each
+  // re-render of the Intro subtree is cheap.
   const [bootTyped, setBootTyped] = useState('')
   useEffect(() => {
-    if (disableHeavyFx) {
+    if (reduceMotion) {
       setBootTyped(BOOT_LINE)
       return
     }
+    const cadence = isMobile ? 100 : 55
     let i = 0
     const t = setInterval(() => {
       i++
       setBootTyped(BOOT_LINE.slice(0, i))
       if (i >= BOOT_LINE.length) clearInterval(t)
-    }, 55)
+    }, cadence)
     return () => clearInterval(t)
-  }, [disableHeavyFx])
+  }, [reduceMotion, isMobile])
 
   // Slow frame counter for bottom HUD. Drives StabilityMeter sine wave +
-  // GlitchNum tick. On mobile we freeze it entirely — the SMIL/decorative
-  // animations it feeds are already gated to off via `disableHeavyFx`, so
-  // the only thing this would still drive is the FPS/iter readout in the
-  // meta strip, which mobile users won't notice if it stays static. Killing
-  // the interval kills 5 React re-renders per second of the entire Intro
-  // subtree, which is the single biggest gain on phones.
+  // GlitchNum tick. On mobile we freeze it entirely. On desktop we run at
+  // 4Hz (was 10Hz) — that still feels alive but cuts the per-second
+  // re-renders of the whole Intro subtree by 60%, which has a real impact
+  // on cursor responsiveness with this many decorative children.
   const [frame, setFrame] = useState(0)
   useEffect(() => {
-    if (disableHeavyFx) return
-    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 100)
+    if (disableHeavyFx || !heroInView) return
+    const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 250)
     return () => clearInterval(t)
-  }, [disableHeavyFx])
+  }, [disableHeavyFx, heroInView])
 
   useEffect(() => {
     // Skip mouse-tracked spotlight on mobile — the radial-gradient repaint
@@ -190,22 +233,47 @@ export function Intro() {
     if (isMobile) return
     const el = sectionRef.current
     if (!el) return
-    const handler = (e: MouseEvent) => {
+    // rAF-coalesce mousemove — at 60Hz native pointer events can fire
+    // ~120Hz on high-rate mice, and each one runs four motion-value sets
+    // that ripple through useSpring + useTransform consumers. Coalescing
+    // to one update per frame caps that work to display refresh.
+    let pending: { x: number; y: number } | null = null
+    let rafId: number | null = null
+    const flush = () => {
+      rafId = null
+      if (!pending) return
       const rect = el.getBoundingClientRect()
-      mouseX.set(e.clientX - rect.left)
-      mouseY.set(e.clientY - rect.top)
+      const localX = pending.x - rect.left
+      const localY = pending.y - rect.top
+      pending = null
+      mouseX.set(localX)
+      mouseY.set(localY)
+      tiltMx.set((localX / rect.width) * 2 - 1)
+      tiltMy.set((localY / rect.height) * 2 - 1)
+    }
+    const handler = (e: MouseEvent) => {
+      pending = { x: e.clientX, y: e.clientY }
+      if (rafId === null) rafId = requestAnimationFrame(flush)
     }
     const leave = () => {
+      pending = null
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+        rafId = null
+      }
       mouseX.set(-400)
       mouseY.set(-400)
+      tiltMx.set(0)
+      tiltMy.set(0)
     }
     el.addEventListener('mousemove', handler)
     el.addEventListener('mouseleave', leave)
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId)
       el.removeEventListener('mousemove', handler)
       el.removeEventListener('mouseleave', leave)
     }
-  }, [mouseX, mouseY, isMobile])
+  }, [mouseX, mouseY, tiltMx, tiltMy, isMobile])
 
   return (
     <section
@@ -214,45 +282,68 @@ export function Intro() {
       className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-background"
     >
       {/* crisp SVG dot substrate (replaces pixelated CSS radial-gradient) */}
-      <DotSubstrate />
+      <DotSubstrate paused={!heroInView} />
       {/* faint scan lines */}
       <div
         aria-hidden
         className="absolute inset-0 bg-scanlines opacity-[0.15] pointer-events-none mix-blend-multiply"
       />
-      <NodeNetwork className="opacity-[0.55]" />
+      {/* slow color-cycling aurora bloom — ambient wash that ebbs through
+          the brand palette. Mobile gets a "lite" single-blob version
+          (no mix-blend-screen) so phones still feel alive without paying
+          the GPU compositor cost of two blended layers. Skipped while
+          scrolled out so framer-motion tracks stop ticking offscreen. */}
+      {!reduceMotion && heroInView && <AuroraBloom lite={isMobile} />}
+      <NodeNetwork
+        className="opacity-[0.55]"
+        density={0.00006}
+        linkDistance={130}
+        paused={!heroInView}
+      />
+      {/* spotlight — pre-rasterized radial gradient on a fixed-size div,
+          translated via GPU transform. Cheap: ZERO repaints, just a
+          compositor matrix update on each cursor frame. */}
       <motion.div
         aria-hidden
-        style={{ background: spotlight }}
-        className="absolute inset-0 pointer-events-none"
+        style={{
+          x: spotlightX,
+          y: spotlightY,
+          width: SPOTLIGHT_R * 2,
+          height: SPOTLIGHT_R * 2,
+          background:
+            'radial-gradient(circle at center, hsl(var(--accent) / 0.14), transparent 55%)',
+          willChange: 'transform',
+        }}
+        className="absolute top-0 left-0 pointer-events-none"
       />
       {/* === Circuit-board energy grid: glowing traces pulse with energy === */}
-      <CircuitField />
+      <CircuitField paused={!heroInView} />
 
       {/* === Lightning bolts: dramatic electric arcs fire across the hero === */}
-      <LightningField />
+      <LightningField paused={!heroInView} />
 
       {/* === Shooting stars: bright diagonal streaks === */}
-      <MeteorField />
+      <MeteorField paused={!heroInView} />
 
-      {/* floating micro-particles — desktop-only. 8 infinite framer-motion
-          loops compositing 4 properties each = 32 active animation tracks
-          that the browser keeps repainting. On mobile they barely register
-          visually but add real GPU load during scroll. */}
+      {/* === Cursor aura: comet trail + click shockwaves + soft halo === */}
+      <CursorAura className="z-[5]" paused={!heroInView} />
+
+      {/* floating micro-particles — desktop-only. Halved from 8 to 4 and
+          dropped the box-shadow glow (which forces a paint-area expansion)
+          plus the scale axis. Result: 4 elements × 2 animated transform
+          channels (x/y) + opacity = 12 tracks instead of 32. Visually
+          still alive thanks to AuroraBloom + CursorAura carrying the
+          ambient atmosphere. */}
       {!disableHeavyFx && (
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none overflow-hidden"
         >
           {[
-            { left: '12%', top: '22%', size: 4, color: 'bg-accent/60', dur: 7, delay: 0 },
-            { left: '82%', top: '18%', size: 3, color: 'bg-lime/70', dur: 9, delay: 1.2 },
-            { left: '28%', top: '72%', size: 5, color: 'bg-amber/50', dur: 8, delay: 2.1 },
-            { left: '62%', top: '58%', size: 2, color: 'bg-electric/70', dur: 10, delay: 0.6 },
-            { left: '90%', top: '68%', size: 3, color: 'bg-accent/50', dur: 11, delay: 3 },
-            { left: '5%', top: '52%', size: 2, color: 'bg-lime/60', dur: 12, delay: 1.8 },
-            { left: '48%', top: '12%', size: 3, color: 'bg-amber/60', dur: 9, delay: 2.8 },
-            { left: '72%', top: '82%', size: 4, color: 'bg-accent/40', dur: 13, delay: 0.4 },
+            { left: '14%', top: '28%', size: 4, color: 'bg-accent/60', dur: 9, delay: 0 },
+            { left: '82%', top: '20%', size: 3, color: 'bg-lime/70', dur: 11, delay: 1.6 },
+            { left: '28%', top: '74%', size: 4, color: 'bg-amber/55', dur: 10, delay: 2.4 },
+            { left: '74%', top: '78%', size: 3, color: 'bg-electric/65', dur: 12, delay: 0.8 },
           ].map((p, i) => (
             <motion.span
               key={i}
@@ -262,13 +353,12 @@ export function Intro() {
                 top: p.top,
                 width: p.size,
                 height: p.size,
-                boxShadow: '0 0 12px currentColor',
+                willChange: 'transform, opacity',
               }}
               animate={{
-                y: [0, -24, 0],
-                x: [0, i % 2 === 0 ? 12 : -12, 0],
-                opacity: [0.3, 0.9, 0.3],
-                scale: [0.8, 1.2, 0.8],
+                y: [0, -22, 0],
+                x: [0, i % 2 === 0 ? 10 : -10, 0],
+                opacity: [0.35, 0.85, 0.35],
               }}
               transition={{
                 duration: p.dur,
@@ -323,7 +413,7 @@ export function Intro() {
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-lime/40 bg-lime/10 text-ink"
               >
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
+                  <span className="motion-safe-mobile absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-lime" />
                 </span>
                 <span className="font-mono text-[11px] tracking-wide">status: available</span>
@@ -349,7 +439,18 @@ export function Intro() {
               </motion.div>
             </div>
 
-            <h1 className="font-display text-[clamp(2.5rem,6.2vw,5.25rem)] leading-[0.98] tracking-tighter text-ink font-bold mb-8 text-balance">
+            <motion.h1
+              className="font-display text-[clamp(2.5rem,6.2vw,5.25rem)] leading-[0.98] tracking-tighter text-ink font-bold mb-8 text-balance [transform-style:preserve-3d] will-change-transform"
+              style={
+                disableHeavyFx
+                  ? undefined
+                  : {
+                      rotateX: headlineRotX,
+                      rotateY: headlineRotY,
+                      transformPerspective: 1000,
+                    }
+              }
+            >
               <span className="whitespace-nowrap">
                 <span className="italic font-extrabold text-accent text-glow-accent">
                   Product
@@ -522,7 +623,7 @@ export function Intro() {
                   {i < TAGLINE_WORDS.length - 1 ? ' ' : ''}
                 </span>
               ))}
-            </h1>
+            </motion.h1>
 
             <WhoamiTerminal />
 
@@ -556,7 +657,7 @@ export function Intro() {
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-4 lg:pt-8"
           >
-            <ShipEngine frame={frame} />
+            <ShipEngine frame={frame} paused={!heroInView} />
           </motion.div>
         </div>
       </div>
@@ -921,6 +1022,80 @@ function HudCorners() {
 }
 
 // ============================================================
+// AuroraBloom — slow-drifting radial blooms in the brand palette.
+//
+// Desktop: two blobs, mix-blend-screen, full transform+opacity drift.
+// Mobile (lite): one blob, no mix-blend (it's a non-trivial GPU cost
+// on lower-end phones), softer gradient, simple opacity-and-translate.
+// Both modes use will-change to keep each blob on its own compositor
+// layer. The radial gradient is rasterized once per layer and just
+// translated/scaled by the GPU each frame.
+// ============================================================
+
+const AuroraBloom = memo(function AuroraBloom({ lite = false }: { lite?: boolean }) {
+  if (lite) {
+    return (
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+      >
+        <motion.div
+          className="absolute -top-1/4 -left-1/4 w-[100%] h-[100%] rounded-full"
+          style={{
+            background:
+              'radial-gradient(closest-side, hsl(var(--accent) / 0.22), transparent 75%)',
+            willChange: 'transform, opacity',
+          }}
+          animate={{
+            x: ['0%', '6%', '0%'],
+            y: ['0%', '-4%', '0%'],
+            opacity: [0.5, 0.7, 0.5],
+          }}
+          transition={{ duration: 40, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </div>
+    )
+  }
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen"
+    >
+      <motion.div
+        className="absolute -top-1/4 -left-1/4 w-[80%] h-[80%] rounded-full"
+        style={{
+          background:
+            'radial-gradient(closest-side, hsl(var(--accent) / 0.36), transparent 75%)',
+          willChange: 'transform, opacity',
+        }}
+        animate={{
+          x: ['0%', '10%', '-4%', '0%'],
+          y: ['0%', '-6%', '8%', '0%'],
+          scale: [1, 1.12, 0.96, 1],
+          opacity: [0.55, 0.8, 0.65, 0.55],
+        }}
+        transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute top-[5%] -right-1/4 w-[70%] h-[70%] rounded-full"
+        style={{
+          background:
+            'radial-gradient(closest-side, hsl(var(--lime) / 0.3), transparent 75%)',
+          willChange: 'transform, opacity',
+        }}
+        animate={{
+          x: ['0%', '-8%', '6%', '0%'],
+          y: ['0%', '10%', '-4%', '0%'],
+          scale: [1, 0.94, 1.14, 1],
+          opacity: [0.4, 0.7, 0.5, 0.4],
+        }}
+        transition={{ duration: 36, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
+      />
+    </div>
+  )
+})
+
+// ============================================================
 // DotSubstrate — crisp, anti-aliased dot grid that replaces the
 // legacy CSS `bg-dots` radial-gradient. SVG `<pattern>` renders
 // dots as real circles so they look sharp at any DPI. A sparse
@@ -928,11 +1103,13 @@ function HudCorners() {
 // cluttering the grid.
 // ============================================================
 
-function DotSubstrate() {
+const DotSubstrate = memo(function DotSubstrate({ paused = false }: { paused?: boolean }) {
   // Skip the entire 30-dot twinkle layer (60 concurrent SMIL animations) on
-  // mobile / reduce-motion. The base dot grid pattern below is static and
-  // carries the visual; the colored twinkles are pure decoration.
+  // mobile / reduce-motion / when scrolled offscreen (paused). The base dot
+  // grid pattern below is static and carries the visual; the colored twinkles
+  // are pure decoration.
   const { disableHeavyFx } = useFxLevel()
+  const skipTwinkles = disableHeavyFx || paused
   // Deterministic twinkle positions — stable across renders.
   const twinkles = useMemo(() => {
     const palette = [
@@ -991,9 +1168,9 @@ function DotSubstrate() {
       </svg>
 
       {/* Twinkle layer — colored accent dots that fade in/out.
-          Mobile / reduce-motion: not rendered (60 SMIL animations of work
-          for a layer most users won't notice missing). */}
-      {!disableHeavyFx && (
+          Mobile / reduce-motion / offscreen: not rendered (60 SMIL animations
+          of work for a layer most users won't notice missing). */}
+      {!skipTwinkles && (
         <svg
           aria-hidden
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1027,7 +1204,7 @@ function DotSubstrate() {
       )}
     </>
   )
-}
+})
 
 // ============================================================
 // CircuitField — animated SVG circuit-board traces across the hero.
@@ -1045,11 +1222,11 @@ type Trace = {
   delay: number
 }
 
-function CircuitField() {
+const CircuitField = memo(function CircuitField({ paused = false }: { paused?: boolean }) {
   // 10 traces × 2 SMIL <animateMotion> circles + 10 opacity <animate> tags =
   // ~30 concurrent SMIL animations. SMIL is GPU-cheap on desktop but causes
   // measurable jank on mid-range Android during scroll. Hide entirely on
-  // mobile and for prefers-reduced-motion (was previously unconditional).
+  // mobile, for prefers-reduced-motion, or when scrolled offscreen.
   const { disableHeavyFx } = useFxLevel()
   const traces: Trace[] = useMemo(() => {
     const palette = [
@@ -1080,7 +1257,7 @@ function CircuitField() {
     }))
   }, [])
 
-  if (disableHeavyFx) return null
+  if (disableHeavyFx || paused) return null
 
   return (
     <svg
@@ -1185,7 +1362,7 @@ function CircuitField() {
       })}
     </svg>
   )
-}
+})
 
 // ============================================================
 // MeteorField — diagonal shooting-star streaks that fire across
@@ -1202,16 +1379,17 @@ type Meteor = {
   length: number
 }
 
-function MeteorField() {
+const MeteorField = memo(function MeteorField({ paused = false }: { paused?: boolean }) {
   // Desktop-only. Streaming geometry + state churn (spawn → setTimeout →
   // splice) every 2.2s is wasted work on phones where the meteors are tiny
   // and barely visible against the busy hero. Mirrors LightningField's gate.
+  // Also paused when the hero is scrolled offscreen.
   const { disableHeavyFx } = useFxLevel()
   const [meteors, setMeteors] = useState<Meteor[]>([])
   const idRef = useRef(0)
 
   useEffect(() => {
-    if (disableHeavyFx) return
+    if (disableHeavyFx || paused) return
     const spawn = () => {
       const id = idRef.current++
       const palette = [
@@ -1242,9 +1420,9 @@ function MeteorField() {
       clearTimeout(first)
       clearInterval(iv)
     }
-  }, [disableHeavyFx])
+  }, [disableHeavyFx, paused])
 
-  if (disableHeavyFx) return null
+  if (disableHeavyFx || paused) return null
   return (
     <div
       aria-hidden
@@ -1275,7 +1453,7 @@ function MeteorField() {
       ))}
     </div>
   )
-}
+})
 
 // ============================================================
 // LightningField — SVG lightning bolts that fire across the hero
@@ -1284,11 +1462,12 @@ function MeteorField() {
 // then disappears. Respects reduced-motion.
 // ============================================================
 
-function LightningField() {
+const LightningField = memo(function LightningField({ paused = false }: { paused?: boolean }) {
   // Lightning is desktop-only — fractal generation + 4 SVG path layers per
   // bolt + 900ms ticker is too much for mid-range phones, and the dramatic
   // strikes read as visual noise alongside the rest of the hero on a small
-  // screen. Falls back identically for prefers-reduced-motion.
+  // screen. Falls back identically for prefers-reduced-motion or when
+  // scrolled offscreen.
   const { disableHeavyFx } = useFxLevel()
 
   const [bolts, setBolts] = useState<
@@ -1297,7 +1476,7 @@ function LightningField() {
   const idRef = useRef(0)
 
   useEffect(() => {
-    if (disableHeavyFx) return
+    if (disableHeavyFx || paused) return
     // Midpoint-displacement subdivision — classic "fractal lightning"
     // algorithm. Repeatedly splits each segment and jitters the midpoint
     // perpendicular to the segment direction. Produces the irregular,
@@ -1412,9 +1591,9 @@ function LightningField() {
       clearTimeout(first)
       clearInterval(interval)
     }
-  }, [disableHeavyFx])
+  }, [disableHeavyFx, paused])
 
-  if (disableHeavyFx) return null
+  if (disableHeavyFx || paused) return null
 
   return (
     <svg
@@ -1496,7 +1675,7 @@ function LightningField() {
       </AnimatePresence>
     </svg>
   )
-}
+})
 
 // ============================================================
 // ShipEngine — the live console on the right.
@@ -1506,7 +1685,7 @@ function LightningField() {
 // crossover that fall into a rolling shipped stream below.
 // ============================================================
 
-function ShipEngine({ frame }: { frame: number }) {
+function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean }) {
   // `reduce` here is intentionally widened to "lite" semantics: drop heavy
   // decorative work on either prefers-reduced-motion OR mobile viewport.
   // The IDE scene below has ~80 SMIL animations + a 3D-tilt spotlight that
@@ -1526,7 +1705,7 @@ function ShipEngine({ frame }: { frame: number }) {
   )
 
   useEffect(() => {
-    if (reduce) return
+    if (reduce || paused) return
     const t = setInterval(() => {
       setQueue((prev) => {
         const next = SHIP_ARTIFACTS[uidRef.current % SHIP_ARTIFACTS.length]
@@ -1535,7 +1714,7 @@ function ShipEngine({ frame }: { frame: number }) {
       })
     }, 2900)
     return () => clearInterval(t)
-  }, [reduce])
+  }, [reduce, paused])
 
   const fps = 58 + ((frame % 7) - 3)
   const iter = 2847 + Math.floor(frame / 12)
