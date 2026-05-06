@@ -7,6 +7,10 @@ interface NodeNetworkProps {
   color?: string
   accentColor?: string
   mouseRadius?: number
+  /** When true, the rAF loop is canceled — the canvas freezes on its
+   *  last frame. Used by callers to pause work while the section is
+   *  scrolled out of view. */
+  paused?: boolean
 }
 
 type Node = {
@@ -30,6 +34,7 @@ export function NodeNetwork({
   color = 'hsl(199 16% 48%)',
   accentColor = 'hsl(325 58% 34%)',
   mouseRadius = 160,
+  paused = false,
 }: NodeNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number | null>(null)
@@ -46,6 +51,10 @@ export function NodeNetwork({
     // phones and crowds the hero content. Canvas is also CSS-hidden via
     // `hidden md:block` below so no element sits in layout either.
     if (!window.matchMedia('(min-width: 768px)').matches) return
+    // Skip the entire setup when paused — caller (Intro) sets paused=true
+    // when the hero scrolls out of view. The cleanup from the previous
+    // run cancels rAF and removes listeners, so all per-frame work stops.
+    if (paused) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -315,7 +324,7 @@ export function NodeNetwork({
       host.removeEventListener('mousemove', onMove)
       host.removeEventListener('mouseleave', onLeave)
     }
-  }, [density, linkDistance, color, accentColor, mouseRadius])
+  }, [density, linkDistance, color, accentColor, mouseRadius, paused])
 
   return (
     <canvas

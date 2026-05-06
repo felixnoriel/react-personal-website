@@ -2,6 +2,11 @@ import { useEffect, useRef } from 'react'
 
 interface CursorAuraProps {
   className?: string
+  /** When true, the rAF loop is canceled and listeners detached. Used by
+   *  the parent (Intro) to suspend all work while the hero is scrolled
+   *  off — otherwise the rAF keeps clearing and (sometimes) drawing
+   *  a canvas the user can't see. */
+  paused?: boolean
 }
 
 type TrailPoint = { x: number; y: number; t: number }
@@ -26,7 +31,7 @@ const HUES = [325, 145, 200, 38]
  *
  * Skipped on mobile (touch has no hover cursor) and on prefers-reduced-motion.
  */
-export function CursorAura({ className = '' }: CursorAuraProps) {
+export function CursorAura({ className = '', paused = false }: CursorAuraProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number | null>(null)
 
@@ -34,6 +39,10 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
     if (!window.matchMedia('(min-width: 768px)').matches) return
+    // When the parent says we're offscreen, skip setup entirely. Cleanup
+    // from the previous run already canceled rAF + detached listeners,
+    // so the entire effect goes silent until paused flips back to false.
+    if (paused) return
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -262,7 +271,7 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       host.removeEventListener('mouseleave', onLeave)
       host.removeEventListener('mousedown', onDown)
     }
-  }, [])
+  }, [paused])
 
   return (
     <canvas

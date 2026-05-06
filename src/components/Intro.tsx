@@ -140,15 +140,44 @@ export function Intro() {
   }
 
   const sectionRef = useRef<HTMLElement>(null)
+  // Hand-rolled IntersectionObserver for "is the hero in view" — this gates
+  // every continuous animation in the section. Once the user scrolls past,
+  // rAFs/intervals/SMIL all keep ticking full speed (content-visibility:auto
+  // skips paint, not script), so pausing them recovers a huge chunk of
+  // mid-scroll lag.
+  //
+  // Initial value MUST be `true` rather than `false` — the section is at
+  // the top of the document and is in view on first render. If we started
+  // at false, the rAFs in CursorAura/NodeNetwork would fail their setup
+  // (paused=true gate), and we'd have to wait for IO to fire before they
+  // run. Starting true means they set up immediately; if the user already
+  // scrolled past on initial load, IO fires and pauses them within a frame.
+  const [heroInView, setHeroInView] = useState(true)
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) setHeroInView(e.isIntersecting)
+      },
+      { rootMargin: '60px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
   const mouseX = useMotionValue(-400)
   const mouseY = useMotionValue(-400)
   const smoothX = useSpring(mouseX, { damping: 20, stiffness: 120 })
   const smoothY = useSpring(mouseY, { damping: 20, stiffness: 120 })
-  const spotlight = useTransform(
-    [smoothX, smoothY],
-    ([x, y]) =>
-      `radial-gradient(600px circle at ${x}px ${y}px, hsl(var(--accent) / 0.14), transparent 55%)`
-  )
+  // Spotlight is positioned via transform on a fixed-size pre-rasterized
+  // radial-gradient div, NOT by moving a `radial-gradient(... at Xpx Ypx)`
+  // background. The latter forces a full re-rasterization of the whole
+  // bg every frame; the former is a single GPU compositor translate.
+  // SPOTLIGHT_R is the visible radius — the div is 2*R wide so the gradient
+  // fully covers when centered. We translate by `-R` so cursor sits at center.
+  const SPOTLIGHT_R = 600
+  const spotlightX = useTransform(smoothX, (x) => x - SPOTLIGHT_R)
+  const spotlightY = useTransform(smoothY, (y) => y - SPOTLIGHT_R)
   // Normalized cursor position (-1..1) for the H1 3D parallax tilt. We
   // route through softer springs than the spotlight so the headline doesn't
   // jitter on micro-movements; the tilt should feel like floating, not
@@ -193,10 +222,10 @@ export function Intro() {
   // on cursor responsiveness with this many decorative children.
   const [frame, setFrame] = useState(0)
   useEffect(() => {
-    if (disableHeavyFx) return
+    if (disableHeavyFx || !heroInView) return
     const t = setInterval(() => setFrame((n) => (n + 1) % 10000), 250)
     return () => clearInterval(t)
-  }, [disableHeavyFx])
+  }, [disableHeavyFx, heroInView])
 
   useEffect(() => {
     // Skip mouse-tracked spotlight on mobile — the radial-gradient repaint
@@ -260,14 +289,30 @@ export function Intro() {
         className="absolute inset-0 bg-scanlines opacity-[0.15] pointer-events-none mix-blend-multiply"
       />
       {/* slow color-cycling aurora bloom — desktop-only ambient wash that
-          ebbs through the brand palette. Sits below the spotlight so it
-          tints the whole stage rather than overpowering it. */}
-      {!disableHeavyFx && <AuroraBloom />}
-      <NodeNetwork className="opacity-[0.55]" density={0.00006} linkDistance={130} />
+          ebbs through the brand palette. Skipped when scrolled out so the
+          two infinite framer-motion tracks stop ticking offscreen. */}
+      {!disableHeavyFx && heroInView && <AuroraBloom />}
+      <NodeNetwork
+        className="opacity-[0.55]"
+        density={0.00006}
+        linkDistance={130}
+        paused={!heroInView}
+      />
+      {/* spotlight — pre-rasterized radial gradient on a fixed-size div,
+          translated via GPU transform. Cheap: ZERO repaints, just a
+          compositor matrix update on each cursor frame. */}
       <motion.div
         aria-hidden
-        style={{ background: spotlight }}
-        className="absolute inset-0 pointer-events-none"
+        style={{
+          x: spotlightX,
+          y: spotlightY,
+          width: SPOTLIGHT_R * 2,
+          height: SPOTLIGHT_R * 2,
+          background:
+            'radial-gradient(circle at center, hsl(var(--accent) / 0.14), transparent 55%)',
+          willChange: 'transform',
+        }}
+        className="absolute top-0 left-0 pointer-events-none"
       />
       {/* === Circuit-board energy grid: glowing traces pulse with energy === */}
       <CircuitField />
@@ -279,7 +324,7 @@ export function Intro() {
       <MeteorField />
 
       {/* === Cursor aura: comet trail + click shockwaves + soft halo === */}
-      <CursorAura className="z-[5]" />
+      <CursorAura className="z-[5]" paused={!heroInView} />
 
       {/* floating micro-particles — desktop-only. Halved from 8 to 4 and
           dropped the box-shadow glow (which forces a paint-area expansion)
@@ -610,7 +655,7 @@ export function Intro() {
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-4 lg:pt-8"
           >
-            <ShipEngine frame={frame} />
+            <ShipEngine frame={frame} paused={!heroInView} />
           </motion.div>
         </div>
       </div>
@@ -1610,7 +1655,7 @@ function LightningField() {
 // crossover that fall into a rolling shipped stream below.
 // ============================================================
 
-function ShipEngine({ frame }: { frame: number }) {
+function ShipEngine({ frame, paused = false }: { frame: number; paused?: boolean }) {
   // `reduce` here is intentionally widened to "lite" semantics: drop heavy
   // decorative work on either prefers-reduced-motion OR mobile viewport.
   // The IDE scene below has ~80 SMIL animations + a 3D-tilt spotlight that
@@ -1630,7 +1675,7 @@ function ShipEngine({ frame }: { frame: number }) {
   )
 
   useEffect(() => {
-    if (reduce) return
+    if (reduce || paused) return
     const t = setInterval(() => {
       setQueue((prev) => {
         const next = SHIP_ARTIFACTS[uidRef.current % SHIP_ARTIFACTS.length]
@@ -1639,7 +1684,7 @@ function ShipEngine({ frame }: { frame: number }) {
       })
     }, 2900)
     return () => clearInterval(t)
-  }, [reduce])
+  }, [reduce, paused])
 
   const fps = 58 + ((frame % 7) - 3)
   const iter = 2847 + Math.floor(frame / 12)
