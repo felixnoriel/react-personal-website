@@ -131,10 +131,19 @@ const BOOT_LINE = 'felix --status --live'
 const SESSION_ID = '#2847'
 
 export function Intro() {
+  // Hero CTA scroll: smooth-scroll was causing the page to feel frozen
+  // for the duration of the ~600ms animation when users clicked rapidly,
+  // because React work (heroInView IO callbacks, motion-value updates,
+  // etc.) competes with the scroll animation on the main thread.
+  // Native scroll-behavior: smooth is implemented as a JS-driven
+  // animation in most browsers, not a true compositor effect. Switching
+  // to instant scroll snaps to the destination immediately — no main-
+  // thread contention, click feels responsive — and the user's own
+  // operating system smoothing kicks in for trackpad/mouse-wheel scrolls.
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      element.scrollIntoView({ behavior: 'auto', block: 'start' })
     }
   }
 
@@ -1660,8 +1669,8 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="5"
-              strokeOpacity="0.55"
+              strokeWidth="14"
+              strokeOpacity="0.5"
               strokeLinecap="round"
               strokeLinejoin="round"
               filter="url(#bolt-glow-soft)"
@@ -1672,7 +1681,7 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="2.8"
+              strokeWidth="8"
               strokeOpacity="0.85"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -1684,7 +1693,7 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke={b.color}
-              strokeWidth="1.6"
+              strokeWidth="4.5"
               strokeOpacity="1"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -1695,7 +1704,7 @@ const LightningField = memo(function LightningField({ paused = false }: { paused
               d={b.d}
               fill="none"
               stroke="#ffffff"
-              strokeWidth="0.9"
+              strokeWidth="2.5"
               strokeOpacity="1"
               strokeLinecap="round"
               strokeLinejoin="round"
