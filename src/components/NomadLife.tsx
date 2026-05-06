@@ -561,11 +561,13 @@ function SectionDivider({ title, meta }: { title: string; meta?: string }) {
 // ============================================================
 
 function FloatingPlaneDecor() {
-  // Two infinite framer-motion translations across the full section.
-  // Decorative-only; on mobile/reduce we skip them (the section's centerpiece
-  // is the FlightRadar card, not background plane silhouettes).
-  const { disableHeavyFx } = useFxLevel()
-  if (disableHeavyFx) return null
+  // Two infinite translate-only animations across the full section. Each is
+  // a single transform on a tiny <Plane> icon at very long durations (42s,
+  // 58s) — composited on the GPU and trivially cheap. We keep them on mobile
+  // for visual life and only gate on prefers-reduced-motion. The heavier
+  // FlightRadar SVG fx around them are still gated separately via `lite`.
+  const { reduceMotion } = useFxLevel()
+  if (reduceMotion) return null
   return (
     <>
       <motion.span

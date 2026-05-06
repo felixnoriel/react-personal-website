@@ -149,26 +149,30 @@ export function Intro() {
       `radial-gradient(600px circle at ${x}px ${y}px, hsl(var(--accent) / 0.14), transparent 55%)`
   )
   const [aiHover, setAiHover] = useState(false)
-  const { isMobile, disableHeavyFx } = useFxLevel()
+  const { reduceMotion, isMobile, disableHeavyFx } = useFxLevel()
 
-  // boot-line typewriter — show fully typed instantly on mobile / reduce-motion.
-  // The 55ms cadence is satisfying on a 60Hz desktop but adds ~1.4s of
-  // useless re-renders on first paint for phone users who can't even see
-  // the cursor blink that quickly anyway.
+  // boot-line typewriter — a one-shot intro flourish, finite by construction.
+  // Reduce-motion users get the line instantly. Mobile keeps the typewriter
+  // but at a slower 100ms cadence (vs 55ms desktop) — fewer re-renders, still
+  // feels alive. Cost is bounded: the interval clears as soon as the line
+  // finishes, and the heavy children of <Intro> (DotSubstrate, CircuitField,
+  // MeteorField, LightningField) all return null on mobile, so each
+  // re-render of the Intro subtree is cheap.
   const [bootTyped, setBootTyped] = useState('')
   useEffect(() => {
-    if (disableHeavyFx) {
+    if (reduceMotion) {
       setBootTyped(BOOT_LINE)
       return
     }
+    const cadence = isMobile ? 100 : 55
     let i = 0
     const t = setInterval(() => {
       i++
       setBootTyped(BOOT_LINE.slice(0, i))
       if (i >= BOOT_LINE.length) clearInterval(t)
-    }, 55)
+    }, cadence)
     return () => clearInterval(t)
-  }, [disableHeavyFx])
+  }, [reduceMotion, isMobile])
 
   // Slow frame counter for bottom HUD. Drives StabilityMeter sine wave +
   // GlitchNum tick. On mobile we freeze it entirely — the SMIL/decorative
