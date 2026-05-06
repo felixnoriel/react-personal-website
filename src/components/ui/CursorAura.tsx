@@ -113,21 +113,8 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       if (ripples.length > 6) ripples.shift()
     }
 
-    // Clear in-flight click ripples on significant scroll. Many hero buttons
-    // (e.g. "See selected work") smooth-scroll the page on click. Without
-    // this, the chromatic ring would keep expanding on the fixed-position
-    // canvas while the page slides under it — looking like a "stuck"
-    // artifact mid-page rather than feedback for the click that triggered
-    // the scroll. Threshold of 30px ignores minor scroll jitter.
-    let lastScrollY = window.scrollY
-    const onScroll = () => {
-      const dy = Math.abs(window.scrollY - lastScrollY)
-      if (dy > 30 && ripples.length > 0) ripples.length = 0
-      lastScrollY = window.scrollY
-    }
     window.addEventListener('mousemove', onMove, { passive: true })
     window.addEventListener('mousedown', onDown, { passive: true })
-    window.addEventListener('scroll', onScroll, { passive: true })
     document.documentElement.addEventListener('mouseout', onDocLeave)
 
     const TRAIL_FADE_MS = 700
@@ -284,7 +271,6 @@ export function CursorAura({ className = '' }: CursorAuraProps) {
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mousedown', onDown)
-      window.removeEventListener('scroll', onScroll)
       document.documentElement.removeEventListener('mouseout', onDocLeave)
     }
   }, [])
