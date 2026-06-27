@@ -66,12 +66,6 @@ const A_TEXT: Record<Accent, string> = {
   electric: 'text-electric',
   amber: 'text-amber',
 }
-const A_BG: Record<Accent, string> = {
-  accent: 'bg-accent',
-  lime: 'bg-lime',
-  electric: 'bg-electric',
-  amber: 'bg-amber',
-}
 const A_DOT: Record<Accent, string> = {
   accent: 'bg-accent',
   lime: 'bg-lime',
@@ -316,6 +310,96 @@ export function Intro() {
 // one-shot entrance. No perpetual loops.
 // ============================================================
 
+const A_HSL: Record<Accent, string> = {
+  accent: 'var(--accent)',
+  lime: 'var(--lime)',
+  electric: 'var(--electric)',
+  amber: 'var(--amber)',
+}
+
+// stable, gently-rising telemetry sparkline path from a seed string
+function buildSpark(seed: string): { line: string; area: string } {
+  let s = 0
+  for (let i = 0; i < seed.length; i++) s = (s * 31 + seed.charCodeAt(i)) >>> 0
+  const rng = () => {
+    s = (s * 9301 + 49297) % 233280
+    return s / 233280
+  }
+  const n = 14
+  const pts: Array<[number, number]> = []
+  for (let i = 0; i < n; i++) {
+    const x = (i / (n - 1)) * 100
+    const trend = 21 - (i / (n - 1)) * 15 // rising left→right (SVG y is down)
+    const y = Math.max(3, Math.min(23, trend + (rng() - 0.5) * 7))
+    pts.push([x, y])
+  }
+  const line = 'M ' + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(' L ')
+  return { line, area: `${line} L 100 26 L 0 26 Z` }
+}
+
+// live telemetry sparkline — area + a drawn-in line + a bright signal pulse
+// that continuously flows along the data (1 cheap SMIL dash animation)
+function MiniSparkline({ accent, seed }: { accent: Accent; seed: string }) {
+  const { line, area } = useMemo(() => buildSpark(seed), [seed])
+  const hsl = `hsl(${A_HSL[accent]})`
+  const gid = `spk-${seed.replace(/\W/g, '')}`
+  return (
+    <svg viewBox="0 0 100 26" preserveAspectRatio="none" className="w-full h-6 mt-2.5" aria-hidden>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={hsl} stopOpacity="0.3" />
+          <stop offset="100%" stopColor={hsl} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <motion.path
+        d={area}
+        fill={`url(#${gid})`}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      />
+      <motion.path
+        d={line}
+        fill="none"
+        stroke={hsl}
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        initial={{ pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 0.5 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      />
+      {/* the bright signal pulse sweeping the line */}
+      <path
+        d={line}
+        fill="none"
+        stroke={hsl}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        pathLength={100}
+        strokeDasharray="14 86"
+        style={{ filter: `drop-shadow(0 0 2px ${hsl})` }}
+      >
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2.6s" repeatCount="indefinite" />
+      </path>
+    </svg>
+  )
+}
+
+// live throughput ticker — a small ops/sec readout that flickers like a feed
+function LiveStat() {
+  const [v, setV] = useState(2840)
+  useEffect(() => {
+    const id = setInterval(() => setV(2650 + Math.floor(Math.random() * 480)), 420)
+    return () => clearInterval(id)
+  }, [])
+  return <span className="tabular-nums">{v.toLocaleString()}</span>
+}
+
 function MetricsPanel() {
   return (
     <div className="relative rounded-2xl overflow-hidden">
@@ -375,6 +459,7 @@ function MetricsPanel() {
             </div>
             <div
               className={`font-display text-[1.7rem] leading-none font-bold tabular-nums ${A_TEXT[m.accent]}`}
+              style={{ textShadow: `0 0 22px hsl(${A_HSL[m.accent]} / 0.3)` }}
             >
               <AnimatedNumber
                 value={m.value}
@@ -386,15 +471,7 @@ function MetricsPanel() {
             <div className="font-mono text-[9.5px] text-ink-muted mt-1 truncate">
               {m.sub}
             </div>
-            <div className="mt-2.5 h-1 rounded-full bg-border/70 overflow-hidden">
-              <motion.div
-                className={`h-full rounded-full ${A_BG[m.accent]}`}
-                initial={{ width: 0 }}
-                whileInView={{ width: `${Math.round(m.fill * 100)}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              />
-            </div>
+            <MiniSparkline accent={m.accent} seed={m.label} />
           </div>
         ))}
       </div>
@@ -408,7 +485,10 @@ function MetricsPanel() {
               key={c}
               className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-ink/10 bg-background/30 backdrop-blur-md font-mono text-[9.5px] tracking-tight text-ink-muted"
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${A_DOT[a]}`} />
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${A_DOT[a]} animate-pulse`}
+                style={{ animationDelay: `${i * 0.25}s` }}
+              />
               {c}
             </span>
           )
@@ -419,7 +499,7 @@ function MetricsPanel() {
       <div className="relative z-10 flex items-center justify-between px-4 py-2 border-t border-ink/5 font-mono text-[9.5px] tracking-[0.1em] text-ink-soft">
         <span className="inline-flex items-center gap-1.5">
           <Radio className="w-3 h-3 text-lime" />
-          uptime: shipping
+          live · <LiveStat /> ops/s
         </span>
         <span className="inline-flex items-center gap-1.5 text-ink-muted">
           <Zap className="w-3 h-3 text-amber" />
