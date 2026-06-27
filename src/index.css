@@ -821,3 +821,147 @@ section:not(#hero) {
 .yarl__fullsize .yarl__slide_image {
   cursor: grab;
 }
+
+/* ============================================================
+   Latest-web-tech box treatments
+   ------------------------------------------------------------
+   - Aurora gradient border: a registered @property lets the conic
+     gradient ANGLE animate on the compositor (you can't animate a
+     gradient angle otherwise). Masked to a hairline ring via
+     mask-composite — no extra DOM, no JS.
+   - Hover gradient ring: a static palette conic revealed on hover
+     (opacity only — zero repaint-on-move).
+   - Equalizer bars + glowing caret: GPU transform / opacity only.
+   ============================================================ */
+@property --aurora-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@layer utilities {
+  @keyframes aurora-spin {
+    to {
+      --aurora-angle: 360deg;
+    }
+  }
+
+  /* shared hairline-ring mask used by both border variants */
+  .ring-mask {
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .aurora-ring {
+    position: relative;
+    isolation: isolate;
+  }
+  .aurora-ring::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: conic-gradient(
+      from var(--aurora-angle),
+      hsl(var(--accent)),
+      hsl(var(--lime)),
+      hsl(var(--electric)),
+      hsl(var(--amber)),
+      hsl(var(--accent))
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: aurora-spin 9s linear infinite;
+    pointer-events: none;
+    opacity: 0.9;
+    z-index: 2;
+  }
+
+  @keyframes eq-bar {
+    0%,
+    100% {
+      transform: scaleY(0.32);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+  .eq-bar {
+    transform-origin: bottom;
+    animation: eq-bar 0.9s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @keyframes caret-glow {
+    0%,
+    45% {
+      opacity: 1;
+      box-shadow:
+        0 0 10px hsl(var(--accent) / 0.85),
+        0 0 4px hsl(var(--accent) / 0.9);
+    }
+    55%,
+    100% {
+      opacity: 0.25;
+      box-shadow: 0 0 0 transparent;
+    }
+  }
+  .caret-glow {
+    animation: caret-glow 1.15s ease-in-out infinite;
+  }
+
+  /* aurora text — a flowing palette field masked to the glyphs via
+     background-clip:text. The robust, accessible, GPU-friendly analogue to
+     "the living shader inside the letters": it wraps natively on every
+     screen (no fragile glyph-mask / web-font-in-SVG), stays real selectable
+     text, and only the one phrase repaints. */
+  .aurora-text {
+    background-image:
+      radial-gradient(70% 150% at 12% 20%, hsl(var(--accent)), transparent 55%),
+      radial-gradient(65% 140% at 88% 30%, hsl(var(--electric)), transparent 55%),
+      radial-gradient(80% 160% at 60% 95%, hsl(var(--lime)), transparent 58%),
+      radial-gradient(70% 150% at 35% 75%, hsl(var(--amber)), transparent 60%),
+      linear-gradient(120deg, hsl(var(--accent)), hsl(var(--plum)));
+    background-size: 220% 220%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: aurora-text-flow 9s ease-in-out infinite;
+    filter: drop-shadow(0 3px 22px hsl(var(--accent) / 0.2));
+  }
+  @keyframes aurora-text-flow {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-ring::before,
+  .eq-bar,
+  .caret-glow,
+  .aurora-text {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .aurora-ring::before,
+  .eq-bar,
+  .aurora-text {
+    animation: none !important;
+  }
+}

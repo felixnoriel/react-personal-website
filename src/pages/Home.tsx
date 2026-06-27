@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
 import { Intro } from '../components/Intro'
+import { ShaderField } from '../components/ui/ShaderField'
 
 const TechToolbelt = lazy(() => import('../components/TechToolbelt').then(m => ({ default: m.TechToolbelt })))
 const BuildingJourney = lazy(() => import('../components/BuildingJourney').then(m => ({ default: m.BuildingJourney })))
@@ -35,15 +36,25 @@ export function Home() {
   return (
     <>
       <SEOHead />
-      <Intro />
-      <Suspense fallback={<div className="h-40 flex items-center justify-center text-muted-foreground">Loading...</div>}>
-        <NomadLife />
-        <TechToolbelt />
-        <BuildingJourney experiences={careerList} />
-        <ProductsBuilt projects={projectList} />
-        <TravelStories stories={blogList} />
-        <ContactSection />
-      </Suspense>
+      {/* Global living shader backdrop — ONE WebGL context behind the whole
+          page. Every redesigned section is transparent and floats over this
+          field on frosted glass panels (the hero's proven legible pattern),
+          so the site reads as one cohesive system. CSS-gradient fallback on
+          mobile / reduced-motion / no-WebGL. */}
+      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none">
+        <ShaderField intensity={0.82} />
+      </div>
+      <div className="relative z-10">
+        <Intro />
+        <Suspense fallback={<div className="h-40 flex items-center justify-center text-muted-foreground">Loading...</div>}>
+          <NomadLife />
+          <TechToolbelt />
+          <BuildingJourney experiences={careerList} />
+          <ProductsBuilt projects={projectList} />
+          <TravelStories stories={blogList} />
+          <ContactSection />
+        </Suspense>
+      </div>
     </>
   )
 }
