@@ -1,21 +1,22 @@
 import { Cloud, Layout, Server } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import {
-  GlassPanel,
+  FxWord,
   HudDot,
   Reveal,
   SectionHeading,
   SectionShell,
 } from './ui/section'
-import { ACCENT, type Accent } from './ui/section-tokens'
+import type { Accent } from './ui/section-tokens'
+import { TechSphere, type SphereGroup, type SphereWord } from './ui/TechSphere'
 
 // ============================================================
 // TechToolbelt — "Tools and tech I reach for every day."
 //
 // Rebuilt from a ~1,000-line pile (orbital core-reactor, htop process
-// tables with per-row sparklines + mouse spotlights, a skill heatmap,
-// a filterable terminal) into three clean glass stack cards. Same
-// real data; far easier to grasp; no perpetual animation systems.
+// tables, a skill heatmap) into one interactive 3D constellation that
+// holds all three stacks — color-coded by domain, filterable, with the
+// sphere reforming to each stack on demand. Same real skill data.
 // ============================================================
 
 type Skill = {
@@ -179,6 +180,26 @@ const countItems = (s: Stack) =>
 const countLive = (s: Stack) =>
   s.groups.reduce((m, g) => m + g.items.filter((i) => i.live).length, 0)
 
+// Flatten the stacks into the constellation's data: one node per skill
+// (tagged with its domain), plus per-domain totals for the filter chips.
+const SPHERE_GROUPS: SphereGroup[] = STACKS.map((s) => ({
+  id: s.id,
+  title: s.title,
+  accent: s.accent,
+  total: countItems(s),
+  live: countLive(s),
+}))
+const SPHERE_WORDS: SphereWord[] = STACKS.flatMap((s) =>
+  s.groups.flatMap((g) =>
+    g.items.map((it) => ({
+      name: it.name,
+      years: it.years,
+      groupId: s.id,
+      legacy: it.note === 'legacy',
+    })),
+  ),
+)
+
 export function TechToolbelt() {
   const toolCount = STACKS.reduce((n, s) => n + countItems(s), 0)
   const liveCount = STACKS.reduce((n, s) => n + countLive(s), 0)
@@ -196,93 +217,16 @@ export function TechToolbelt() {
         title={
           <>
             Tools and tech I reach for{' '}
-            <span className="italic font-extrabold aurora-text">every day.</span>
+            <FxWord className="italic font-extrabold">every day.</FxWord>
           </>
         }
         intro="A decade of shipping across startups, media, and Web3 — here's what's in the current toolbox, booted and running."
       />
 
-      <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
-        {STACKS.map((s, i) => (
-          <StackCard key={s.id} stack={s} index={i} />
-        ))}
-      </div>
+      <Reveal className="mt-12">
+        <TechSphere words={SPHERE_WORDS} groups={SPHERE_GROUPS} />
+      </Reveal>
     </SectionShell>
   )
 }
 
-function StackCard({ stack, index }: { stack: Stack; index: number }) {
-  const a = ACCENT[stack.accent]
-  const Icon = stack.icon
-  const total = countItems(stack)
-  const live = countLive(stack)
-
-  return (
-    <Reveal delay={index * 0.1}>
-      <GlassPanel accent={stack.accent} className="h-full p-5 flex flex-col">
-        {/* header */}
-        <div className="flex items-center gap-3 mb-5">
-          <span
-            className={`w-11 h-11 rounded-xl flex items-center justify-center ${a.soft} ${a.text}`}
-          >
-            <Icon className="w-5 h-5" />
-          </span>
-          <div className="min-w-0">
-            <div className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-ink-soft">
-              {stack.number} · {stack.caption}
-            </div>
-            <h3 className="font-display text-xl font-bold tracking-tight text-ink">
-              {stack.title}
-            </h3>
-          </div>
-          <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] text-ink-soft shrink-0">
-            <span className={`w-1.5 h-1.5 rounded-full ${a.bg}`} />
-            {live}/{total}
-          </span>
-        </div>
-
-        {/* groups */}
-        <div className="space-y-4 flex-1">
-          {stack.groups.map((g) => (
-            <div key={g.label}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-ink-soft">
-                  {g.label}
-                </span>
-                <span className="flex-1 h-px bg-border/50" />
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {g.items.map((it) => (
-                  <SkillChip key={it.name} skill={it} accent={stack.accent} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </GlassPanel>
-    </Reveal>
-  )
-}
-
-function SkillChip({ skill, accent }: { skill: Skill; accent: Accent }) {
-  const a = ACCENT[accent]
-  const legacy = skill.note === 'legacy'
-
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 pl-2 pr-2 py-1 rounded-md border font-mono text-[11px] transition-colors ${
-        legacy
-          ? 'border-border/40 bg-background/25 text-ink-soft'
-          : 'border-border/60 bg-background/45 text-ink hover:border-ink/25'
-      }`}
-    >
-      {skill.live && <span className={`w-1.5 h-1.5 rounded-full ${a.bg}`} />}
-      <span>{skill.name}</span>
-      {skill.years != null && (
-        <span className="text-ink-soft text-[9.5px] tabular-nums">
-          {skill.years}y
-        </span>
-      )}
-    </span>
-  )
-}

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useRef, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react'
 import { ACCENT, EASE, type Accent } from './section-tokens'
+import { ScrambleText } from './ScrambleText'
 import { useFxLevel } from '../../hooks/useFxLevel'
 
 // ============================================================
@@ -128,8 +129,19 @@ export function GlassPanel({
       ref={ref}
       onPointerMove={interactive ? onMove : undefined}
       onPointerLeave={interactive ? onLeave : undefined}
-      style={tiltOn ? { willChange: 'transform' } : undefined}
-      className={`group/glass relative rounded-2xl border border-border/60 bg-background/80 backdrop-blur-xl shadow-[0_24px_60px_-28px_hsl(var(--ink)/0.5)] overflow-hidden ${className}`}
+      style={{
+        // Layered "liquid glass" depth, all static (rasterized once):
+        //   1) bright top edge — light catching the rim of the pane
+        //   2) faint inner ring — the glass thickness
+        //   3) grounding drop shadow
+        //   4) an accent-tinted halo that BLEEDS past the panel and melts
+        //      it into the living shader behind (box-shadow isn't clipped by
+        //      overflow-hidden) — this is what makes the card read as
+        //      floating ON the shader rather than sitting on opaque paper.
+        boxShadow: `inset 0 1px 0 0 hsl(var(--background) / 0.6), inset 0 0 0 1px hsl(var(--background) / 0.14), 0 26px 64px -30px hsl(var(--ink) / 0.5), 0 0 60px -16px hsl(${ACCENT[accent].hsl} / 0.18)`,
+        ...(tiltOn ? { willChange: 'transform' } : {}),
+      }}
+      className={`group/glass relative rounded-2xl border border-ink/[0.07] bg-background/60 backdrop-blur-xl md:backdrop-blur-2xl overflow-hidden ${className}`}
     >
       {/* cursor-follow accent glow */}
       {spotOn && (
@@ -167,6 +179,62 @@ export function GlassPanel({
       )}
       {children}
     </div>
+  )
+}
+
+// Modern frosted tag pill — the single tag language used everywhere
+// (tech stacks, project tags, skill chips). Hairline + barely-there
+// dark frost so the living shader bleeds through and it reads as part
+// of the background rather than a boxy chip.
+export function Tag({
+  children,
+  accent,
+  dot = false,
+  muted = false,
+  className = '',
+}: {
+  children: ReactNode
+  /** color of the leading dot (and hover tint), when used */
+  accent?: Accent
+  dot?: boolean
+  /** dimmer, recede-into-background variant (e.g. legacy/secondary) */
+  muted?: boolean
+  className?: string
+}) {
+  const a = accent ? ACCENT[accent] : null
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10.5px] backdrop-blur-sm transition-colors ${
+        muted
+          ? 'border-ink/[0.06] bg-ink/[0.02] text-ink-soft/80'
+          : 'border-ink/[0.09] bg-ink/[0.035] text-ink-soft hover:border-accent/35 hover:text-ink'
+      } ${className}`}
+    >
+      {dot && a && <span className={`h-1.5 w-1.5 rounded-full ${a.bg}`} />}
+      {children}
+    </span>
+  )
+}
+
+// The "wow word" treatment shared by every heading: aurora gradient + a
+// periodic electric glitch + a scramble-in reveal when it scrolls into view.
+// `variant` retints the gradient (cool/warm) for the hero's two lines.
+export function FxWord({
+  children,
+  variant,
+  className = '',
+}: {
+  children: string
+  variant?: 'cool' | 'warm'
+  className?: string
+}) {
+  const tint = variant === 'cool' ? 'aurora-cool' : variant === 'warm' ? 'aurora-warm' : ''
+  return (
+    <ScrambleText
+      text={children}
+      trigger="view"
+      className={`aurora-text electric-text ${tint} ${className}`}
+    />
   )
 }
 

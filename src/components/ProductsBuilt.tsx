@@ -14,11 +14,13 @@ import { AnimatedNumber } from './ui/AnimatedNumber'
 import { StablePayBanner } from './ui/StablePayBanner'
 import { trackProjectView } from '../utils/analytics'
 import {
+  FxWord,
   GlassPanel,
   HudDot,
   Reveal,
   SectionHeading,
   SectionShell,
+  Tag,
 } from './ui/section'
 import { ACCENT, type Accent } from './ui/section-tokens'
 
@@ -99,7 +101,7 @@ export function ProductsBuilt({
         title={
           <>
             Products I've{' '}
-            <span className="italic font-extrabold aurora-text">shipped and scaled.</span>
+            <FxWord className="italic font-extrabold">shipped and scaled.</FxWord>
           </>
         }
         intro="From Web3 gaming to hospitality SaaS — a handful of the products that define the last few years of my work."
@@ -284,12 +286,7 @@ function ProjectCard({
           {tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1.5">
               {tags.map((t) => (
-                <span
-                  key={t.slug}
-                  className="font-mono text-[10.5px] px-2 py-0.5 rounded border border-border/60 bg-background/40 text-ink-muted"
-                >
-                  {t.name}
-                </span>
+                <Tag key={t.slug}>{t.name}</Tag>
               ))}
             </div>
           )}

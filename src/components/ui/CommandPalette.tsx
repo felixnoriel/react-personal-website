@@ -28,29 +28,20 @@ type CommandItem = {
   action: () => void
 }
 
-// Group → accent color mapping (CSS custom properties / tokens)
-const GROUP_COLOR: Record<GroupName, { dot: string; glow: string; text: string; bg: string; border: string }> = {
-  Navigate: {
-    dot: 'bg-electric',
-    glow: 'shadow-[0_0_8px_hsl(var(--electric)/0.7)]',
-    text: 'text-electric',
-    bg: 'bg-electric/10',
-    border: 'border-electric/50',
-  },
-  'Jump to': {
-    dot: 'bg-lime',
-    glow: 'shadow-[0_0_8px_hsl(var(--lime)/0.7)]',
-    text: 'text-lime',
-    bg: 'bg-lime/10',
-    border: 'border-lime/50',
-  },
-  Contact: {
-    dot: 'bg-amber',
-    glow: 'shadow-[0_0_8px_hsl(var(--amber)/0.7)]',
-    text: 'text-amber',
-    bg: 'bg-amber/10',
-    border: 'border-amber/50',
-  },
+// Brightened brand accents tuned for the dark console (the light-mode brand
+// vars are too dark to read on near-black). c = solid, soft = fill, glow =
+// box-shadow color, edge = hairline border.
+type FxAccent = { c: string; soft: string; glow: string; edge: string }
+const ACCENTS: Record<'accent' | 'electric' | 'lime' | 'amber', FxAccent> = {
+  accent: { c: 'hsl(322 90% 74%)', soft: 'hsl(322 82% 58% / 0.16)', glow: 'hsl(322 85% 62% / 0.55)', edge: 'hsl(322 84% 66% / 0.45)' },
+  electric: { c: 'hsl(214 94% 76%)', soft: 'hsl(214 86% 58% / 0.16)', glow: 'hsl(214 90% 64% / 0.55)', edge: 'hsl(214 90% 68% / 0.45)' },
+  lime: { c: 'hsl(79 78% 66%)', soft: 'hsl(79 72% 50% / 0.18)', glow: 'hsl(79 74% 54% / 0.5)', edge: 'hsl(79 74% 58% / 0.4)' },
+  amber: { c: 'hsl(40 96% 69%)', soft: 'hsl(40 92% 55% / 0.16)', glow: 'hsl(40 92% 58% / 0.5)', edge: 'hsl(40 94% 62% / 0.42)' },
+}
+const GROUP_ACCENT: Record<GroupName, FxAccent> = {
+  Navigate: ACCENTS.electric,
+  'Jump to': ACCENTS.lime,
+  Contact: ACCENTS.amber,
 }
 
 export function CommandPalette() {
@@ -284,18 +275,20 @@ export function CommandPalette() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
         >
-          {/* Backdrop */}
+          {/* Backdrop — heavy blur darkens the page (shader bleeds through) with
+              a soft accent bloom up top */}
           <motion.div
             aria-hidden
-            className="absolute inset-0 bg-ink/55 backdrop-blur-md"
+            className="absolute inset-0 backdrop-blur-xl"
             onClick={() => setOpen(false)}
             style={{
+              background: 'hsl(253 52% 4% / 0.62)',
               backgroundImage:
-                'radial-gradient(circle at 50% 20%, hsl(var(--accent)/0.12) 0%, transparent 50%)',
+                'radial-gradient(120% 70% at 50% 8%, hsl(322 80% 48% / 0.18) 0%, transparent 55%)',
             }}
           />
 
-          {/* Console shell */}
+          {/* Console shell — dark frosted glass over the shader */}
           <motion.div
             role="dialog"
             aria-label="Command palette"
@@ -303,53 +296,80 @@ export function CommandPalette() {
             animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            style={{ perspective: '1200px' }}
-            className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-accent/30 bg-background/95 shadow-[0_30px_80px_-20px_hsl(var(--accent)/0.35),0_0_0_1px_hsl(var(--accent)/0.1)] backdrop-blur-xl"
+            style={{
+              perspective: '1200px',
+              background:
+                'radial-gradient(135% 115% at 50% 0%, hsl(253 40% 15% / 0.9), hsl(253 52% 6% / 0.94) 72%)',
+              backdropFilter: 'blur(22px)',
+              WebkitBackdropFilter: 'blur(22px)',
+              boxShadow:
+                '0 44px 100px -28px hsl(253 70% 2% / 0.88), inset 0 1px 0 0 hsl(0 0% 100% / 0.07), 0 0 0 1px hsl(0 0% 100% / 0.06), 0 0 70px -12px hsl(322 80% 48% / 0.3)',
+            }}
+            className="relative w-full max-w-xl overflow-hidden rounded-2xl"
           >
+            {/* faint starfield texture — ties to the tech constellation */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-50"
+              style={{
+                backgroundImage:
+                  'radial-gradient(hsl(0 0% 100% / 0.14) 0.5px, transparent 0.6px)',
+                backgroundSize: '22px 22px',
+              }}
+            />
             {/* Corner HUD brackets */}
             <ConsoleCorners />
 
             {/* Animated scan line at the top edge */}
-            <div
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-[2px] overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+            <div aria-hidden className="absolute inset-x-0 top-0 h-[2px] overflow-hidden">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent, hsl(322 88% 68% / 0.8), transparent)',
+                }}
+              />
               <motion.div
                 className="absolute top-0 bottom-0 w-[30%]"
                 style={{
                   background:
-                    'linear-gradient(90deg, transparent 0%, hsl(var(--lime)) 50%, transparent 100%)',
-                  boxShadow: '0 0 10px hsl(var(--lime) / 0.8)',
+                    'linear-gradient(90deg, transparent 0%, hsl(79 80% 64%) 50%, transparent 100%)',
+                  boxShadow: '0 0 12px hsl(79 80% 60% / 0.9)',
                 }}
                 animate={{ left: ['-30%', '100%'] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               />
             </div>
 
-            {/* Header — tiny meta strip above the input */}
-            <div className="flex items-center justify-between px-4 pt-2.5 pb-1 text-[9.5px] font-mono tracking-[0.22em] uppercase text-ink-soft">
+            {/* Header — meta strip */}
+            <div className="relative flex items-center justify-between px-4 pt-3 pb-1.5 text-[9.5px] font-mono tracking-[0.22em] uppercase text-white/40">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+                  <span
+                    className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping"
+                    style={{ background: ACCENTS.lime.c }}
+                  />
+                  <span
+                    className="relative inline-flex h-1.5 w-1.5 rounded-full"
+                    style={{ background: ACCENTS.lime.c }}
+                  />
                 </span>
-                <span className="text-ink">FX.CONSOLE</span>
-                <span className="text-ink-soft/60">/</span>
-                <span>v1.0</span>
+                <span className="font-semibold tracking-[0.26em] text-white/85">FX.CONSOLE</span>
+                <span className="text-white/25">/</span>
+                <span>v2.0</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="tabular-nums">{clock}</span>
-                <span className="text-ink-soft/60">·</span>
+                <span className="text-white/25">·</span>
                 <span>⌘K</span>
               </div>
             </div>
 
             {/* Search row */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+            <div className="relative flex items-center gap-3 px-4 py-3.5 border-b border-white/[0.07]">
               <span className="flex items-center gap-2 shrink-0">
-                <Search className="w-4 h-4 text-accent" />
-                <span className="font-mono text-lime text-sm select-none">
+                <Search className="w-4 h-4" style={{ color: ACCENTS.accent.c }} />
+                <span className="font-mono text-sm select-none" style={{ color: ACCENTS.lime.c }}>
                   &gt;
                 </span>
               </span>
@@ -359,60 +379,68 @@ export function CommandPalette() {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder="jump anywhere — projects, career, contact…"
-                className="flex-1 bg-transparent outline-none text-sm text-ink placeholder:text-ink-soft font-mono caret-accent"
+                className="flex-1 bg-transparent outline-none text-[15px] text-white placeholder:text-white/35 font-mono"
+                style={{ caretColor: ACCENTS.accent.c }}
                 aria-label="Command query"
               />
-              {/* Trailing: match count tiny chip + ESC */}
-              <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-ink-soft tabular-nums">
-                <span className="text-ink">{filtered.length}</span>
-                <span className="text-ink-soft/60">/</span>
+              <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-white/40 tabular-nums">
+                <span className="text-white/80">{filtered.length}</span>
+                <span className="text-white/25">/</span>
                 <span>{commands.length}</span>
               </span>
-              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded border border-border bg-surface text-[10px] font-mono text-ink-muted">
+              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded border border-white/15 bg-white/[0.05] text-[10px] font-mono text-white/55">
                 ESC
               </kbd>
             </div>
 
             {/* Filter chips */}
-            <div className="flex items-center gap-1.5 px-3 pt-2.5 pb-1.5 overflow-x-auto no-scrollbar">
-              {(['All', 'Navigate', 'Jump to', 'Contact'] as FilterName[]).map(
-                (name) => {
-                  const isActive = filterGroup === name
-                  const color =
-                    name === 'All' ? null : GROUP_COLOR[name as GroupName]
-                  return (
-                    <button
-                      key={name}
-                      onClick={() => setFilterGroup(name)}
-                      className={`group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border font-mono text-[11px] tracking-wide transition-all shrink-0 ${
-                        isActive
-                          ? color
-                            ? `${color.border} ${color.bg} ${color.text}`
-                            : 'border-accent/50 bg-accent/10 text-accent'
-                          : 'border-border bg-surface text-ink-muted hover:bg-surface/80'
-                      }`}
+            <div className="relative flex items-center gap-1.5 px-3 pt-2.5 pb-1.5 overflow-x-auto no-scrollbar">
+              {(['All', 'Navigate', 'Jump to', 'Contact'] as FilterName[]).map((name) => {
+                const isActive = filterGroup === name
+                const a = name === 'All' ? ACCENTS.accent : GROUP_ACCENT[name as GroupName]
+                return (
+                  <button
+                    key={name}
+                    onClick={() => setFilterGroup(name)}
+                    style={
+                      isActive
+                        ? {
+                            color: a.c,
+                            background: a.soft,
+                            borderColor: a.edge,
+                            boxShadow: `0 0 18px -6px ${a.glow}`,
+                          }
+                        : undefined
+                    }
+                    className={`group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border font-mono text-[11px] tracking-wide transition-all shrink-0 ${
+                      isActive
+                        ? ''
+                        : 'border-white/10 bg-white/[0.03] text-white/55 hover:bg-white/[0.07] hover:text-white/80'
+                    }`}
+                  >
+                    <span
+                      className="inline-block w-1.5 h-1.5 rounded-full"
+                      style={{
+                        background: a.c,
+                        opacity: isActive ? 1 : 0.55,
+                        boxShadow: isActive ? `0 0 7px ${a.c}` : undefined,
+                      }}
+                    />
+                    <span className="lowercase">{name}</span>
+                    <span
+                      className="text-[10px] tabular-nums px-1 rounded-sm"
+                      style={{
+                        background: isActive ? 'hsl(0 0% 100% / 0.1)' : 'hsl(0 0% 100% / 0.05)',
+                        color: isActive ? '#fff' : 'hsl(0 0% 100% / 0.5)',
+                      }}
                     >
-                      <span
-                        className={`inline-block w-1.5 h-1.5 rounded-full ${
-                          color ? color.dot : 'bg-accent'
-                        } ${isActive ? 'shadow-[0_0_6px_currentColor]' : 'opacity-60'}`}
-                      />
-                      <span className="lowercase">{name}</span>
-                      <span
-                        className={`text-[10px] tabular-nums px-1 rounded-sm ${
-                          isActive
-                            ? 'bg-background/50 text-ink'
-                            : 'bg-background/80 text-ink-soft'
-                        }`}
-                      >
-                        {groupCounts[name]}
-                      </span>
-                    </button>
-                  )
-                },
-              )}
-              <span className="ml-auto hidden md:inline-flex items-center gap-1 font-mono text-[9.5px] text-ink-soft/70 tracking-wider uppercase">
-                <kbd className="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded border border-border bg-background text-ink-muted text-[9px]">
+                      {groupCounts[name]}
+                    </span>
+                  </button>
+                )
+              })}
+              <span className="ml-auto hidden md:inline-flex items-center gap-1 font-mono text-[9.5px] text-white/35 tracking-wider uppercase">
+                <kbd className="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded border border-white/12 bg-white/[0.04] text-white/55 text-[9px]">
                   tab
                 </kbd>
                 <span>cycle</span>
@@ -420,23 +448,24 @@ export function CommandPalette() {
             </div>
 
             {/* Results */}
-            <div className="max-h-[50vh] overflow-y-auto pt-1 pb-2">
+            <div className="relative max-h-[50vh] overflow-y-auto pt-1 pb-2">
               {filtered.length === 0 ? (
                 <EmptyState query={query} />
               ) : (
                 Object.entries(grouped).map(([group, items]) => {
-                  const color = GROUP_COLOR[group as GroupName]
+                  const a = GROUP_ACCENT[group as GroupName]
                   return (
                     <div key={group} className="px-2 pb-2">
                       <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
                         <span
-                          className={`inline-block w-1 h-3 rounded-sm ${color.dot} ${color.glow}`}
+                          className="inline-block w-1 h-3 rounded-sm"
+                          style={{ background: a.c, boxShadow: `0 0 8px ${a.glow}` }}
                         />
-                        <span className="text-[10px] tracking-[0.28em] uppercase text-ink-soft font-mono">
+                        <span className="text-[10px] tracking-[0.28em] uppercase text-white/45 font-mono">
                           {group}
                         </span>
-                        <span className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
-                        <span className="text-[9.5px] font-mono text-ink-soft/70 tabular-nums">
+                        <span className="flex-1 h-px bg-gradient-to-r from-white/15 to-transparent" />
+                        <span className="text-[9.5px] font-mono text-white/35 tabular-nums">
                           {String(items.length).padStart(2, '0')}
                         </span>
                       </div>
@@ -450,16 +479,13 @@ export function CommandPalette() {
                               key={item.id}
                               initial={{ opacity: 0, x: -6 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{
-                                duration: 0.2,
-                                delay: 0.02 * itemIdx,
-                              }}
+                              transition={{ duration: 0.2, delay: 0.02 * itemIdx }}
                             >
                               <CommandRow
                                 item={item}
                                 isActive={isActive}
                                 query={query}
-                                color={color}
+                                accent={a}
                                 onHover={() => setActiveIndex(localIndex)}
                                 onActivate={() => {
                                   item.action()
@@ -477,26 +503,18 @@ export function CommandPalette() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between gap-4 px-4 py-2.5 border-t border-border bg-surface/60 text-[11px] font-mono text-ink-soft">
+            <div className="relative flex items-center justify-between gap-4 px-4 py-2.5 border-t border-white/[0.07] bg-[hsl(253_50%_4%/0.4)] text-[11px] font-mono text-white/45">
               <div className="flex items-center gap-3">
                 <Shortcut keys={['↑', '↓']} label="navigate" />
-                <Shortcut
-                  keys={[
-                    <CornerDownLeft key="enter" className="w-3 h-3" />,
-                  ]}
-                  label="open"
-                />
+                <Shortcut keys={[<CornerDownLeft key="enter" className="w-3 h-3" />]} label="open" />
                 <Shortcut keys={['esc']} label="close" />
               </div>
               <div className="flex items-center gap-2.5">
-                {/* Tiny heartbeat sparkline */}
                 <Heartbeat />
-                <span className="text-ink-soft/80">·</span>
+                <span className="text-white/25">·</span>
                 <span>
-                  <span className="text-ink tabular-nums">
-                    {filtered.length}
-                  </span>{' '}
-                  result{filtered.length === 1 ? '' : 's'}
+                  <span className="text-white/85 tabular-nums">{filtered.length}</span> result
+                  {filtered.length === 1 ? '' : 's'}
                 </span>
               </div>
             </div>
@@ -508,20 +526,20 @@ export function CommandPalette() {
 }
 
 // ════════════════════════════════════════════════════════════
-// CommandRow — one result row with active shimmer + match highlight
+// CommandRow — one result row with active glow + match highlight
 // ════════════════════════════════════════════════════════════
 function CommandRow({
   item,
   isActive,
   query,
-  color,
+  accent,
   onHover,
   onActivate,
 }: {
   item: CommandItem
   isActive: boolean
   query: string
-  color: (typeof GROUP_COLOR)[GroupName]
+  accent: FxAccent
   onHover: () => void
   onActivate: () => void
 }) {
@@ -530,94 +548,95 @@ function CommandRow({
     <button
       onMouseEnter={onHover}
       onClick={onActivate}
-      className={`relative w-full group flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors overflow-hidden ${
-        isActive ? color.bg : 'hover:bg-surface'
-      }`}
+      className="relative w-full group flex items-center gap-3 px-3 py-2.5 rounded-xl text-left overflow-hidden"
+      style={
+        isActive
+          ? { background: `linear-gradient(90deg, ${accent.soft}, transparent 88%)` }
+          : undefined
+      }
     >
-      {/* Left group accent bar, thicker when active */}
+      {/* hover wash on inactive rows */}
+      {!isActive && (
+        <span
+          aria-hidden
+          className="absolute inset-0 rounded-xl bg-white/[0.04] opacity-0 group-hover:opacity-100 transition-opacity"
+        />
+      )}
+
+      {/* left glow bar, lit when active */}
       <span
         aria-hidden
-        className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-sm transition-all ${
-          isActive ? `${color.dot} ${color.glow}` : 'bg-transparent'
-        }`}
+        className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-sm transition-all"
+        style={isActive ? { background: accent.c, boxShadow: `0 0 12px ${accent.glow}` } : undefined}
       />
 
       {/* Shimmer sweep on active row */}
       {isActive && (
         <motion.span
           aria-hidden
-          className="absolute inset-y-0 w-[50%] pointer-events-none"
+          className="absolute inset-y-0 w-[55%] pointer-events-none"
           style={{
-            background:
-              'linear-gradient(90deg, transparent 0%, hsl(var(--lime)/0.08) 50%, transparent 100%)',
+            background: `linear-gradient(90deg, transparent 0%, ${accent.soft} 50%, transparent 100%)`,
           }}
-          initial={{ left: '-50%' }}
+          initial={{ left: '-55%' }}
           animate={{ left: '100%' }}
-          transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
+          transition={{ duration: 1.9, repeat: Infinity, ease: 'linear' }}
         />
       )}
 
       {/* Icon badge */}
       <span
-        className={`relative flex items-center justify-center w-7 h-7 rounded-md border transition-colors ${
+        className="relative z-[1] flex items-center justify-center w-7 h-7 rounded-lg border transition-colors"
+        style={
           isActive
-            ? `${color.border} ${color.bg} ${color.text}`
-            : 'border-border bg-surface text-ink-muted'
-        }`}
+            ? { color: accent.c, background: accent.soft, borderColor: accent.edge }
+            : {
+                color: 'hsl(0 0% 100% / 0.5)',
+                background: 'hsl(0 0% 100% / 0.03)',
+                borderColor: 'hsl(0 0% 100% / 0.1)',
+              }
+        }
       >
         <Icon className="w-3.5 h-3.5" />
         {isActive && (
           <motion.span
             aria-hidden
-            className={`absolute inset-0 rounded-md ${color.dot}`}
+            className="absolute inset-0 rounded-lg"
+            style={{ background: accent.c, filter: 'blur(7px)' }}
             initial={{ opacity: 0, scale: 1 }}
-            animate={{ opacity: [0, 0.3, 0], scale: [1, 1.35, 1.35] }}
-            transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
-            style={{ filter: 'blur(6px)' }}
+            animate={{ opacity: [0, 0.35, 0], scale: [1, 1.4, 1.4] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
           />
         )}
       </span>
 
       {/* Label + match highlight */}
-      <span className="flex-1 text-sm text-ink truncate">
+      <span
+        className="relative z-[1] flex-1 text-[14px] truncate"
+        style={{ color: isActive ? '#fff' : 'hsl(0 0% 100% / 0.82)' }}
+      >
         <HighlightMatch text={item.label} query={query} />
       </span>
 
       {/* Hint (path / email) */}
       {item.hint && (
         <span
-          className={`hidden sm:inline-block text-[11px] font-mono transition-colors tabular-nums ${
-            isActive ? color.text : 'text-ink-soft'
-          }`}
+          className="relative z-[1] hidden sm:inline-block text-[11px] font-mono tabular-nums transition-colors"
+          style={{ color: isActive ? accent.c : 'hsl(0 0% 100% / 0.4)' }}
         >
           {item.hint}
         </span>
       )}
 
-      {/* Right arrow with animated translation on active */}
+      {/* Right arrow */}
       <motion.span
-        className="relative inline-flex items-center justify-center"
-        animate={
-          isActive
-            ? { x: [0, 3, 0] }
-            : { x: 0 }
-        }
-        transition={{
-          duration: 1.2,
-          repeat: isActive ? Infinity : 0,
-          ease: 'easeInOut',
-        }}
+        className="relative z-[1] inline-flex items-center justify-center"
+        animate={isActive ? { x: [0, 3, 0] } : { x: 0 }}
+        transition={{ duration: 1.2, repeat: isActive ? Infinity : 0, ease: 'easeInOut' }}
       >
         <ArrowRight
-          className={`w-3.5 h-3.5 transition-opacity ${
-            isActive
-              ? color.text
-              : 'text-ink-soft opacity-0 group-hover:opacity-80'
-          }`}
+          className={`w-3.5 h-3.5 transition-opacity ${isActive ? '' : 'opacity-0 group-hover:opacity-70'}`}
+          style={{ color: isActive ? accent.c : 'hsl(0 0% 100% / 0.5)' }}
         />
       </motion.span>
     </button>
@@ -625,8 +644,7 @@ function CommandRow({
 }
 
 // ════════════════════════════════════════════════════════════
-// HighlightMatch — highlights each space-separated query token
-// inside the label with an accent color
+// HighlightMatch — highlights each query token inside the label
 // ════════════════════════════════════════════════════════════
 function HighlightMatch({ text, query }: { text: string; query: string }) {
   const q = query.trim()
@@ -644,7 +662,8 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
         re.test(p) ? (
           <span
             key={i}
-            className="text-accent font-semibold bg-accent/10 rounded-sm px-[1.5px]"
+            className="font-semibold rounded-sm px-[1.5px]"
+            style={{ color: ACCENTS.accent.c, background: 'hsl(322 80% 60% / 0.2)' }}
           >
             {p}
           </span>
@@ -657,30 +676,28 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
 }
 
 // ════════════════════════════════════════════════════════════
-// EmptyState — cool "no signal" panel
+// EmptyState — "no signal" panel
 // ════════════════════════════════════════════════════════════
 function EmptyState({ query }: { query: string }) {
   return (
     <div className="px-6 py-9 text-center font-mono">
-      {/* Glitchy NO SIGNAL */}
       <div className="relative inline-block mb-3">
         <motion.div
-          className="text-[11px] tracking-[0.35em] uppercase text-ink-soft"
+          className="text-[11px] tracking-[0.35em] uppercase text-white/40"
           animate={{ opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
         >
           ▚ NO SIGNAL ▚
         </motion.div>
       </div>
-      <div className="text-sm text-ink-muted mb-1">
-        No results for{' '}
-        <span className="text-ink">&quot;{query || '…'}&quot;</span>
+      <div className="text-sm text-white/70 mb-1">
+        No results for <span className="text-white">&quot;{query || '…'}&quot;</span>
       </div>
-      <div className="text-[11px] text-ink-soft">
+      <div className="text-[11px] text-white/45">
         try{' '}
-        <span className="text-accent">projects</span>,{' '}
-        <span className="text-lime">career</span>, or{' '}
-        <span className="text-amber">contact</span>
+        <span style={{ color: ACCENTS.electric.c }}>projects</span>,{' '}
+        <span style={{ color: ACCENTS.lime.c }}>career</span>, or{' '}
+        <span style={{ color: ACCENTS.amber.c }}>contact</span>
       </div>
     </div>
   )
@@ -704,15 +721,10 @@ function ConsoleCorners() {
           width="14"
           height="14"
           viewBox="0 0 14 14"
-          className={`absolute ${x.cls} text-accent/60`}
+          className={`absolute ${x.cls}`}
+          style={{ color: 'hsl(322 84% 68% / 0.7)' }}
         >
-          <path
-            d={x.d}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
+          <path d={x.d} fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
         </svg>
       ))}
     </div>
@@ -724,8 +736,11 @@ function ConsoleCorners() {
 // ════════════════════════════════════════════════════════════
 function Heartbeat() {
   return (
-    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-ink-soft">
-      <svg width="28" height="10" viewBox="0 0 28 10" className="text-lime">
+    <span
+      className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase"
+      style={{ color: ACCENTS.lime.c }}
+    >
+      <svg width="28" height="10" viewBox="0 0 28 10">
         <polyline
           points="0,5 6,5 9,1 12,9 15,5 28,5"
           fill="none"
@@ -733,18 +748,12 @@ function Heartbeat() {
           strokeWidth="1.2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ filter: 'drop-shadow(0 0 3px hsl(var(--lime)/0.8))' }}
+          style={{ filter: 'drop-shadow(0 0 3px hsl(79 80% 56% / 0.9))' }}
         >
-          <animate
-            attributeName="stroke-dashoffset"
-            from="0"
-            to="-28"
-            dur="1.5s"
-            repeatCount="indefinite"
-          />
+          <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.5s" repeatCount="indefinite" />
         </polyline>
       </svg>
-      <span className="text-lime">online</span>
+      <span>online</span>
     </span>
   )
 }
@@ -764,12 +773,12 @@ function Shortcut({
       {keys.map((k, i) => (
         <kbd
           key={i}
-          className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded border border-border bg-background text-ink-muted text-[10px]"
+          className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded border border-white/12 bg-white/[0.05] text-white/60 text-[10px]"
         >
           {k}
         </kbd>
       ))}
-      <span className="ml-1">{label}</span>
+      <span className="ml-1 text-white/45">{label}</span>
     </span>
   )
 }

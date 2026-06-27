@@ -3,6 +3,7 @@ import { ArrowUpRight, MapPin } from 'lucide-react'
 import type { BlogPost } from '../types/data'
 import { formatDate } from '../utils/date'
 import {
+  FxWord,
   GlassPanel,
   HudDot,
   Reveal,
@@ -54,7 +55,7 @@ export function TravelStories({ stories }: TravelStoriesProps) {
         title={
           <>
             Field notes from{' '}
-            <span className="italic font-extrabold aurora-text">the road.</span>
+            <FxWord className="italic font-extrabold">the road.</FxWord>
           </>
         }
         intro="Dispatches from the places I've worked from, the teams I've shipped with, and the roads in between."

@@ -20,6 +20,14 @@ export function ScrambleText({
   const elementRef = useRef<HTMLSpanElement>(null)
 
   const scramble = () => {
+    // Respect reduced-motion: settle straight to the real text, no scramble.
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setDisplay(text)
+      return
+    }
     if (frameRef.current) cancelAnimationFrame(frameRef.current)
     const start = performance.now()
 

@@ -63,7 +63,7 @@ void main(){
   // flowing bright filaments for life (kept modest so the type stays legible)
   float band = abs(fract(f*2.6 + t*0.6) - 0.5);
   float fil = smoothstep(0.05, 0.0, band);
-  col += fil * 0.35 * mix(u_c3, vec3(1.0), 0.45);
+  col += fil * 0.35 * mix(a3, vec3(1.0), 0.45);
 
   // keep enough depth for contrast on the light paper
   col *= 0.95;
@@ -190,17 +190,19 @@ export function ShaderText({
       d3: gl.getUniformLocation(prog, 'u_d3'),
       d4: gl.getUniformLocation(prog, 'u_d4'),
     }
-    // two distinct deep palettes so the two headline lines read as different
-    // shades. Line 1 "Product Engineer" — cool blue / indigo.
-    gl.uniform3fv(U.c1, hslVar('--electric', [0.22, 0.34, 0.56], 1.3, 0.48))
-    gl.uniform3fv(U.c2, hslVar('--amber', [0.3, 0.26, 0.45], 1.2, 0.4))
-    gl.uniform3fv(U.c3, hslVar('--electric', [0.3, 0.45, 0.7], 1.4, 0.56))
-    gl.uniform3fv(U.c4, hslVar('--plum', [0.3, 0.13, 0.22], 1.2, 0.34))
-    // Line 2 "Making It Happen" — warm magenta / violet.
-    gl.uniform3fv(U.d1, hslVar('--accent', [0.55, 0.2, 0.4], 1.4, 0.47))
-    gl.uniform3fv(U.d2, hslVar('--plum', [0.3, 0.13, 0.22], 1.3, 0.34))
-    gl.uniform3fv(U.d3, hslVar('--accent', [0.7, 0.3, 0.55], 1.5, 0.57))
-    gl.uniform3fv(U.d4, hslVar('--amber', [0.3, 0.26, 0.45], 1.2, 0.42))
+    // Two palettes kept in SEPARATE hue families so the lines read as clearly
+    // different color sets. Line 1 "Product Engineer" — a pure COOL blue ramp
+    // (mid → bright → sky → deep), no magenta so it stays unmistakably blue.
+    gl.uniform3fv(U.c1, hslVar('--electric', [0.18, 0.32, 0.6], 1.25, 0.5))
+    gl.uniform3fv(U.c2, hslVar('--electric', [0.3, 0.46, 0.78], 1.35, 0.64))
+    gl.uniform3fv(U.c3, hslVar('--electric', [0.42, 0.6, 0.88], 1.2, 0.74))
+    gl.uniform3fv(U.c4, hslVar('--electric', [0.08, 0.16, 0.4], 1.3, 0.3))
+    // Line 2 "Making It Happen" — a pure WARM magenta / rose ramp, the
+    // complementary side of the wheel so the contrast against line 1 is obvious.
+    gl.uniform3fv(U.d1, hslVar('--accent', [0.62, 0.18, 0.42], 1.3, 0.52))
+    gl.uniform3fv(U.d2, hslVar('--accent', [0.82, 0.32, 0.58], 1.4, 0.66))
+    gl.uniform3fv(U.d3, hslVar('--accent', [0.9, 0.5, 0.72], 1.2, 0.76))
+    gl.uniform3fv(U.d4, hslVar('--plum', [0.34, 0.1, 0.26], 1.3, 0.3))
 
     // mask texture (text rendered to a 2D canvas)
     const maskTex = gl.createTexture()

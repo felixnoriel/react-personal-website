@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { ArrowUpRight, Check, Coffee, Copy, Mail, MapPin, Send } from 'lucide-react'
 import { LiveClock } from './ui/LiveClock'
 import {
+  FxWord,
   GlassPanel,
   HudDot,
   Reveal,
@@ -58,7 +59,7 @@ export function ContactSection() {
         title={
           <>
             Got something in mind?{' '}
-            <span className="italic font-extrabold aurora-text">Let's talk.</span>
+            <FxWord className="italic font-extrabold">Let's talk.</FxWord>
           </>
         }
         intro="Whether it's a product, a problem, or just a quick chat about engineering — drop a line and I'll get back to you."

@@ -4,6 +4,7 @@ import { Coffee, MapPin, Plane, Utensils } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import {
+  FxWord,
   GlassPanel,
   HudDot,
   Reveal,
@@ -237,8 +238,8 @@ export function NomadLife() {
         }
         title={
           <>
-            Nomading across Asia with{' '}
-            <span className="italic font-extrabold aurora-text">the fam</span> and a
+            <FxWord className="italic font-extrabold">Nomading</FxWord> across Asia
+            with <FxWord className="italic font-extrabold">the fam</FxWord> and a
             laptop.
           </>
         }
@@ -326,10 +327,10 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
 
   // small ambient city-to-city hops for extra life [from, to, durationSeconds]
   const ambient: Array<[string, string, number]> = [
-    ['TPE', 'TYO', 9],
-    ['BLI', 'SYD', 12],
-    ['MAD', 'BLQ', 8],
-    ['HKG', 'SIN', 10],
+    ['TPE', 'TYO', 5],
+    ['BLI', 'SYD', 6],
+    ['MAD', 'BLQ', 4.5],
+    ['HKG', 'SIN', 5.5],
   ]
 
   return (
@@ -465,37 +466,37 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
             <g style={{ color: 'hsl(var(--amber))' }}>
               {/* contrail dots trailing behind the plane */}
               {[
-                { beg: -1.8, op: 0.5, r: 0.26 },
-                { beg: -1.6, op: 0.4, r: 0.22 },
-                { beg: -1.4, op: 0.3, r: 0.18 },
-                { beg: -1.2, op: 0.2, r: 0.14 },
+                { beg: -1.88, op: 0.5, r: 0.34 },
+                { beg: -1.76, op: 0.4, r: 0.28 },
+                { beg: -1.64, op: 0.3, r: 0.22 },
+                { beg: -1.52, op: 0.2, r: 0.17 },
               ].map((p, i) => (
                 <circle key={`trail-${i}`} r={p.r} fill="hsl(var(--amber))" opacity="0">
                   <animate
                     attributeName="opacity"
                     values={`0;${p.op};${p.op};0`}
                     keyTimes="0;0.06;0.9;1"
-                    dur="13s"
+                    dur="8s"
                     begin={`${p.beg}s`}
                     repeatCount="indefinite"
                   />
-                  <animateMotion dur="13s" begin={`${p.beg}s`} repeatCount="indefinite">
+                  <animateMotion dur="8s" begin={`${p.beg}s`} repeatCount="indefinite">
                     <mpath href="#nomad-active-path" />
                   </animateMotion>
                 </circle>
               ))}
               {/* soft glow halo */}
-              <circle r="1.6" fill="hsl(var(--amber))" opacity="0">
-                <animate attributeName="opacity" values="0;0.18;0.18;0" keyTimes="0;0.06;0.9;1" dur="13s" begin="-2s" repeatCount="indefinite" />
-                <animateMotion dur="13s" begin="-2s" repeatCount="indefinite">
+              <circle r="2.3" fill="hsl(var(--amber))" opacity="0">
+                <animate attributeName="opacity" values="0;0.2;0.2;0" keyTimes="0;0.06;0.9;1" dur="8s" begin="-2s" repeatCount="indefinite" />
+                <animateMotion dur="8s" begin="-2s" repeatCount="indefinite">
                   <mpath href="#nomad-active-path" />
                 </animateMotion>
               </circle>
               {/* the plane — banks to its heading, fades at the loop seam */}
               <g opacity="0">
-                <use href="#nomad-plane" transform="scale(1.5)" />
-                <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.93;1" dur="13s" begin="-2s" repeatCount="indefinite" />
-                <animateMotion dur="13s" begin="-2s" rotate="auto" repeatCount="indefinite">
+                <use href="#nomad-plane" transform="scale(2.3)" />
+                <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.93;1" dur="8s" begin="-2s" repeatCount="indefinite" />
+                <animateMotion dur="8s" begin="-2s" rotate="auto" repeatCount="indefinite">
                   <mpath href="#nomad-active-path" />
                 </animateMotion>
               </g>
@@ -506,7 +507,7 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
           {!reduceMotion &&
             ambient.map(([, , dur], i) => (
               <g key={`ambplane-${i}`} style={{ color: 'hsl(var(--lime))' }} opacity="0">
-                <use href="#nomad-plane" transform="scale(0.85)" />
+                <use href="#nomad-plane" transform="scale(2.3)" />
                 <animate attributeName="opacity" values="0;0.8;0.8;0" keyTimes="0;0.12;0.85;1" dur={`${dur}s`} begin={`${-i * 1.9}s`} repeatCount="indefinite" />
                 <animateMotion dur={`${dur}s`} begin={`${-i * 1.9}s`} rotate="auto" repeatCount="indefinite">
                   <mpath href={`#nomad-amb-${i}`} />

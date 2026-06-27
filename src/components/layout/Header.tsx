@@ -23,11 +23,13 @@ import { MagneticButton } from '../ui/MagneticButton'
 // All original navigation behaviour is preserved.
 // ============================================================
 
+// Ordered to match the homepage section flow: hero → Skills (tools) →
+// nomad → Experience → Work.
 const navItems = [
-  { name: 'Work', id: 'projects-section', redirectPath: '/projects' },
-  { name: 'Experience', id: 'career-section', redirectPath: '/career' },
   { name: 'Skills', id: 'skills-section', redirectPath: '/' },
   { name: 'Writing', id: 'nomad-section', redirectPath: '/blog' },
+  { name: 'Experience', id: 'career-section', redirectPath: '/career' },
+  { name: 'Work', id: 'projects-section', redirectPath: '/projects' },
 ]
 
 const RING_R = 19
@@ -191,10 +193,17 @@ export function Header() {
         initial={{ y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          // glass top-edge highlight + grounding depth + an accent halo that
+          // melts the capsule into the shader (same recipe as the GlassPanels)
+          boxShadow: isScrolled
+            ? 'inset 0 1px 0 0 hsl(var(--background) / 0.7), 0 18px 44px -22px hsl(var(--ink) / 0.5), 0 0 44px -12px hsl(var(--accent) / 0.22)'
+            : 'inset 0 1px 0 0 hsl(var(--background) / 0.55), 0 12px 36px -22px hsl(var(--ink) / 0.4), 0 0 34px -14px hsl(var(--accent) / 0.16)',
+        }}
         className={`pointer-events-auto relative flex items-center gap-1 rounded-full border backdrop-blur-xl overflow-hidden transition-[background-color,border-color,box-shadow,padding] duration-300 pl-2 pr-2 ${
           isScrolled
-            ? 'py-1.5 bg-background/70 border-border/60 shadow-[0_16px_40px_-20px_hsl(var(--ink)/0.5)]'
-            : 'py-2 bg-background/45 border-border/40 shadow-[0_12px_36px_-22px_hsl(var(--ink)/0.4)]'
+            ? 'py-1.5 bg-background/65 border-ink/[0.08]'
+            : 'py-2 bg-background/45 border-ink/[0.06]'
         }`}
       >
         {/* cursor sheen */}
@@ -204,7 +213,7 @@ export function Header() {
           className="pointer-events-none absolute top-0 left-0 w-[340px] h-[340px] -z-0"
           style={{
             background:
-              'radial-gradient(circle at center, hsl(var(--accent) / 0.16), transparent 60%)',
+              'radial-gradient(circle at center, hsl(var(--accent) / 0.22), hsl(var(--electric) / 0.08) 45%, transparent 65%)',
             willChange: 'transform',
           }}
         />
@@ -218,6 +227,14 @@ export function Header() {
         >
           <span className="relative flex items-center justify-center w-11 h-11">
             <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 44 44">
+              <defs>
+                <linearGradient id="nav-ring-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--accent))" />
+                  <stop offset="38%" stopColor="hsl(var(--electric))" />
+                  <stop offset="68%" stopColor="hsl(var(--lime))" />
+                  <stop offset="100%" stopColor="hsl(var(--amber))" />
+                </linearGradient>
+              </defs>
               <circle
                 cx="22"
                 cy="22"
@@ -231,11 +248,14 @@ export function Header() {
                 cy="22"
                 r={RING_R}
                 fill="none"
-                stroke="hsl(var(--accent))"
-                strokeWidth="1.5"
+                stroke="url(#nav-ring-grad)"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeDasharray={RING_C}
-                style={{ strokeDashoffset: ringOffset }}
+                style={{
+                  strokeDashoffset: ringOffset,
+                  filter: 'drop-shadow(0 0 2px hsl(var(--accent) / 0.55))',
+                }}
               />
             </svg>
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-ink text-background font-display text-base font-semibold transition-transform duration-300 group-hover:scale-95">
@@ -267,7 +287,14 @@ export function Header() {
                   <motion.span
                     layoutId="nav-pill"
                     aria-hidden
-                    className="absolute inset-0 rounded-full bg-accent/12 border border-accent/20"
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background:
+                        'linear-gradient(120deg, hsl(var(--accent) / 0.2), hsl(var(--electric) / 0.12))',
+                      border: '1px solid hsl(var(--accent) / 0.28)',
+                      boxShadow:
+                        '0 0 18px -5px hsl(var(--accent) / 0.55), inset 0 1px 0 hsl(var(--background) / 0.35)',
+                    }}
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -282,10 +309,10 @@ export function Header() {
           type="button"
           onClick={openPalette}
           aria-label="Open command palette"
-          className="relative z-10 hidden md:inline-flex items-center gap-2 h-9 pl-3 pr-2 rounded-full border border-border/50 bg-background/40 text-ink-soft hover:text-ink hover:border-accent/40 transition-colors"
+          className="relative z-10 hidden md:inline-flex items-center gap-2 h-9 pl-3 pr-2 rounded-full border border-ink/[0.08] bg-background/40 text-ink-soft hover:text-ink hover:border-accent/45 hover:bg-background/55 transition-colors"
         >
           <Search className="w-3.5 h-3.5" />
-          <kbd className="inline-flex items-center px-1.5 py-0.5 rounded border border-border/60 bg-background/60 text-[10px] font-mono">
+          <kbd className="inline-flex items-center px-1.5 py-0.5 rounded border border-ink/10 bg-background/60 text-[10px] font-mono">
             ⌘K
           </kbd>
         </button>
@@ -294,7 +321,7 @@ export function Header() {
         <MagneticButton
           onClick={handleContactClick}
           strength={0.35}
-          className="relative z-10 group hidden md:inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-ink text-background text-[13px] font-medium overflow-hidden"
+          className="relative z-10 group hidden md:inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-ink text-background text-[13px] font-medium overflow-hidden shadow-[0_8px_24px_-10px_hsl(var(--accent)/0.55)]"
         >
           <span className="relative z-10">Contact</span>
           <ArrowUpRight className="w-3.5 h-3.5 relative z-10 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -322,7 +349,11 @@ export function Header() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.97 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-auto md:hidden mt-2 w-[min(92vw,420px)] rounded-2xl border border-border/60 bg-background/80 backdrop-blur-xl shadow-[0_24px_60px_-30px_hsl(var(--ink)/0.5)] overflow-hidden"
+            style={{
+              boxShadow:
+                'inset 0 1px 0 0 hsl(var(--background) / 0.6), 0 26px 64px -30px hsl(var(--ink) / 0.5), 0 0 50px -16px hsl(var(--accent) / 0.2)',
+            }}
+            className="pointer-events-auto md:hidden mt-2 w-[min(92vw,420px)] rounded-2xl border border-ink/[0.08] bg-background/75 backdrop-blur-2xl overflow-hidden"
           >
             <div className="p-3 flex flex-col gap-0.5">
               {navItems.map((item) => (

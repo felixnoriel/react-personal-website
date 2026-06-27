@@ -18,7 +18,7 @@ import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { MagneticButton } from './ui/MagneticButton'
-import { ShaderText } from './ui/ShaderText'
+import { FxWord } from './ui/section'
 import { useFxLevel } from '../hooks/useFxLevel'
 
 // ============================================================
@@ -65,12 +65,6 @@ const A_TEXT: Record<Accent, string> = {
   lime: 'text-lime',
   electric: 'text-electric',
   amber: 'text-amber',
-}
-const A_DOT: Record<Accent, string> = {
-  accent: 'bg-accent',
-  lime: 'bg-lime',
-  electric: 'bg-electric',
-  amber: 'bg-amber',
 }
 
 // Real production impact, pulled from the career/projects data. These are the
@@ -188,7 +182,13 @@ export function Intro() {
           >
             {/* boot strip */}
             <div className="flex flex-wrap items-center gap-2.5 mb-6 text-[11px]">
-              <div className="inline-flex items-center gap-2 h-8 px-3 rounded-md border border-ink/10 bg-background/25 backdrop-blur-md font-mono tracking-normal text-[11px]">
+              <div
+                className="inline-flex items-center gap-2 h-8 px-3 rounded-lg border border-ink/[0.08] bg-background/30 backdrop-blur-md font-mono tracking-normal text-[11px]"
+                style={{
+                  boxShadow:
+                    'inset 0 1px 0 0 hsl(var(--background) / 0.5), 0 2px 10px -6px hsl(var(--ink) / 0.25)',
+                }}
+              >
                 <span className="text-lime">felix@portfolio</span>
                 <span className="text-ink-soft">:~$</span>
                 <span className="text-ink">{bootTyped}</span>
@@ -196,29 +196,53 @@ export function Intro() {
                   <span className="w-1.5 h-3.5 bg-ink animate-blink" />
                 )}
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-lime/25 bg-lime/[0.08] backdrop-blur-md text-ink">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-lime/30 bg-lime/[0.1] backdrop-blur-md text-ink"
+                style={{
+                  boxShadow:
+                    'inset 0 1px 0 0 hsl(var(--background) / 0.35), 0 0 18px -7px hsl(var(--lime) / 0.7)',
+                }}
+              >
                 <span className="relative flex h-2 w-2">
                   <span className="motion-safe-mobile absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-lime" />
+                  <span
+                    className="relative inline-flex h-2 w-2 rounded-full bg-lime"
+                    style={{ boxShadow: '0 0 6px hsl(var(--lime))' }}
+                  />
                 </span>
                 <span className="font-mono text-[11px] tracking-wide">status: available</span>
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-ink/10 bg-background/25 backdrop-blur-md text-ink-muted">
-                <Terminal className="w-3 h-3" />
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-ink/[0.08] bg-background/30 backdrop-blur-md text-ink-muted"
+                style={{ boxShadow: 'inset 0 1px 0 0 hsl(var(--background) / 0.45)' }}
+              >
+                <Terminal className="w-3 h-3 text-electric/80" />
                 <LiveClock timezone="UTC" className="text-ink text-xs" />
                 <span className="text-ink-soft">· UTC</span>
               </div>
-              <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-ink/10 bg-background/25 backdrop-blur-md text-ink-muted font-mono text-[10.5px] tracking-[0.1em]">
+              <div
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-ink/[0.08] bg-background/30 backdrop-blur-md text-ink-muted font-mono text-[10.5px] tracking-[0.1em]"
+                style={{ boxShadow: 'inset 0 1px 0 0 hsl(var(--background) / 0.45)' }}
+              >
                 <span className="text-ink-soft">session</span>
-                <span className="text-ink tabular-nums">{SESSION_ID}</span>
+                <span className="text-accent tabular-nums">{SESSION_ID}</span>
               </div>
             </div>
 
-            {/* headline */}
-            <ShaderText
-              lines={['Product Engineer', 'Making It Happen']}
+            {/* headline — two lines, each an electric-glitch + scramble aurora
+                word in its own color family (cool blue / warm magenta) */}
+            <h1
+              aria-label="Product Engineer · Problem Solver"
               className="font-display text-[clamp(2rem,5.2vw,4.25rem)] leading-[1.06] tracking-tighter font-bold mb-6"
-            />
+            >
+              <span className="block whitespace-nowrap">
+                <FxWord variant="cool">Product Engineer</FxWord>
+              </span>
+              {/* subtitle — ~20% smaller so "Product Engineer" reads as the title */}
+              <span className="block whitespace-nowrap text-[0.83em]">
+                <FxWord variant="warm" className="electric-offset">Problem Solver</FxWord>
+              </span>
+            </h1>
 
             <WhoamiTerminal />
 
@@ -343,6 +367,13 @@ function MiniSparkline({ accent, seed }: { accent: Accent; seed: string }) {
   const { line, area } = useMemo(() => buildSpark(seed), [seed])
   const hsl = `hsl(${A_HSL[accent]})`
   const gid = `spk-${seed.replace(/\W/g, '')}`
+  // faster, per-box pulse rate (1.0–1.4s) so the four feeds sweep at slightly
+  // different speeds instead of pulsing in lockstep
+  const pulseDur = useMemo(() => {
+    let h = 0
+    for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
+    return 1.0 + (h % 5) * 0.1
+  }, [seed])
   return (
     <svg viewBox="0 0 100 26" preserveAspectRatio="none" className="w-full h-6 mt-2.5" aria-hidden>
       <defs>
@@ -384,7 +415,7 @@ function MiniSparkline({ accent, seed }: { accent: Accent; seed: string }) {
         strokeDasharray="14 86"
         style={{ filter: `drop-shadow(0 0 2px ${hsl})` }}
       >
-        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2.6s" repeatCount="indefinite" />
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur={`${pulseDur.toFixed(2)}s`} repeatCount="indefinite" />
       </path>
     </svg>
   )
@@ -483,11 +514,20 @@ function MetricsPanel() {
           return (
             <span
               key={c}
-              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-ink/10 bg-background/30 backdrop-blur-md font-mono text-[9.5px] tracking-tight text-ink-muted"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border backdrop-blur-md font-mono text-[9.5px] tracking-tight text-ink-muted"
+              style={{
+                background: `hsl(${A_HSL[a]} / 0.07)`,
+                borderColor: `hsl(${A_HSL[a]} / 0.24)`,
+                boxShadow: `inset 0 1px 0 0 hsl(var(--background) / 0.4), 0 0 16px -10px hsl(${A_HSL[a]} / 0.8)`,
+              }}
             >
               <span
-                className={`w-1.5 h-1.5 rounded-full ${A_DOT[a]} animate-pulse`}
-                style={{ animationDelay: `${i * 0.25}s` }}
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{
+                  background: `hsl(${A_HSL[a]})`,
+                  boxShadow: `0 0 6px hsl(${A_HSL[a]} / 0.9)`,
+                  animationDelay: `${i * 0.25}s`,
+                }}
               />
               {c}
             </span>
@@ -633,6 +673,7 @@ function WhoamiTerminal() {
   )
   const [done, setDone] = useState(false)
   const [reduceMotion, setReduceMotion] = useState(false)
+  const hostRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const reduce =
@@ -646,21 +687,34 @@ function WhoamiTerminal() {
       return
     }
 
+    // How long the finished bio holds on screen before the reveal re-types.
+    const HOLD_MS = 4000
     const timers: ReturnType<typeof setTimeout>[] = []
     const intervals: ReturnType<typeof setInterval>[] = []
     let cancelled = false
+    let inView = true
+    let pendingRestart = false
 
-    const addTimer = (fn: () => void, ms: number) => {
+    function addTimer(fn: () => void, ms: number) {
       const t = setTimeout(() => {
         if (!cancelled) fn()
       }, ms)
       timers.push(t)
     }
 
-    const typeLine = (lineIdx: number) => {
+    function maybeRestart() {
+      if (cancelled) return
+      // Only loop while the hero is actually on screen + the tab is visible, so
+      // the main thread stays quiet when nobody is watching the terminal.
+      if (inView && !document.hidden) startCycle()
+      else pendingRestart = true
+    }
+
+    function typeLine(lineIdx: number) {
       if (cancelled) return
       if (lineIdx >= WHOAMI_OUTPUT.length) {
         addTimer(() => setDone(true), 360)
+        addTimer(maybeRestart, 360 + HOLD_MS)
         return
       }
       const targetLen = lineLengths[lineIdx]
@@ -685,25 +739,61 @@ function WhoamiTerminal() {
       intervals.push(interval)
     }
 
-    let cmdChar = 0
-    const cmdInt = setInterval(() => {
-      if (cancelled) {
-        clearInterval(cmdInt)
-        return
+    function startCycle() {
+      if (cancelled) return
+      // wipe the previous pass, then re-type from `whoami`
+      setDone(false)
+      setTypedCmd('')
+      setTypedPerLine(WHOAMI_OUTPUT.map(() => 0))
+      let cmdChar = 0
+      const cmdInt = setInterval(() => {
+        if (cancelled) {
+          clearInterval(cmdInt)
+          return
+        }
+        cmdChar++
+        setTypedCmd(WHOAMI_COMMAND.slice(0, cmdChar))
+        if (cmdChar >= WHOAMI_COMMAND.length) {
+          clearInterval(cmdInt)
+          addTimer(() => typeLine(0), 360)
+        }
+      }, 95)
+      intervals.push(cmdInt)
+    }
+
+    // Pause/resume the loop with viewport visibility — when the hero scrolls
+    // away the current pass finishes, then it parks until it's seen again.
+    const host = hostRef.current
+    let io: IntersectionObserver | null = null
+    if (host && typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(
+        (entries) => {
+          inView = entries[0]?.isIntersecting ?? true
+          if (inView && pendingRestart && !document.hidden) {
+            pendingRestart = false
+            startCycle()
+          }
+        },
+        { rootMargin: '0px' },
+      )
+      io.observe(host)
+    }
+    const onVis = () => {
+      if (!document.hidden && inView && pendingRestart) {
+        pendingRestart = false
+        startCycle()
       }
-      cmdChar++
-      setTypedCmd(WHOAMI_COMMAND.slice(0, cmdChar))
-      if (cmdChar >= WHOAMI_COMMAND.length) {
-        clearInterval(cmdInt)
-        addTimer(() => typeLine(0), 360)
-      }
-    }, 95)
-    intervals.push(cmdInt)
+    }
+    document.addEventListener('visibilitychange', onVis)
+
+    startCycle()
 
     return () => {
       cancelled = true
       intervals.forEach((i) => clearInterval(i))
       timers.forEach((t) => clearTimeout(t))
+      io?.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
     }
   }, [lineLengths])
 
@@ -713,6 +803,7 @@ function WhoamiTerminal() {
 
   return (
     <motion.div
+      ref={hostRef}
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}

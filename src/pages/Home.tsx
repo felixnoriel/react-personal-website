@@ -47,8 +47,8 @@ export function Home() {
       <div className="relative z-10">
         <Intro />
         <Suspense fallback={<div className="h-40 flex items-center justify-center text-muted-foreground">Loading...</div>}>
-          <NomadLife />
           <TechToolbelt />
+          <NomadLife />
           <BuildingJourney experiences={careerList} />
           <ProductsBuilt projects={projectList} />
           <TravelStories stories={blogList} />

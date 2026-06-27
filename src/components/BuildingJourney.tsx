@@ -3,11 +3,13 @@ import { ArrowUpRight, MapPin } from 'lucide-react'
 import type { Career } from '../types/data'
 import { ScrambleText } from './ui/ScrambleText'
 import {
+  FxWord,
   GlassPanel,
   HudDot,
   Reveal,
   SectionHeading,
   SectionShell,
+  Tag,
 } from './ui/section'
 import { ACCENT, type Accent } from './ui/section-tokens'
 
@@ -57,9 +59,7 @@ export function BuildingJourney({
         title={
           <>
             A decade of building with{' '}
-            <span className="italic font-extrabold aurora-text">
-              small, sharp teams.
-            </span>
+            <FxWord className="italic font-extrabold">small, sharp teams.</FxWord>
           </>
         }
         intro="Startups across gaming, hospitality, education, and publishing — the products and teams that shaped how I work."
@@ -147,7 +147,7 @@ function CareerCard({
                   <span className="text-ink font-medium">{ach.title}</span>
                   {ach.badge && (
                     <span
-                      className={`inline-block font-mono text-[10px] px-1.5 py-0.5 rounded border ${a.border} ${a.soft} ${a.text}`}
+                      className={`inline-block font-mono text-[10px] px-2 py-0.5 rounded-full border ${a.border} ${a.soft} ${a.text}`}
                     >
                       {ach.badge}
                     </span>
@@ -168,12 +168,7 @@ function CareerCard({
       {tech.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
           {tech.map((t) => (
-            <span
-              key={t}
-              className="font-mono text-[10.5px] px-2 py-0.5 rounded border border-border/60 bg-background/40 text-ink-muted"
-            >
-              {t}
-            </span>
+            <Tag key={t}>{t}</Tag>
           ))}
         </div>
       )}
