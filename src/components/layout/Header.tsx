@@ -187,6 +187,16 @@ export function Header() {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col items-center px-3 pt-3 pointer-events-none">
+      {/* liquid-glass refraction filter — referenced by .liquid-refract */}
+      <svg aria-hidden width="0" height="0" className="absolute pointer-events-none">
+        <defs>
+          <filter id="liquid-glass-filter" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="noise" />
+            <feGaussianBlur in="noise" stdDeviation="1.4" result="bn" />
+            <feDisplacementMap in="SourceGraphic" in2="bn" scale="20" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
       <motion.nav
         ref={navRef}
         onPointerMove={onNavMove}
@@ -194,26 +204,28 @@ export function Header() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         style={{
-          // glass top-edge highlight + grounding depth + an accent halo that
-          // melts the capsule into the shader (same recipe as the GlassPanels)
+          // beveled glass edge — bright top rim catching light, faint dark
+          // base for thickness — over grounding depth + an accent halo.
           boxShadow: isScrolled
-            ? 'inset 0 1px 0 0 hsl(var(--background) / 0.7), 0 18px 44px -22px hsl(var(--ink) / 0.5), 0 0 44px -12px hsl(var(--accent) / 0.22)'
-            : 'inset 0 1px 0 0 hsl(var(--background) / 0.55), 0 12px 36px -22px hsl(var(--ink) / 0.4), 0 0 34px -14px hsl(var(--accent) / 0.16)',
+            ? 'inset 0 1px 1px rgba(255,255,255,0.65), inset 0 -1px 1.5px rgba(70,40,70,0.08), 0 18px 44px -22px hsl(var(--ink) / 0.5), 0 0 44px -12px hsl(var(--accent) / 0.22)'
+            : 'inset 0 1px 1px rgba(255,255,255,0.55), inset 0 -1px 1.5px rgba(70,40,70,0.06), 0 12px 36px -22px hsl(var(--ink) / 0.4), 0 0 34px -14px hsl(var(--accent) / 0.16)',
         }}
-        className={`pointer-events-auto relative flex items-center gap-1 rounded-full border backdrop-blur-xl overflow-hidden transition-[background-color,border-color,box-shadow,padding] duration-300 pl-2 pr-2 ${
-          isScrolled
-            ? 'py-1.5 bg-background/65 border-ink/[0.08]'
-            : 'py-2 bg-background/45 border-ink/[0.06]'
+        className={`pointer-events-auto liquid-glass relative flex items-center gap-1 rounded-full border border-white/25 overflow-hidden transition-[box-shadow,padding] duration-300 pl-2 pr-2 ${
+          isScrolled ? 'py-1.5' : 'py-2'
         }`}
       >
-        {/* cursor sheen */}
+        {/* liquid refraction — bends the backdrop through the glass (Chromium) */}
+        <div aria-hidden className="liquid-refract pointer-events-none absolute inset-0 z-0" />
+        {/* specular gloss — the bright reflection across the top of the pane */}
+        <div aria-hidden className="liquid-gloss pointer-events-none absolute inset-0 z-[1]" />
+        {/* cursor sheen — a moving specular highlight that tracks the pointer */}
         <div
           ref={glowRef}
           aria-hidden
-          className="pointer-events-none absolute top-0 left-0 w-[340px] h-[340px] -z-0"
+          className="pointer-events-none absolute top-0 left-0 w-[340px] h-[340px] z-[2]"
           style={{
             background:
-              'radial-gradient(circle at center, hsl(var(--accent) / 0.22), hsl(var(--electric) / 0.08) 45%, transparent 65%)',
+              'radial-gradient(circle at center, rgba(255,255,255,0.32), hsl(var(--accent) / 0.12) 42%, transparent 64%)',
             willChange: 'transform',
           }}
         />

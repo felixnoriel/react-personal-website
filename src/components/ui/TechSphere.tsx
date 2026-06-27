@@ -35,6 +35,12 @@ const GCOLOR: Record<string, { c: string; glow: string; soft: string; edge: stri
 }
 const colorFor = (accent: string) => GCOLOR[accent] ?? GCOLOR.accent
 
+// Concentric shells, like a star's core and layers: infrastructure is the
+// dense inner core, back end the middle layer, front end the outer layer —
+// which mirrors how the stack physically sits (infra underneath, front end on
+// top). Picking a layer pulls it out to fill the whole sphere.
+const LAYER: Record<string, number> = { infra: 0.48, backend: 0.73, frontend: 1 }
+
 export function TechSphere({ words, groups }: { words: SphereWord[]; groups: SphereGroup[] }) {
   const { reduceMotion, isMobile } = useFxLevel()
   const hostRef = useRef<HTMLDivElement>(null)
@@ -77,7 +83,11 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
     }
     // two layouts per word: the global "all" spread, and a per-group spread
     // (so a group can fill the whole sphere when it's the only one shown).
-    const posAll = words.map((_, i) => fib(N, i))
+    const posAll = words.map((_, i) => {
+      const p = fib(N, i)
+      const L = LAYER[words[i].groupId] ?? 1
+      return { x: p.x * L, y: p.y * L, z: p.z * L }
+    })
     const posGroup: { x: number; y: number; z: number }[] = new Array(N)
     groups.forEach((g) => {
       const idxs = words.map((w, i) => (w.groupId === g.id ? i : -1)).filter((i) => i >= 0)
@@ -207,7 +217,11 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
         screen[i] = vis[i] > 0.5 ? { sx: cssW / 2 + tx, sy: cssH / 2 + ty, depth } : null
         if (!el) continue
         const isHover = i === hov
-        const scale = sc * 0.7 * (isHover ? 1.3 : 1) * (words[i].legacy ? 0.92 : 1)
+        // smaller toward the core (mag = layer radius in "all", → 1 when the
+        // layer is pulled out to fill) so the dense inner core stays legible
+        const mag = Math.hypot(p.x, p.y, p.z)
+        const scale =
+          sc * 0.7 * (isHover ? 1.3 : 1) * (words[i].legacy ? 0.92 : 1) * (0.62 + 0.38 * mag)
         el.style.transform = `translate(-50%, -50%) translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`
         const baseOp = (0.2 + depth * 0.8) * (words[i].legacy ? 0.62 : 1)
         el.style.opacity = (baseOp * vis[i]).toFixed(3)
