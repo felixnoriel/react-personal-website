@@ -239,11 +239,11 @@ export function Intro() {
                   "Product Engineer" (the longer/binding line) always fits one line
                   down to ~320px; desktop keeps the fixed 80/72px sizes. */}
               <span className="block whitespace-nowrap text-[9vw] md:text-[80px]">
-                <FxWord variant="cool">Product Engineer</FxWord>
+                <FxWord variant="cool" className="hero-fx">Product Engineer</FxWord>
               </span>
               {/* subtitle — a touch smaller so "Product Engineer" reads as the title */}
               <span className="block whitespace-nowrap text-[7.6vw] md:text-[72px]">
-                <FxWord variant="warm" className="electric-offset">Problem Solver</FxWord>
+                <FxWord variant="warm" className="electric-offset hero-fx">Problem Solver</FxWord>
               </span>
             </h1>
 

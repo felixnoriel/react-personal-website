@@ -1058,9 +1058,21 @@ section:not(#hero) {
 @media (max-width: 767px) {
   .aurora-ring::before,
   .eq-bar,
-  .aurora-text,
-  .electric-text {
+  .aurora-text:not(.hero-fx),
+  .electric-text:not(.hero-fx) {
     animation: none !important;
+  }
+  /* …but the hero headline stays alive on mobile — it's the focal point and
+     just two short lines, so the paint cost is negligible. Slightly quicker
+     aurora colour-flow so it visibly travels through the smaller text, plus
+     the electric glitch. */
+  .electric-text.hero-fx {
+    animation:
+      aurora-text-flow 6s ease-in-out infinite,
+      electric-text 2.6s steps(1, end) infinite !important;
+  }
+  .electric-text.hero-fx.electric-offset {
+    animation-delay: -3s, -0.65s !important;
   }
 }
 
