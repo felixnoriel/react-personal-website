@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { lazy, Suspense, useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { DataProvider } from './contexts/DataContext'
 import { MainLayout } from './components/layout/MainLayout'
 import { ScrollToTop } from './components/ScrollToTop'
-import { CommandPalette } from './components/ui/CommandPalette'
 import { ScrollHUD } from './components/ui/ScrollHUD'
 import { BootLoader } from './components/ui/BootLoader'
 
@@ -17,6 +17,8 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail').then(m => ({ de
 const Career = lazy(() => import('./pages/Career').then(m => ({ default: m.Career })))
 const CareerDetail = lazy(() => import('./pages/CareerDetail').then(m => ({ default: m.CareerDetail })))
 const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })))
+// Command palette is only needed on ⌘K — keep its code out of the initial bundle.
+const CommandPalette = lazy(() => import('./components/ui/CommandPalette').then(m => ({ default: m.CommandPalette })))
 import { initGA, trackError } from './utils/analytics'
 import { usePageTracking } from './hooks/usePageTracking'
 import { useScrollTracking } from './hooks/useScrollTracking'
@@ -53,20 +55,36 @@ function App() {
     }
   }, [])
 
-  // Show the cinematic BootLoader for 3s on first page load
+  // Boot veil — NON-blocking. The real app mounts immediately so the lazy
+  // route/section chunks start downloading at t=0; the cinematic boot just
+  // overlays for a beat and fades. (The old code hard-gated the whole app for
+  // 3s, so nothing even began loading until the boot finished.)
+  const BOOT_MS = 1400
   const [bootDone, setBootDone] = useState(false)
   useEffect(() => {
-    const t = setTimeout(() => setBootDone(true), 3000)
+    const t = setTimeout(() => setBootDone(true), BOOT_MS)
     return () => clearTimeout(t)
   }, [])
 
-  if (!bootDone) {
-    return (
-      <HelmetProvider>
-        <BootLoader durationMs={3000} />
-      </HelmetProvider>
-    )
-  }
+  // ⌘K command palette — the listener is eager + tiny so it can lazy-load and
+  // open the palette on demand; the palette component itself is a lazy chunk.
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [paletteLoaded, setPaletteLoaded] = useState(false)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toLowerCase().includes('mac')
+      const mod = isMac ? e.metaKey : e.ctrlKey
+      if (mod && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteLoaded(true)
+        setPaletteOpen((v) => !v)
+      } else if (e.key === 'Escape') {
+        setPaletteOpen(false)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   return (
     <HelmetProvider>
@@ -74,7 +92,6 @@ function App() {
         <Router>
           <AnalyticsWrapper>
             <ScrollToTop />
-            <CommandPalette />
             <ScrollHUD />
             <MainLayout>
               <Suspense
@@ -101,9 +118,28 @@ function App() {
                 </Routes>
               </Suspense>
             </MainLayout>
+            {paletteLoaded && (
+              <Suspense fallback={null}>
+                <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+              </Suspense>
+            )}
           </AnalyticsWrapper>
         </Router>
       </DataProvider>
+
+      {/* cinematic boot — fixed veil over the loading app, fades out once done */}
+      <AnimatePresence>
+        {!bootDone && (
+          <motion.div
+            key="boot"
+            className="fixed inset-0 z-[100]"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            <BootLoader durationMs={BOOT_MS} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </HelmetProvider>
   )
 }

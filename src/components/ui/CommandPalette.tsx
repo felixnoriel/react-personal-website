@@ -44,8 +44,7 @@ const GROUP_ACCENT: Record<GroupName, FxAccent> = {
   Contact: ACCENTS.amber,
 }
 
-export function CommandPalette() {
-  const [open, setOpen] = useState(false)
+export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const [filterGroup, setFilterGroup] = useState<FilterName>('All')
@@ -190,24 +189,8 @@ export function CommandPalette() {
     return g
   }, [filtered])
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const isMac = navigator.platform.toLowerCase().includes('mac')
-      const mod = isMac ? e.metaKey : e.ctrlKey
-      if (mod && e.key.toLowerCase() === 'k') {
-        e.preventDefault()
-        setOpen((v) => !v)
-        return
-      }
-      if (e.key === 'Escape' && open) {
-        e.preventDefault()
-        setOpen(false)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open])
-
+  // open/close + the ⌘K and Escape shortcuts are owned by App (so the palette
+  // can be a lazy chunk that only loads on first open).
   useEffect(() => {
     if (open) {
       setActiveIndex(0)
@@ -225,7 +208,7 @@ export function CommandPalette() {
     const item = filtered[activeIndex]
     if (!item) return
     item.action()
-    setOpen(false)
+    onClose()
   }
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -280,7 +263,7 @@ export function CommandPalette() {
           <motion.div
             aria-hidden
             className="absolute inset-0 backdrop-blur-xl"
-            onClick={() => setOpen(false)}
+            onClick={onClose}
             style={{
               background: 'hsl(253 52% 4% / 0.62)',
               backgroundImage:
@@ -489,7 +472,7 @@ export function CommandPalette() {
                                 onHover={() => setActiveIndex(localIndex)}
                                 onActivate={() => {
                                   item.action()
-                                  setOpen(false)
+                                  onClose()
                                 }}
                               />
                             </motion.li>
