@@ -165,12 +165,14 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
       if (!ctx) return
       const maxDist = Math.min(radiusX, radiusY) * 0.85
       ctx.lineWidth = 0.7
+      // only link front-facing nodes — back-of-sphere links are near-invisible
+      // anyway, and this cuts the O(n²) pairwise work to roughly a quarter
       for (let i = 0; i < N; i++) {
         const a = screen[i]
-        if (!a) continue
+        if (!a || a.depth < 0.4) continue
         for (let j = i + 1; j < N; j++) {
           const b = screen[j]
-          if (!b) continue
+          if (!b || b.depth < 0.4) continue
           const dx = a.sx - b.sx
           const dy = a.sy - b.sy
           const d = Math.hypot(dx, dy)
