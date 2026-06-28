@@ -1,5 +1,5 @@
 import { FileCode, GitBranch, Terminal, Sparkles } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 const skillCategories = [
   {
@@ -58,7 +58,7 @@ export function Skills() {
       {/* Header Section */}
       <section id="skills-section" className="bg-gradient-primary text-white py-20">
         <div className="container mx-auto max-w-7xl px-4 text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -70,7 +70,7 @@ export function Skills() {
             <h2 className="text-lg md:text-xl lg:text-2xl opacity-90">
               Strategising, designing, and developing big scalable applications from end to end
             </h2>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
@@ -84,14 +84,14 @@ export function Skills() {
 
         <div className="container mx-auto max-w-7xl px-4 relative z-10">
           {/* Section Header */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <motion.div
+            <m.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
@@ -101,17 +101,17 @@ export function Skills() {
               <div className="w-16 h-16 mx-auto bg-gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
                 <Sparkles className="text-white w-8 h-8" />
               </div>
-            </motion.div>
+            </m.div>
             <h2 className="text-3xl font-bold mb-4 text-gradient-primary">My Superpowers</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               An ever-growing arsenal of technologies I use to build amazing things 🎯
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Skill Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {skillCategories.map((category, categoryIndex) => (
-              <motion.div
+              <m.div
                 key={category.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -120,20 +120,20 @@ export function Skills() {
               >
                 <div className="bg-white/80 backdrop-blur border-2 border-violet-100 hover:border-violet-300 rounded-xl p-6 h-full shadow-sm hover:shadow-2xl transition-all duration-300">
                   {/* Category Icon */}
-                  <motion.div whileHover={{ scale: 1.05, rotate: 5 }} className="mb-6">
+                  <m.div whileHover={{ scale: 1.05, rotate: 5 }} className="mb-6">
                     <div
                       className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${category.bgColor} border border-violet-200`}
                     >
                       <category.Icon className="w-6 h-6 text-violet-600" />
                     </div>
-                  </motion.div>
+                  </m.div>
 
                   <h3 className="text-xl font-semibold mb-6">{category.title}</h3>
 
                   {/* Skills with Progress Bars */}
                   <div className="space-y-4">
                     {category.skills.map((skill, skillIndex) => (
-                      <motion.div
+                      <m.div
                         key={skill.name}
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -151,7 +151,7 @@ export function Skills() {
                           <span className="text-sm text-muted-foreground">{skill.level}%</span>
                         </div>
                         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <motion.div
+                          <m.div
                             initial={{ width: 0 }}
                             whileInView={{ width: `${skill.level}%` }}
                             viewport={{ once: true }}
@@ -163,18 +163,18 @@ export function Skills() {
                             className={`h-full bg-gradient-to-r ${category.color} rounded-full relative overflow-hidden`}
                           >
                             <div className="absolute inset-0 bg-white/30 animate-shimmer" />
-                          </motion.div>
+                          </m.div>
                         </div>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
 
           {/* Fun Stats Section */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -182,7 +182,7 @@ export function Skills() {
             className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
           >
             {stats.map((stat, index) => (
-              <motion.div
+              <m.div
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -199,9 +199,9 @@ export function Skills() {
                   <div className="text-2xl font-bold text-gradient-primary mb-1">{stat.value}</div>
                   <div className="text-muted-foreground text-sm">{stat.label}</div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </div>

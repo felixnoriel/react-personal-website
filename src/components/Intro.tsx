@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   Activity,
   ArrowDown,
@@ -174,7 +174,7 @@ export function Intro() {
       <div className="container relative z-10 mx-auto px-6 pt-20 md:pt-24 pb-8 flex-1 flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center w-full">
           {/* ---- left: identity + headline + bio + CTAs ---- */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -235,13 +235,14 @@ export function Intro() {
               aria-label="Product Engineer · Problem Solver"
               className="font-display leading-[1.05] tracking-tighter font-bold mb-6"
             >
-              {/* one line on desktop (fits); wraps on mobile, where 50px can't
-                  fit "Product Engineer" on one line (≈38px would) */}
-              <span className="block whitespace-normal md:whitespace-nowrap text-[50px] md:text-[80px]">
+              {/* one line on every width. Mobile uses a viewport-relative size so
+                  "Product Engineer" (the longer/binding line) always fits one line
+                  down to ~320px; desktop keeps the fixed 80/72px sizes. */}
+              <span className="block whitespace-nowrap text-[9vw] md:text-[80px]">
                 <FxWord variant="cool">Product Engineer</FxWord>
               </span>
               {/* subtitle — a touch smaller so "Product Engineer" reads as the title */}
-              <span className="block whitespace-normal md:whitespace-nowrap text-[42px] md:text-[72px]">
+              <span className="block whitespace-nowrap text-[7.6vw] md:text-[72px]">
                 <FxWord variant="warm" className="electric-offset">Problem Solver</FxWord>
               </span>
             </h1>
@@ -270,17 +271,17 @@ export function Intro() {
                 Get in touch
               </MagneticButton>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* ---- right: engineering-impact telemetry deck ---- */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-5"
           >
             <MetricsPanel />
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
@@ -297,7 +298,7 @@ export function Intro() {
       </div>
 
       {/* scroll cue */}
-      <motion.button
+      <m.button
         onClick={() => scrollToSection('skills-section')}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -307,7 +308,7 @@ export function Intro() {
       >
         Scroll
         <span aria-hidden className="relative block w-px h-14 bg-border overflow-hidden">
-          <motion.span
+          <m.span
             className="absolute top-0 left-0 w-full bg-gradient-to-b from-accent via-lime to-transparent"
             initial={{ height: 0, y: 0 }}
             animate={{ height: '60%', y: ['0%', '140%', '0%'] }}
@@ -317,14 +318,14 @@ export function Intro() {
             }}
           />
         </span>
-        <motion.span
+        <m.span
           animate={{ y: [0, 4, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
           className="group-hover:text-accent transition-colors"
         >
           <ArrowDown className="w-4 h-4" />
-        </motion.span>
-      </motion.button>
+        </m.span>
+      </m.button>
     </section>
   )
 }
@@ -384,7 +385,7 @@ function MiniSparkline({ accent, seed }: { accent: Accent; seed: string }) {
           <stop offset="100%" stopColor={hsl} stopOpacity="0" />
         </linearGradient>
       </defs>
-      <motion.path
+      <m.path
         d={area}
         fill={`url(#${gid})`}
         initial={{ opacity: 0 }}
@@ -392,7 +393,7 @@ function MiniSparkline({ accent, seed }: { accent: Accent; seed: string }) {
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.4 }}
       />
-      <motion.path
+      <m.path
         d={line}
         fill="none"
         stroke={hsl}
@@ -804,7 +805,7 @@ function WhoamiTerminal() {
   const caretOnLine = !cmdTyping && activeLineIdx !== -1 ? activeLineIdx : -1
 
   return (
-    <motion.div
+    <m.div
       ref={hostRef}
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
@@ -875,7 +876,7 @@ function WhoamiTerminal() {
           <GlowCaret />
         </ConsoleRow>
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -929,7 +930,7 @@ function HudCorners() {
   return (
     <div aria-hidden className="absolute inset-0 pointer-events-none hidden md:block z-10">
       {brackets.map((b, i) => (
-        <motion.svg
+        <m.svg
           key={i}
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 0.5, scale: 1 }}
@@ -946,7 +947,7 @@ function HudCorners() {
             strokeWidth="1.5"
             strokeLinecap="round"
           />
-        </motion.svg>
+        </m.svg>
       ))}
     </div>
   )

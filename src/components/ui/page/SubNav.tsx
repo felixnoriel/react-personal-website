@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useScrollSpy } from '../../../hooks/useDetailPage'
 
 export interface SubNavItem {
@@ -73,7 +73,7 @@ export function SubNav({
               )}
               <span>{it.label}</span>
               {isActive && (
-                <motion.span
+                <m.span
                   aria-hidden
                   layoutId={underlineLayoutId}
                   className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-gradient-to-r from-accent via-amber to-lime"

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { m, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -158,12 +158,12 @@ function FlightProgress() {
             backgroundRepeat: 'repeat-x',
           }}
         />
-        <motion.div
+        <m.div
           className="absolute inset-y-0 left-0 origin-left bg-gradient-to-r from-[hsl(var(--accent))] via-[hsl(var(--lime))] to-[hsl(var(--electric))]"
           style={{ scaleX, right: 0 }}
         />
         {/* the plane riding the progress */}
-        <motion.div
+        <m.div
           className="absolute top-1/2 -translate-y-1/2"
           style={{ left: useSpring(scrollYProgress, { stiffness: 180, damping: 30 }) }}
         >
@@ -175,7 +175,7 @@ function FlightProgress() {
           >
             <Plane className="w-4 h-4 text-[hsl(var(--accent))] -rotate-90" />
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   )
@@ -226,7 +226,7 @@ function DispatchHero({
         </div>
 
         {/* Dispatch slate header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -249,10 +249,10 @@ function DispatchHero({
           <Stamp3D color="lime">
             <Clock className="w-3 h-3" />~{readingMinutes} min read
           </Stamp3D>
-        </motion.div>
+        </m.div>
 
         {/* Title block */}
-        <motion.h1
+        <m.h1
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
@@ -260,7 +260,7 @@ function DispatchHero({
           dangerouslySetInnerHTML={{ __html: blog.title }}
         />
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
@@ -270,7 +270,7 @@ function DispatchHero({
 
         {/* Hero image card */}
         {blog.image?.url && (
-          <motion.figure
+          <m.figure
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -316,7 +316,7 @@ function DispatchHero({
 
               {/* Flight arc */}
               <svg className="absolute bottom-0 left-0 w-full h-24 pointer-events-none" viewBox="0 0 400 80" preserveAspectRatio="none">
-                <motion.path
+                <m.path
                   d="M 0 60 Q 100 20, 200 45 T 400 30"
                   fill="none"
                   stroke="hsl(var(--lime))"
@@ -328,7 +328,7 @@ function DispatchHero({
                   transition={{ duration: 2, delay: 0.6 }}
                 />
                 {!reduce && (
-                  <motion.circle
+                  <m.circle
                     r="2.8"
                     fill="hsl(var(--lime))"
                     animate={{ offsetDistance: ['0%', '100%'] }}
@@ -338,7 +338,7 @@ function DispatchHero({
                 )}
               </svg>
             </div>
-          </motion.figure>
+          </m.figure>
         )}
       </div>
     </section>

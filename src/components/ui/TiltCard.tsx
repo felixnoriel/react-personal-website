@@ -1,5 +1,5 @@
 import {
-  motion,
+  m,
   useMotionTemplate,
   useMotionValue,
   useSpring,
@@ -55,7 +55,7 @@ export function TiltCard({
   }
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
@@ -68,11 +68,11 @@ export function TiltCard({
       className={`relative ${className}`}
     >
       {children}
-      <motion.div
+      <m.div
         aria-hidden
         style={{ background: spotlight }}
         className={`absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-500 ${rounded}`}
       />
-    </motion.div>
+    </m.div>
   )
 }

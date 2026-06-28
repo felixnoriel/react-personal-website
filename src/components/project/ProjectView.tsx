@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  motion,
+  m,
   useMotionTemplate,
   useMotionValue,
   useScroll,
@@ -160,7 +160,7 @@ export function ProjectView({
   return (
     <>
       {/* scroll progress bar at the very top */}
-      <motion.div
+      <m.div
         aria-hidden
         className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent via-lime to-electric origin-left z-50"
         style={{ scaleX }}
@@ -191,7 +191,7 @@ export function ProjectView({
 
         <div className="container mx-auto max-w-7xl px-4 py-10 md:py-14 relative">
           {/* ===================== BREADCRUMB / TOP CHROME ===================== */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
@@ -252,10 +252,10 @@ export function ProjectView({
                 )}
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* ===================== HERO HEADER ===================== */}
-          <motion.header
+          <m.header
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08 }}
@@ -336,7 +336,7 @@ export function ProjectView({
                 <span className="text-ink tabular-nums">~{readingMinutes} min</span>
               </span>
             </div>
-          </motion.header>
+          </m.header>
 
           {/* ===================== INLINE GALLERY PREVIEW STRIP =====================
               4-image strip near the top so visitors see the visuals before
@@ -394,7 +394,7 @@ export function ProjectView({
               (4 cols, sticky so it stays in view while the user reads). */}
           <div className="mt-12 md:mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
             {/* Main */}
-            <motion.div
+            <m.div
               id="overview"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -407,7 +407,7 @@ export function ProjectView({
                 hash={hash}
                 content={project.content}
               />
-            </motion.div>
+            </m.div>
 
             {/* Sidebar — sticky on desktop. Max-height + overflow-y-auto
                 handle the case where the sidebar is taller than the
@@ -521,7 +521,7 @@ function MissionConsole({
   const fileExt = isStable ? 'tsx' : isSvg ? 'svg' : 'jpg'
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay: 0.18 }}
@@ -634,7 +634,7 @@ function MissionConsole({
         />
 
         {/* mouse spotlight */}
-        <motion.span
+        <m.span
           aria-hidden
           style={{ background: spot }}
           className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -675,7 +675,7 @@ function MissionConsole({
           </span>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -774,18 +774,18 @@ function ProjectSidebar({
   return (
     <aside className="space-y-5">
       {/* TRANSMISSION */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
         <TransmissionCard hash={commitHash(project.slug)} />
-      </motion.div>
+      </m.div>
 
       {/* STACK MATRIX */}
       {project.tags && project.tags.length > 0 && (
-        <motion.div
+        <m.div
           id="stack"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -794,12 +794,12 @@ function ProjectSidebar({
           className="scroll-mt-[140px]"
         >
           <StackMatrix tags={project.tags} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* SWITCH MISSION */}
       {otherProjects.length > 0 && (
-        <motion.div
+        <m.div
           id="related"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -808,7 +808,7 @@ function ProjectSidebar({
           className="scroll-mt-[140px]"
         >
           <SwitchMission otherProjects={otherProjects} />
-        </motion.div>
+        </m.div>
       )}
     </aside>
   )
@@ -896,7 +896,7 @@ function SignalBars() {
       style={{ alignSelf: 'flex-end' }}
     >
       {heights.map((h, i) => (
-        <motion.span
+        <m.span
           key={i}
           className="w-1.5 rounded-sm bg-lime"
           initial={{ scaleY: 0.15, opacity: 0.5 }}
@@ -923,7 +923,7 @@ function StackMatrix({ tags }: { tags: Tag[] }) {
           const accent = TAG_ACCENTS[i % TAG_ACCENTS.length]
           const position = `[${i.toString(16).padStart(2, '0').toUpperCase()}]`
           return (
-            <motion.span
+            <m.span
               key={tag.slug}
               initial={{ opacity: 0, y: 4 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -940,7 +940,7 @@ function StackMatrix({ tags }: { tags: Tag[] }) {
                 className="text-ink truncate"
                 dangerouslySetInnerHTML={{ __html: tag.name }}
               />
-            </motion.span>
+            </m.span>
           )
         })}
       </div>
@@ -1042,7 +1042,7 @@ function GallerySection({
   onOpen: (index: number) => void
 }) {
   return (
-    <motion.div
+    <m.div
       id="gallery"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -1074,7 +1074,7 @@ function GallerySection({
       ) : (
         <FlatGallery validGallery={validGallery} onOpen={onOpen} />
       )}
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -1140,7 +1140,7 @@ function CategoryGallery({
         })}
       </div>
       {/* Active grid */}
-      <motion.div
+      <m.div
         key={activeTab}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1156,7 +1156,7 @@ function CategoryGallery({
             onOpen={onOpen}
           />
         ))}
-      </motion.div>
+      </m.div>
     </div>
   )
 }
@@ -1235,7 +1235,7 @@ function GalleryTile({
 }) {
   const showAlt = !!img.alt && img.alt !== 'Default'
   return (
-    <motion.button
+    <m.button
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -1284,7 +1284,7 @@ function GalleryTile({
           {img.alt}
         </div>
       )}
-    </motion.button>
+    </m.button>
   )
 }
 
@@ -1301,7 +1301,7 @@ function FooterNav({
 }) {
   if (!prev && !next) return null
   return (
-    <motion.nav
+    <m.nav
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -1318,7 +1318,7 @@ function FooterNav({
       ) : (
         <div className="hidden md:block" />
       )}
-    </motion.nav>
+    </m.nav>
   )
 }
 
@@ -1454,7 +1454,7 @@ function GalleryPreviewStrip({
 
   if (teasers.length === 0) return null
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.15 }}
@@ -1504,7 +1504,7 @@ function GalleryPreviewStrip({
           </button>
         ))}
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 

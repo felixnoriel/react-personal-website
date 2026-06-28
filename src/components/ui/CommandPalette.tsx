@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import {
   ArrowRight,
   Briefcase,
@@ -250,7 +250,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           key="palette"
           className="fixed inset-0 z-[90] flex items-start justify-center pt-[12vh] px-4"
           initial={{ opacity: 0 }}
@@ -260,7 +260,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
         >
           {/* Backdrop — heavy blur darkens the page (shader bleeds through) with
               a soft accent bloom up top */}
-          <motion.div
+          <m.div
             aria-hidden
             className="absolute inset-0 backdrop-blur-xl"
             onClick={onClose}
@@ -272,7 +272,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
           />
 
           {/* Console shell — dark frosted glass over the shader */}
-          <motion.div
+          <m.div
             role="dialog"
             aria-label="Command palette"
             initial={{ opacity: 0, y: -14, scale: 0.97, rotateX: -6 }}
@@ -312,7 +312,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                     'linear-gradient(90deg, transparent, hsl(322 88% 68% / 0.8), transparent)',
                 }}
               />
-              <motion.div
+              <m.div
                 className="absolute top-0 bottom-0 w-[30%]"
                 style={{
                   background:
@@ -458,7 +458,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                           const isActive = runningIndex === activeIndex
                           const localIndex = runningIndex
                           return (
-                            <motion.li
+                            <m.li
                               key={item.id}
                               initial={{ opacity: 0, x: -6 }}
                               animate={{ opacity: 1, x: 0 }}
@@ -475,7 +475,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                                   onClose()
                                 }}
                               />
-                            </motion.li>
+                            </m.li>
                           )
                         })}
                       </ul>
@@ -501,8 +501,8 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 </span>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   )
@@ -555,7 +555,7 @@ function CommandRow({
 
       {/* Shimmer sweep on active row */}
       {isActive && (
-        <motion.span
+        <m.span
           aria-hidden
           className="absolute inset-y-0 w-[55%] pointer-events-none"
           style={{
@@ -582,7 +582,7 @@ function CommandRow({
       >
         <Icon className="w-3.5 h-3.5" />
         {isActive && (
-          <motion.span
+          <m.span
             aria-hidden
             className="absolute inset-0 rounded-lg"
             style={{ background: accent.c, filter: 'blur(7px)' }}
@@ -612,7 +612,7 @@ function CommandRow({
       )}
 
       {/* Right arrow */}
-      <motion.span
+      <m.span
         className="relative z-[1] inline-flex items-center justify-center"
         animate={isActive ? { x: [0, 3, 0] } : { x: 0 }}
         transition={{ duration: 1.2, repeat: isActive ? Infinity : 0, ease: 'easeInOut' }}
@@ -621,7 +621,7 @@ function CommandRow({
           className={`w-3.5 h-3.5 transition-opacity ${isActive ? '' : 'opacity-0 group-hover:opacity-70'}`}
           style={{ color: isActive ? accent.c : 'hsl(0 0% 100% / 0.5)' }}
         />
-      </motion.span>
+      </m.span>
     </button>
   )
 }
@@ -665,13 +665,13 @@ function EmptyState({ query }: { query: string }) {
   return (
     <div className="px-6 py-9 text-center font-mono">
       <div className="relative inline-block mb-3">
-        <motion.div
+        <m.div
           className="text-[11px] tracking-[0.35em] uppercase text-white/40"
           animate={{ opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
         >
           ▚ NO SIGNAL ▚
-        </motion.div>
+        </m.div>
       </div>
       <div className="text-sm text-white/70 mb-1">
         No results for <span className="text-white">&quot;{query || '…'}&quot;</span>

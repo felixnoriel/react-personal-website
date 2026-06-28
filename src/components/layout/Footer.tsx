@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ArrowUpRight, Terminal } from 'lucide-react'
 import { Socials } from '../Socials'
 import { trackNavigation, trackEmailClick } from '../../utils/analytics'
@@ -44,7 +44,7 @@ export function Footer() {
         }}
       />
       <div className="container mx-auto max-w-7xl px-6 py-20 md:py-28 relative z-10">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -72,7 +72,7 @@ export function Footer() {
             </a>
             .
           </h2>
-        </motion.div>
+        </m.div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-background/10">
           <div className="md:col-span-5">

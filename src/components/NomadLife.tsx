@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Coffee, MapPin, Plane, Utensils } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatedNumber } from './ui/AnimatedNumber'
@@ -397,7 +397,7 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
           })}
 
           {/* continents */}
-          <motion.g
+          <m.g
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -407,13 +407,13 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
               const p = project(lng, lat)
               return <circle key={`dot-${i}`} cx={p.x} cy={p.y} r="0.38" fill="hsl(var(--ink))" opacity="0.38" />
             })}
-          </motion.g>
+          </m.g>
 
           {/* faint route web */}
           {ROUTE_EDGES.map(([aCode, bCode], i) => {
             const d = arcPath(CITIES[idx(aCode)], CITIES[idx(bCode)], 0.28)
             return (
-              <motion.path
+              <m.path
                 key={`edge-${aCode}-${bCode}`}
                 d={d}
                 fill="none"
@@ -434,7 +434,7 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
             const d = arcPath(CITIES[idx(aCode)], CITIES[idx(bCode)], 0.32)
             return (
               <g key={`active-${aCode}-${bCode}`}>
-                <motion.path
+                <m.path
                   d={d}
                   fill="none"
                   stroke="url(#nomad-active)"
@@ -446,7 +446,7 @@ function WorldMap({ reduceMotion }: { reduceMotion: boolean }) {
                   viewport={{ once: true }}
                   transition={{ duration: reduceMotion ? 0 : 2, delay: reduceMotion ? 0 : 0.8 + i * 0.4, ease: [0.22, 1, 0.36, 1] }}
                 />
-                <motion.path
+                <m.path
                   d={d}
                   fill="none"
                   stroke="url(#nomad-active)"

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
 
 interface BackToTopProps {
@@ -31,7 +31,7 @@ export function BackToTop({ threshold = 1500, className = '' }: BackToTopProps) 
   }, [threshold])
   if (!show) return null
   return (
-    <motion.button
+    <m.button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="Scroll back to top"
@@ -43,6 +43,6 @@ export function BackToTop({ threshold = 1500, className = '' }: BackToTopProps) 
     >
       <ArrowUp className="w-3.5 h-3.5 text-accent" />
       <span className="hidden sm:inline">to top</span>
-    </motion.button>
+    </m.button>
   )
 }

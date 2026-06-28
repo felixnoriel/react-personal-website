@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import {
   ArrowUpRight,
   Calendar,
@@ -163,7 +163,7 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
           {!reduce && (
             <span className="hidden md:inline-flex items-center gap-0.5">
               {Array.from({ length: 10 }).map((_, i) => (
-                <motion.span
+                <m.span
                   key={i}
                   className="inline-block w-[3px] bg-[hsl(var(--accent)/0.7)] rounded-sm"
                   animate={{ height: ['4px', '12px', '6px', '14px', '4px'] }}
@@ -181,7 +181,7 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
               <span className="w-10 h-px bg-ink/30" />
               Archive · Field dispatches
             </div>
-            <motion.h1
+            <m.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -190,7 +190,7 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
               The{' '}
               <span className="italic text-accent relative inline-block">
                 dispatch
-                <motion.span
+                <m.span
                   aria-hidden
                   className="absolute left-0 -bottom-1 h-1 bg-[hsl(var(--accent))] origin-left"
                   initial={{ scaleX: 0 }}
@@ -201,8 +201,8 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
               </span>
               <br />
               archive.
-            </motion.h1>
-            <motion.p
+            </m.h1>
+            <m.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
@@ -211,11 +211,11 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
               A running notebook of places, meals, and teams — filed by hand
               from hotel rooms, cafes, and 35,000 ft above. Foodie by default,
               engineer by training, tourist on weekends.
-            </motion.p>
+            </m.p>
           </div>
 
           {/* meta panel */}
-          <motion.aside
+          <m.aside
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
@@ -250,7 +250,7 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
                 </div>
               </dl>
             </div>
-          </motion.aside>
+          </m.aside>
         </div>
       </div>
 
@@ -368,7 +368,7 @@ function PolaroidCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
   const meta = stableMeta(post.slug)
   const reduce = useReducedMotion()
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 20, rotate: meta.rot }}
       whileInView={{ opacity: 1, y: 0, rotate: meta.rot }}
       viewport={{ once: true }}
@@ -438,7 +438,7 @@ function PolaroidCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
           </div>
         </div>
       </Link>
-    </motion.article>
+    </m.article>
   )
 }
 
@@ -447,7 +447,7 @@ function PostcardCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
   const meta = stableMeta(post.slug)
   const reduce = useReducedMotion()
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 20, rotate: meta.rot }}
       whileInView={{ opacity: 1, y: 0, rotate: meta.rot }}
       viewport={{ once: true }}
@@ -517,7 +517,7 @@ function PostcardCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
           </div>
         </div>
       </Link>
-    </motion.article>
+    </m.article>
   )
 }
 
@@ -526,7 +526,7 @@ function LuggageCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
   const meta = stableMeta(post.slug)
   const reduce = useReducedMotion()
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 20, rotate: meta.rot }}
       whileInView={{ opacity: 1, y: 0, rotate: meta.rot }}
       viewport={{ once: true }}
@@ -604,7 +604,7 @@ function LuggageCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
           </div>
         </div>
       </Link>
-    </motion.article>
+    </m.article>
   )
 }
 
@@ -712,7 +712,7 @@ function FeaturedHero({
 }) {
   const reduce = useReducedMotion()
   return (
-    <motion.article
+    <m.article
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -775,7 +775,7 @@ function FeaturedHero({
 
               {/* flight arc */}
               <svg className="absolute bottom-0 left-0 w-full h-20 pointer-events-none" viewBox="0 0 400 80" preserveAspectRatio="none">
-                <motion.path
+                <m.path
                   d="M 0 60 Q 100 20, 200 45 T 400 30"
                   fill="none"
                   stroke="hsl(var(--accent))"
@@ -788,7 +788,7 @@ function FeaturedHero({
                   transition={{ duration: 1.8, delay: 0.3 }}
                 />
                 {!reduce && (
-                  <motion.circle
+                  <m.circle
                     r="2.5"
                     fill="hsl(var(--accent))"
                     animate={{ offsetDistance: ['0%', '100%'] }}
@@ -839,6 +839,6 @@ function FeaturedHero({
           </div>
         </div>
       </Link>
-    </motion.article>
+    </m.article>
   )
 }

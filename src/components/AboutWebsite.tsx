@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
 import { Badge } from './ui/badge'
 import { Code2, Server, Cloud, User, Sparkles } from 'lucide-react'
@@ -13,13 +13,13 @@ export function AboutWebsite() {
         </div>
 
         <section className="container mx-auto max-w-5xl px-4 relative z-10">
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="text-center mb-16"
             >
-                <motion.div
+                <m.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', duration: 0.8 }}
@@ -28,7 +28,7 @@ export function AboutWebsite() {
                     <div className="w-16 h-16 mx-auto bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
                         <User className="w-8 h-8 text-white" />
                     </div>
-                </motion.div>
+                </m.div>
                 <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-violet-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
                     About Me
                 </h2>
@@ -42,11 +42,11 @@ export function AboutWebsite() {
                         different restaurants and cuisines, and traveling every once in a while. 🍜
                     </p>
                 </div>
-            </motion.div>
+            </m.div>
 
             <div className="grid md:grid-cols-2 gap-8 mb-16">
                  {/* About Website */}
-                 <motion.div
+                 <m.div
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
@@ -69,9 +69,9 @@ export function AboutWebsite() {
                              </ul>
                         </CardContent>
                     </Card>
-                 </motion.div>
+                 </m.div>
 
-                 <motion.div
+                 <m.div
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
@@ -112,17 +112,17 @@ export function AboutWebsite() {
                             </CardContent>
                         </Card>
                      </div>
-                 </motion.div>
+                 </m.div>
             </div>
             
-            <motion.p 
+            <m.p 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
                 className="text-center text-sm text-muted-foreground"
             >
                 Developed with ❤️ by Felix Noriel
-            </motion.p>
+            </m.p>
         </section>
     </div>
   )

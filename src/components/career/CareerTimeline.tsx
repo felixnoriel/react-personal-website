@@ -1,6 +1,6 @@
 import { Rocket, Calendar, Award, Building2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ViewAllLink } from '../ViewAllLink'
 import type { Career } from '../../types/data'
 
@@ -33,14 +33,14 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
 
       <div className="container mx-auto max-w-7xl px-4 relative z-10">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <motion.div
+          <m.div
             initial={{ scale: 0, rotate: 45 }}
             whileInView={{ scale: 1, rotate: 0 }}
             viewport={{ once: true }}
@@ -50,12 +50,12 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
             <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
               <Rocket className="text-white w-8 h-8" />
             </div>
-          </motion.div>
+          </m.div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gradient-primary">My Journey</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             A timeline of my professional adventures in the world of software development 🗺️
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Timeline */}
         <div className="max-w-4xl mx-auto space-y-8">
@@ -64,17 +64,17 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
             const color = colorMap[exp.slug] || colorMap.default
 
             return (
-              <motion.div
+              <m.div
                 key={exp.slug}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
               >
-                <motion.div whileHover={{ scale: 1.02 }} className="relative">
+                <m.div whileHover={{ scale: 1.02 }} className="relative">
                   {/* Timeline connector */}
                   {index < experiences.length - 1 && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0 }}
                       whileInView={{ height: '100%' }}
                       viewport={{ once: true }}
@@ -90,12 +90,12 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
                     <div className="flex flex-col md:flex-row gap-6">
                       {/* Icon and timeline */}
                       <div className="flex md:flex-col items-center md:items-start gap-4">
-                        <motion.div whileHover={{ scale: 1.1, rotate: 10 }} className="relative">
+                        <m.div whileHover={{ scale: 1.1, rotate: 10 }} className="relative">
                           <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl blur-md opacity-30`} />
                           <div className="relative w-14 h-14 bg-gradient-to-br from-white to-gray-50 rounded-2xl flex items-center justify-center border-2 border-violet-200 shadow-lg text-2xl">
                             {emoji}
                           </div>
-                        </motion.div>
+                        </m.div>
 
                         {/* Calendar badge */}
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-violet-100 to-pink-100 rounded-full border border-violet-200">
@@ -127,8 +127,8 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
                       </div>
                     </div>
                   </Link>
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
             )
           })}
         </div>
@@ -136,7 +136,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
         <ViewAllLink route="career" indexPage={indexPage} />
 
         {/* Achievement callout */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -155,7 +155,7 @@ export function CareerTimeline({ experiences, indexPage }: CareerTimelineProps) 
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )

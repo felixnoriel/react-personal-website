@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   ArrowLeft,
   Briefcase,
@@ -68,7 +68,7 @@ export function CareerView({ experience, projects }: CareerViewProps) {
       <section className="relative overflow-x-clip bg-background">
         <div className="container mx-auto max-w-5xl px-4 py-10 md:py-14">
           {/* Breadcrumb */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
@@ -81,10 +81,10 @@ export function CareerView({ experience, projects }: CareerViewProps) {
               <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
               <span>cd ../career</span>
             </Link>
-          </motion.div>
+          </m.div>
 
           {/* Hero */}
-          <motion.header
+          <m.header
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.05 }}
@@ -143,7 +143,7 @@ export function CareerView({ experience, projects }: CareerViewProps) {
                 </span>
               )}
             </div>
-          </motion.header>
+          </m.header>
 
           {/* Sticky sub-nav (Overview / Projects) */}
           <SubNav
@@ -164,7 +164,7 @@ export function CareerView({ experience, projects }: CareerViewProps) {
 
           {/* Hero image */}
           {experience.image?.url && (
-            <motion.figure
+            <m.figure
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -178,11 +178,11 @@ export function CareerView({ experience, projects }: CareerViewProps) {
                 loading="lazy"
                 className="w-full h-auto object-cover"
               />
-            </motion.figure>
+            </m.figure>
           )}
 
           {/* Overview / prose */}
-          <motion.div
+          <m.div
             id="overview"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -203,7 +203,7 @@ export function CareerView({ experience, projects }: CareerViewProps) {
               className="prose prose-lg max-w-none px-5 md:px-10 py-8 md:py-10 prose-headings:font-display prose-headings:tracking-tight prose-headings:text-ink prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-ink prose-li:text-ink prose-li:marker:text-accent"
               dangerouslySetInnerHTML={{ __html: experience.content }}
             />
-          </motion.div>
+          </m.div>
         </div>
       </section>
 

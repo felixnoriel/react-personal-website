@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { m, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
 const SECTION_IDS = [
@@ -66,12 +66,12 @@ export function ScrollHUD() {
       <span className="w-px h-3 bg-border" />
       <div className="flex items-center gap-2">
         <div className="relative w-20 h-[3px] bg-border rounded-full overflow-hidden">
-          <motion.div
+          <m.div
             className="absolute inset-y-0 left-0 bg-gradient-to-r from-accent via-lime to-accent"
             style={{ width: bar }}
           />
         </div>
-        <motion.span className="tabular-nums text-ink">{pct}</motion.span>%
+        <m.span className="tabular-nums text-ink">{pct}</m.span>%
       </div>
       <span className="w-px h-3 bg-border" />
       <span className="text-ink-soft">

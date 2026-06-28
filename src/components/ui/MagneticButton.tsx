@@ -1,5 +1,5 @@
 import {
-  motion,
+  m,
   useMotionValue,
   useSpring,
   type HTMLMotionProps,
@@ -40,7 +40,7 @@ export function MagneticButton({
   }
 
   return (
-    <motion.button
+    <m.button
       ref={ref}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
@@ -49,6 +49,6 @@ export function MagneticButton({
       {...rest}
     >
       {children}
-    </motion.button>
+    </m.button>
   )
 }

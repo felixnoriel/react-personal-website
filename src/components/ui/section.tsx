@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useRef, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react'
 import { ACCENT, EASE, type Accent } from './section-tokens'
 import { ScrambleText } from './ScrambleText'
@@ -256,7 +256,7 @@ export function SectionHeading({
   className?: string
 }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
@@ -292,7 +292,7 @@ export function SectionHeading({
       {intro && align !== 'between' && (
         <p className="mt-4 text-ink-muted leading-relaxed max-w-xl">{intro}</p>
       )}
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -309,7 +309,7 @@ export function Reveal({
   className?: string
 }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -317,6 +317,6 @@ export function Reveal({
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 }

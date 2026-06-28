@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 
 /**
  * BootLoader — a cinematic boot-sequence loading experience.
@@ -149,7 +149,7 @@ export function BootLoader({
 
       {/* 4. Horizontal scan sweep */}
       {!reduce && (
-        <motion.div
+        <m.div
           aria-hidden
           className="absolute left-0 right-0 h-[2px] pointer-events-none z-[2]"
           style={{
@@ -179,7 +179,7 @@ export function BootLoader({
       {/* 7. MAIN STACK */}
       <div className="relative z-10 flex flex-col items-center gap-6 px-6 w-full max-w-xl">
         {/* Top meta line */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.4 }}
@@ -190,7 +190,7 @@ export function BootLoader({
           <span>·</span>
           <span>v2026.04.23</span>
           <span className="inline-block w-6 h-px bg-white/30" />
-        </motion.div>
+        </m.div>
 
         {/* Orbital core */}
         <OrbitCore reduce={reduce} progress={progress} />
@@ -223,7 +223,7 @@ export function BootLoader({
               const on = i < filledSegments
               const edge = i === filledSegments - 1 && !reduce
               return (
-                <motion.div
+                <m.div
                   key={i}
                   className="flex-1 h-2 rounded-[1px]"
                   style={{
@@ -282,7 +282,7 @@ export function BootLoader({
                 ? Math.floor((tick * 2) % 16)
                 : 0
             return (
-              <motion.div
+              <m.div
                 key={`${step.addr}-${realIdx}`}
                 initial={reduce ? false : { opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -308,13 +308,13 @@ export function BootLoader({
                 <span className="ml-auto text-[10px] tabular-nums text-white/35 shrink-0 min-w-[42px] text-right">
                   {state === 'pending' ? '—' : `${ms}ms`}
                 </span>
-              </motion.div>
+              </m.div>
             )
           })}
         </div>
 
         {/* Bottom tagline */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
@@ -325,7 +325,7 @@ export function BootLoader({
           <span>claude</span>
           <span className="text-lime">×</span>
           <span>loop</span>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* sr-only */}
@@ -361,7 +361,7 @@ function OrbitCore({ reduce, progress }: { reduce: boolean; progress: number }) 
       {/* Expanding pulse rings */}
       {!reduce &&
         [0, 1, 2].map((i) => (
-          <motion.div
+          <m.div
             key={`pulse-${i}`}
             aria-hidden
             className="absolute inset-0 rounded-full border"
@@ -630,7 +630,7 @@ function ReactorCore({ reduce }: { reduce: boolean }) {
         />
         {/* pulsing inner dot */}
         {!reduce ? (
-          <motion.circle
+          <m.circle
             cx={size / 2}
             cy={size / 2}
             r="3.5"
@@ -683,7 +683,7 @@ function HoloTitle({
       {/* RGB split: red + cyan layers behind the main one */}
       {!reduce && (
         <>
-          <motion.div
+          <m.div
             aria-hidden
             className="absolute inset-0 flex items-center justify-center whitespace-nowrap"
             style={{
@@ -704,8 +704,8 @@ function HoloTitle({
             }}
           >
             <span className="text-2xl md:text-3xl">{label}</span>
-          </motion.div>
-          <motion.div
+          </m.div>
+          <m.div
             aria-hidden
             className="absolute inset-0 flex items-center justify-center whitespace-nowrap"
             style={{
@@ -726,7 +726,7 @@ function HoloTitle({
             }}
           >
             <span className="text-2xl md:text-3xl">{label}</span>
-          </motion.div>
+          </m.div>
         </>
       )}
 
@@ -750,7 +750,7 @@ function HoloTitle({
 
       {/* Underline flicker */}
       {!reduce && (
-        <motion.div
+        <m.div
           aria-hidden
           className="absolute -bottom-1.5 left-0 right-0 h-px"
           style={{
@@ -799,7 +799,7 @@ function TypingLine({
 // ════════════════════════════════════════════════════════════
 function BlinkCaret() {
   return (
-    <motion.span
+    <m.span
       className="inline-block w-[7px] h-[12px] bg-lime ml-0.5"
       animate={{ opacity: [1, 0, 1] }}
       transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
@@ -914,7 +914,7 @@ function StatePill({
   }
   if (state === 'run') {
     return (
-      <motion.span
+      <m.span
         className="inline-flex items-center justify-center w-[42px] shrink-0 font-mono text-[9.5px] tracking-wider rounded-sm py-[1px]"
         style={{
           color: '#82beff',
@@ -925,7 +925,7 @@ function StatePill({
         transition={{ duration: 0.9, repeat: Infinity, ease: 'easeInOut' }}
       >
         RUN
-      </motion.span>
+      </m.span>
     )
   }
   return (
@@ -955,7 +955,7 @@ function HudBrackets() {
   return (
     <div aria-hidden className="absolute inset-0 pointer-events-none z-[3]">
       {brackets.map((b, i) => (
-        <motion.svg
+        <m.svg
           key={i}
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 0.9, scale: 1 }}
@@ -976,7 +976,7 @@ function HudBrackets() {
             strokeWidth="1.5"
             strokeLinecap="round"
           />
-        </motion.svg>
+        </m.svg>
       ))}
     </div>
   )
@@ -1017,7 +1017,7 @@ function StatChip({
       : '#b886ff'
 
   return (
-    <motion.div
+    <m.div
       aria-hidden
       initial={{ opacity: 0, y: pos.startsWith('t') ? -4 : 4 }}
       animate={{ opacity: 0.92, y: 0 }}
@@ -1025,7 +1025,7 @@ function StatChip({
       className="hidden md:flex absolute z-[4] items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] uppercase"
       style={base}
     >
-      <motion.span
+      <m.span
         className="inline-block w-1.5 h-1.5 rounded-full"
         style={{
           backgroundColor: dotClr,
@@ -1042,6 +1042,6 @@ function StatChip({
       <span style={{ color: 'rgba(255,255,255,0.9)' }} className="tabular-nums">
         {v}
       </span>
-    </motion.div>
+    </m.div>
   )
 }

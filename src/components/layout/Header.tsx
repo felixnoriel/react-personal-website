@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  motion,
+  m,
   AnimatePresence,
   useScroll,
   useSpring,
@@ -228,7 +228,7 @@ export function Header() {
           </filter>
         </defs>
       </svg>
-      <motion.nav
+      <m.nav
         ref={navRef}
         onPointerMove={onNavMove}
         initial={{ y: -24, opacity: 0 }}
@@ -286,7 +286,7 @@ export function Header() {
                 stroke="hsl(var(--border))"
                 strokeWidth="1.5"
               />
-              <motion.circle
+              <m.circle
                 cx="22"
                 cy="22"
                 r={RING_R}
@@ -331,7 +331,7 @@ export function Header() {
                 }`}
               >
                 {indicatorId === item.id && (
-                  <motion.span
+                  <m.span
                     layoutId="nav-pill"
                     aria-hidden
                     className="absolute inset-0 rounded-full"
@@ -391,12 +391,12 @@ export function Header() {
         >
           {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
-      </motion.nav>
+      </m.nav>
 
       {/* mobile menu — glass dropdown */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.97 }}
@@ -435,7 +435,7 @@ export function Header() {
                 <ArrowUpRight className="w-4 h-4" />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>
