@@ -100,13 +100,26 @@
   }
 }
 
+/* Metric-matched fallback for Montserrat (Arial re-scaled to Montserrat's
+   ascent/descent/advance metrics). Slotted right after 'Montserrat' in every
+   stack so that, before the web font loads, the fallback occupies the SAME box
+   the real font will — eliminating the reflow/CLS when Montserrat swaps in. */
+@font-face {
+  font-family: 'Montserrat Fallback';
+  src: local('Arial');
+  ascent-override: 85.8%;
+  descent-override: 22.25%;
+  line-gap-override: 0%;
+  size-adjust: 112.8%;
+}
+
 @layer base {
   * {
     @apply border-border;
   }
 
   html {
-    font-family: 'Montserrat', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -114,14 +127,14 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Montserrat', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
     background-image:
       radial-gradient(hsl(var(--ink) / 0.025) 1px, transparent 1px);
     background-size: 4px 4px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
     letter-spacing: -0.02em;
   }
 
@@ -133,12 +146,12 @@
 
 @layer utilities {
   .font-display {
-    font-family: 'Montserrat', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
     letter-spacing: -0.02em;
   }
 
   .font-body {
-    font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, sans-serif;
   }
 
   .text-balance {

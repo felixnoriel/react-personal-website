@@ -590,30 +590,33 @@ const WHOAMI_OUTPUT: WhoamiFragment[][] = [
   ],
 ]
 
-function renderFragments(fragments: WhoamiFragment[], charsShown: number): ReactNode[] {
+function renderFragments(
+  fragments: WhoamiFragment[],
+  charsShown: number,
+  showCaret = false,
+): ReactNode[] {
   const out: ReactNode[] = []
   let cursor = 0
+  let caretPlaced = false
   for (let fi = 0; fi < fragments.length; fi++) {
     const frag = fragments[fi]
-    const end = cursor + frag.t.length
-    if (charsShown >= end) {
-      out.push(
-        <span key={fi} className={frag.cls}>
-          {frag.t}
-        </span>,
-      )
-    } else if (charsShown > cursor) {
-      const take = charsShown - cursor
-      out.push(
-        <span key={fi} className={frag.cls}>
-          {frag.t.slice(0, take)}
-        </span>,
-      )
-      break
-    } else {
-      break
-    }
-    cursor = end
+    const typed = Math.max(0, Math.min(frag.t.length, charsShown - cursor))
+    const shown = frag.t.slice(0, typed)
+    const rest = frag.t.slice(typed)
+    const placeCaret = showCaret && !caretPlaced && rest.length > 0
+    if (placeCaret) caretPlaced = true
+    out.push(
+      <span key={fi} className={frag.cls}>
+        {shown}
+        {placeCaret && <CaretInline />}
+        {/* The untyped remainder stays in the layout (transparent) so every line
+            always occupies its final, fully-wrapped height. Without this the
+            terminal grows/shrinks as it types + loops — a 120px height swing on
+            mobile that was the dominant source of layout shift (CLS). */}
+        {rest && <span className="text-transparent">{rest}</span>}
+      </span>,
+    )
+    cursor += frag.t.length
   }
   return out
 }
@@ -622,7 +625,9 @@ function CaretInline() {
   return (
     <span
       aria-hidden
-      className="inline-block w-[7px] h-[15px] bg-ink animate-blink align-middle ml-0.5 translate-y-[-1px]"
+      // negative right margin cancels the caret's own width so it never pushes a
+      // word onto a new line mid-type (which would jitter the terminal height)
+      className="inline-block w-[7px] h-[15px] bg-ink animate-blink align-middle ml-0.5 -mr-[7px] translate-y-[-1px]"
     />
   )
 }
@@ -865,8 +870,7 @@ function WhoamiTerminal() {
           return (
             <ConsoleRow key={i} n={i + 2} hidden={!visible}>
               <span className="text-accent/45 mr-2 select-none">▸</span>
-              {renderFragments(fragments, chars)}
-              {caretOnLine === i && <CaretInline />}
+              {renderFragments(fragments, chars, caretOnLine === i)}
             </ConsoleRow>
           )
         })}
