@@ -39,7 +39,7 @@ const colorFor = (accent: string) => GCOLOR[accent] ?? GCOLOR.accent
 // dense inner core, back end the middle layer, front end the outer layer —
 // which mirrors how the stack physically sits (infra underneath, front end on
 // top). Picking a layer pulls it out to fill the whole sphere.
-const LAYER: Record<string, number> = { infra: 0.48, backend: 0.73, frontend: 1 }
+const LAYER: Record<string, number> = { infra: 0.55, backend: 0.78, frontend: 1 }
 
 export function TechSphere({ words, groups }: { words: SphereWord[]; groups: SphereGroup[] }) {
   const { reduceMotion, isMobile } = useFxLevel()
@@ -107,7 +107,8 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
     let dragging = false
     let lastX = 0
     let lastY = 0
-    let radius = 0
+    let radiusX = 0
+    let radiusY = 0
     let cssW = 0
     let cssH = 0
     let stars: { x: number; y: number; r: number; a: number; tw: number; warm: boolean }[] = []
@@ -131,7 +132,11 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
       const r = host.getBoundingClientRect()
       cssW = r.width
       cssH = r.height
-      radius = Math.min(cssW, cssH) * 0.34
+      // separate X/Y radii so the cloud fills the wide panel and the nodes sit
+      // far apart instead of clumping in a circle; vertical pulled in a touch so
+      // top/bottom nodes clear the filter chips + the bottom hint
+      radiusX = cssW * 0.4
+      radiusY = cssH * 0.37
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       canvas.width = Math.max(1, Math.floor(cssW * dpr))
       canvas.height = Math.max(1, Math.floor(cssH * dpr))
@@ -158,7 +163,7 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
 
     const drawLines = () => {
       if (!ctx) return
-      const maxDist = radius * 0.6
+      const maxDist = Math.min(radiusX, radiusY) * 0.85
       ctx.lineWidth = 0.7
       for (let i = 0; i < N; i++) {
         const a = screen[i]
@@ -211,8 +216,8 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
         const y2 = p.y * cosX - z1 * sinX
         const z2 = p.y * sinX + z1 * cosX
         const sc = persp / (persp - z2)
-        const tx = x1 * radius * sc
-        const ty = y2 * radius * sc
+        const tx = x1 * radiusX * sc
+        const ty = y2 * radiusY * sc
         const depth = (z2 + 1) / 2
         screen[i] = vis[i] > 0.5 ? { sx: cssW / 2 + tx, sy: cssH / 2 + ty, depth } : null
         if (!el) continue
