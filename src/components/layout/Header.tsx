@@ -40,6 +40,8 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeId, setActiveId] = useState('hero')
   const [hoverId, setHoverId] = useState<string | null>(null)
+  // electric pulse that travels across the nav: logo → links → loop
+  const [electricIdx, setElectricIdx] = useState(0)
   const location = useLocation()
   const navigate = useNavigate()
   const onHome = location.pathname === '/'
@@ -99,6 +101,31 @@ export function Header() {
       if (raf != null) cancelAnimationFrame(raf)
     }
   }, [onHome, location.pathname])
+
+  // travelling electric pulse across the nav (Felix Noriel → Skills → Writing →
+  // … → loop). Decorative; desktop-only, and quiet for reduced-motion / hidden.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const desktop = window.matchMedia('(min-width: 768px)').matches
+    if (reduce || !desktop) return
+    const id = setInterval(
+      () => setElectricIdx((i) => (i + 1) % (navItems.length + 1)),
+      1400,
+    )
+    return () => clearInterval(id)
+  }, [])
+
+  // electric styling for the currently-lit nav item (steady glow; the .nav-zap
+  // class adds the on-arrival flicker)
+  const electricGlow = (on: boolean) =>
+    on
+      ? {
+          color: 'hsl(var(--electric))',
+          textShadow:
+            '0 0 12px hsl(var(--electric) / 0.55), 0 0 4px hsl(var(--electric) / 0.85)',
+        }
+      : undefined
 
   // cursor sheen on the capsule (GPU translate, no repaint)
   const onNavMove = (e: React.PointerEvent) => {
@@ -274,7 +301,10 @@ export function Header() {
               F
             </span>
           </span>
-          <span className="font-display text-[15px] font-semibold text-ink hidden sm:inline tracking-tight pr-1">
+          <span
+            className={`font-display text-[15px] font-semibold hidden sm:inline-block tracking-tight pr-1 text-ink transition-[color,text-shadow] duration-500 ${electricIdx === 0 ? 'nav-zap' : ''}`}
+            style={electricGlow(electricIdx === 0)}
+          >
             Felix Noriel
           </span>
         </Link>
@@ -284,8 +314,9 @@ export function Header() {
           className="relative z-10 hidden md:flex items-center"
           onMouseLeave={() => setHoverId(null)}
         >
-          {navItems.map((item) => {
+          {navItems.map((item, idx) => {
             const isActive = onHome && activeId === item.id
+            const zap = electricIdx === idx + 1
             return (
               <button
                 key={item.id}
@@ -310,7 +341,12 @@ export function Header() {
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span className="relative">{item.name}</span>
+                <span
+                  className={`relative inline-block transition-[color,text-shadow] duration-500 ${zap ? 'nav-zap' : ''}`}
+                  style={electricGlow(zap)}
+                >
+                  {item.name}
+                </span>
               </button>
             )
           })}

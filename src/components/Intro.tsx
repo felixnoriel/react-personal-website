@@ -233,13 +233,15 @@ export function Intro() {
                 word in its own color family (cool blue / warm magenta) */}
             <h1
               aria-label="Product Engineer · Problem Solver"
-              className="font-display text-[clamp(1.7rem,4.4vw,3.6rem)] leading-[1.05] tracking-tighter font-bold mb-6"
+              className="font-display leading-[1.05] tracking-tighter font-bold mb-6"
             >
-              <span className="block whitespace-nowrap">
+              {/* one line on desktop (fits); wraps on mobile, where 50px can't
+                  fit "Product Engineer" on one line (≈38px would) */}
+              <span className="block whitespace-normal md:whitespace-nowrap text-[50px] md:text-[80px]">
                 <FxWord variant="cool">Product Engineer</FxWord>
               </span>
-              {/* subtitle — ~20% smaller so "Product Engineer" reads as the title */}
-              <span className="block whitespace-nowrap text-[0.83em]">
+              {/* subtitle — a touch smaller so "Product Engineer" reads as the title */}
+              <span className="block whitespace-normal md:whitespace-nowrap text-[42px] md:text-[72px]">
                 <FxWord variant="warm" className="electric-offset">Problem Solver</FxWord>
               </span>
             </h1>

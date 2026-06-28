@@ -1100,3 +1100,41 @@ section:not(#hero) {
     display: none;
   }
 }
+
+/* ============================================================
+   Nav electric pulse — a chromatic "zap" that fires when the live
+   item arrives (the travelling highlight: Felix Noriel → Skills →
+   … → loop). The steady glow is set inline per active item; this is
+   the on-arrival flicker. GPU transform/filter only.
+   ============================================================ */
+@keyframes nav-zap {
+  0% {
+    transform: translateX(0) skewX(0deg);
+    filter: drop-shadow(0 0 8px hsl(var(--electric)));
+  }
+  16% {
+    transform: translateX(-1.5px) skewX(-3deg);
+    filter: drop-shadow(-1.5px 0 hsl(var(--accent))) drop-shadow(1.5px 0 hsl(var(--electric)));
+  }
+  34% {
+    transform: translateX(1.5px) skewX(2deg);
+    filter: drop-shadow(0 0 6px hsl(var(--electric)));
+  }
+  52% {
+    transform: translateX(-0.6px) skewX(0deg);
+    filter: drop-shadow(1.5px 0 hsl(var(--electric) / 0.8));
+  }
+  100% {
+    transform: translateX(0) skewX(0deg);
+    filter: none;
+  }
+}
+.nav-zap {
+  animation: nav-zap 0.5s ease-out;
+  will-change: transform, filter;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-zap {
+    animation: none;
+  }
+}
