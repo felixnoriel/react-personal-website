@@ -211,6 +211,10 @@ export function Header() {
     )
 
   const indicatorId = hoverId ?? (onHome ? activeId : null)
+  // when a nav item is actually highlighted (hover or scrollspy pill), pause the
+  // travelling electric pulse so the two indicators don't compete
+  const pillActive = navItems.some((n) => n.id === indicatorId)
+  const logoLit = electricIdx === 0 && !pillActive
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col items-center px-3 pt-3 pointer-events-none">
@@ -302,8 +306,8 @@ export function Header() {
             </span>
           </span>
           <span
-            className={`font-display text-[15px] font-semibold hidden sm:inline-block tracking-tight pr-1 text-ink transition-[color,text-shadow] duration-500 ${electricIdx === 0 ? 'nav-zap' : ''}`}
-            style={electricGlow(electricIdx === 0)}
+            className={`font-display text-[15px] font-semibold hidden sm:inline-block tracking-tight pr-1 text-ink transition-[color,text-shadow] duration-500 ${logoLit ? 'nav-zap' : ''}`}
+            style={electricGlow(logoLit)}
           >
             Felix Noriel
           </span>
@@ -316,7 +320,7 @@ export function Header() {
         >
           {navItems.map((item, idx) => {
             const isActive = onHome && activeId === item.id
-            const zap = electricIdx === idx + 1
+            const zap = electricIdx === idx + 1 && !pillActive
             return (
               <button
                 key={item.id}
