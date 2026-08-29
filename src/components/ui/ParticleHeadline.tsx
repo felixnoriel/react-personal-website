@@ -263,7 +263,7 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       const dark = document.documentElement.classList.contains('dark')
       const L = dark
         ? { c1: 0.68, c2: 0.72, c3: 0.68, c4: 0.64, sat: 1.5 }
-        : { c1: 0.34, c2: 0.32, c3: 0.36, c4: 0.32, sat: 1.4 }
+        : { c1: 0.4, c2: 0.38, c3: 0.42, c4: 0.38, sat: 1.75 }
       gl.uniform3fv(U.uC1, hslVarToRgb('--accent', [0.4, 0.1, 0.28], L.sat, L.c1))
       gl.uniform3fv(U.uC2, hslVarToRgb('--lime', [0.32, 0.42, 0.2], L.sat, L.c2))
       gl.uniform3fv(U.uC3, hslVarToRgb('--electric', [0.14, 0.24, 0.48], L.sat, L.c3))

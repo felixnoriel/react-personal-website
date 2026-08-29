@@ -187,6 +187,27 @@ export function Intro() {
           floats over it like every other section. Just a little extra HUD
           texture here. */}
       <StaticSubstrate />
+      {/* vivid aurora blooms — saturated gradient fields that make the light
+          theme read as a designed holographic surface, not plain paper.
+          Pure CSS, compositor-only drift, hidden for reduced motion via the
+          existing animate-float-slow gate (they stay as static color). */}
+      <div aria-hidden className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="animate-float-slow absolute -top-[10%] -left-[6%] w-[55vw] h-[55vw] max-w-[760px] max-h-[760px] rounded-full opacity-45 dark:opacity-25 blur-3xl"
+          style={{
+            background:
+              'radial-gradient(circle at 35% 35%, hsl(var(--accent) / 0.55), hsl(var(--electric) / 0.35) 45%, transparent 70%)',
+          }}
+        />
+        <div
+          className="animate-float-slow absolute top-[26%] -right-[10%] w-[48vw] h-[48vw] max-w-[680px] max-h-[680px] rounded-full opacity-40 dark:opacity-20 blur-3xl"
+          style={{
+            background:
+              'radial-gradient(circle at 60% 40%, hsl(var(--lime) / 0.6), hsl(var(--amber) / 0.35) 50%, transparent 72%)',
+            animationDelay: '-7s',
+          }}
+        />
+      </div>
       <div
         ref={hudLayerRef}
         className="hero-exit-hud absolute inset-0 pointer-events-none z-10"

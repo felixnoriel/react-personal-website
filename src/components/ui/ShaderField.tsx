@@ -137,9 +137,9 @@ void main() {
   a += fil * 0.35 * u_alpha;
   a += glow * 0.35;
 
-  // on light paper keep it airy; on dark keep it QUIETER still — the
-  // field is atmosphere, never a competitor to the content above it
-  a *= mix(0.9, 0.72, u_dark);
+  // light theme runs the field at full presence (the scrim above keeps
+  // text safe); dark stays quieter so neon never fights the type
+  a *= mix(1.0, 0.72, u_dark);
 
   // click shockwaves — luminous rings expanding from each click point
   for (int i = 0; i < 5; i++) {
@@ -279,13 +279,15 @@ export const ShaderField = memo(function ShaderField({
     // bright plasma look destroyed text contrast.
     const readPalette = () => {
       const isDark = document.documentElement.classList.contains('dark')
+      // light theme is VIVID, not faint: saturated holographic washes that
+      // read clearly on white paper (the muted look read as "unchanged")
       const L = isDark
-        ? { c1: 0.4, c2: 0.42, c3: 0.4, c4: 0.36 }
-        : { c1: 0.58, c2: 0.62, c3: 0.58, c4: 0.54 }
-      gl.uniform3fv(U.c1, hslVarToRgb('--accent', [0.72, 0.3, 0.56], 1.35, L.c1))
-      gl.uniform3fv(U.c2, hslVarToRgb('--lime', [0.66, 0.82, 0.45], 1.3, L.c2))
-      gl.uniform3fv(U.c3, hslVarToRgb('--electric', [0.3, 0.5, 0.82], 1.4, L.c3))
-      gl.uniform3fv(U.c4, hslVarToRgb('--amber', [0.46, 0.4, 0.74], 1.35, L.c4))
+        ? { c1: 0.4, c2: 0.42, c3: 0.4, c4: 0.36, sat: 1.35 }
+        : { c1: 0.52, c2: 0.55, c3: 0.52, c4: 0.48, sat: 1.75 }
+      gl.uniform3fv(U.c1, hslVarToRgb('--accent', [0.72, 0.3, 0.56], L.sat, L.c1))
+      gl.uniform3fv(U.c2, hslVarToRgb('--lime', [0.66, 0.82, 0.45], L.sat, L.c2))
+      gl.uniform3fv(U.c3, hslVarToRgb('--electric', [0.3, 0.5, 0.82], L.sat, L.c3))
+      gl.uniform3fv(U.c4, hslVarToRgb('--amber', [0.46, 0.4, 0.74], L.sat, L.c4))
       gl.uniform1f(U.dark, isDark ? 1 : 0)
     }
     readPalette()

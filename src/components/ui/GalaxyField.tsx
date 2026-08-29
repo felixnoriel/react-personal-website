@@ -140,7 +140,8 @@ fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> VSOut
   col = mix(col, sim.c4.rgb, step(0.94, h));
   // dark theme: speed brightens toward white-hot; light theme: stay ink
   col = mix(col, vec3f(1.0), min(0.55, speed * 0.045) * sim.dark);
-  let alpha = (0.3 + 0.55 * min(1.0, speed * 0.06)) * (0.45 + 0.55 * h);
+  // light theme runs a higher floor: colored ink must be plainly visible
+  let alpha = (mix(0.44, 0.3, sim.dark) + 0.55 * min(1.0, speed * 0.06)) * (0.45 + 0.55 * h);
 
   var out: VSOut;
   out.pos = vec4f(clip.x, -clip.y, 0.0, 1.0);
@@ -277,10 +278,11 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
         })
         const uni = new Float32Array(28)
         uni[10] = isDark ? 1 : 0
-        // palette — luminous neon over dark, deep ink dust over light paper
+        // palette — luminous neon over dark; SATURATED colored ink over
+        // light paper (gray dust read as invisible — color is the point)
         const L = isDark
           ? { c1: 0.68, c2: 0.72, c3: 0.7, c4: 0.68, sat: 1.35 }
-          : { c1: 0.4, c2: 0.38, c3: 0.42, c4: 0.38, sat: 1.35 }
+          : { c1: 0.46, c2: 0.48, c3: 0.48, c4: 0.44, sat: 1.7 }
         const pal = [
           hslVarToRgb('--accent', [0.85, 0.5, 0.72], L.sat, L.c1),
           hslVarToRgb('--lime', [0.75, 0.85, 0.6], L.sat, L.c2),

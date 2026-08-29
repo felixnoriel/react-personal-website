@@ -60,10 +60,11 @@ export function CosmicBackdrop() {
 
   return (
     <>
-      <ShaderField intensity={0.62} />
-      {/* luminance scrim — the one UX rule the backdrop must obey: deep
-          enough that text always wins, light enough that space feels alive */}
-      <div aria-hidden className="absolute inset-0 bg-background/35" />
+      <ShaderField intensity={0.78} />
+      {/* luminance scrim — text always wins, but the field must stay ALIVE:
+          light theme needs only a whisper of scrim (vivid is the point),
+          dark needs more so neon never fights the type */}
+      <div aria-hidden className="absolute inset-0 bg-scrim" />
       {gpu && !reduceMotion && (
         <GalaxyField
           isMobile={isMobile}

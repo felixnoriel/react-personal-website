@@ -935,15 +935,22 @@ section:not(#hero) {
     transition: opacity 0.6s ease;
   }
   .headline-ghost .hl-swap {
-    /* faint aurora text stays under the particles: it fills the gaps between
+    /* aurora text stays under the particles: it fills the gaps between
        points so the glyphs read solid, and keeps the headline legible even
        mid-burst — the swarm carries the motion, the ghost carries the ink */
-    opacity: 0.16;
+    opacity: 0.45;
   }
   /* dark theme: the busy nebula behind demands a stronger text anchor —
      legibility beats spectacle, always */
   .dark .headline-ghost .hl-swap {
     opacity: 0.4;
+  }
+  /* backdrop scrim, theme-tuned: light stays vivid, dark stays calm */
+  .bg-scrim {
+    background: hsl(var(--background) / 0.14);
+  }
+  .dark .bg-scrim {
+    background: hsl(var(--background) / 0.35);
   }
   /* dark theme: the cursor halo reads much hotter over deep space — calm it */
   .dark .cursor-aura-halo {
