@@ -6,11 +6,11 @@ import { useFxLevel } from '../../hooks/useFxLevel'
  *
  * Three acts, all driven by ONE tiny engine writing per-letter
  * `font-variation-settings: 'wght'` on a variable font:
- *   1. Scramble-in: letters decode left→right (per-letter, staggered).
- *   2. Reveal wave: a weight pulse sweeps through the word once.
- *   3. Live: on desktop, letters swell toward the cursor as it passes
- *      (gooey type). On touch, a tap sends the same weight ripple
- *      through the word from the tap point.
+ *   1. Text is readable at frame one (no scramble — never garble the
+ *      words being read), then a single weight wave sweeps through.
+ *   2. Live: on desktop, letters swell toward the cursor as it passes
+ *      (gooey type) and a click sends a weight ripple. Touch gets the
+ *      static gradient — pointer forces are a mouse affordance.
  *
  * Why weight-only (no per-letter transforms): the aurora gradient is
  * `background-clip: text` on the HOST element, and weight changes are
@@ -27,27 +27,21 @@ import { useFxLevel } from '../../hooks/useFxLevel'
  *   - Reduced-motion renders static text, no listeners at all.
  */
 
-const SCRAMBLE_CHARS = '!<>-_\\/[]{}=+*^?#'
 const BASE_WGHT = 700 // matches the h1's font-bold
 const PEAK_WGHT = 900
 const POINTER_RADIUS = 120 // px of cursor influence
-const SCRAMBLE_STAGGER = 26 // ms between letters locking in
-const SCRAMBLE_LOCK = 240 // ms a letter stays scrambled
 
 type Pulse = { x: number; y: number; t0: number; life: number; span: number }
 
 interface KineticHeadlineProps {
   text: string
   variant?: 'cool' | 'warm'
-  /** ms before the scramble reveal starts (staggers the two hero lines) */
-  delay?: number
   className?: string
 }
 
 export function KineticHeadline({
   text,
   variant,
-  delay = 0,
   className = '',
 }: KineticHeadlineProps) {
   const { reduceMotion, disableHeavyFx } = useFxLevel()
@@ -66,9 +60,7 @@ export function KineticHeadline({
     const finalChars = letters.map((el) => el.dataset.kin ?? '')
 
     let raf = 0
-    let frame = 0
     let revealed = false
-    const t0 = performance.now() + delay
     const wght = letters.map(() => BASE_WGHT)
     const written = letters.map(() => BASE_WGHT)
     let centers: { x: number; y: number }[] | null = null
@@ -98,37 +90,21 @@ export function KineticHeadline({
 
     const tick = (now: number) => {
       raf = 0
-      frame++
       let busy = false
 
-      // ── Act 1: scramble-in ─────────────────────────────────────
+      // ── Act 1: instant text (the headline must be readable at frame
+      // one — scrambling the first words destroyed the highest-value
+      // pixels on the page), then a single weight wave sweeps through.
       if (!revealed) {
-        let allLocked = true
-        for (let i = 0; i < letters.length; i++) {
-          const local = now - t0 - i * SCRAMBLE_STAGGER
-          if (local < SCRAMBLE_LOCK) {
-            allLocked = false
-            // decode not started for this letter yet → keep real text
-            if (local >= 0 && frame % 2 === 0) {
-              letters[i].textContent =
-                SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0]
-            }
-          } else if (letters[i].textContent !== finalChars[i]) {
-            letters[i].textContent = finalChars[i]
-          }
-        }
-        if (allLocked) {
-          revealed = true
-          computeCenters()
-          // Act 2: the reveal wave — a weight front sweeping the whole line
-          pulses.push({
-            x: hostRect.left,
-            y: hostRect.top + hostRect.height / 2,
-            t0: now,
-            life: 1000,
-            span: hostRect.width + 260,
-          })
-        }
+        revealed = true
+        computeCenters()
+        pulses.push({
+          x: hostRect.left,
+          y: hostRect.top + hostRect.height / 2,
+          t0: now,
+          life: 1000,
+          span: hostRect.width + 260,
+        })
         busy = true
       }
 
@@ -195,9 +171,10 @@ export function KineticHeadline({
       if (pointer.near || wasNear) wake()
     }
 
-    // Any device: a tap/click near the headline ripples a weight wave
-    // outward from the tap point — mobile's version of the interaction.
+    // Mouse-only click ripple through the letters (touch scroll-start
+    // taps must never fire forces).
     const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return
       if (!revealed) return
       freshHostRect()
       const pad = 90
@@ -246,11 +223,11 @@ export function KineticHeadline({
         el.style.removeProperty('font-variation-settings')
       })
     }
-  }, [reduceMotion, text, delay])
+  }, [reduceMotion, text])
 
   const tint = variant === 'cool' ? 'aurora-cool' : variant === 'warm' ? 'aurora-warm' : ''
   return (
-    <span ref={hostRef} className={`aurora-text electric-text ${tint} ${className}`}>
+    <span ref={hostRef} className={`aurora-text ${tint} ${className}`}>
       {text.split('').map((ch, i) =>
         ch === ' ' ? (
           ' '

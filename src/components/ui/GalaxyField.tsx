@@ -164,13 +164,25 @@ fn fs(in: VSOut) -> @location(0) vec4f {
 
 interface GalaxyFieldProps {
   isMobile: boolean
+  /** true while the hero is offscreen — the field freezes so nothing
+   *  animates behind body copy (reading tax) */
+  paused: boolean
   onFail: () => void
 }
 
-export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: GalaxyFieldProps) {
+export const GalaxyField = memo(function GalaxyField({ isMobile, paused: pausedProp, onFail }: GalaxyFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const failRef = useRef(onFail)
   failRef.current = onFail
+  const pausedRef = useRef(pausedProp)
+  pausedRef.current = pausedProp
+  // the loop fully stops while paused; this ref lets the unpause effect
+  // below restart it AFTER the prop has committed (an event dispatched
+  // synchronously from the IntersectionObserver raced the ref and lost)
+  const wakeRef = useRef<() => void>(() => {})
+  useEffect(() => {
+    if (!pausedProp) wakeRef.current()
+  }, [pausedProp])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -191,7 +203,7 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
     const lowMem =
       (navigator as unknown as { deviceMemory?: number }).deviceMemory !== undefined &&
       (navigator as unknown as { deviceMemory?: number }).deviceMemory! <= 4
-    const count = (isMobile ? 90_000 : 500_000) >> (lowMem ? 1 : 0)
+    const count = (isMobile ? 50_000 : 300_000) >> (lowMem ? 1 : 0)
     const dpr = Math.min(window.devicePixelRatio || 1, 1.75)
     const cleanupFns: Array<() => void> = []
 
@@ -282,9 +294,10 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
         uni[10] = isDark ? 1 : 0
         // palette — luminous neon over dark; SATURATED colored ink over
         // light paper (gray dust read as invisible — color is the point)
+        // pastel dust on light paper; luminous neon on dark
         const L = isDark
           ? { c1: 0.68, c2: 0.72, c3: 0.7, c4: 0.68, sat: 1.35 }
-          : { c1: 0.46, c2: 0.48, c3: 0.48, c4: 0.44, sat: 1.7 }
+          : { c1: 0.56, c2: 0.58, c3: 0.58, c4: 0.54, sat: 1.1 }
         const pal = [
           hslVarToRgb('--accent', [0.85, 0.5, 0.72], L.sat, L.c1),
           hslVarToRgb('--lime', [0.75, 0.85, 0.6], L.sat, L.c2),
@@ -327,16 +340,26 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
 
         const mouse = { x: cssW / 2, y: cssH / 3, tx: cssW / 2, ty: cssH / 3, str: 0, tstr: 0 }
         let pulse = 0
+        // vortex/gravity are MOUSE affordances — on touch the latched field
+        // parked a permanent whorl at the last finger position
         const onMove = (e: PointerEvent) => {
+          if (e.pointerType !== 'mouse') return
           mouse.tx = e.clientX
           mouse.ty = e.clientY
           mouse.tstr = 1
         }
-        const onDown = () => {
+        const release = () => {
+          mouse.tstr = 0
+        }
+        const onDown = (e: PointerEvent) => {
+          if (e.pointerType !== 'mouse') return
           pulse = 1
         }
         window.addEventListener('pointermove', onMove, { passive: true })
         window.addEventListener('pointerdown', onDown, { passive: true })
+        window.addEventListener('pointerup', release, { passive: true })
+        window.addEventListener('pointercancel', release, { passive: true })
+        window.addEventListener('blur', release)
 
         let warp = 0
         let warpTarget = 0
@@ -356,22 +379,13 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
         // times say the GPU can't keep up
         let activeCount = count
         let slowFrames = 0
-        let fpsFrames = 0
-        let fpsT0 = performance.now()
 
         let elapsed = 0
         let last = performance.now()
 
-        const announce = () => {
-          const detail = { kind: 'webgpu', count: activeCount }
-          ;(window as unknown as { __fxRendererInfo?: object }).__fxRendererInfo = detail
-          window.dispatchEvent(new CustomEvent('fx:renderer', { detail }))
-        }
-        announce()
-
         const frame = (now: number) => {
           if (disposed) return
-          if (document.hidden) {
+          if (document.hidden || pausedRef.current) {
             raf = 0
             return
           }
@@ -383,22 +397,12 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
           // adaptive backoff (only while the tab is actually animating)
           if (dt > 0.024) {
             slowFrames++
-            if (slowFrames > 90 && activeCount > 60_000) {
+            if (slowFrames > 90 && activeCount > 40_000) {
               activeCount = Math.floor(activeCount * 0.6)
               slowFrames = 0
-              announce()
             }
           } else if (slowFrames > 0) {
             slowFrames--
-          }
-
-          // live fps readout for the hero HUD (direct DOM write, no React)
-          fpsFrames++
-          if (now - fpsT0 > 1000) {
-            const el = document.getElementById('fx-fps')
-            if (el) el.textContent = String(Math.min(240, Math.round((fpsFrames * 1000) / (now - fpsT0))))
-            fpsFrames = 0
-            fpsT0 = now
           }
 
           mouse.x += (mouse.tx - mouse.x) * 0.12
@@ -445,17 +449,24 @@ export const GalaxyField = memo(function GalaxyField({ isMobile, onFail }: Galax
         raf = requestAnimationFrame(frame)
 
         const onVis = () => {
-          if (!document.hidden && !raf && !disposed) {
+          if (!document.hidden && !pausedRef.current && !raf && !disposed) {
             last = performance.now()
             raf = requestAnimationFrame(frame)
           }
         }
         document.addEventListener('visibilitychange', onVis)
+        wakeRef.current = onVis
+        cleanupFns.push(() => {
+          wakeRef.current = () => {}
+        })
 
         cleanupFns.push(() => {
           window.removeEventListener('resize', resize)
           window.removeEventListener('pointermove', onMove)
           window.removeEventListener('pointerdown', onDown)
+          window.removeEventListener('pointerup', release)
+          window.removeEventListener('pointercancel', release)
+          window.removeEventListener('blur', release)
           window.removeEventListener('scroll', onScroll)
           document.removeEventListener('visibilitychange', onVis)
           partBuf.destroy()

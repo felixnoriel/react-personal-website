@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { m } from 'framer-motion'
 import { Coffee, MapPin, Plane, Utensils } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -212,11 +212,8 @@ const PLACES: {
 ]
 
 function useUtcMinute() {
-  const [t, setT] = useState(() => new Date().toISOString().slice(11, 16))
-  useEffect(() => {
-    const id = setInterval(() => setT(new Date().toISOString().slice(11, 16)), 30_000)
-    return () => clearInterval(id)
-  }, [])
+  // computed once — a heading-adjacent value must not change under the reader
+  const [t] = useState(() => new Date().toISOString().slice(11, 16))
   return t
 }
 

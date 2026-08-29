@@ -641,11 +641,18 @@ function ReactorCore({ reduce }: { reduce: boolean }) {
           <m.circle
             cx={size / 2}
             cy={size / 2}
-            r="3.5"
+            r="4.2"
             fill="#8effa6"
-            animate={{ r: [3, 5.5, 3], opacity: [1, 0.55, 1] }}
+            // scale via transform, NOT the r attribute: framer strips an
+            // attribute it animates during the pre-feature render, which
+            // logged `<circle> attribute r: Expected length` on every load
+            animate={{ scale: [0.72, 1.3, 0.72], opacity: [1, 0.55, 1] }}
             transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ filter: 'drop-shadow(0 0 6px #8effa6)' }}
+            style={{
+              filter: 'drop-shadow(0 0 6px #8effa6)',
+              transformBox: 'fill-box',
+              transformOrigin: 'center',
+            }}
           />
         ) : (
           <circle cx={size / 2} cy={size / 2} r="3.5" fill="#8effa6" />

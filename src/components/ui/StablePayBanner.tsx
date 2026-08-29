@@ -81,7 +81,6 @@ export function StablePayBanner({ className = '' }: StablePayBannerProps) {
       <div className="relative z-10 flex items-center justify-between mb-5 md:mb-6">
         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur border border-border text-[10px] tracking-[0.18em] uppercase font-mono text-ink">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
           </span>
           StablePay · v1

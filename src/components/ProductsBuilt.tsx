@@ -9,7 +9,6 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Project } from '../types/data'
-import { ScrambleText } from './ui/ScrambleText'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { StablePayBanner } from './ui/StablePayBanner'
 import { trackProjectView } from '../utils/analytics'
@@ -250,7 +249,7 @@ function ProjectCard({
           </div>
 
           <h3 className="font-display text-2xl md:text-[1.9rem] leading-tight font-bold tracking-tight text-ink group-hover:text-accent transition-colors">
-            <ScrambleText text={project.title} trigger="hover" />
+            {project.title}
           </h3>
           {project.company?.title && (
             <div className="mt-1 font-mono text-[12px] text-ink-soft">

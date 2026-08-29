@@ -258,7 +258,7 @@ function ArchiveHero({ total, tags }: { total: number; tags: string[] }) {
       <div className="relative border-t border-dashed border-ink/15 bg-[hsl(var(--background)/0.6)] backdrop-blur">
         <div className="overflow-hidden py-2">
           <div
-            className={`flex items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft ${reduce ? '' : 'animate-scroll-x'}`}
+            className={`flex items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft `}
             style={{ width: reduce ? 'auto' : 'max-content' }}
           >
             {Array.from({ length: 2 }).flatMap((_, rep) =>

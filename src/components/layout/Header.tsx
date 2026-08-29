@@ -40,8 +40,6 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeId, setActiveId] = useState('hero')
   const [hoverId, setHoverId] = useState<string | null>(null)
-  // electric pulse that travels across the nav: logo → links → loop
-  const [electricIdx, setElectricIdx] = useState(0)
   const location = useLocation()
   const navigate = useNavigate()
   const onHome = location.pathname === '/'
@@ -102,30 +100,9 @@ export function Header() {
     }
   }, [onHome, location.pathname])
 
-  // travelling electric pulse across the nav (Felix Noriel → Skills → Writing →
-  // … → loop). Decorative; desktop-only, and quiet for reduced-motion / hidden.
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const desktop = window.matchMedia('(min-width: 768px)').matches
-    if (reduce || !desktop) return
-    const id = setInterval(
-      () => setElectricIdx((i) => (i + 1) % (navItems.length + 1)),
-      1400,
-    )
-    return () => clearInterval(id)
-  }, [])
-
-  // electric styling for the currently-lit nav item (steady glow; the .nav-zap
-  // class adds the on-arrival flicker)
-  const electricGlow = (on: boolean) =>
-    on
-      ? {
-          color: 'hsl(var(--electric))',
-          textShadow:
-            '0 0 12px hsl(var(--electric) / 0.55), 0 0 4px hsl(var(--electric) / 0.85)',
-        }
-      : undefined
+  // (The travelling "electric pulse" that cycled nav items forever is gone:
+  // a perpetually self-highlighting nav read as a stuck animation, and it
+  // competed with the one indicator that matters — the scrollspy pill.)
 
   // cursor sheen on the capsule (GPU translate, no repaint)
   const onNavMove = (e: React.PointerEvent) => {
@@ -143,18 +120,34 @@ export function Header() {
     }
   }
 
+  // scroll to a section, waiting for it to exist first — Home is a lazy
+  // route, so right after navigate('/') the target node may not be mounted
+  // yet; a fixed timeout silently no-oped and the click looked frozen
+  const scrollToWhenReady = (id: string) => {
+    const started = performance.now()
+    const attempt = () => {
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
+      if (performance.now() - started < 2000) requestAnimationFrame(attempt)
+    }
+    attempt()
+  }
+
   // ---- preserved navigation behaviour ----
   const handleNavClick = (id: string, redirectPath?: string) => {
+    // hand the pill back to scrollspy immediately — a hovered pill pinned
+    // under a stationary pointer while the page scrolls reads as stuck
+    setHoverId(null)
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false)
       if (redirectPath) {
         if (id === 'skills-section') {
           if (location.pathname !== '/') {
             navigate('/')
-            setTimeout(
-              () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }),
-              100,
-            )
+            scrollToWhenReady(id)
           } else {
             document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
           }
@@ -171,10 +164,7 @@ export function Header() {
     setIsMobileMenuOpen(false)
     if (location.pathname !== '/') {
       navigate('/')
-      setTimeout(
-        () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }),
-        100,
-      )
+      scrollToWhenReady(id)
     } else {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
     }
@@ -193,10 +183,7 @@ export function Header() {
       el.scrollIntoView({ behavior: 'smooth' })
     } else if (location.pathname !== '/') {
       navigate('/')
-      setTimeout(
-        () => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }),
-        100,
-      )
+      scrollToWhenReady('contact-section')
     }
   }
 
@@ -211,10 +198,6 @@ export function Header() {
     )
 
   const indicatorId = hoverId ?? (onHome ? activeId : null)
-  // when a nav item is actually highlighted (hover or scrollspy pill), pause the
-  // travelling electric pulse so the two indicators don't compete
-  const pillActive = navItems.some((n) => n.id === indicatorId)
-  const logoLit = electricIdx === 0 && !pillActive
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col items-center px-3 pt-3 pointer-events-none">
@@ -241,9 +224,7 @@ export function Header() {
             ? 'inset 0 1px 1px rgba(255,255,255,0.65), inset 0 -1px 1.5px rgba(70,40,70,0.08), 0 18px 44px -22px hsl(var(--ink) / 0.5), 0 0 44px -12px hsl(var(--accent) / 0.22)'
             : 'inset 0 1px 1px rgba(255,255,255,0.55), inset 0 -1px 1.5px rgba(70,40,70,0.06), 0 12px 36px -22px hsl(var(--ink) / 0.4), 0 0 34px -14px hsl(var(--accent) / 0.16)',
         }}
-        className={`pointer-events-auto liquid-glass relative flex items-center gap-1 rounded-full border border-white/25 overflow-hidden transition-[box-shadow,padding] duration-300 pl-2 pr-2 ${
-          isScrolled ? 'py-1.5' : 'py-2'
-        }`}
+        className={`pointer-events-auto liquid-glass relative flex items-center gap-1 rounded-full border border-white/25 overflow-hidden transition-[box-shadow] duration-300 pl-2 pr-2 py-2`}
       >
         {/* liquid refraction — bends the backdrop through the glass (Chromium) */}
         <div aria-hidden className="liquid-refract pointer-events-none absolute inset-0 z-0" />
@@ -305,10 +286,7 @@ export function Header() {
               F
             </span>
           </span>
-          <span
-            className={`font-display text-[15px] font-semibold hidden sm:inline-block tracking-tight pr-1 text-ink transition-[color,text-shadow] duration-500 ${logoLit ? 'nav-zap' : ''}`}
-            style={electricGlow(logoLit)}
-          >
+          <span className="font-display text-[15px] font-semibold hidden sm:inline-block tracking-tight pr-1 text-ink">
             Felix Noriel
           </span>
         </Link>
@@ -318,9 +296,8 @@ export function Header() {
           className="relative z-10 hidden md:flex items-center"
           onMouseLeave={() => setHoverId(null)}
         >
-          {navItems.map((item, idx) => {
+          {navItems.map((item) => {
             const isActive = onHome && activeId === item.id
-            const zap = electricIdx === idx + 1 && !pillActive
             return (
               <button
                 key={item.id}
@@ -345,12 +322,7 @@ export function Header() {
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span
-                  className={`relative inline-block transition-[color,text-shadow] duration-500 ${zap ? 'nav-zap' : ''}`}
-                  style={electricGlow(zap)}
-                >
-                  {item.name}
-                </span>
+                <span className="relative inline-block">{item.name}</span>
               </button>
             )
           })}

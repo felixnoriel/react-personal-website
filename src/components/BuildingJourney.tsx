@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowUpRight, MapPin } from 'lucide-react'
 import type { Career } from '../types/data'
-import { ScrambleText } from './ui/ScrambleText'
 import {
   FxWord,
   GlassPanel,
@@ -129,7 +128,7 @@ function CareerCard({
 
       {/* company / role */}
       <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-ink">
-        <ScrambleText text={exp.title} trigger="hover" />
+        {exp.title}
         <span className="text-ink-soft font-medium"> · </span>
         <span className="text-ink-muted font-semibold text-lg md:text-xl">
           {exp.jobTitle}

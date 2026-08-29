@@ -70,7 +70,7 @@ export function ContactSection() {
       <div className="mt-12 grid lg:grid-cols-5 gap-5 items-start">
         {/* form */}
         <Reveal className="lg:col-span-3">
-          <GlassPanel tilt={false} className="p-6 md:p-7">
+          <GlassPanel className="p-6 md:p-7">
             <form onSubmit={handleSubmit} className="space-y-4">
               <Field label="callsign · your name">
                 <input

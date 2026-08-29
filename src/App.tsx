@@ -5,7 +5,6 @@ import { AnimatePresence, LazyMotion, m } from 'framer-motion'
 import { DataProvider } from './contexts/DataContext'
 import { MainLayout } from './components/layout/MainLayout'
 import { ScrollToTop } from './components/ScrollToTop'
-import { ScrollHUD } from './components/ui/ScrollHUD'
 import { BootLoader } from './components/ui/BootLoader'
 
 // Lazy Load Pages
@@ -76,7 +75,7 @@ function App() {
   // 3s, so nothing even began loading until the boot finished.)
   // Speed rules: the beat is SHORT, and a repeat visit in the same session
   // skips the veil entirely — the cinematic intro is for first contact only.
-  const BOOT_MS = 800
+  const BOOT_MS = 600
   const [skipBoot] = useState(() => {
     try {
       return sessionStorage.getItem('fx-booted') === '1'
@@ -143,7 +142,6 @@ function App() {
           <Router>
             <AnalyticsWrapper>
               <ScrollToTop />
-              <ScrollHUD />
               <MainLayout>
                 <Suspense
                   fallback={

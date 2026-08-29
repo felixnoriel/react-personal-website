@@ -281,9 +281,11 @@ export const ShaderField = memo(function ShaderField({
       const isDark = document.documentElement.classList.contains('dark')
       // light theme is VIVID, not faint: saturated holographic washes that
       // read clearly on white paper (the muted look read as "unchanged")
+      // PASTEL light theme: soft milky washes, never plasma — and the
+      // type above always keeps deep-ink contrast
       const L = isDark
         ? { c1: 0.4, c2: 0.42, c3: 0.4, c4: 0.36, sat: 1.35 }
-        : { c1: 0.52, c2: 0.55, c3: 0.52, c4: 0.48, sat: 1.75 }
+        : { c1: 0.72, c2: 0.75, c3: 0.72, c4: 0.68, sat: 0.9 }
       gl.uniform3fv(U.c1, hslVarToRgb('--accent', [0.72, 0.3, 0.56], L.sat, L.c1))
       gl.uniform3fv(U.c2, hslVarToRgb('--lime', [0.66, 0.82, 0.45], L.sat, L.c2))
       gl.uniform3fv(U.c3, hslVarToRgb('--electric', [0.3, 0.5, 0.82], L.sat, L.c3))
@@ -363,6 +365,7 @@ export const ShaderField = memo(function ShaderField({
     const rippleData = new Float32Array(15)
     for (let i = 0; i < 5; i++) rippleData[i * 3 + 2] = -1
     const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return
       const rect = canvas.getBoundingClientRect()
       ripples.push({
         x: (e.clientX - rect.left) / Math.max(1, rect.width),

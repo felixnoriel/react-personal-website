@@ -18,41 +18,35 @@ import { useFxLevel } from '../../hooks/useFxLevel'
  * static gradient + scrim only.
  */
 
-function announce(kind: 'webgpu' | 'webgl' | 'static', count: number) {
-  const detail = { kind, count }
-  ;(window as unknown as { __fxRendererInfo?: object }).__fxRendererInfo = detail
-  window.dispatchEvent(new CustomEvent('fx:renderer', { detail }))
-}
-
 export function CosmicBackdrop() {
   const { reduceMotion, isMobile } = useFxLevel()
   const [gpu, setGpu] = useState(false)
+  // freeze the whole backdrop once the hero scrolls away: an animating
+  // field behind body copy is pure reading tax — the last frame stays as
+  // a static texture and everything below reads on calm ground
+  const [heroAway, setHeroAway] = useState(false)
+  useEffect(() => {
+    const hero = document.getElementById('hero')
+    if (!hero || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver((es) => {
+      setHeroAway(!(es[0]?.isIntersecting ?? true))
+    })
+    io.observe(hero)
+    return () => io.disconnect()
+  }, [])
 
   useEffect(() => {
-    if (reduceMotion) {
-      announce('static', 0)
-      return
-    }
+    if (reduceMotion) return
     // respect data-saver users: the aurora alone carries the scene
-    if (window.matchMedia?.('(prefers-reduced-data: reduce)').matches) {
-      announce('webgl', 0)
-      return
-    }
-    if (!('gpu' in navigator) || !navigator.gpu) {
-      announce('webgl', 0)
-      return
-    }
+    if (window.matchMedia?.('(prefers-reduced-data: reduce)').matches) return
+    if (!('gpu' in navigator) || !navigator.gpu) return
     let alive = true
     navigator.gpu
       .requestAdapter()
       .then((adapter) => {
-        if (!alive) return
-        if (adapter) setGpu(true)
-        else announce('webgl', 0)
+        if (alive && adapter) setGpu(true)
       })
-      .catch(() => {
-        if (alive) announce('webgl', 0)
-      })
+      .catch(() => undefined)
     return () => {
       alive = false
     }
@@ -60,10 +54,9 @@ export function CosmicBackdrop() {
 
   return (
     <>
-      {/* mobile runs the field quieter: the same filaments that read as
-          distant atmosphere on desktop render huge against a small
-          viewport and fight the text */}
-      <ShaderField intensity={isMobile ? 0.5 : 0.78} />
+      {/* pastel atmosphere — quiet on mobile (small screens amplify the
+          field), frozen once the hero leaves the viewport */}
+      <ShaderField intensity={isMobile ? 0.42 : 0.62} paused={heroAway} />
       {/* luminance scrim — text always wins, but the field must stay ALIVE:
           light theme needs only a whisper of scrim (vivid is the point),
           dark needs more so neon never fights the type */}
@@ -71,10 +64,8 @@ export function CosmicBackdrop() {
       {gpu && !reduceMotion && (
         <GalaxyField
           isMobile={isMobile}
-          onFail={() => {
-            setGpu(false)
-            announce('webgl', 0)
-          }}
+          paused={heroAway}
+          onFail={() => setGpu(false)}
         />
       )}
     </>

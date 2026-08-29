@@ -274,8 +274,7 @@ export function ProjectView({
               <span className="text-ink-soft/60">·</span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+                                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
                 </span>
                 <span className="text-lime">deployed</span>
               </span>
@@ -647,8 +646,7 @@ function MissionConsole({
         <div className="absolute top-5 right-5">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur border border-border text-[10px] tracking-widest uppercase text-ink font-mono">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
             </span>
             rec
           </span>
@@ -730,7 +728,7 @@ function DocsWindow({
             <span>cat ./README.md</span>
             <span
               aria-hidden
-              className="w-1.5 h-3 bg-ink animate-blink opacity-60"
+              className="w-1.5 h-3 bg-ink opacity-60"
             />
             <span
               aria-hidden
@@ -854,8 +852,7 @@ function TransmissionCard({ hash }: { hash: string }) {
             </span>
             <span className="text-lime inline-flex items-center gap-1.5">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+                                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
               </span>
               active
             </span>
@@ -1057,8 +1054,7 @@ function GallerySection({
           <span className="text-ink">gallery.stream</span>
           <span className="inline-flex items-center gap-1.5 text-lime normal-case tracking-normal text-[10px]">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
             </span>
             live feed
           </span>

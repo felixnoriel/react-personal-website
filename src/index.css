@@ -175,23 +175,6 @@
     text-wrap: balance;
   }
 
-  .bg-grid {
-    background-image:
-      linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-
-  .bg-noise {
-    background-image:
-      radial-gradient(hsl(var(--ink) / 0.015) 1px, transparent 1px);
-    background-size: 3px 3px;
-  }
-
-  .bg-dots {
-    background-image: radial-gradient(hsl(var(--ink) / 0.08) 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
 
   .bg-graph {
     background-image:
@@ -207,26 +190,7 @@
     font-feature-settings: 'ss01', 'ss02';
   }
 
-  .text-glow-lime {
-    text-shadow: 0 0 20px hsl(var(--lime) / 0.5);
-  }
 
-  .text-glow-accent {
-    text-shadow: 0 0 28px hsl(var(--accent) / 0.35);
-  }
-
-  .text-glow-amber {
-    text-shadow: 0 0 24px hsl(var(--amber) / 0.4);
-  }
-
-  @keyframes scroll-x {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  .animate-scroll-x {
-    animation: scroll-x 40s linear infinite;
-  }
 
   @keyframes blink {
     0%, 49% { opacity: 1; }
@@ -237,38 +201,7 @@
     animation: blink 1s steps(2) infinite;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(2px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
-  @keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 8s ease infinite;
-  }
-
-  .gradient-text-flow {
-    background: linear-gradient(90deg, hsl(var(--ink)) 0%, hsl(var(--accent)) 50%, hsl(var(--ink)) 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradient-shift 6s linear infinite;
-  }
-
-  @keyframes float-slow {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(18px, -24px); }
-  }
-
-  .animate-float-slow {
-    animation: float-slow 14s ease-in-out infinite;
-  }
 
   @keyframes pulse-glow {
     0%, 100% { opacity: 0.35; }
@@ -283,226 +216,6 @@
     box-shadow: 0 1px 0 hsl(var(--ink) / 0.04), 0 20px 60px -30px hsl(var(--accent) / 0.25);
   }
 
-  /* RGB split / glitch — cycles in every ~7s, brief flash */
-  @keyframes glitch-split {
-    0%, 100% {
-      text-shadow:
-        -0.5px 0 0 hsl(var(--accent) / 0.35),
-        0.5px 0 0 hsl(var(--electric) / 0.3);
-      transform: translate(0, 0);
-    }
-    8% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.9),
-        1.5px 0 0 hsl(var(--lime) / 0.9);
-      transform: translate(0.5px, 0);
-    }
-    10% {
-      text-shadow:
-        -0.5px 0 0 hsl(var(--accent) / 0.4),
-        0.5px 0 0 hsl(var(--electric) / 0.35);
-      transform: translate(0, 0);
-    }
-    22% {
-      text-shadow:
-        1.5px 0 0 hsl(var(--accent) / 0.9),
-        -1.5px 0 0 hsl(var(--electric) / 0.8);
-      transform: translate(-0.5px, 0);
-    }
-    24% {
-      text-shadow:
-        0.5px 0 0 hsl(var(--accent) / 0.3),
-        -0.5px 0 0 hsl(var(--lime) / 0.3);
-      transform: translate(0, 0);
-    }
-    40% {
-      text-shadow:
-        -2px 0 0 hsl(var(--amber) / 0.75),
-        2px 0 0 hsl(var(--lime) / 0.75);
-      transform: translate(0, 0.5px);
-    }
-    42% {
-      text-shadow:
-        -0.4px 0 0 hsl(var(--amber) / 0.3),
-        0.4px 0 0 hsl(var(--accent) / 0.3);
-      transform: translate(0, 0);
-    }
-    58% {
-      text-shadow:
-        1.2px 0 0 hsl(var(--electric) / 0.85),
-        -1.2px 0 0 hsl(var(--accent) / 0.85);
-      transform: translate(0.4px, -0.3px);
-    }
-    60% {
-      text-shadow:
-        0.5px 0 0 hsl(var(--electric) / 0.3),
-        -0.5px 0 0 hsl(var(--accent) / 0.3);
-      transform: translate(0, 0);
-    }
-    76% {
-      text-shadow:
-        -1.8px 0 0 hsl(var(--lime) / 0.85),
-        1.8px 0 0 hsl(var(--accent) / 0.9);
-      transform: translate(-0.4px, 0.3px);
-    }
-    78% {
-      text-shadow:
-        -0.5px 0 0 hsl(var(--accent) / 0.35),
-        0.5px 0 0 hsl(var(--electric) / 0.3);
-      transform: translate(0, 0);
-    }
-    92% {
-      text-shadow:
-        1.5px 0 0 hsl(var(--amber) / 0.8),
-        -1.5px 0 0 hsl(var(--electric) / 0.8);
-      transform: translate(0.3px, 0);
-    }
-    94% {
-      text-shadow:
-        -0.5px 0 0 hsl(var(--accent) / 0.35),
-        0.5px 0 0 hsl(var(--electric) / 0.3);
-      transform: translate(0, 0);
-    }
-  }
-
-  .glitch-pulse {
-    animation: glitch-split 2.4s infinite steps(1, end);
-  }
-
-  @keyframes glitch-crazy {
-    0%, 100% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.7),
-        1.5px 0 0 hsl(var(--electric) / 0.7),
-        0 0 14px hsl(var(--accent) / 0.4);
-      transform: translate(0, 0) skewX(0deg);
-    }
-    4% {
-      text-shadow:
-        -3.5px 1px 0 hsl(var(--lime) / 0.85),
-        3.5px -1px 0 hsl(var(--accent) / 0.85),
-        0 0 18px hsl(var(--lime) / 0.5);
-      transform: translate(-1.5px, 0.5px) skewX(-3deg);
-    }
-    7% {
-      text-shadow:
-        3px -1px 0 hsl(var(--amber) / 0.8),
-        -3px 1px 0 hsl(var(--electric) / 0.8);
-      transform: translate(1.5px, -0.5px) skewX(2deg);
-    }
-    10% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.7),
-        1.5px 0 0 hsl(var(--lime) / 0.65),
-        0 0 12px hsl(var(--accent) / 0.45);
-      transform: translate(0, 0) skewX(0);
-    }
-    18% {
-      text-shadow:
-        -4.5px 0 0 hsl(var(--amber) / 0.85),
-        4.5px 0 0 hsl(var(--lime) / 0.85),
-        0 0 20px hsl(var(--amber) / 0.55);
-      transform: translate(-1.5px, 0) skewX(4deg);
-    }
-    21% {
-      text-shadow:
-        2px 0.5px 0 hsl(var(--electric) / 0.8),
-        -2px -0.5px 0 hsl(var(--accent) / 0.8);
-      transform: translate(1.5px, -0.5px) skewX(-2deg);
-    }
-    24% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.65),
-        1.5px 0 0 hsl(var(--electric) / 0.6),
-        0 0 14px hsl(var(--accent) / 0.45);
-      transform: translate(0, 0) skewX(0);
-    }
-    36% {
-      text-shadow:
-        -3px 1px 0 hsl(var(--lime) / 0.85),
-        3px -1px 0 hsl(var(--amber) / 0.85),
-        0 0 21px hsl(var(--lime) / 0.5);
-      transform: translate(1.5px, 0.5px) skewX(-4.5deg);
-    }
-    40% {
-      text-shadow:
-        1.5px 0 0 hsl(var(--electric) / 0.8),
-        -1.5px 0 0 hsl(var(--accent) / 0.8);
-      transform: translate(-1.5px, -0.5px) skewX(3deg);
-    }
-    43% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.65),
-        1.5px 0 0 hsl(var(--lime) / 0.6),
-        0 0 12px hsl(var(--accent) / 0.4);
-      transform: translate(0, 0) skewX(0);
-    }
-    58% {
-      text-shadow:
-        -3.5px -0.5px 0 hsl(var(--accent) / 0.85),
-        3.5px 0.5px 0 hsl(var(--electric) / 0.85),
-        0 0 22px hsl(var(--electric) / 0.6);
-      transform: translate(1.5px, 0) skewX(5deg);
-    }
-    61% {
-      text-shadow:
-        2px 0 0 hsl(var(--amber) / 0.8),
-        -2px 0 0 hsl(var(--lime) / 0.8);
-      transform: translate(-1.5px, 0.5px) skewX(-3deg);
-    }
-    64% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.6),
-        1.5px 0 0 hsl(var(--electric) / 0.6),
-        0 0 14px hsl(var(--accent) / 0.45);
-      transform: translate(0, 0) skewX(0);
-    }
-    76% {
-      text-shadow:
-        -4.5px 0.5px 0 hsl(var(--lime) / 0.85),
-        4.5px -0.5px 0 hsl(var(--accent) / 0.85),
-        0 0 24px hsl(var(--accent) / 0.55);
-      transform: translate(-1.5px, -0.5px) skewX(-4deg);
-    }
-    79% {
-      text-shadow:
-        2px 0 0 hsl(var(--electric) / 0.8),
-        -2px 0 0 hsl(var(--amber) / 0.8);
-      transform: translate(1.5px, 0.5px) skewX(3deg);
-    }
-    82% {
-      text-shadow:
-        -1.5px 0 0 hsl(var(--accent) / 0.65),
-        1.5px 0 0 hsl(var(--lime) / 0.6),
-        0 0 12px hsl(var(--accent) / 0.4);
-      transform: translate(0, 0) skewX(0);
-    }
-    92% {
-      text-shadow:
-        3px -0.5px 0 hsl(var(--amber) / 0.85),
-        -3px 0.5px 0 hsl(var(--electric) / 0.85),
-        0 0 20px hsl(var(--amber) / 0.5);
-      transform: translate(1.5px, 0) skewX(-4deg);
-    }
-    95% {
-      text-shadow:
-        -2px 0 0 hsl(var(--lime) / 0.8),
-        2px 0 0 hsl(var(--accent) / 0.8);
-      transform: translate(-1.5px, -0.5px) skewX(2deg);
-    }
-  }
-
-  .glitch-crazy {
-    display: inline-block;
-    padding: 0 0.12em;
-    animation: glitch-crazy 2.4s infinite steps(1, end);
-    will-change: transform, text-shadow;
-  }
-
-  @keyframes scan-lines {
-    from { background-position: 0 0; }
-    to { background-position: 0 4px; }
-  }
 
   .bg-scanlines {
     background-image: repeating-linear-gradient(
@@ -517,13 +230,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glitch-pulse,
-  .glitch-crazy,
-  .bg-scanlines,
-  .animate-float-slow,
-  .animate-pulse-glow,
-  .animate-gradient,
-  .gradient-text-flow {
+  .animate-pulse-glow {
     animation: none !important;
   }
 }
@@ -541,12 +248,12 @@
        no per-frame work after that.
    ============================================================ */
 .cursor-aura-halo {
-  width: 200px;
-  height: 200px;
+  width: 130px;
+  height: 130px;
   background: radial-gradient(
     circle at center,
-    hsl(var(--accent) / 0.22),
-    hsl(var(--accent) / 0.08) 45%,
+    hsl(var(--accent) / 0.1),
+    hsl(var(--accent) / 0.04) 45%,
     transparent 70%
   );
   border-radius: 50%;
@@ -555,96 +262,8 @@
      promotes this element to its own GPU layer up-front. */
   will-change: transform;
 }
-
-/* Bright comet head — sits at cursor position above the soft halo.
-   Pre-rasterized white-hot radial gradient. Only its transform changes,
-   so the browser composites it cheaply on every cursor frame. */
-.cursor-aura-head {
-  width: 22px;
-  height: 22px;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, 0.95),
-    hsl(var(--accent) / 0.85) 35%,
-    hsl(var(--accent) / 0.3) 65%,
-    transparent 80%
-  );
-  border-radius: 50%;
-  transition: opacity 0.18s ease-out;
-  will-change: transform;
-}
-.cursor-aura-pulse {
-  position: fixed;
-  pointer-events: none;
-  z-index: 40;
-  /* Anchored at center via translate(-50%, -50%) so left/top match
-     the click point exactly. Width/height are animated via the
-     keyframes below. */
-  transform: translate(-50%, -50%);
-  border: 2px solid hsl(var(--accent) / 0.85);
-  border-radius: 50%;
-  width: 0;
-  height: 0;
-  opacity: 0.85;
-  animation: cursor-aura-pulse 600ms cubic-bezier(0, 0, 0.2, 1) forwards;
-  /* GPU promotion — keeps the expanding ring in its own layer so
-     the compositor doesn't repaint everything underneath it. */
-  will-change: width, height, opacity;
-}
-@keyframes cursor-aura-pulse {
-  0% {
-    width: 0;
-    height: 0;
-    opacity: 0.85;
-    border-width: 2px;
-  }
-  100% {
-    width: 280px;
-    height: 280px;
-    opacity: 0;
-    border-width: 1px;
-  }
-}
-
-/* Trail particle — emitted by CursorAura on cursor move (throttled to
-   ~55/sec). Hue comes from the inline `--cursor-hue` custom property
-   so colors cycle through the brand palette and a long gesture leaves
-   a rainbow comet ribbon. Lifetime is 1100ms with a hold-then-fade
-   shape: scale stays close to full size for the first ~30% of the
-   animation (so the trail reads as a continuous ribbon, not a sparse
-   dot stream), then tapers to zero. Compositor handles everything. */
-.cursor-aura-trail {
-  position: fixed;
-  pointer-events: none;
-  z-index: 39; /* under the halo (z-40) so the halo always reads as the head */
-  transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: hsl(var(--cursor-hue, 325) 92% 65% / 0.95);
-  filter: blur(3px);
-  animation: cursor-aura-trail 1100ms cubic-bezier(0.22, 0.6, 0.36, 1) forwards;
-  will-change: transform, opacity;
-}
-@keyframes cursor-aura-trail {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.95;
-  }
-  30% {
-    transform: translate(-50%, -50%) scale(0.95);
-    opacity: 0.85;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0.15);
-    opacity: 0;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .cursor-aura-halo,
-  .cursor-aura-head,
-  .cursor-aura-pulse,
-  .cursor-aura-trail {
+  .cursor-aura-halo {
     display: none !important;
   }
 }
@@ -666,24 +285,8 @@
    ============================================================ */
 @media (max-width: 767px) {
   .animate-ping,
-  .animate-pulse-glow,
-  .animate-float-slow,
-  .animate-gradient,
-  .gradient-text-flow,
-  .glitch-pulse,
-  .glitch-crazy,
-  .bg-scanlines {
+  .animate-pulse-glow {
     animation: none !important;
-  }
-  /* Per-element opt-back-in: a few hand-picked "live" indicators
-     (status pill halo, current-city beacon) keep their ping/pulse on
-     mobile so the page doesn't feel completely static. CSS-only,
-     GPU-composited — cheap when limited to a couple of elements. */
-  .motion-safe-mobile.animate-ping {
-    animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-  }
-  .motion-safe-mobile.animate-pulse-glow {
-    animation: pulse-glow 4.5s ease-in-out infinite !important;
   }
 }
 
@@ -914,39 +517,10 @@ section:not(#hero) {
     z-index: 2;
   }
 
-  @keyframes eq-bar {
-    0%,
-    100% {
-      transform: scaleY(0.32);
-    }
-    50% {
-      transform: scaleY(1);
-    }
-  }
-  .eq-bar {
-    transform-origin: bottom;
-    animation: eq-bar 0.9s ease-in-out infinite;
-    will-change: transform;
-  }
-
   /* headline ghost — while the particle swarm carries the headline, the
      real DOM text fades to a faint watermark (it keeps its full layout
      size + selectability + SEO). Its aurora/glitch loops stop so an
      invisible element isn't repainting every frame. */
-  .hl-swap {
-    transition: opacity 0.6s ease;
-  }
-  .headline-ghost .hl-swap {
-    /* aurora text stays under the particles: it fills the gaps between
-       points so the glyphs read solid, and keeps the headline legible even
-       mid-burst — the swarm carries the motion, the ghost carries the ink */
-    opacity: 0.45;
-  }
-  /* dark theme: the busy nebula behind demands a stronger text anchor —
-     legibility beats spectacle, always */
-  .dark .headline-ghost .hl-swap {
-    opacity: 0.4;
-  }
   /* backdrop scrim, theme-tuned: light stays vivid, dark stays calm.
      Mobile gets a heavier veil — small screens amplify the field. */
   .bg-scrim {
@@ -968,10 +542,6 @@ section:not(#hero) {
       hsl(var(--accent) / 0.045) 45%,
       transparent 70%
     );
-  }
-  .headline-ghost .electric-text {
-    animation: none !important;
-    filter: none !important;
   }
 
   /* terminal block cursor — highlights the next untyped cell in place,
@@ -1006,26 +576,6 @@ section:not(#hero) {
   /* prettier paragraph rag everywhere it's supported */
   p {
     text-wrap: pretty;
-  }
-
-  /* native stagger (sibling-index(), Chrome 2025) — children cascade in
-     with zero per-item JS delays. Falls back to a plain simultaneous
-     fade where unsupported. */
-  @keyframes stagger-in {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .stagger-in > * {
-      animation: stagger-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    }
-    @supports (animation-delay: calc(sibling-index() * 1ms)) {
-      .stagger-in > * {
-        animation-delay: calc(sibling-index() * 70ms);
-      }
-    }
   }
 
   /* terminal entries grow in natively (interpolate-size + @starting-style,
@@ -1088,13 +638,12 @@ section:not(#hero) {
       radial-gradient(70% 150% at 35% 75%, hsl(var(--amber)), transparent 60%),
       linear-gradient(120deg, hsl(var(--accent)), hsl(var(--plum)))
     );
-    background-size: 220% 220%;
-    background-position: 0% 50%;
+    background-size: 160% 160%;
+    background-position: 30% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    animation: aurora-text-flow 8s ease-in-out infinite;
     filter: drop-shadow(0 0 24px hsl(var(--accent) / 0.28))
       drop-shadow(0 2px 12px hsl(var(--electric) / 0.18));
   }
@@ -1113,122 +662,16 @@ section:not(#hero) {
       radial-gradient(78% 150% at 60% 95%, hsl(var(--amber) / 0.85), transparent 60%),
       linear-gradient(115deg, hsl(var(--accent)), hsl(var(--plum)));
   }
-  @keyframes aurora-text-flow {
-    0% {
-      background-position: 0% 50%;
-      background-size: 220% 220%;
-    }
-    20% {
-      background-position: 50% 0%;
-    }
-    40% {
-      background-position: 100% 50%;
-      background-size: 285% 235%;
-    }
-    60% {
-      background-position: 50% 100%;
-    }
-    80% {
-      background-position: 8% 62%;
-      background-size: 245% 250%;
-    }
-    100% {
-      background-position: 0% 50%;
-      background-size: 220% 220%;
-    }
-  }
-
-  /* electric glitch — a periodic RGB-split chromatic stutter for heading
-     emphasis words. Always paired with .aurora-text, so it carries that soft
-     glow through its calm keyframes (animating `filter` here would otherwise
-     drop it) and runs BOTH the aurora flow + the glitch in one animation list
-     so the two don't clobber each other's `animation` shorthand. */
-  @keyframes electric-text {
-    0%,
-    34%,
-    45%,
-    82%,
-    93%,
-    100% {
-      transform: translate3d(0, 0, 0) skewX(0deg);
-      filter: drop-shadow(0 0 26px hsl(var(--accent) / 0.32))
-        drop-shadow(0 2px 12px hsl(var(--electric) / 0.2));
-    }
-    36% {
-      transform: translate3d(-2.5px, 0, 0) skewX(-2.5deg);
-      filter: drop-shadow(3px 0 hsl(var(--electric) / 0.9))
-        drop-shadow(-3px 0 hsl(var(--accent) / 0.85));
-    }
-    39% {
-      transform: translate3d(2.5px, 0, 0) skewX(2.5deg);
-      filter: drop-shadow(-3px 0 hsl(var(--lime) / 0.8))
-        drop-shadow(3px 0 hsl(var(--accent) / 0.8))
-        drop-shadow(0 0 16px hsl(var(--electric) / 0.6));
-    }
-    42% {
-      transform: translate3d(-1.5px, 0, 0);
-      filter: drop-shadow(2px 0 hsl(var(--electric) / 0.9));
-    }
-    84% {
-      transform: translate3d(2px, 0, 0) skewX(2deg);
-      filter: drop-shadow(-3px 0 hsl(var(--accent) / 0.85))
-        drop-shadow(3px 0 hsl(var(--lime) / 0.75));
-    }
-    87% {
-      transform: translate3d(-2.5px, 0, 0) skewX(-2.5deg);
-      filter: drop-shadow(3px 0 hsl(var(--electric) / 0.9))
-        drop-shadow(0 0 16px hsl(var(--electric) / 0.6));
-    }
-    90% {
-      transform: translate3d(1.5px, 0, 0);
-      filter: drop-shadow(-2px 0 hsl(var(--accent) / 0.85));
-    }
-  }
-  .electric-text {
-    display: inline-block;
-    animation:
-      aurora-text-flow 8s ease-in-out infinite,
-      electric-text 2.6s steps(1, end) infinite;
-    will-change: transform, filter, background-position;
-  }
-  /* desynced start so two adjacent lines glitch at different times — the
-     electric reads as "always happening" instead of both flashing in sync.
-     Offset is a QUARTER of the electric cycle (not half: with two symmetric
-     bursts per cycle, a half-offset re-aligns them) so the bursts interleave. */
-  .electric-offset {
-    animation-delay: -4s, -0.65s;
-  }
-}
+ }
 
 @media (prefers-reduced-motion: reduce) {
   .aurora-ring::before,
-  .eq-bar,
-  .aurora-text,
-  .electric-text {
+  .aurora-text {
     animation: none !important;
   }
 }
 
-@media (max-width: 767px) {
-  .aurora-ring::before,
-  .eq-bar,
-  .aurora-text:not(.hero-fx),
-  .electric-text:not(.hero-fx) {
-    animation: none !important;
-  }
-  /* …but the hero headline stays alive on mobile — it's the focal point and
-     just two short lines, so the paint cost is negligible. Slightly quicker
-     aurora colour-flow so it visibly travels through the smaller text, plus
-     the electric glitch. */
-  .electric-text.hero-fx {
-    animation:
-      aurora-text-flow 6s ease-in-out infinite,
-      electric-text 2.6s steps(1, end) infinite !important;
-  }
-  .electric-text.hero-fx.electric-offset {
-    animation-delay: -3s, -0.65s !important;
-  }
-}
+
 
 /* ============================================================
    Liquid glass — translucent, glossy, lightly refractive material
@@ -1268,44 +711,6 @@ section:not(#hero) {
 }
 
 /* ============================================================
-   Nav electric pulse — a chromatic "zap" that fires when the live
-   item arrives (the travelling highlight: Felix Noriel → Skills →
-   … → loop). The steady glow is set inline per active item; this is
-   the on-arrival flicker. GPU transform/filter only.
-   ============================================================ */
-@keyframes nav-zap {
-  0% {
-    transform: translateX(0) skewX(0deg);
-    filter: drop-shadow(0 0 8px hsl(var(--electric)));
-  }
-  16% {
-    transform: translateX(-1.5px) skewX(-3deg);
-    filter: drop-shadow(-1.5px 0 hsl(var(--accent))) drop-shadow(1.5px 0 hsl(var(--electric)));
-  }
-  34% {
-    transform: translateX(1.5px) skewX(2deg);
-    filter: drop-shadow(0 0 6px hsl(var(--electric)));
-  }
-  52% {
-    transform: translateX(-0.6px) skewX(0deg);
-    filter: drop-shadow(1.5px 0 hsl(var(--electric) / 0.8));
-  }
-  100% {
-    transform: translateX(0) skewX(0deg);
-    filter: none;
-  }
-}
-.nav-zap {
-  animation: nav-zap 0.5s ease-out;
-  will-change: transform, filter;
-}
-@media (prefers-reduced-motion: reduce) {
-  .nav-zap {
-    animation: none;
-  }
-}
-
-/* ============================================================
    Hero scroll-exit — native CSS scroll-driven animations.
    As the hero leaves the viewport its layers drift out at
    staggered depths (headline fastest, deck slower, HUD frame
@@ -1336,11 +741,6 @@ section:not(#hero) {
       animation-range: exit 22% exit 92%;
     }
   }
-  .hero-exit-hud {
-    animation: hero-exit-fade linear both;
-    animation-timeline: --hero-vt;
-    animation-range: exit 0% exit 40%;
-  }
   @keyframes hero-exit-head {
     to {
       transform: translateY(-64px) scale(0.97);
@@ -1353,16 +753,10 @@ section:not(#hero) {
       opacity: 0;
     }
   }
-  @keyframes hero-exit-fade {
-    to {
-      opacity: 0;
-    }
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-exit-head,
-  .hero-exit-panel,
-  .hero-exit-hud {
+  .hero-exit-panel {
     animation: none !important;
   }
 }
@@ -1378,22 +772,6 @@ section:not(#hero) {
    ============================================================ */
 @supports (animation-timeline: view()) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    .sec-rise {
-      animation: sec-rise linear both;
-      animation-timeline: view();
-      animation-range: entry 5% entry 90%;
-    }
-    @keyframes sec-rise {
-      from {
-        opacity: 0;
-        transform: translateY(46px) scale(0.975);
-      }
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
     /* career timeline spine — draws itself as the list scrolls through */
     .spine-host {
       view-timeline-name: --vt-spine;

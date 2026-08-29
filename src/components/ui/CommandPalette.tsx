@@ -329,10 +329,6 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               <div className="flex items-center gap-2">
                 <span className="relative flex h-1.5 w-1.5">
                   <span
-                    className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping"
-                    style={{ background: ACCENTS.lime.c }}
-                  />
-                  <span
                     className="relative inline-flex h-1.5 w-1.5 rounded-full"
                     style={{ background: ACCENTS.lime.c }}
                   />

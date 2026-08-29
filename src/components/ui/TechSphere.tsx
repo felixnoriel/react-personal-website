@@ -99,7 +99,12 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
     const vis = words.map(() => 1)
 
     const persp = 2.0
+    // entry spin only: the sphere turns for a few seconds so the depth
+    // reads, then SETTLES — ~40 forever-moving text labels beside real
+    // content was the page's worst "text never rests" violation. Drag
+    // still spins it, and it always damps back to rest.
     const baseVy = reduceMotion ? 0 : isMobile ? 0.0016 : 0.0022
+    const settleAt = performance.now() + 3500
     let ax = 0.18
     let ay = 0
     let vx = 0
@@ -272,7 +277,8 @@ export function TechSphere({ words, groups }: { words: SphereWord[]; groups: Sph
           cursor.cx >= 0 && cursor.cx <= r.width && cursor.cy >= 0 && cursor.cy <= r.height
       }
       if (!dragging && !reduceMotion) {
-        const target = cursor.inside ? baseVy * 0.12 : baseVy
+        const settled = performance.now() > settleAt
+        const target = settled ? 0 : cursor.inside ? baseVy * 0.12 : baseVy
         ax += vx
         ay += vy
         vx *= 0.94

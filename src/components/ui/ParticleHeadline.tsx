@@ -4,13 +4,13 @@ import { hslVarToRgb } from '../../utils/glPalette'
 /**
  * ParticleHeadline — the hero headline as ~10k living GPU particles.
  *
- * The real DOM text paints first (LCP/SEO/a11y untouched). Once the boot
- * veil lifts, the glyphs are sampled into particle home positions, the
- * text ghosts out, and the particles swarm in from a rotating chaos ring
- * to assemble the headline. From then on it's alive: the cursor repels
- * particles (with a swirl), clicks send shockwave rings through the
- * glyphs, and the `sudo hire-felix` terminal easter egg detonates the
- * whole headline and reassembles it.
+ * The real DOM text paints first and stays FULLY VISIBLE — the swarm is
+ * a translucent living texture over solid type, never a replacement for
+ * it. After the boot veil lifts, glyphs are sampled into particle homes
+ * and the swarm assembles from a chaos ring. The cursor repels particles
+ * (with a swirl), clicks send shockwave rings, and the `sudo hire-felix`
+ * terminal easter egg detonates and reassembles the swarm. Desktop-only:
+ * pointer forces are a mouse affordance.
  *
  * Why this stays fast (this repo's #1 rule):
  *   - ALL particle motion is computed analytically in the vertex shader
@@ -93,7 +93,7 @@ void main() {
   size *= mix(1.5, 1.0, p); // bigger sparks while in flight
   // high alpha floor once assembled — the glyphs must keep the ink-weight
   // of the real headline, with only a gentle shimmer on top
-  vAlpha = mix(0.35, 0.98, p) * (0.93 + 0.07 * sin(tt * 1.3));
+  vAlpha = mix(0.35, 0.62, p) * (0.93 + 0.07 * sin(tt * 1.3));
   vAlpha = min(1.0, vAlpha + f * 0.35 + glow * 0.45);
 
   vec2 clip = (pos / uRes) * 2.0 - 1.0;
@@ -147,8 +147,13 @@ function sampleTargets(
   for (const el of lines) {
     const r = el.getBoundingClientRect()
     const cs = getComputedStyle(el)
-    // mirror the DOM's actual face/weight so the swarm matches the ghost text
+    // mirror the DOM's actual face/weight so the swarm matches the text.
+    // The canvas font setter is a SILENT no-op on parse failure, so verify
+    // it took and fall back to a sanitized stack if not.
     ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`
+    if (!ctx.font.includes(cs.fontSize)) {
+      ctx.font = `${cs.fontWeight} ${cs.fontSize} 'Space Grotesk', sans-serif`
+    }
     if ('letterSpacing' in ctx && cs.letterSpacing !== 'normal') {
       ctx.letterSpacing = cs.letterSpacing
     }
@@ -193,8 +198,6 @@ interface ParticleHeadlineProps {
   /** the two line spans to rasterize */
   lineRefs: React.RefObject<HTMLElement | null>[]
   isMobile: boolean
-  /** called once the swarm is live → parent ghosts the DOM text */
-  onAssembled: () => void
   /** WebGL missing/failed/context-lost → parent falls back to kinetic text */
   onFail: () => void
 }
@@ -203,12 +206,11 @@ export const ParticleHeadline = memo(function ParticleHeadline({
   hostRef,
   lineRefs,
   isMobile,
-  onAssembled,
   onFail,
 }: ParticleHeadlineProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const cbRef = useRef({ onAssembled, onFail })
-  cbRef.current = { onAssembled, onFail }
+  const cbRef = useRef({ onFail })
+  cbRef.current = { onFail }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -314,7 +316,6 @@ export const ParticleHeadline = memo(function ParticleHeadline({
     const rippleData = new Float32Array(15)
     let assembleStart = -1
     let burstStart = -1
-    let announced = false
     let raf = 0
     let paused = false
     let elapsed = 0
@@ -351,10 +352,6 @@ export const ParticleHeadline = memo(function ParticleHeadline({
           burstStart = -1
           progress = 1
         }
-      }
-      if (!announced && progress > 0.12) {
-        announced = true
-        cbRef.current.onAssembled()
       }
 
       pointer.x += (pointer.tx - pointer.x) * 0.14
@@ -397,8 +394,10 @@ export const ParticleHeadline = memo(function ParticleHeadline({
     }
     const pendingTimers: ReturnType<typeof setTimeout>[] = []
     let bootDoneListener: EventListener | undefined
+    // gate on the ACTUAL display face — document.fonts.ready can resolve
+    // against an empty pending set before the async stylesheet even starts
     const fontsReady: Promise<unknown> = Promise.race([
-      document.fonts?.ready ?? Promise.resolve(),
+      document.fonts?.load?.('700 1em "Space Grotesk"') ?? Promise.resolve(),
       new Promise((r) => pendingTimers.push(setTimeout(r, 2500))),
     ])
     const bootDone = (window as unknown as { __fxBootDone?: boolean }).__fxBootDone
@@ -415,6 +414,11 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       // small beat after the veil fades so the swarm-in is actually seen
       if (!disposed) launchT = setTimeout(launch, 120)
     })
+    // late font arrivals reflow the text — re-sample so the swarm can
+    // never drift from the glyphs it is supposed to be
+    document.fonts?.ready?.then(() => {
+      if (!disposed && !failed && assembleStart >= 0 && !layout()) fail()
+    })
 
     // ── input ─────────────────────────────────────────────────────────
     const near = (cx: number, cy: number, slack: number) => {
@@ -426,14 +430,22 @@ export const ParticleHeadline = memo(function ParticleHeadline({
         cy < canvasRect.bottom + slack
       )
     }
+    // pointer forces are a MOUSE affordance: on touch, the "cursor" is a
+    // scroll gesture and the field latching to it carved rings through the
+    // headline. Fine pointers only, and always released on up/cancel.
     const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return
       if (rectDirty) refreshRect()
       if (!canvasRect) return
       pointer.tx = e.clientX - canvasRect.left
       pointer.ty = e.clientY - canvasRect.top
       pointer.tstr = near(e.clientX, e.clientY, 40) ? 1 : 0
     }
+    const releasePointer = () => {
+      pointer.tstr = 0
+    }
     const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return
       if (rectDirty) refreshRect()
       if (!near(e.clientX, e.clientY, 60) || !canvasRect) return
       ripples.push({
@@ -479,10 +491,23 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       if (!paused) wakeRender()
     })
     io.observe(canvas)
+    // any reflow that changes the text's box (late font, zoom, rotation)
+    // re-samples — the swarm can never drift from its glyphs
+    let roT: ReturnType<typeof setTimeout> | undefined
+    const ro = new ResizeObserver(() => {
+      clearTimeout(roT)
+      roT = setTimeout(() => {
+        if (!disposed && !failed && assembleStart >= 0 && !layout()) fail()
+      }, 200)
+    })
+    ro.observe(lines[0])
     const onVis = () => wakeRender()
     document.addEventListener('visibilitychange', onVis)
     window.addEventListener('pointermove', onMove, { passive: true })
     window.addEventListener('pointerdown', onDown, { passive: true })
+    window.addEventListener('pointerup', releasePointer, { passive: true })
+    window.addEventListener('pointercancel', releasePointer, { passive: true })
+    window.addEventListener('blur', releasePointer)
     window.addEventListener('fx:burst', onBurst)
     window.addEventListener('scroll', markDirty, { passive: true })
     window.addEventListener('resize', onResize)
@@ -492,6 +517,8 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       if (raf) cancelAnimationFrame(raf)
       clearTimeout(launchT)
       clearTimeout(resizeT)
+      clearTimeout(roT)
+      ro.disconnect()
       pendingTimers.forEach(clearTimeout)
       if (bootDoneListener) {
         window.removeEventListener('fx:bootdone', bootDoneListener)
@@ -501,6 +528,9 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       canvas.removeEventListener('webglcontextlost', onLost as EventListener)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('pointerup', releasePointer)
+      window.removeEventListener('pointercancel', releasePointer)
+      window.removeEventListener('blur', releasePointer)
       window.removeEventListener('fx:burst', onBurst)
       window.removeEventListener('scroll', markDirty)
       window.removeEventListener('resize', onResize)

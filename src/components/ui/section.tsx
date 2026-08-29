@@ -1,7 +1,6 @@
 import { m } from 'framer-motion'
 import { useRef, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react'
 import { ACCENT, EASE, type Accent } from './section-tokens'
-import { ScrambleText } from './ScrambleText'
 import { useFxLevel } from '../../hooks/useFxLevel'
 
 // ============================================================
@@ -16,16 +15,9 @@ import { useFxLevel } from '../../hooks/useFxLevel'
 // GlassPanels for legibility — the hero's proven pattern.
 // ============================================================
 
-// Scroll-scrubbed entrances: on desktop browsers with CSS scroll-driven
-// animations, headings/cards are tied to scroll position (see .sec-rise in
-// index.css) instead of framer's one-shot whileInView triggers. Decided ONCE
-// at load so exactly one system ever owns an element's transform/opacity.
-const SCRUBBED =
-  typeof window !== 'undefined' &&
-  typeof CSS !== 'undefined' &&
-  CSS.supports?.('animation-timeline: view()') === true &&
-  window.matchMedia?.('(min-width: 768px)').matches === true &&
-  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches !== true
+// Entrances are ONE-SHOT (framer whileInView, once:true): content settles
+// and stays settled. Scroll-scrubbed entrances kept text moving for as
+// long as the user scrolled and un-revealed on scroll-up — reading tax.
 
 // Transparent section wrapper — lets the global shader show through.
 export function SectionShell({
@@ -57,9 +49,6 @@ export function HudDot({
   const a = ACCENT[accent]
   return (
     <span className={`relative flex h-1.5 w-1.5 ${className}`}>
-      <span
-        className={`motion-safe-mobile absolute inline-flex h-full w-full rounded-full ${a.bg} opacity-75 animate-ping`}
-      />
       <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${a.bg}`} />
     </span>
   )
@@ -73,7 +62,6 @@ export function GlassPanel({
   accent = 'accent',
   accentTop = true,
   spotlight = true,
-  tilt = true,
 }: {
   children: ReactNode
   className?: string
@@ -81,35 +69,20 @@ export function GlassPanel({
   accentTop?: boolean
   /** cursor-follow accent glow — GPU translate, no repaint. */
   spotlight?: boolean
-  /** holographic 3D lean toward the cursor + moving glare. Off for forms /
-   *  very large panels where a per-frame backdrop re-sample isn't worth it. */
-  tilt?: boolean
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const spotRef = useRef<HTMLDivElement>(null)
-  const glareRef = useRef<HTMLDivElement>(null)
   const rafRef = useRef<number | null>(null)
-  const st = useRef({ x: 0, y: 0, rx: 0, ry: 0 })
-
-  // Gate the pointer-driven effects off on touch / reduced-motion: on mobile a
-  // touch-scroll fires pointermove (would tilt cards mid-scroll), and a11y
-  // users shouldn't get the motion. Same flag the rest of the site uses.
+  const st = useRef({ x: 0, y: 0 })
   const { disableHeavyFx } = useFxLevel()
-  const tiltOn = tilt && !disableHeavyFx
   const spotOn = spotlight && !disableHeavyFx
-  const interactive = spotOn || tiltOn
+  const interactive = spotOn
 
   const apply = () => {
     rafRef.current = null
     const s = st.current
-    if (tiltOn && ref.current) {
-      ref.current.style.transform = `perspective(1200px) rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg)`
-    }
     if (spotOn && spotRef.current) {
       spotRef.current.style.transform = `translate3d(${s.x - 280}px, ${s.y - 280}px, 0)`
-    }
-    if (tiltOn && glareRef.current) {
-      glareRef.current.style.transform = `translate3d(${s.x - 320}px, ${s.y - 320}px, 0)`
     }
   }
 
@@ -117,29 +90,15 @@ export function GlassPanel({
     const el = ref.current
     if (!el) return
     const r = el.getBoundingClientRect()
-    const x = e.clientX - r.left
-    const y = e.clientY - r.top
-    st.current.x = x
-    st.current.y = y
-    st.current.rx = (0.5 - y / r.height) * 5
-    st.current.ry = (x / r.width - 0.5) * 5
-    if (tiltOn) el.style.transition = 'none'
+    st.current.x = e.clientX - r.left
+    st.current.y = e.clientY - r.top
     if (rafRef.current == null) rafRef.current = requestAnimationFrame(apply)
-  }
-
-  const onLeave = () => {
-    const el = ref.current
-    if (tiltOn && el) {
-      el.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)'
-      el.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg)'
-    }
   }
 
   return (
     <div
       ref={ref}
       onPointerMove={interactive ? onMove : undefined}
-      onPointerLeave={interactive ? onLeave : undefined}
       style={{
         // Layered "liquid glass" depth, all static (rasterized once):
         //   1) bright top edge — light catching the rim of the pane
@@ -150,7 +109,6 @@ export function GlassPanel({
         //      overflow-hidden) — this is what makes the card read as
         //      floating ON the shader rather than sitting on opaque paper.
         boxShadow: `inset 0 1px 0 0 hsl(var(--background) / 0.6), inset 0 0 0 1px hsl(var(--background) / 0.14), 0 26px 64px -30px hsl(var(--ink) / 0.5), 0 0 60px -16px hsl(${ACCENT[accent].hsl} / 0.18)`,
-        ...(tiltOn ? { willChange: 'transform' } : {}),
       }}
       className={`group/glass corner-squircle relative rounded-2xl border border-ink/[0.07] bg-background/60 backdrop-blur-xl md:backdrop-blur-2xl overflow-hidden ${className}`}
     >
@@ -162,19 +120,6 @@ export function GlassPanel({
           className="pointer-events-none absolute top-0 left-0 w-[560px] h-[560px] opacity-0 group-hover/glass:opacity-100 transition-opacity duration-300"
           style={{
             background: `radial-gradient(circle at center, hsl(${ACCENT[accent].hsl} / 0.13), transparent 60%)`,
-            willChange: 'transform',
-          }}
-        />
-      )}
-      {/* holographic glare — a soft white sheen that tracks the cursor */}
-      {tiltOn && (
-        <div
-          ref={glareRef}
-          aria-hidden
-          className="pointer-events-none absolute top-0 left-0 w-[640px] h-[640px] opacity-0 group-hover/glass:opacity-100 transition-opacity duration-300 mix-blend-overlay"
-          style={{
-            background:
-              'radial-gradient(circle at center, rgba(255,255,255,0.14), transparent 55%)',
             willChange: 'transform',
           }}
         />
@@ -227,9 +172,9 @@ export function Tag({
   )
 }
 
-// The "wow word" treatment shared by every heading: aurora gradient + a
-// periodic electric glitch + a scramble-in reveal when it scrolls into view.
-// `variant` retints the gradient (cool/warm) for the hero's two lines.
+// Heading emphasis: a static aurora gradient. (The scramble-in + glitch
+// made the first thing the eye lands on unreadable for a beat, in every
+// section.)
 export function FxWord({
   children,
   variant,
@@ -240,13 +185,7 @@ export function FxWord({
   className?: string
 }) {
   const tint = variant === 'cool' ? 'aurora-cool' : variant === 'warm' ? 'aurora-warm' : ''
-  return (
-    <ScrambleText
-      text={children}
-      trigger="view"
-      className={`aurora-text electric-text ${tint} ${className}`}
-    />
-  )
+  return <span className={`aurora-text aurora-static ${tint} ${className}`}>{children}</span>
 }
 
 // The one consistent section header: mono eyebrow + meta, big display
@@ -269,20 +208,6 @@ export function SectionHeading({
   align?: 'left' | 'between'
   className?: string
 }) {
-  if (SCRUBBED) {
-    return (
-      <div className={`sec-rise relative ${className}`}>
-        <SectionHeadingInner
-          eyebrow={eyebrow}
-          meta={meta}
-          title={title}
-          intro={intro}
-          index={index}
-          align={align}
-        />
-      </div>
-    )
-  }
   return (
     <m.div
       initial={{ opacity: 0, y: 20 }}
@@ -376,9 +301,6 @@ export function Reveal({
   y?: number
   className?: string
 }) {
-  if (SCRUBBED) {
-    return <div className={`sec-rise ${className}`}>{children}</div>
-  }
   return (
     <m.div
       initial={{ opacity: 0, y }}

@@ -28,38 +28,37 @@ export function HeroHeadline() {
   const line2Ref = useRef<HTMLSpanElement>(null)
   const lineRefs = useMemo(() => [line1Ref, line2Ref], [])
   const [glFailed, setGlFailed] = useState(false)
-  const [assembled, setAssembled] = useState(false)
 
-  const particles = !reduceMotion && !glFailed
+  // Desktop-only swarm: on touch the pointer forces are a mouse affordance
+  // that only ever misfired, and the sampled-canvas approach is fragile on
+  // the surface that's hardest to test. Mobile gets clean gradient type.
+  const particles = !reduceMotion && !isMobile && !glFailed
 
   return (
-    <div ref={hostRef} className={`relative ${assembled && particles ? 'headline-ghost' : ''}`}>
+    <div ref={hostRef} className="relative">
       <span
         ref={line1Ref}
-        className="hl-swap block whitespace-nowrap text-[clamp(30px,9.6vw,164px)]"
+        className="block whitespace-nowrap text-[clamp(30px,9.6vw,164px)]"
       >
         {particles ? (
-          <span className="aurora-text electric-text aurora-cool hero-fx">{LINE_1}</span>
+          <span className="aurora-text aurora-static aurora-cool">{LINE_1}</span>
         ) : (
-          <KineticHeadline variant="cool" className="hero-fx" text={LINE_1} />
+          <KineticHeadline variant="cool" className="aurora-static" text={LINE_1} />
         )}
       </span>
       {/* staggered second line — the editorial offset that breaks template
           symmetry and gives the composition its diagonal */}
       <span
         ref={line2Ref}
-        className="hl-swap block whitespace-nowrap pl-[6vw] text-[clamp(30px,9.6vw,164px)]"
+        className="block whitespace-nowrap pl-[6vw] text-[clamp(30px,9.6vw,164px)]"
       >
         {particles ? (
-          <span className="aurora-text electric-text aurora-warm electric-offset hero-fx">
-            {LINE_2}
-          </span>
+          <span className="aurora-text aurora-static aurora-warm">{LINE_2}</span>
         ) : (
           <KineticHeadline
             variant="warm"
-            className="electric-offset hero-fx"
+            className="aurora-static"
             text={LINE_2}
-            delay={260}
           />
         )}
       </span>
@@ -68,11 +67,7 @@ export function HeroHeadline() {
           hostRef={hostRef}
           lineRefs={lineRefs}
           isMobile={isMobile}
-          onAssembled={() => setAssembled(true)}
-          onFail={() => {
-            setGlFailed(true)
-            setAssembled(false)
-          }}
+          onFail={() => setGlFailed(true)}
         />
       )}
     </div>

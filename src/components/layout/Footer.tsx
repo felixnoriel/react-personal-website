@@ -55,8 +55,7 @@ export function Footer() {
             <span className="text-background/60 font-mono">— Let&apos;s build something</span>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-lime/40 bg-lime/10 text-lime font-mono normal-case text-[10px]">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-lime opacity-75 animate-ping" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
+                                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lime" />
               </span>
               online · accepting dms
             </span>
