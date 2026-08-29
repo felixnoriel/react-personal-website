@@ -36,7 +36,7 @@ export function HeroHeadline() {
     <div ref={hostRef} className={`relative ${assembled && particles ? 'headline-ghost' : ''}`}>
       <span
         ref={line1Ref}
-        className="hl-swap block whitespace-nowrap text-[9vw] md:text-[80px]"
+        className="hl-swap block whitespace-nowrap text-[clamp(30px,9.6vw,164px)]"
       >
         {particles ? (
           <span className="aurora-text electric-text aurora-cool hero-fx">{LINE_1}</span>
@@ -44,9 +44,11 @@ export function HeroHeadline() {
           <KineticHeadline variant="cool" className="hero-fx" text={LINE_1} />
         )}
       </span>
+      {/* staggered second line — the editorial offset that breaks template
+          symmetry and gives the composition its diagonal */}
       <span
         ref={line2Ref}
-        className="hl-swap block whitespace-nowrap text-[7.6vw] md:text-[72px]"
+        className="hl-swap block whitespace-nowrap pl-[6vw] text-[clamp(30px,9.6vw,164px)]"
       >
         {particles ? (
           <span className="aurora-text electric-text aurora-warm electric-offset hero-fx">

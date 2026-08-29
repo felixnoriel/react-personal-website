@@ -147,15 +147,17 @@ function sampleTargets(
   for (const el of lines) {
     const r = el.getBoundingClientRect()
     const cs = getComputedStyle(el)
-    // include the metric-matched fallback so a slow font load still samples
-    // glyphs at (nearly) the same geometry the DOM is rendering
-    ctx.font = `700 ${cs.fontSize} Montserrat, 'Montserrat Fallback', sans-serif`
+    // mirror the DOM's actual face/weight so the swarm matches the ghost text
+    ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`
     if ('letterSpacing' in ctx && cs.letterSpacing !== 'normal') {
       ctx.letterSpacing = cs.letterSpacing
     }
+    // draw from the CONTENT box: the line spans carry padding (the editorial
+    // indent), and getBoundingClientRect includes it — sampling from the
+    // padding box painted the swarm one indent left of the real text
     ctx.fillText(
       el.textContent ?? '',
-      r.left - hostRect.left,
+      r.left - hostRect.left + parseFloat(cs.paddingLeft || '0'),
       r.top - hostRect.top + r.height / 2 + r.height * 0.03,
     )
   }
@@ -169,6 +171,19 @@ function sampleTargets(
     }
   }
   if (pts.length / 6 < 200) return null
+  // monumental type samples far more pixels — decimate evenly past the cap
+  // so the draw cost stays flat no matter the headline size
+  const MAX = 26000
+  const n = pts.length / 6
+  if (n > MAX) {
+    const out = new Float32Array(MAX * 6)
+    const stride = n / MAX
+    for (let i = 0; i < MAX; i++) {
+      const src = Math.floor(i * stride) * 6
+      out.set(pts.slice(src, src + 6), i * 6)
+    }
+    return out
+  }
   return new Float32Array(pts)
 }
 

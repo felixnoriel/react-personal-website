@@ -135,9 +135,11 @@ fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> VSOut
   let clip = (world / sim.res) * 2.0 - vec2f(1.0);
 
   let h = hash21(vec2f(f32(ii) * 0.123, f32(ii) * 0.789));
+  // disciplined palette: violet↔blue carries the field; green/indigo are
+  // rare sparks (a four-hue soup read as mud)
   var col = mix(sim.c1.rgb, sim.c3.rgb, smoothstep(0.0, 1.0, h));
-  col = mix(col, sim.c2.rgb, step(0.82, h));
-  col = mix(col, sim.c4.rgb, step(0.94, h));
+  col = mix(col, sim.c2.rgb, step(0.9, h));
+  col = mix(col, sim.c4.rgb, step(0.97, h));
   // dark theme: speed brightens toward white-hot; light theme: stay ink
   col = mix(col, vec3f(1.0), min(0.55, speed * 0.045) * sim.dark);
   // light theme runs a higher floor: colored ink must be plainly visible

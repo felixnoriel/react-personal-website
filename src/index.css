@@ -160,9 +160,11 @@
 }
 
 @layer utilities {
+  /* display face: Space Grotesk — the distinctive geometric voice that
+     separates the headlines from the (Montserrat) body text */
   .font-display {
-    font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.02em;
+    font-family: 'Space Grotesk', 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.03em;
   }
 
   .font-body {
@@ -945,9 +947,15 @@ section:not(#hero) {
   .dark .headline-ghost .hl-swap {
     opacity: 0.4;
   }
-  /* backdrop scrim, theme-tuned: light stays vivid, dark stays calm */
+  /* backdrop scrim, theme-tuned: light stays vivid, dark stays calm.
+     Mobile gets a heavier veil — small screens amplify the field. */
   .bg-scrim {
     background: hsl(var(--background) / 0.14);
+  }
+  @media (max-width: 767px) {
+    .bg-scrim {
+      background: hsl(var(--background) / 0.32);
+    }
   }
   .dark .bg-scrim {
     background: hsl(var(--background) / 0.35);

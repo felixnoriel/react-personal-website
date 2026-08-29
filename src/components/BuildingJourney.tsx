@@ -55,6 +55,7 @@ export function BuildingJourney({
     <SectionShell>
       <SectionHeading
         eyebrow="experience"
+        index="03"
         meta="2014 → now"
         title={
           <>

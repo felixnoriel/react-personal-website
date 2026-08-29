@@ -208,6 +208,7 @@ export function TechToolbelt() {
     <SectionShell>
       <SectionHeading
         eyebrow="capabilities"
+        index="01"
         meta={
           <span className="inline-flex items-center gap-2">
             <HudDot accent="lime" />

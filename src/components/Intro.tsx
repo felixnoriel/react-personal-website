@@ -8,13 +8,11 @@ import {
   Gauge,
   Radio,
   Sparkles,
-  Terminal,
   Users,
   Zap,
 } from 'lucide-react'
 import type { ReactNode, PointerEvent as ReactPointerEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { MagneticButton } from './ui/MagneticButton'
@@ -57,7 +55,6 @@ const TECH_STACK = [
 ]
 
 const BOOT_LINE = 'felix --status --live'
-const SESSION_ID = '#2847'
 
 type Accent = 'accent' | 'lime' | 'electric' | 'amber'
 
@@ -203,7 +200,7 @@ export function Intro() {
           className="animate-float-slow absolute top-[26%] -right-[10%] w-[48vw] h-[48vw] max-w-[680px] max-h-[680px] rounded-full opacity-40 dark:opacity-20 blur-3xl"
           style={{
             background:
-              'radial-gradient(circle at 60% 40%, hsl(var(--lime) / 0.6), hsl(var(--amber) / 0.35) 50%, transparent 72%)',
+              'radial-gradient(circle at 60% 40%, hsl(var(--electric) / 0.5), hsl(var(--accent) / 0.28) 50%, transparent 72%)',
             animationDelay: '-7s',
           }}
         />
@@ -215,20 +212,19 @@ export function Intro() {
         <HudCorners />
       </div>
 
-      <div className="container relative z-10 mx-auto px-6 pt-20 md:pt-24 pb-8 flex-1 flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center w-full">
-          {/* ---- left: identity + headline + bio + CTAs ----
-              Outer div owns the scroll-driven exit (CSS transform/opacity);
-              the m.div owns the entrance + the parallax `translate`. */}
-          <div className="lg:col-span-7 max-w-3xl hero-exit-head">
+      <div className="container relative z-10 mx-auto px-6 pt-24 md:pt-28 pb-8 flex-1 flex flex-col justify-center">
+        {/* ---- monumental headline: full-bleed, the type IS the layout.
+            Outer div owns the scroll-driven exit (CSS transform/opacity);
+            the m.div owns the entrance + the parallax `translate`. */}
+        <div className="hero-exit-head">
           <m.div
             ref={leftLayerRef}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* boot strip */}
-            <div className="flex flex-wrap items-center gap-2.5 mb-6 text-[11px]">
+            {/* boot strip — ruthlessly slim: command, availability, engine */}
+            <div className="flex flex-wrap items-center gap-2.5 mb-7 text-[11px]">
               <div
                 className="inline-flex items-center gap-2 h-8 px-3 rounded-lg border border-ink/[0.08] bg-background/30 backdrop-blur-md font-mono tracking-normal text-[11px]"
                 style={{
@@ -269,35 +265,30 @@ export function Intro() {
                 </span>
                 <span className="font-mono text-[11px] tracking-wide">status: available</span>
               </div>
-              <div
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-ink/[0.08] bg-background/30 backdrop-blur-md text-ink-muted"
-                style={{ boxShadow: 'inset 0 1px 0 0 hsl(var(--background) / 0.45)' }}
-              >
-                <Terminal className="w-3 h-3 text-electric/80" />
-                <LiveClock timezone="UTC" className="text-ink text-xs" />
-                <span className="text-ink-soft">· UTC</span>
-              </div>
-              <div
-                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-ink/[0.08] bg-background/30 backdrop-blur-md text-ink-muted font-mono text-[10.5px] tracking-[0.1em]"
-                style={{ boxShadow: 'inset 0 1px 0 0 hsl(var(--background) / 0.45)' }}
-              >
-                <span className="text-ink-soft">session</span>
-                <span className="text-accent tabular-nums">{SESSION_ID}</span>
-              </div>
               <RendererChip />
             </div>
 
             {/* headline — the WebGL particle swarm (real text paints first for
-                LCP/SEO, then ~10k particles assemble it and react to the
+                LCP/SEO, then the particles assemble it and react to the
                 cursor); falls back to the kinetic variable-font treatment
                 where WebGL isn't available. See HeroHeadline. */}
             <h1
               aria-label="Product Engineer · Problem Solver"
-              className="font-display leading-[1.05] tracking-tighter font-bold mb-6"
+              className="font-display leading-[0.98] tracking-tighter font-bold mb-10"
             >
               <HeroHeadline />
             </h1>
+          </m.div>
+        </div>
 
+        {/* ---- second band: terminal + CTAs beside the telemetry deck ---- */}
+        <div className="hero-exit-panel grid grid-cols-1 lg:grid-cols-12 gap-10 items-start w-full">
+          <m.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-7 max-w-3xl"
+          >
             <WhoamiTerminal />
 
             <div className="flex flex-wrap items-center gap-3">
@@ -323,29 +314,32 @@ export function Intro() {
               </MagneticButton>
             </div>
           </m.div>
-          </div>
 
           {/* ---- right: engineering-impact telemetry deck ---- */}
-          <div className="lg:col-span-5 hero-exit-panel">
           <m.div
             ref={panelLayerRef}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-5"
           >
             <MetricsPanel />
           </m.div>
-          </div>
         </div>
       </div>
 
-      {/* tech marquee */}
-      <div className="relative z-10 border-y border-border bg-surface/40 backdrop-blur-sm py-4">
-        <Marquee className="text-[11px] tracking-[0.25em] uppercase text-ink-muted">
+      {/* tech marquee — big outlined display type, the editorial ticker */}
+      <div className="relative z-10 border-y border-border bg-surface/40 backdrop-blur-sm py-3 md:py-4">
+        <Marquee className="text-ink-muted">
           {TECH_STACK.map((tech, i) => (
-            <div key={`${tech}-${i}`} className="flex items-center gap-12">
-              <span className="font-mono">{tech}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-accent/40" />
+            <div key={`${tech}-${i}`} className="flex items-center gap-[3vw]">
+              <span
+                className="font-display font-bold tracking-tight text-[clamp(22px,2.6vw,42px)] text-transparent"
+                style={{ WebkitTextStroke: '1.3px hsl(var(--ink) / 0.5)' }}
+              >
+                {tech}
+              </span>
+              <span className="w-2 h-2 rotate-45 rounded-[2px] bg-accent/50" />
             </div>
           ))}
         </Marquee>

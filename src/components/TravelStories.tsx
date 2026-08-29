@@ -46,6 +46,7 @@ export function TravelStories({ stories }: TravelStoriesProps) {
     <SectionShell>
       <SectionHeading
         eyebrow="writing"
+        index="05"
         meta={
           <span className="inline-flex items-center gap-2">
             <HudDot accent="lime" />

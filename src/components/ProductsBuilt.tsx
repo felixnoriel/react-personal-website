@@ -92,6 +92,7 @@ export function ProductsBuilt({
     <SectionShell>
       <SectionHeading
         eyebrow="selected work"
+        index="04"
         meta={
           <span className="inline-flex items-center gap-2">
             <HudDot accent="lime" />

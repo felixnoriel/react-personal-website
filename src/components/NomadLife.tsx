@@ -230,6 +230,7 @@ export function NomadLife() {
       <SectionHeading
         align="between"
         eyebrow="nomad.log"
+        index="02"
         meta={
           <span className="inline-flex items-center gap-2 tabular-nums">
             <HudDot accent="lime" />

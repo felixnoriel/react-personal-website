@@ -60,7 +60,10 @@ export function CosmicBackdrop() {
 
   return (
     <>
-      <ShaderField intensity={0.78} />
+      {/* mobile runs the field quieter: the same filaments that read as
+          distant atmosphere on desktop render huge against a small
+          viewport and fight the text */}
+      <ShaderField intensity={isMobile ? 0.5 : 0.78} />
       {/* luminance scrim — text always wins, but the field must stay ALIVE:
           light theme needs only a whisper of scrim (vivid is the point),
           dark needs more so neon never fights the type */}

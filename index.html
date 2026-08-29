@@ -18,14 +18,14 @@
          Montserrat weights — fewer bytes + requests, and the continuous wght
          axis powers the hero's kinetic (cursor-swell) headline. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
       <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
         rel="stylesheet"
       />
     </noscript>
@@ -76,16 +76,19 @@
       }
       #boot-static .ghost {
         position: absolute;
-        left: 6vw;
-        top: 18vh;
-        font-family: 'Montserrat', 'Montserrat Fallback', Arial, sans-serif;
+        left: 4vw;
+        top: 16vh;
+        font-family: 'Space Grotesk', 'Montserrat', 'Montserrat Fallback', Arial, sans-serif;
         font-weight: 700;
-        font-size: clamp(38px, 6.2vw, 80px);
-        line-height: 1.05;
-        letter-spacing: -0.02em;
+        /* sized to match the hero h1 so this IS the LCP element at CSS-paint
+           time — if the h1 ever gets bigger than this, LCP regresses ~3s */
+        font-size: clamp(30px, 9.6vw, 164px);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
         color: rgba(160, 150, 220, 0.16);
         white-space: nowrap;
         pointer-events: none;
+        overflow: hidden;
       }
       #boot-static .bar {
         width: 210px;

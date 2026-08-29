@@ -256,6 +256,7 @@ export function SectionHeading({
   meta,
   title,
   intro,
+  index,
   align = 'left',
   className = '',
 }: {
@@ -263,17 +264,20 @@ export function SectionHeading({
   meta?: ReactNode
   title: ReactNode
   intro?: ReactNode
+  /** giant ghost numeral behind the heading ("01"…) — editorial scale cue */
+  index?: string
   align?: 'left' | 'between'
   className?: string
 }) {
   if (SCRUBBED) {
     return (
-      <div className={`sec-rise ${className}`}>
+      <div className={`sec-rise relative ${className}`}>
         <SectionHeadingInner
           eyebrow={eyebrow}
           meta={meta}
           title={title}
           intro={intro}
+          index={index}
           align={align}
         />
       </div>
@@ -285,13 +289,14 @@ export function SectionHeading({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.7, ease: EASE }}
-      className={className}
+      className={`relative ${className}`}
     >
       <SectionHeadingInner
         eyebrow={eyebrow}
         meta={meta}
         title={title}
         intro={intro}
+        index={index}
         align={align}
       />
     </m.div>
@@ -303,16 +308,27 @@ function SectionHeadingInner({
   meta,
   title,
   intro,
+  index,
   align,
 }: {
   eyebrow: string
   meta?: ReactNode
   title: ReactNode
   intro?: ReactNode
+  index?: string
   align: 'left' | 'between'
 }) {
   return (
     <>
+      {index && (
+        <span
+          aria-hidden
+          className="absolute -top-[0.42em] right-0 font-display font-bold leading-none text-[6rem] md:text-[9.5rem] tracking-tighter text-transparent select-none pointer-events-none"
+          style={{ WebkitTextStroke: '1.5px hsl(var(--ink) / 0.13)' }}
+        >
+          {index}
+        </span>
+      )}
       <div className="flex items-center gap-3 mb-4 font-mono text-[11px] tracking-[0.25em] uppercase text-ink-soft">
         <span className="text-accent">—</span>
         <span>{eyebrow}</span>

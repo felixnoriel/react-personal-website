@@ -51,6 +51,7 @@ export function ContactSection() {
     <SectionShell>
       <SectionHeading
         eyebrow="contact"
+        index="06"
         meta={
           <span className="inline-flex items-center gap-2">
             <HudDot accent="lime" />
