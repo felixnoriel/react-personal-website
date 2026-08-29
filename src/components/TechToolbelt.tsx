@@ -205,7 +205,7 @@ export function TechToolbelt() {
   const liveCount = STACKS.reduce((n, s) => n + countLive(s), 0)
 
   return (
-    <SectionShell id="skills-section">
+    <SectionShell>
       <SectionHeading
         eyebrow="capabilities"
         meta={

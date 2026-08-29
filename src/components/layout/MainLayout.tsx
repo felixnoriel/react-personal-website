@@ -47,7 +47,7 @@ function useGlobalScrollToTop() {
 export function MainLayout({ children }: MainLayoutProps) {
   useGlobalScrollToTop()
   return (
-    <div id="main-wrapper" className="min-h-screen flex flex-col">
+    <div id="main-wrapper" className="grain min-h-screen flex flex-col">
       <ScrollProgress />
       <Header />
       <main className="flex-1">{children}</main>

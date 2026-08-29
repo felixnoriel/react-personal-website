@@ -1,4 +1,7 @@
-import ReactGA from 'react-ga4'
+// react-ga4 is loaded LAZILY: analytics must never sit in the critical
+// bundle or compete with first paint. Calls made before the library
+// arrives are queued and flushed after init.
+type GAModule = typeof import('react-ga4').default
 
 // Google Analytics Measurement ID
 const GA_MEASUREMENT_ID = 'G-JEM0Y5QF76'
@@ -6,31 +9,50 @@ const GA_MEASUREMENT_ID = 'G-JEM0Y5QF76'
 // Check if we're in development for debug logging
 const isDevelopment = import.meta.env.DEV
 
+let ga: GAModule | null = null
+const pending: Array<(g: GAModule) => void> = []
+
+const withGA = (fn: (g: GAModule) => void) => {
+  if (ga) {
+    try {
+      fn(ga)
+    } catch (error) {
+      console.error('GA call failed:', error)
+    }
+  } else if (pending.length < 50) {
+    pending.push(fn)
+  }
+}
+
 /**
  * Initialize Google Analytics
- * Should be called once when the app starts
+ * Should be called once when the app starts (ideally at idle)
  */
 export const initGA = () => {
-  try {
-    ReactGA.initialize(GA_MEASUREMENT_ID, {
-      gaOptions: {
-        // Anonymize IP addresses for privacy
-        anonymize_ip: true,
-        // Enable debug mode in development
-        debug_mode: isDevelopment,
-      },
-      gtagOptions: {
-        // Send page views manually (we'll track route changes)
-        send_page_view: false,
-      },
-    })
+  import('react-ga4')
+    .then(({ default: ReactGA }) => {
+      ReactGA.initialize(GA_MEASUREMENT_ID, {
+        gaOptions: {
+          // Anonymize IP addresses for privacy
+          anonymize_ip: true,
+          // Enable debug mode in development
+          debug_mode: isDevelopment,
+        },
+        gtagOptions: {
+          // Send page views manually (we'll track route changes)
+          send_page_view: false,
+        },
+      })
+      ga = ReactGA
+      pending.splice(0).forEach((fn) => withGA(fn))
 
-    if (isDevelopment) {
-      console.log('Google Analytics initialized in development mode')
-    }
-  } catch (error) {
-    console.error('Failed to initialize Google Analytics:', error)
-  }
+      if (isDevelopment) {
+        console.log('Google Analytics initialized in development mode')
+      }
+    })
+    .catch((error) => {
+      console.error('Failed to initialize Google Analytics:', error)
+    })
 }
 
 /**
@@ -38,18 +60,15 @@ export const initGA = () => {
  * Call this on route changes
  */
 export const trackPageView = (path: string, title?: string) => {
-  try {
-    ReactGA.send({
+  withGA((g) => {
+    g.send({
       hitType: 'pageview',
       page: path,
       title: title || document.title,
     })
-
-    if (isDevelopment) {
-      console.log('GA Page View:', { path, title })
-    }
-  } catch (error) {
-    console.error('Failed to track page view:', error)
+  })
+  if (isDevelopment) {
+    console.log('GA Page View:', { path, title })
   }
 }
 
@@ -62,19 +81,16 @@ export const trackEvent = (
   label?: string,
   value?: number
 ) => {
-  try {
-    ReactGA.event({
+  withGA((g) => {
+    g.event({
       category,
       action,
       label,
       value,
     })
-
-    if (isDevelopment) {
-      console.log('GA Event:', { category, action, label, value })
-    }
-  } catch (error) {
-    console.error('Failed to track event:', error)
+  })
+  if (isDevelopment) {
+    console.log('GA Event:', { category, action, label, value })
   }
 }
 

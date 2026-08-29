@@ -56,7 +56,10 @@ export function BootLoader({
   const [glitch, setGlitch] = useState(false)
   const startedAt = useRef<number>(performance.now())
 
-  // Main progress loop — ease-out curve across `durationMs`
+  // Main progress loop — ease-out curve across `durationMs`. State updates
+  // are throttled to ~12Hz: a per-frame setState re-rendered this whole
+  // (large) tree 60×/s and was the single biggest main-thread cost of the
+  // entire page load under CPU throttling.
   useEffect(() => {
     if (reduce) {
       setProgress(1)
@@ -65,12 +68,15 @@ export function BootLoader({
     }
     const durSec = durationMs / 1000
     let rafId = 0
-    const loop = () => {
-      const elapsed = (performance.now() - startedAt.current) / 1000
+    let lastPush = 0
+    const loop = (now: number) => {
+      rafId = requestAnimationFrame(loop)
+      if (now - lastPush < 80) return
+      lastPush = now
+      const elapsed = (now - startedAt.current) / 1000
       const eased = 1 - Math.pow(1 - Math.min(elapsed / durSec, 0.995), 3)
       setProgress(eased)
       setTick(Math.floor(elapsed * 10))
-      rafId = requestAnimationFrame(loop)
     }
     rafId = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(rafId)
@@ -157,8 +163,10 @@ export function BootLoader({
               'linear-gradient(90deg, transparent 0%, rgba(142, 255, 166, 0.0) 10%, rgba(142, 255, 166, 0.9) 50%, rgba(142, 255, 166, 0.0) 90%, transparent 100%)',
             boxShadow: '0 0 28px rgba(142, 255, 166, 0.75)',
           }}
-          initial={{ top: '12%', opacity: 0 }}
-          animate={{ top: ['12%', '88%', '12%'], opacity: [0, 1, 0] }}
+          // travels via transform (y), not `top`: animating a layout property
+          // re-layouts every frame and spams layout-shift entries (CLS)
+          initial={{ top: '12%', y: 0, opacity: 0 }}
+          animate={{ y: ['0vh', '76vh', '0vh'], opacity: [0, 1, 0] }}
           transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
         />
       )}
@@ -821,7 +829,9 @@ function MatrixRain({ reduce }: { reduce: boolean }) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const fontSize = 14
+    // wider columns + capped dpr + half-rate drawing below: the rain is a
+    // background texture and must never compete with the app booting under it
+    const fontSize = 18
     const chars =
       '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/_'
 
@@ -829,7 +839,7 @@ function MatrixRain({ reduce }: { reduce: boolean }) {
     let h = 0
     let cols = 0
     let drops: number[] = []
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = 1
 
     const resize = () => {
       w = window.innerWidth
@@ -849,9 +859,14 @@ function MatrixRain({ reduce }: { reduce: boolean }) {
     window.addEventListener('resize', resize)
 
     let raf = 0
+    let odd = false
     const draw = () => {
+      raf = requestAnimationFrame(draw)
+      // half-rate: the rain reads identically at 30fps for a fraction of the cost
+      odd = !odd
+      if (odd) return
       // trail fade
-      ctx.fillStyle = 'rgba(6, 6, 17, 0.09)'
+      ctx.fillStyle = 'rgba(6, 6, 17, 0.17)'
       ctx.fillRect(0, 0, w, h)
       ctx.font = `${fontSize}px "JetBrains Mono", ui-monospace, monospace`
       for (let i = 0; i < cols; i++) {
@@ -864,9 +879,8 @@ function MatrixRain({ reduce }: { reduce: boolean }) {
           : 'rgba(142, 255, 166, 0.28)'
         ctx.fillText(ch, i * fontSize, y)
         if (y > h && Math.random() > 0.965) drops[i] = 0
-        drops[i] += 0.75
+        drops[i] += 1.5
       }
-      raf = requestAnimationFrame(draw)
     }
     draw()
 

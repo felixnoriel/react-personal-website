@@ -12,14 +12,15 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
-import type { ReactNode } from 'react'
+import type { ReactNode, PointerEvent as ReactPointerEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { LiveClock } from './ui/LiveClock'
 import { Marquee } from './ui/Marquee'
 import { AnimatedNumber } from './ui/AnimatedNumber'
 import { MagneticButton } from './ui/MagneticButton'
-import { FxWord } from './ui/section'
+import { HeroHeadline } from './ui/HeroHeadline'
 import { useFxLevel } from '../hooks/useFxLevel'
+import { useDepthParallax, type ParallaxLayer } from '../hooks/useDepthParallax'
 
 // ============================================================
 // Intro — the hero. Rebuilt around a single GPU fragment-shader
@@ -133,7 +134,24 @@ const IMPACT_CHIPS = [
 
 export function Intro() {
   const sectionRef = useRef<HTMLElement>(null)
-  const { reduceMotion, isMobile } = useFxLevel()
+  const { reduceMotion, isMobile, disableHeavyFx } = useFxLevel()
+
+  // Pointer-depth rig — the three hero layers drift at different depths
+  // with the cursor so the scene reads as 3D. Writes the CSS `translate`
+  // property, which composes with framer's transform (same element) and
+  // the scroll-exit animation (ancestor wrappers). Desktop only.
+  const leftLayerRef = useRef<HTMLDivElement>(null)
+  const panelLayerRef = useRef<HTMLDivElement>(null)
+  const hudLayerRef = useRef<HTMLDivElement>(null)
+  const parallaxLayers = useMemo<ParallaxLayer[]>(
+    () => [
+      { ref: leftLayerRef, depth: -7 }, // foreground: against the cursor
+      { ref: panelLayerRef, depth: -12 }, // closest: strongest counter-drift
+      { ref: hudLayerRef, depth: 9 }, // background frame: drifts with it
+    ],
+    [],
+  )
+  useDepthParallax(sectionRef, parallaxLayers, !disableHeavyFx)
 
   // Instant (not smooth) CTA scroll — a hard-won fix from this repo's history:
   // smooth-scroll is a JS-driven animation that competes with the heavy
@@ -149,7 +167,7 @@ export function Intro() {
       setBootTyped(BOOT_LINE)
       return
     }
-    const cadence = isMobile ? 90 : 55
+    const cadence = isMobile ? 65 : 38
     let i = 0
     const t = setInterval(() => {
       i++
@@ -169,16 +187,24 @@ export function Intro() {
           floats over it like every other section. Just a little extra HUD
           texture here. */}
       <StaticSubstrate />
-      <HudCorners />
+      <div
+        ref={hudLayerRef}
+        className="hero-exit-hud absolute inset-0 pointer-events-none z-10"
+      >
+        <HudCorners />
+      </div>
 
       <div className="container relative z-10 mx-auto px-6 pt-20 md:pt-24 pb-8 flex-1 flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center w-full">
-          {/* ---- left: identity + headline + bio + CTAs ---- */}
+          {/* ---- left: identity + headline + bio + CTAs ----
+              Outer div owns the scroll-driven exit (CSS transform/opacity);
+              the m.div owns the entrance + the parallax `translate`. */}
+          <div className="lg:col-span-7 max-w-3xl hero-exit-head">
           <m.div
+            ref={leftLayerRef}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7 max-w-3xl"
           >
             {/* boot strip */}
             <div className="flex flex-wrap items-center gap-2.5 mb-6 text-[11px]">
@@ -191,10 +217,20 @@ export function Intro() {
               >
                 <span className="text-lime">felix@portfolio</span>
                 <span className="text-ink-soft">:~$</span>
-                <span className="text-ink">{bootTyped}</span>
-                {bootTyped.length < BOOT_LINE.length && (
-                  <span className="w-1.5 h-3.5 bg-ink animate-blink" />
-                )}
+                {/* reserve the full command's width from first paint — the chip
+                    growing as it types was wrapping the session chip onto a new
+                    row mid-boot and shifting the whole hero down (CLS) */}
+                <span className="relative text-ink">
+                  {/* nowrap: the reservation must occupy one line exactly like
+                      the overlay, or the two disagree below ~345px width */}
+                  <span aria-hidden className="invisible whitespace-nowrap">{BOOT_LINE}</span>
+                  <span className="absolute inset-y-0 left-0 whitespace-nowrap">
+                    {bootTyped}
+                    {bootTyped.length < BOOT_LINE.length && (
+                      <span className="inline-block w-1.5 h-3.5 bg-ink animate-blink align-middle" />
+                    )}
+                  </span>
+                </span>
               </div>
               <div
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-lime/30 bg-lime/[0.1] backdrop-blur-md text-ink"
@@ -227,24 +263,18 @@ export function Intro() {
                 <span className="text-ink-soft">session</span>
                 <span className="text-accent tabular-nums">{SESSION_ID}</span>
               </div>
+              <RendererChip />
             </div>
 
-            {/* headline — two lines, each an electric-glitch + scramble aurora
-                word in its own color family (cool blue / warm magenta) */}
+            {/* headline — the WebGL particle swarm (real text paints first for
+                LCP/SEO, then ~10k particles assemble it and react to the
+                cursor); falls back to the kinetic variable-font treatment
+                where WebGL isn't available. See HeroHeadline. */}
             <h1
               aria-label="Product Engineer · Problem Solver"
               className="font-display leading-[1.05] tracking-tighter font-bold mb-6"
             >
-              {/* one line on every width. Mobile uses a viewport-relative size so
-                  "Product Engineer" (the longer/binding line) always fits one line
-                  down to ~320px; desktop keeps the fixed 80/72px sizes. */}
-              <span className="block whitespace-nowrap text-[9vw] md:text-[80px]">
-                <FxWord variant="cool" className="hero-fx">Product Engineer</FxWord>
-              </span>
-              {/* subtitle — a touch smaller so "Product Engineer" reads as the title */}
-              <span className="block whitespace-nowrap text-[7.6vw] md:text-[72px]">
-                <FxWord variant="warm" className="electric-offset hero-fx">Problem Solver</FxWord>
-              </span>
+              <HeroHeadline />
             </h1>
 
             <WhoamiTerminal />
@@ -253,7 +283,7 @@ export function Intro() {
               <MagneticButton
                 onClick={() => scrollToSection('projects-section')}
                 strength={0.4}
-                className="group relative inline-flex items-center gap-2 h-12 px-6 rounded-full bg-ink text-background text-sm font-medium hover:bg-accent transition-colors overflow-hidden"
+                className="group corner-squircle relative inline-flex items-center gap-2 h-12 px-6 rounded-full bg-ink text-background text-sm font-medium hover:bg-accent transition-colors overflow-hidden"
               >
                 <span className="relative z-10">See selected work</span>
                 <ArrowUpRight className="w-4 h-4 relative z-10 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -272,16 +302,19 @@ export function Intro() {
               </MagneticButton>
             </div>
           </m.div>
+          </div>
 
           {/* ---- right: engineering-impact telemetry deck ---- */}
+          <div className="lg:col-span-5 hero-exit-panel">
           <m.div
+            ref={panelLayerRef}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5"
           >
             <MetricsPanel />
           </m.div>
+          </div>
         </div>
       </div>
 
@@ -327,6 +360,47 @@ export function Intro() {
         </m.span>
       </m.button>
     </section>
+  )
+}
+
+// ============================================================
+// RendererChip — an honest tech readout: which engine is painting the
+// backdrop (webgpu compute galaxy / webgl aurora), how many particles,
+// and a live fps counter the engine writes directly into #fx-fps.
+// ============================================================
+
+type RendererInfo = { kind: 'webgpu' | 'webgl' | 'static'; count: number }
+
+function RendererChip() {
+  const [info, setInfo] = useState<RendererInfo | null>(null)
+  useEffect(() => {
+    const cached = (window as unknown as { __fxRendererInfo?: RendererInfo }).__fxRendererInfo
+    if (cached) setInfo(cached)
+    const on = (e: Event) => setInfo((e as CustomEvent<RendererInfo>).detail)
+    window.addEventListener('fx:renderer', on)
+    return () => window.removeEventListener('fx:renderer', on)
+  }, [])
+  if (!info || info.kind === 'static') return null
+  return (
+    <div
+      className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-electric/25 bg-electric/[0.07] backdrop-blur-md text-ink-muted font-mono text-[10.5px] tracking-[0.08em]"
+      style={{ boxShadow: 'inset 0 1px 0 0 hsl(var(--background) / 0.35), 0 0 16px -8px hsl(var(--electric) / 0.7)' }}
+    >
+      <Zap className="w-3 h-3 text-electric" />
+      <span className="text-ink">{info.kind}</span>
+      {info.kind === 'webgpu' && (
+        <>
+          <span className="text-ink-soft">·</span>
+          <span className="text-electric tabular-nums">{Math.round(info.count / 1000)}k</span>
+          <span className="text-ink-soft">particles</span>
+          <span className="text-ink-soft">·</span>
+          <span id="fx-fps" className="text-lime tabular-nums">
+            —
+          </span>
+          <span className="text-ink-soft">fps</span>
+        </>
+      )}
+    </div>
   )
 }
 
@@ -435,8 +509,76 @@ function LiveStat() {
 }
 
 function MetricsPanel() {
+  // Holographic tilt — the deck leans toward the cursor with a tracking
+  // glare, same rAF-coalesced GPU-transform pattern as GlassPanel (the
+  // proven one from this repo's perf history). Desktop only.
+  const { disableHeavyFx } = useFxLevel()
+  const tiltRef = useRef<HTMLDivElement>(null)
+  const glareRef = useRef<HTMLDivElement>(null)
+  const tiltRaf = useRef<number | null>(null)
+  // rect cached on pointerenter — reading it per pointermove would force a
+  // layout under the parallax + scroll-exit writers on this same subtree
+  const tiltRect = useRef<DOMRect | null>(null)
+  const tiltState = useRef({ x: 0, y: 0, rx: 0, ry: 0 })
+
+  useEffect(() => {
+    if (disableHeavyFx) {
+      // clear leftover pointer styles (e.g. desktop→mobile resize mid-hover)
+      tiltRef.current?.style.removeProperty('transform')
+      tiltRef.current?.style.removeProperty('transition')
+      glareRef.current?.style.removeProperty('transform')
+    }
+    return () => {
+      if (tiltRaf.current != null) cancelAnimationFrame(tiltRaf.current)
+    }
+  }, [disableHeavyFx])
+
+  const applyTilt = () => {
+    tiltRaf.current = null
+    const s = tiltState.current
+    if (tiltRef.current) {
+      tiltRef.current.style.transform = `perspective(1100px) rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg)`
+    }
+    if (glareRef.current) {
+      glareRef.current.style.transform = `translate3d(${s.x - 300}px, ${s.y - 300}px, 0)`
+    }
+  }
+
+  const onTiltEnter = (e: ReactPointerEvent<HTMLDivElement>) => {
+    tiltRect.current = tiltRef.current?.getBoundingClientRect() ?? null
+    onTiltMove(e)
+  }
+
+  const onTiltMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const el = tiltRef.current
+    const r = tiltRect.current
+    if (!el || !r) return
+    const x = e.clientX - r.left
+    const y = e.clientY - r.top
+    tiltState.current.x = x
+    tiltState.current.y = y
+    tiltState.current.rx = (0.5 - y / r.height) * 4.5
+    tiltState.current.ry = (x / r.width - 0.5) * 4.5
+    el.style.transition = 'none'
+    if (tiltRaf.current == null) tiltRaf.current = requestAnimationFrame(applyTilt)
+  }
+
+  const onTiltLeave = () => {
+    const el = tiltRef.current
+    if (!el) return
+    el.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)'
+    el.style.transform = 'perspective(1100px) rotateX(0deg) rotateY(0deg)'
+  }
+
   return (
-    <div className="relative rounded-2xl overflow-hidden">
+    <div
+      ref={tiltRef}
+      onPointerEnter={disableHeavyFx ? undefined : onTiltEnter}
+      onPointerMove={disableHeavyFx ? undefined : onTiltMove}
+      onPointerLeave={disableHeavyFx ? undefined : onTiltLeave}
+      className="group/metrics relative rounded-2xl overflow-hidden"
+      style={disableHeavyFx ? undefined : { willChange: 'transform' }}
+    >
       {/* feathered frosted backdrop — dissolves into the shader at its edges */}
       <div
         aria-hidden
@@ -450,6 +592,22 @@ function MetricsPanel() {
           maskComposite: 'intersect',
         }}
       />
+      {/* holographic glare — a soft sheen tracking the cursor while tilted.
+          Not rendered at all when effects are gated off (mobile / reduced
+          motion): nothing would ever drive it, and its promoted layer +
+          blend mode would just leak GPU memory and hover-latch on tap. */}
+      {!disableHeavyFx && (
+        <div
+          ref={glareRef}
+          aria-hidden
+          className="pointer-events-none absolute top-0 left-0 z-10 w-[600px] h-[600px] opacity-0 group-hover/metrics:opacity-100 transition-opacity duration-300 mix-blend-overlay"
+          style={{
+            background:
+              'radial-gradient(circle at center, rgba(255,255,255,0.16), transparent 55%)',
+            willChange: 'transform',
+          }}
+        />
+      )}
       {/* title bar */}
       <div className="relative z-10 flex items-center gap-2 px-4 py-2.5 border-b border-ink/5">
         <span className="flex items-center gap-1">
@@ -510,8 +668,8 @@ function MetricsPanel() {
         ))}
       </div>
 
-      {/* impact chips */}
-      <div className="relative z-10 flex flex-wrap gap-1.5 px-4 py-3 mt-1">
+      {/* impact chips — native sibling-index() stagger where supported */}
+      <div className="stagger-in relative z-10 flex flex-wrap gap-1.5 px-4 py-3 mt-1">
         {IMPACT_CHIPS.map((c, i) => {
           const a: Accent = (['accent', 'lime', 'electric', 'amber', 'accent'] as Accent[])[i]
           return (
@@ -590,6 +748,11 @@ const WHOAMI_OUTPUT: WhoamiFragment[][] = [
   ],
 ]
 
+// Every character is laid out at its FINAL position from the first frame
+// (untyped chars are just invisible), so typing changes zero geometry — no
+// re-wrapping, no caret push, no layout shift. The reveal is pure opacity,
+// and the "caret" is a block highlight on the next untyped cell (classic
+// terminal cursor) — it occupies the cell it already owns.
 function renderFragments(
   fragments: WhoamiFragment[],
   charsShown: number,
@@ -597,23 +760,21 @@ function renderFragments(
 ): ReactNode[] {
   const out: ReactNode[] = []
   let cursor = 0
-  let caretPlaced = false
   for (let fi = 0; fi < fragments.length; fi++) {
     const frag = fragments[fi]
-    const typed = Math.max(0, Math.min(frag.t.length, charsShown - cursor))
-    const shown = frag.t.slice(0, typed)
-    const rest = frag.t.slice(typed)
-    const placeCaret = showCaret && !caretPlaced && rest.length > 0
-    if (placeCaret) caretPlaced = true
+    const start = cursor
     out.push(
       <span key={fi} className={frag.cls}>
-        {shown}
-        {placeCaret && <CaretInline />}
-        {/* The untyped remainder stays in the layout (transparent) so every line
-            always occupies its final, fully-wrapped height. Without this the
-            terminal grows/shrinks as it types + loops — a 120px height swing on
-            mobile that was the dominant source of layout shift (CLS). */}
-        {rest && <span className="text-transparent">{rest}</span>}
+        {[...frag.t].map((ch, ci) => {
+          const idx = start + ci
+          if (idx < charsShown) return ch
+          const isCaret = showCaret && idx === charsShown
+          return (
+            <span key={ci} className={isCaret ? 'term-caret' : 'opacity-0'}>
+              {ch}
+            </span>
+          )
+        })}
       </span>,
     )
     cursor += frag.t.length
@@ -632,16 +793,6 @@ function CaretInline() {
   )
 }
 
-// resting caret — glows + pulses (CSS .caret-glow)
-function GlowCaret() {
-  return (
-    <span
-      aria-hidden
-      className="caret-glow inline-block w-[8px] h-[15px] bg-accent rounded-[1px] align-middle translate-y-[-1px]"
-    />
-  )
-}
-
 // one console line with a code-editor line-number gutter
 function ConsoleRow({
   n,
@@ -649,7 +800,7 @@ function ConsoleRow({
   hidden = false,
   dim = false,
 }: {
-  n: number
+  n: number | string
   children: ReactNode
   hidden?: boolean
   dim?: boolean
@@ -670,6 +821,35 @@ function ConsoleRow({
   )
 }
 
+// ── interactive commands ──────────────────────────────────────────
+type TermEntry = { cmd: string; out: ReactNode }
+
+const TERM_JUMPS: Record<string, { id: string; label: string }> = {
+  work: { id: 'projects-section', label: 'selected work' },
+  projects: { id: 'projects-section', label: 'selected work' },
+  skills: { id: 'skills-section', label: 'skills' },
+  stack: { id: 'skills-section', label: 'skills' },
+  contact: { id: 'contact-section', label: 'contact' },
+}
+
+const TERM_HELP = (
+  <div>
+    <div>
+      <span className="text-ink">whoami</span> · replay the intro
+    </div>
+    <div>
+      <span className="text-ink">work</span> · <span className="text-ink">skills</span> ·{' '}
+      <span className="text-ink">contact</span> · jump to a section
+    </div>
+    <div>
+      <span className="text-ink">clear</span> · wipe the screen
+    </div>
+    <div className="text-ink-soft">
+      hint: real engineers use <span className="text-accent">sudo</span>
+    </div>
+  </div>
+)
+
 function WhoamiTerminal() {
   const lineLengths = useMemo(
     () => WHOAMI_OUTPUT.map((l) => l.reduce((n, f) => n + f.t.length, 0)),
@@ -679,9 +859,16 @@ function WhoamiTerminal() {
   const [typedPerLine, setTypedPerLine] = useState<number[]>(() =>
     WHOAMI_OUTPUT.map(() => 0),
   )
-  const [done, setDone] = useState(false)
+  // sticks true after the first reveal: the prompt row stays mounted (and
+  // focused input alive) even while `whoami` replays the intro
+  const [everDone, setEverDone] = useState(false)
   const [reduceMotion, setReduceMotion] = useState(false)
+  const [entries, setEntries] = useState<TermEntry[]>([])
+  const [draft, setDraft] = useState('')
+  // bumping this replays the whoami intro (the `whoami` command)
+  const [cycle, setCycle] = useState(0)
   const hostRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const reduce =
@@ -690,18 +877,16 @@ function WhoamiTerminal() {
     if (reduce) {
       setTypedCmd(WHOAMI_COMMAND)
       setTypedPerLine(lineLengths)
-      setDone(true)
+      setEverDone(true)
       setReduceMotion(true)
       return
     }
 
-    // How long the finished bio holds on screen before the reveal re-types.
-    const HOLD_MS = 4000
+    // Type-ONCE reveal (no perpetual loop — the terminal parks on an
+    // interactive prompt when finished, so the main thread goes quiet).
     const timers: ReturnType<typeof setTimeout>[] = []
     const intervals: ReturnType<typeof setInterval>[] = []
     let cancelled = false
-    let inView = true
-    let pendingRestart = false
 
     function addTimer(fn: () => void, ms: number) {
       const t = setTimeout(() => {
@@ -710,19 +895,10 @@ function WhoamiTerminal() {
       timers.push(t)
     }
 
-    function maybeRestart() {
-      if (cancelled) return
-      // Only loop while the hero is actually on screen + the tab is visible, so
-      // the main thread stays quiet when nobody is watching the terminal.
-      if (inView && !document.hidden) startCycle()
-      else pendingRestart = true
-    }
-
     function typeLine(lineIdx: number) {
       if (cancelled) return
       if (lineIdx >= WHOAMI_OUTPUT.length) {
-        addTimer(() => setDone(true), 360)
-        addTimer(maybeRestart, 360 + HOLD_MS)
+        addTimer(() => setEverDone(true), 360)
         return
       }
       const targetLen = lineLengths[lineIdx]
@@ -732,7 +908,9 @@ function WhoamiTerminal() {
           clearInterval(interval)
           return
         }
-        const burst = Math.random() < 0.22 ? 2 : 1
+        // same chars/second as a per-char tick, but 3× fewer React renders —
+        // long-task cost during load matters more than per-char granularity
+        const burst = Math.random() < 0.35 ? 4 : 3
         chars = Math.min(chars + burst, targetLen)
         setTypedPerLine((prev) => {
           const next = [...prev]
@@ -741,73 +919,92 @@ function WhoamiTerminal() {
         })
         if (chars >= targetLen) {
           clearInterval(interval)
-          addTimer(() => typeLine(lineIdx + 1), 240)
+          addTimer(() => typeLine(lineIdx + 1), 150)
         }
-      }, 22)
+      }, 42)
       intervals.push(interval)
     }
 
-    function startCycle() {
-      if (cancelled) return
-      // wipe the previous pass, then re-type from `whoami`
-      setDone(false)
-      setTypedCmd('')
-      setTypedPerLine(WHOAMI_OUTPUT.map(() => 0))
-      let cmdChar = 0
-      const cmdInt = setInterval(() => {
-        if (cancelled) {
-          clearInterval(cmdInt)
-          return
-        }
-        cmdChar++
-        setTypedCmd(WHOAMI_COMMAND.slice(0, cmdChar))
-        if (cmdChar >= WHOAMI_COMMAND.length) {
-          clearInterval(cmdInt)
-          addTimer(() => typeLine(0), 360)
-        }
-      }, 95)
-      intervals.push(cmdInt)
-    }
-
-    // Pause/resume the loop with viewport visibility — when the hero scrolls
-    // away the current pass finishes, then it parks until it's seen again.
-    const host = hostRef.current
-    let io: IntersectionObserver | null = null
-    if (host && typeof IntersectionObserver !== 'undefined') {
-      io = new IntersectionObserver(
-        (entries) => {
-          inView = entries[0]?.isIntersecting ?? true
-          if (inView && pendingRestart && !document.hidden) {
-            pendingRestart = false
-            startCycle()
-          }
-        },
-        { rootMargin: '0px' },
-      )
-      io.observe(host)
-    }
-    const onVis = () => {
-      if (!document.hidden && inView && pendingRestart) {
-        pendingRestart = false
-        startCycle()
+    setTypedCmd('')
+    setTypedPerLine(WHOAMI_OUTPUT.map(() => 0))
+    let cmdChar = 0
+    const cmdInt = setInterval(() => {
+      if (cancelled) {
+        clearInterval(cmdInt)
+        return
       }
-    }
-    document.addEventListener('visibilitychange', onVis)
-
-    startCycle()
+      cmdChar++
+      setTypedCmd(WHOAMI_COMMAND.slice(0, cmdChar))
+      if (cmdChar >= WHOAMI_COMMAND.length) {
+        clearInterval(cmdInt)
+        addTimer(() => typeLine(0), 240)
+      }
+    }, 60)
+    intervals.push(cmdInt)
 
     return () => {
       cancelled = true
       intervals.forEach((i) => clearInterval(i))
       timers.forEach((t) => clearTimeout(t))
-      io?.disconnect()
-      document.removeEventListener('visibilitychange', onVis)
     }
-  }, [lineLengths])
+  }, [lineLengths, cycle])
+
+  const runCommand = (raw: string) => {
+    const cmd = raw.trim()
+    if (!cmd) return
+    const c = cmd.toLowerCase()
+    if (c === 'clear') {
+      setEntries([])
+      return
+    }
+    if (c === 'whoami') {
+      setEntries([])
+      setCycle((k) => k + 1)
+      return
+    }
+    let out: ReactNode
+    if (c === 'help' || c === '?') {
+      out = TERM_HELP
+    } else if (TERM_JUMPS[c]) {
+      const jump = TERM_JUMPS[c]
+      out = (
+        <span>
+          opening <span className="text-ink">{jump.label}</span>…
+        </span>
+      )
+      setTimeout(() => {
+        document.getElementById(jump.id)?.scrollIntoView({ behavior: 'auto', block: 'start' })
+      }, 350)
+    } else if (c === 'sudo hire-felix' || c === 'sudo hire felix' || c === 'sudo hire') {
+      // detonate + reassemble the particle headline
+      window.dispatchEvent(new Event('fx:burst'))
+      out = (
+        <span>
+          <span className="text-lime">access granted</span> — offer inbound. felix@
+          <span className="text-accent">your-team</span> provisioned ✓
+        </span>
+      )
+    } else if (c === 'hire-felix' || c === 'hire felix' || c === 'hire') {
+      out = (
+        <span className="text-amber">
+          permission denied — try <span className="text-ink">sudo hire-felix</span>
+        </span>
+      )
+    } else {
+      out = (
+        <span>
+          command not found: <span className="text-ink">{cmd}</span> — try{' '}
+          <span className="text-accent">help</span>
+        </span>
+      )
+    }
+    setEntries((prev) => [...prev.slice(-2), { cmd, out }])
+  }
 
   const cmdTyping = typedCmd.length < WHOAMI_COMMAND.length
   const activeLineIdx = typedPerLine.findIndex((n, i) => n > 0 && n < lineLengths[i])
   const caretOnLine = !cmdTyping && activeLineIdx !== -1 ? activeLineIdx : -1
+  const entryBase = WHOAMI_OUTPUT.length + 2
 
   return (
     <m.div
@@ -815,7 +1012,9 @@ function WhoamiTerminal() {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      className="relative max-w-2xl mb-7 rounded-2xl overflow-hidden"
+      // the whole terminal is a click target for its prompt (real terminal feel)
+      onClick={() => everDone && inputRef.current?.focus({ preventScroll: true })}
+      className={`relative max-w-2xl mb-7 rounded-2xl overflow-hidden ${everDone ? 'cursor-text' : ''}`}
     >
       {/* feathered frosted backdrop — dissolves into the shader at its edges
           instead of sitting on top as a framed card */}
@@ -875,10 +1074,60 @@ function WhoamiTerminal() {
           )
         })}
 
-        <ConsoleRow n={WHOAMI_OUTPUT.length + 2} dim hidden={!done}>
+        {/* interactive history — capped at the last 3 commands. The log
+            container is always mounted so the live region exists before its
+            first announcement (screen readers miss regions that appear with
+            their content). */}
+        <div role="log" aria-live="polite">
+          {entries.map((e, i) => (
+            <div key={`${i}-${e.cmd}`} className="term-entry">
+              <ConsoleRow n={entryBase + i * 2} dim>
+                <span className="text-accent mr-2">$</span>
+                <span className="text-ink">{e.cmd}</span>
+              </ConsoleRow>
+              <ConsoleRow n={entryBase + i * 2 + 1}>
+                <span className="text-accent/45 mr-2 select-none">▸</span>
+                {e.out}
+              </ConsoleRow>
+            </div>
+          ))}
+        </div>
+
+        {/* live prompt — a real terminal. Type `help`. Always mounted (it
+            reserves its row from first paint — no shift when it activates,
+            and focus survives a `whoami` replay), revealed once typed out. */}
+        <div
+          className={`flex min-h-[1.85em] transition-opacity duration-300 ${
+            everDone ? 'opacity-100' : 'opacity-0'
+          }`}
+          aria-hidden={!everDone}
+        >
+          <span className="w-7 shrink-0 text-right pr-3 mr-3 border-r border-border/40 text-ink-soft/40 select-none">
+            ❯
+          </span>
           <span className="text-accent mr-2">$</span>
-          <GlowCaret />
-        </ConsoleRow>
+          <input
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                runCommand(draft)
+                setDraft('')
+              }
+            }}
+            aria-label="Terminal command input"
+            placeholder='type "help"'
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+            enterKeyHint="go"
+            tabIndex={everDone ? 0 : -1}
+            className="flex-1 min-w-0 bg-transparent border-none outline-none font-mono text-[16px] md:text-[14px] text-ink placeholder:text-ink-soft/45 rounded focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent/50"
+            style={{ caretColor: 'hsl(var(--accent))' }}
+          />
+        </div>
       </div>
     </m.div>
   )

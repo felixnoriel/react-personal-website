@@ -16,6 +16,17 @@ import { useFxLevel } from '../../hooks/useFxLevel'
 // GlassPanels for legibility — the hero's proven pattern.
 // ============================================================
 
+// Scroll-scrubbed entrances: on desktop browsers with CSS scroll-driven
+// animations, headings/cards are tied to scroll position (see .sec-rise in
+// index.css) instead of framer's one-shot whileInView triggers. Decided ONCE
+// at load so exactly one system ever owns an element's transform/opacity.
+const SCRUBBED =
+  typeof window !== 'undefined' &&
+  typeof CSS !== 'undefined' &&
+  CSS.supports?.('animation-timeline: view()') === true &&
+  window.matchMedia?.('(min-width: 768px)').matches === true &&
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches !== true
+
 // Transparent section wrapper — lets the global shader show through.
 export function SectionShell({
   id,
@@ -141,7 +152,7 @@ export function GlassPanel({
         boxShadow: `inset 0 1px 0 0 hsl(var(--background) / 0.6), inset 0 0 0 1px hsl(var(--background) / 0.14), 0 26px 64px -30px hsl(var(--ink) / 0.5), 0 0 60px -16px hsl(${ACCENT[accent].hsl} / 0.18)`,
         ...(tiltOn ? { willChange: 'transform' } : {}),
       }}
-      className={`group/glass relative rounded-2xl border border-ink/[0.07] bg-background/60 backdrop-blur-xl md:backdrop-blur-2xl overflow-hidden ${className}`}
+      className={`group/glass corner-squircle relative rounded-2xl border border-ink/[0.07] bg-background/60 backdrop-blur-xl md:backdrop-blur-2xl overflow-hidden ${className}`}
     >
       {/* cursor-follow accent glow */}
       {spotOn && (
@@ -255,6 +266,19 @@ export function SectionHeading({
   align?: 'left' | 'between'
   className?: string
 }) {
+  if (SCRUBBED) {
+    return (
+      <div className={`sec-rise ${className}`}>
+        <SectionHeadingInner
+          eyebrow={eyebrow}
+          meta={meta}
+          title={title}
+          intro={intro}
+          align={align}
+        />
+      </div>
+    )
+  }
   return (
     <m.div
       initial={{ opacity: 0, y: 20 }}
@@ -263,6 +287,32 @@ export function SectionHeading({
       transition={{ duration: 0.7, ease: EASE }}
       className={className}
     >
+      <SectionHeadingInner
+        eyebrow={eyebrow}
+        meta={meta}
+        title={title}
+        intro={intro}
+        align={align}
+      />
+    </m.div>
+  )
+}
+
+function SectionHeadingInner({
+  eyebrow,
+  meta,
+  title,
+  intro,
+  align,
+}: {
+  eyebrow: string
+  meta?: ReactNode
+  title: ReactNode
+  intro?: ReactNode
+  align: 'left' | 'between'
+}) {
+  return (
+    <>
       <div className="flex items-center gap-3 mb-4 font-mono text-[11px] tracking-[0.25em] uppercase text-ink-soft">
         <span className="text-accent">—</span>
         <span>{eyebrow}</span>
@@ -280,7 +330,7 @@ export function SectionHeading({
             : ''
         }
       >
-        <h2 className="font-display text-4xl md:text-5xl lg:text-[3.4rem] leading-[1.02] font-bold tracking-tighter text-ink text-balance max-w-3xl">
+        <h2 className="text-box-cap font-display text-4xl md:text-5xl lg:text-[3.4rem] leading-[1.02] font-bold tracking-tighter text-ink text-balance max-w-3xl">
           {title}
         </h2>
         {intro && align === 'between' && (
@@ -292,11 +342,13 @@ export function SectionHeading({
       {intro && align !== 'between' && (
         <p className="mt-4 text-ink-muted leading-relaxed max-w-xl">{intro}</p>
       )}
-    </m.div>
+    </>
   )
 }
 
-// Reusable scroll-reveal wrapper for staggered content blocks.
+// Reusable scroll-reveal wrapper for staggered content blocks. Scrubbed
+// browsers get the CSS view-timeline rise (stagger comes free from each
+// block's own scroll position — `delay` only applies to the framer path).
 export function Reveal({
   children,
   delay = 0,
@@ -308,6 +360,9 @@ export function Reveal({
   y?: number
   className?: string
 }) {
+  if (SCRUBBED) {
+    return <div className={`sec-rise ${className}`}>{children}</div>
+  }
   return (
     <m.div
       initial={{ opacity: 0, y }}

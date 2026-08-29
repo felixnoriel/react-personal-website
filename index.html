@@ -1,4 +1,8 @@
 <!doctype html>
+<!-- Light theme (Felix's call). Every fx layer (aurora shader, galaxy,
+     particle headline) is theme-aware and reads its palette from the CSS
+     tokens — add class="dark" here to flip the whole site back to the
+     cinematic dark variant. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,15 +14,18 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Variable fonts (wght ranges): ONE file per family instead of 7 static
+         Montserrat weights — fewer bytes + requests, and the continuous wght
+         axis powers the hero's kinetic (cursor-swell) headline. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
       <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
         rel="stylesheet"
       />
     </noscript>
@@ -35,7 +42,82 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Static pre-hydration frame: paints the dark boot screen the instant
+         HTML+CSS arrive, seconds before the JS bundle executes (first paint
+         no longer waits for React). React replaces it on mount, dark→dark,
+         so the swap is invisible. -->
+    <style>
+      #boot-static {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: #060611;
+        color: rgba(255, 255, 255, 0.82);
+        font-family: ui-monospace, Menlo, monospace;
+        letter-spacing: 0.32em;
+        font-size: 13px;
+      }
+      #boot-static .core {
+        width: 46px;
+        height: 46px;
+        border: 1.5px solid #8effa6;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        color: #fff;
+        box-shadow: 0 0 18px rgba(142, 255, 166, 0.5);
+      }
+      #boot-static .ghost {
+        position: absolute;
+        left: 6vw;
+        top: 18vh;
+        font-family: 'Montserrat', 'Montserrat Fallback', Arial, sans-serif;
+        font-weight: 700;
+        font-size: clamp(38px, 6.2vw, 80px);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: rgba(160, 150, 220, 0.16);
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      #boot-static .bar {
+        width: 210px;
+        height: 3px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+      #boot-static .bar::after {
+        content: '';
+        display: block;
+        height: 100%;
+        width: 40%;
+        background: #8effa6;
+        animation: boot-sweep 1s ease-in-out infinite;
+      }
+      @keyframes boot-sweep {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(260%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #boot-static .bar::after { animation: none; }
+      }
+    </style>
+    <div id="root">
+      <div id="boot-static">
+        <div class="ghost" aria-hidden="true">Product Engineer<br />Problem Solver</div>
+        <div class="core">FX</div>
+        <div>BOOTING&nbsp;WORKSPACE</div>
+        <div class="bar"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

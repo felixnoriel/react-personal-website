@@ -179,7 +179,7 @@ const PLACES: {
 }[] = [
   {
     image:
-      'https://images.unsplash.com/photo-1649061267116-bf9d813b3757?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwbm9tYWQlMjBsYXB0b3AlMjBjYWZlfGVufDF8fHx8MTc2NTMyNTcwNHww&ixlib=rb-4.1.0&q=80&w=1080',
+      'https://images.unsplash.com/photo-1649061267116-bf9d813b3757?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwbm9tYWQlMjBsYXB0b3AlMjBjYWZlfGVufDF8fHx8MTc2NTMyNTcwNHww&ixlib=rb-4.1.0&q=80&w=640',
     title: 'Café coding',
     location: 'Tokyo, Japan',
     description: 'Best matcha lattes while debugging',
@@ -187,7 +187,7 @@ const PLACES: {
   },
   {
     image:
-      'https://images.unsplash.com/photo-1609765685592-703a97c877ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhaXJwbGFuZSUyMHdpbmRvdyUyMHRyYXZlbHxlbnwxfHx8fDE3NjUzMDE2MTF8MA&ixlib=rb-4.1.0&q=80&w=1080',
+      'https://images.unsplash.com/photo-1609765685592-703a97c877ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhaXJwbGFuZSUyMHdpbmRvdyUyMHRyYXZlbHxlbnwxfHx8fDE3NjUzMDE2MTF8MA&ixlib=rb-4.1.0&q=80&w=640',
     title: 'Cloud office',
     location: '35,000 ft',
     description: 'Where merge conflicts meet turbulence',
@@ -195,7 +195,7 @@ const PLACES: {
   },
   {
     image:
-      'https://images.unsplash.com/photo-1652793822328-47340b1b4407?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXR5JTIwd2Fsa2luZyUyMHN0cmVldHxlbnwxfHx8fDE3NjUzMjU3MDR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+      'https://images.unsplash.com/photo-1652793822328-47340b1b4407?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXR5JTIwd2Fsa2luZyUyMHN0cmVldHxlbnwxfHx8fDE3NjUzMjU3MDR8MA&ixlib=rb-4.1.0&q=80&w=640',
     title: 'City explorer',
     location: 'Street markets',
     description: 'Best ideas come while walking',
@@ -203,7 +203,7 @@ const PLACES: {
   },
   {
     image:
-      'https://images.unsplash.com/photo-1758767055219-35755e2d76bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJlZXQlMjBmb29kJTIwY3VsdHVyZXxlbnwxfHx8fDE3NjUzMjU3MDR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+      'https://images.unsplash.com/photo-1758767055219-35755e2d76bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJlZXQlMjBmb29kJTIwY3VsdHVyZXxlbnwxfHx8fDE3NjUzMjU3MDR8MA&ixlib=rb-4.1.0&q=80&w=640',
     title: 'Food adventures',
     location: 'Everywhere',
     description: 'Trying local cuisines between commits',
@@ -226,7 +226,7 @@ export function NomadLife() {
   const current = CITIES.find((c) => c.current)!
 
   return (
-    <SectionShell id="nomad-section">
+    <SectionShell>
       <SectionHeading
         align="between"
         eyebrow="nomad.log"
@@ -288,13 +288,15 @@ export function NomadLife() {
 function PlaceCard({ place }: { place: (typeof PLACES)[number] }) {
   const Icon = place.icon
   return (
-    <div className="group relative rounded-2xl overflow-hidden border border-border/60 aspect-[4/5] bg-surface">
-      <img
-        src={place.image}
-        alt={place.title}
-        loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-      />
+    <div className="group relative rounded-2xl overflow-hidden border border-border/60 aspect-[4/5] bg-surface vt-card">
+      <div className="vt-parallax absolute inset-0">
+        <img
+          src={place.image}
+          alt={place.title}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      </div>
       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(253_38%_8%/0.9)] via-[hsl(253_38%_8%/0.25)] to-transparent" />
       <div className="absolute bottom-0 inset-x-0 p-4 text-white">
         <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.14em] text-white/75">

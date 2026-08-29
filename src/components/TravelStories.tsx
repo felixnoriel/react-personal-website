@@ -80,6 +80,7 @@ export function TravelStories({ stories }: TravelStoriesProps) {
       <div className="mt-8">
         <Link
           to="/blog"
+          viewTransition
           className="group inline-flex items-center gap-2 font-mono text-sm text-ink hover:text-accent transition-colors"
         >
           <span className="text-accent">$</span> open ./archive ·{' '}
@@ -93,16 +94,18 @@ export function TravelStories({ stories }: TravelStoriesProps) {
 
 function FeatureCard({ post }: { post: BlogPost }) {
   return (
-    <Link to={`/blog/${post.slug}`} className="group block h-full">
-      <GlassPanel className="h-full flex flex-col overflow-hidden">
+    <Link to={`/blog/${post.slug}`} viewTransition className="group block h-full">
+      <GlassPanel className="h-full flex flex-col overflow-hidden vt-card">
         <div className="relative aspect-[16/10] overflow-hidden bg-surface">
           {post.image?.url && (
-            <img
-              src={post.image.url}
-              alt={post.image.alt || post.title}
-              loading="lazy"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
+            <div className="vt-parallax absolute inset-0">
+              <img
+                src={post.image.url}
+                alt={post.image.alt || post.title}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(253_38%_8%/0.55)] to-transparent" />
           <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur border border-border/60 font-mono text-[10px] uppercase tracking-[0.14em] text-ink">
@@ -132,16 +135,18 @@ function FeatureCard({ post }: { post: BlogPost }) {
 
 function Postcard({ post }: { post: BlogPost }) {
   return (
-    <Link to={`/blog/${post.slug}`} className="group block h-full">
-      <GlassPanel accentTop={false} className="h-full flex flex-col overflow-hidden">
+    <Link to={`/blog/${post.slug}`} viewTransition className="group block h-full">
+      <GlassPanel accentTop={false} className="h-full flex flex-col overflow-hidden vt-card">
         <div className="relative aspect-[16/10] overflow-hidden bg-surface">
           {post.image?.url && (
-            <img
-              src={post.image.url}
-              alt={post.image.alt || post.title}
-              loading="lazy"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
+            <div className="vt-parallax absolute inset-0">
+              <img
+                src={post.image.url}
+                alt={post.image.alt || post.title}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
           )}
         </div>
         <div className="p-4 flex flex-col flex-1">

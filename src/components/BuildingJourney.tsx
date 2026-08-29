@@ -52,7 +52,7 @@ export function BuildingJourney({
   showViewAllLink = true,
 }: BuildingJourneyProps) {
   return (
-    <SectionShell id="career-section">
+    <SectionShell>
       <SectionHeading
         eyebrow="experience"
         meta="2014 → now"
@@ -65,18 +65,28 @@ export function BuildingJourney({
         intro="Startups across gaming, hospitality, education, and publishing — the products and teams that shaped how I work."
       />
 
-      <div className="mt-12 space-y-5">
-        {experiences.map((exp, i) => (
-          <Reveal key={exp.slug} delay={i * 0.05}>
-            <CareerCard exp={exp} accent={CYCLE[i % CYCLE.length]} isCurrent={i === 0} />
-          </Reveal>
-        ))}
+      {/* spine-host: a commit-graph spine draws itself down the timeline as
+          you scroll (CSS view-timeline; static hairline where unsupported) */}
+      <div className="mt-12 relative spine-host">
+        <span
+          aria-hidden
+          className="spine-rail hidden lg:block absolute -left-6 top-3 bottom-3 w-px bg-gradient-to-b from-accent via-electric to-lime/70 opacity-70"
+          style={{ boxShadow: '0 0 12px hsl(var(--accent) / 0.35)' }}
+        />
+        <div className="space-y-5">
+          {experiences.map((exp, i) => (
+            <Reveal key={exp.slug} delay={i * 0.05}>
+              <CareerCard exp={exp} accent={CYCLE[i % CYCLE.length]} isCurrent={i === 0} />
+            </Reveal>
+          ))}
+        </div>
       </div>
 
       {showViewAllLink && (
         <div className="mt-8">
           <Link
             to="/career"
+            viewTransition
             className="group inline-flex items-center gap-2 font-mono text-sm text-ink hover:text-accent transition-colors"
           >
             <span className="text-accent">$</span> cd ./full-experience

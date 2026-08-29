@@ -58,6 +58,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     --background: 253 30% 8%;
     --foreground: 79 30% 96%;
 
@@ -111,6 +112,20 @@
   descent-override: 22.25%;
   line-gap-override: 0%;
   size-adjust: 112.8%;
+}
+
+/* Metric-matched fallback for JetBrains Mono (Courier New re-scaled to its
+   0.600em advance + 1020/300 vertical metrics). Monospace wrap-points are
+   pure advance-width math, so matching the advance keeps every terminal
+   line wrapping identically before/after the web font swaps in — without
+   this the whoami terminal collapsed ~86px on a cold-cache first visit. */
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Courier New');
+  ascent-override: 102%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+  size-adjust: 99.98%;
 }
 
 @layer base {
@@ -186,7 +201,7 @@
   }
 
   .font-mono {
-    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', ui-monospace, monospace;
+    font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', 'SF Mono', 'Monaco', 'Menlo', ui-monospace, monospace;
     font-feature-settings: 'ss01', 'ss02';
   }
 
@@ -912,22 +927,134 @@ section:not(#hero) {
     will-change: transform;
   }
 
-  @keyframes caret-glow {
-    0%,
-    45% {
-      opacity: 1;
-      box-shadow:
-        0 0 10px hsl(var(--accent) / 0.85),
-        0 0 4px hsl(var(--accent) / 0.9);
-    }
-    55%,
-    100% {
-      opacity: 0.25;
-      box-shadow: 0 0 0 transparent;
+  /* headline ghost — while the particle swarm carries the headline, the
+     real DOM text fades to a faint watermark (it keeps its full layout
+     size + selectability + SEO). Its aurora/glitch loops stop so an
+     invisible element isn't repainting every frame. */
+  .hl-swap {
+    transition: opacity 0.6s ease;
+  }
+  .headline-ghost .hl-swap {
+    /* faint aurora text stays under the particles: it fills the gaps between
+       points so the glyphs read solid, and keeps the headline legible even
+       mid-burst — the swarm carries the motion, the ghost carries the ink */
+    opacity: 0.16;
+  }
+  /* dark theme: the busy nebula behind demands a stronger text anchor —
+     legibility beats spectacle, always */
+  .dark .headline-ghost .hl-swap {
+    opacity: 0.4;
+  }
+  /* dark theme: the cursor halo reads much hotter over deep space — calm it */
+  .dark .cursor-aura-halo {
+    background: radial-gradient(
+      circle at center,
+      hsl(var(--accent) / 0.12),
+      hsl(var(--accent) / 0.045) 45%,
+      transparent 70%
+    );
+  }
+  .headline-ghost .electric-text {
+    animation: none !important;
+    filter: none !important;
+  }
+
+  /* terminal block cursor — highlights the next untyped cell in place,
+     so the caret never adds width or moves layout */
+  .term-caret {
+    background: hsl(var(--ink) / 0.85);
+    color: transparent;
+    border-radius: 1px;
+  }
+
+  /* ============================================================
+     2025/2026 platform batch — every rule progressive, nothing
+     required for the page to work.
+     ============================================================ */
+
+  /* squircle corners (corner-shape, Chrome 2025) — iOS-grade curvature
+     continuity on glass panels and pills where supported */
+  @supports (corner-shape: squircle) {
+    .corner-squircle {
+      corner-shape: squircle;
     }
   }
-  .caret-glow {
-    animation: caret-glow 1.15s ease-in-out infinite;
+
+  /* optical text boxes (text-box-trim) — headings sit EXACTLY on their
+     cap height, no phantom leading above/below */
+  @supports (text-box: trim-both cap alphabetic) {
+    .text-box-cap {
+      text-box: trim-both cap alphabetic;
+    }
+  }
+
+  /* prettier paragraph rag everywhere it's supported */
+  p {
+    text-wrap: pretty;
+  }
+
+  /* native stagger (sibling-index(), Chrome 2025) — children cascade in
+     with zero per-item JS delays. Falls back to a plain simultaneous
+     fade where unsupported. */
+  @keyframes stagger-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .stagger-in > * {
+      animation: stagger-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+    @supports (animation-delay: calc(sibling-index() * 1ms)) {
+      .stagger-in > * {
+        animation-delay: calc(sibling-index() * 70ms);
+      }
+    }
+  }
+
+  /* terminal entries grow in natively (interpolate-size + @starting-style,
+     the no-keyframes entry-animation pattern) */
+  .term-entry {
+    interpolate-size: allow-keywords;
+    height: auto;
+    overflow: clip;
+    transition:
+      height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.28s ease;
+    @starting-style {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  /* spring pop — a real spring curve via linear(), no JS physics */
+  .spring-pop {
+    transition: scale 0.45s
+      linear(0, 0.32 9%, 0.87 22%, 1.06 33%, 1.02 42%, 0.99 54%, 1 100%);
+  }
+  .spring-pop:hover {
+    scale: 1.035;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-in > *,
+    .spring-pop {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* film grain finish — static SVG turbulence, one fixed layer, zero JS.
+     The subtle texture that keeps large dark fields from banding. */
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* aurora text — a flowing palette field masked to the glyphs via
@@ -1061,7 +1188,6 @@ section:not(#hero) {
 @media (prefers-reduced-motion: reduce) {
   .aurora-ring::before,
   .eq-bar,
-  .caret-glow,
   .aurora-text,
   .electric-text {
     animation: none !important;
@@ -1161,5 +1287,161 @@ section:not(#hero) {
 @media (prefers-reduced-motion: reduce) {
   .nav-zap {
     animation: none;
+  }
+}
+
+/* ============================================================
+   Hero scroll-exit — native CSS scroll-driven animations.
+   As the hero leaves the viewport its layers drift out at
+   staggered depths (headline fastest, deck slower, HUD frame
+   fades first). Runs on the compositor with ZERO JavaScript;
+   browsers without animation-timeline just scroll normally.
+   The animated wrappers are dedicated divs so this transform
+   never fights framer-motion's inline entrance transforms or
+   the parallax rig's `translate` (separate property).
+   ============================================================ */
+@supports (animation-timeline: view()) {
+  #hero {
+    view-timeline-name: --hero-vt;
+  }
+  /* The transform+opacity exits are desktop-only: on phones they'd force
+     per-scroll-frame re-rasterization of a subtree full of backdrop-blur
+     panels (this repo has burned on mobile scroll cost before). The ranges
+     start at exit 18%+ so nothing visibly fades while the hero content is
+     still front-and-center at the first scrolled pixels of a 100vh hero. */
+  @media (min-width: 768px) {
+    .hero-exit-head {
+      animation: hero-exit-head linear both;
+      animation-timeline: --hero-vt;
+      animation-range: exit 18% exit 80%;
+    }
+    .hero-exit-panel {
+      animation: hero-exit-panel linear both;
+      animation-timeline: --hero-vt;
+      animation-range: exit 22% exit 92%;
+    }
+  }
+  .hero-exit-hud {
+    animation: hero-exit-fade linear both;
+    animation-timeline: --hero-vt;
+    animation-range: exit 0% exit 40%;
+  }
+  @keyframes hero-exit-head {
+    to {
+      transform: translateY(-64px) scale(0.97);
+      opacity: 0;
+    }
+  }
+  @keyframes hero-exit-panel {
+    to {
+      transform: translateY(-26px);
+      opacity: 0;
+    }
+  }
+  @keyframes hero-exit-fade {
+    to {
+      opacity: 0;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-exit-head,
+  .hero-exit-panel,
+  .hero-exit-hud {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Scroll-scrubbed section choreography — native CSS scroll-driven
+   animations, ZERO JavaScript. Cards and headings are physically
+   tied to scroll: they rise and settle as they enter, sink back
+   when you reverse. Desktop-only (animating backdrop-blur subtrees
+   re-rasterizes per frame on phones) and reduced-motion off; other
+   browsers keep framer's trigger-based entrances (section.tsx picks
+   ONE owner per environment so the two never fight).
+   ============================================================ */
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .sec-rise {
+      animation: sec-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 90%;
+    }
+    @keyframes sec-rise {
+      from {
+        opacity: 0;
+        transform: translateY(46px) scale(0.975);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* career timeline spine — draws itself as the list scrolls through */
+    .spine-host {
+      view-timeline-name: --vt-spine;
+    }
+    .spine-rail {
+      transform-origin: top;
+      animation: spine-draw linear both;
+      animation-timeline: --vt-spine;
+      animation-range: cover 0% cover 85%;
+    }
+    @keyframes spine-draw {
+      from {
+        transform: scaleY(0);
+      }
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    /* per-card image parallax — the image drifts inside its masked card
+       while the card crosses the viewport (the scale hides the travel).
+       Lives on a dedicated wrapper so hover-zoom on the img composes. */
+    .vt-card {
+      view-timeline-name: --vt-card;
+    }
+    .vt-parallax {
+      animation: card-parallax linear both;
+      animation-timeline: --vt-card;
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes card-parallax {
+      from {
+        transform: translateY(-6.5%) scale(1.14);
+      }
+      to {
+        transform: translateY(6.5%) scale(1.14);
+      }
+    }
+  }
+}
+
+/* ============================================================
+   View Transitions — route changes crossfade + drift instead of
+   hard-cutting (react-router `viewTransition` links). Browsers
+   without the API just navigate normally.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes vt-out {
+    to {
+      opacity: 0;
+      transform: translateY(-14px) scale(0.996);
+    }
+  }
+  @keyframes vt-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.996);
+    }
   }
 }

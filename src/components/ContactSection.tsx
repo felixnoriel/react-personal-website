@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { ArrowUpRight, Check, Coffee, Copy, Mail, MapPin, Send } from 'lucide-react'
 import { LiveClock } from './ui/LiveClock'
+import { MagneticButton } from './ui/MagneticButton'
 import {
   FxWord,
   GlassPanel,
@@ -47,7 +48,7 @@ export function ContactSection() {
   }
 
   return (
-    <SectionShell id="contact-section">
+    <SectionShell>
       <SectionHeading
         eyebrow="contact"
         meta={
@@ -99,8 +100,9 @@ export function ContactSection() {
                   className="w-full bg-background/50 border border-border/60 rounded-lg px-3.5 py-2.5 text-ink placeholder:text-ink-soft/70 outline-none focus:border-accent/60 transition-colors resize-none"
                 />
               </Field>
-              <button
+              <MagneticButton
                 type="submit"
+                strength={0.3}
                 className="group inline-flex items-center gap-2 h-12 px-6 rounded-full bg-ink text-background text-sm font-medium hover:bg-accent transition-colors"
               >
                 {sent ? (
@@ -114,7 +116,7 @@ export function ContactSection() {
                     Send message
                   </>
                 )}
-              </button>
+              </MagneticButton>
             </form>
           </GlassPanel>
         </Reveal>

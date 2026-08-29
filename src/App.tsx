@@ -10,6 +10,10 @@ import { BootLoader } from './components/ui/BootLoader'
 
 // Lazy Load Pages
 const Home = lazy(() => import('./pages/Home').then(mod => ({ default: mod.Home })))
+// warm the Home chunk immediately (in parallel with React booting) instead
+// of waiting for the router to mount its Suspense — removes a fetch hop
+// from the LCP critical path
+import('./pages/Home')
 const Blog = lazy(() => import('./pages/Blog').then(mod => ({ default: mod.Blog })))
 const BlogDetail = lazy(() => import('./pages/BlogDetail').then(mod => ({ default: mod.BlogDetail })))
 const Projects = lazy(() => import('./pages/Projects').then(mod => ({ default: mod.Projects })))
@@ -20,6 +24,7 @@ const About = lazy(() => import('./pages/About').then(mod => ({ default: mod.Abo
 // Command palette is only needed on ⌘K — keep its code out of the initial bundle.
 const CommandPalette = lazy(() => import('./components/ui/CommandPalette').then(mod => ({ default: mod.CommandPalette })))
 import { initGA, trackError } from './utils/analytics'
+import { usePrefetchRoutes } from './hooks/usePrefetchRoutes'
 import { usePageTracking } from './hooks/usePageTracking'
 import { useScrollTracking } from './hooks/useScrollTracking'
 import { useTimeTracking } from './hooks/useTimeTracking'
@@ -33,13 +38,19 @@ function AnalyticsWrapper({ children }: { children: React.ReactNode }) {
   usePageTracking()
   useScrollTracking()
   useTimeTracking()
+  // hover-intent chunk prefetch — SPA navigations feel instant
+  usePrefetchRoutes()
   return <>{children}</>
 }
 
 function App() {
-  // Initialize Google Analytics on app mount
+  // Analytics init waits for idle — it should never compete with first paint
   useEffect(() => {
-    initGA()
+    const w = window as unknown as {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+    }
+    if (w.requestIdleCallback) w.requestIdleCallback(() => initGA(), { timeout: 3000 })
+    else setTimeout(initGA, 1200)
 
     // Global error tracking
     const handleError = (event: ErrorEvent) => {
@@ -63,7 +74,16 @@ function App() {
   // route/section chunks start downloading at t=0; the cinematic boot just
   // overlays for a beat and fades. (The old code hard-gated the whole app for
   // 3s, so nothing even began loading until the boot finished.)
-  const BOOT_MS = 1400
+  // Speed rules: the beat is SHORT, and a repeat visit in the same session
+  // skips the veil entirely — the cinematic intro is for first contact only.
+  const BOOT_MS = 800
+  const [skipBoot] = useState(() => {
+    try {
+      return sessionStorage.getItem('fx-booted') === '1'
+    } catch {
+      return false
+    }
+  })
   const [bootTimeUp, setBootTimeUp] = useState(false)
   // The veil also waits on the framer feature chunk: `m` components render in
   // their pre-animation `initial` state (e.g. opacity:0) until domMax loads, so
@@ -80,7 +100,21 @@ function App() {
       clearTimeout(t)
     }
   }, [])
-  const bootDone = bootTimeUp && featuresReady
+  const bootDone = skipBoot || (bootTimeUp && featuresReady)
+
+  // Tell fx components (particle headline) the veil is lifting, so their
+  // big entrance moment happens where the visitor can actually see it.
+  useEffect(() => {
+    if (bootDone) {
+      ;(window as unknown as { __fxBootDone?: boolean }).__fxBootDone = true
+      window.dispatchEvent(new Event('fx:bootdone'))
+      try {
+        sessionStorage.setItem('fx-booted', '1')
+      } catch {
+        /* private mode — every visit gets the boot, fine */
+      }
+    }
+  }, [bootDone])
 
   // ⌘K command palette — the listener is eager + tiny so it can lazy-load and
   // open the palette on demand; the palette component itself is a lazy chunk.

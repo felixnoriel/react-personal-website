@@ -161,7 +161,7 @@ export function Header() {
           return
         }
         if (redirectPath !== location.pathname) {
-          navigate(redirectPath)
+          navigate(redirectPath, { viewTransition: true })
           window.scrollTo({ top: 0, behavior: 'smooth' })
           return
         }
@@ -183,7 +183,7 @@ export function Header() {
   const handleContactClick = () => {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false)
-      navigate('/about')
+      navigate('/about', { viewTransition: true })
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }

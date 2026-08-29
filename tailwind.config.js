@@ -11,9 +11,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        sans: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'ui-monospace', 'monospace'],
+        display: ['Montserrat', 'Montserrat Fallback', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Montserrat', 'Montserrat Fallback', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'JetBrains Mono Fallback', 'SF Mono', 'Monaco', 'Menlo', 'ui-monospace', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',

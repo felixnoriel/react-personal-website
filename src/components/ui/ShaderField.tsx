@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import { useFxLevel } from '../../hooks/useFxLevel'
+import { hslVarToRgb } from '../../utils/glPalette'
 
 /**
  * ShaderField — the hero's signature "wow" background. A single WebGL
@@ -122,8 +123,9 @@ void main() {
   float band1 = abs(fract(f * 2.6 + t * 0.7) - 0.5);
   float band2 = abs(fract(f * 5.0 - t * 0.4) - 0.5);
   float fil = smoothstep(0.06, 0.0, band1) + 0.5 * smoothstep(0.035, 0.0, band2);
-  vec3 filCol = mix(u_c3, vec3(1.0), 0.35);
-  col += fil * 0.7 * filCol;
+  // filaments run cooler on dark — hot white bands wash the nebula gray
+  vec3 filCol = mix(u_c3, vec3(1.0), mix(0.35, 0.22, u_dark));
+  col += fil * mix(0.7, 0.5, u_dark) * filCol;
   col += glow * 0.8 * mix(u_c1, u_c2, 0.4);
 
   // lift saturation + contrast so it reads as a luminous energy field, not haze
@@ -135,8 +137,9 @@ void main() {
   a += fil * 0.35 * u_alpha;
   a += glow * 0.35;
 
-  // on light paper keep it airy; on dark mode let it breathe wider
-  a *= mix(0.9, 1.15, u_dark);
+  // on light paper keep it airy; on dark keep it QUIETER still — the
+  // field is atmosphere, never a competitor to the content above it
+  a *= mix(0.9, 0.72, u_dark);
 
   // click shockwaves — luminous rings expanding from each click point
   for (int i = 0; i < 5; i++) {
@@ -159,34 +162,6 @@ void main() {
 // Render the field at a fraction of CSS resolution. The field is soft, so a
 // smaller buffer looks identical while slashing fragment-shader fill cost.
 const REDUCED_SCALE = 0.6
-
-type RGB = [number, number, number]
-
-// Read an "H S% L%" CSS var → RGB 0..1. satBoost/lightTo turn the UI-tuned
-// (deliberately muted, for text contrast) brand colors into luminous versions
-// that actually glow as an aurora over the light paper instead of going muddy.
-function hslVarToRgb(
-  varName: string,
-  fallback: RGB,
-  satBoost = 1,
-  lightTo?: number,
-): RGB {
-  if (typeof window === 'undefined') return fallback
-  const raw = getComputedStyle(document.documentElement)
-    .getPropertyValue(varName)
-    .trim()
-  // expected "H S% L%"
-  const m = raw.match(/([\d.]+)\s+([\d.]+)%\s+([\d.]+)%/)
-  if (!m) return fallback
-  const h = parseFloat(m[1])
-  const s = Math.min(1, (parseFloat(m[2]) / 100) * satBoost)
-  const l = lightTo !== undefined ? lightTo : parseFloat(m[3]) / 100
-  const k = (n: number) => (n + h / 30) % 12
-  const aa = s * Math.min(l, 1 - l)
-  const f = (n: number) =>
-    l - aa * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))
-  return [f(0), f(8), f(4)]
-}
 
 function compile(gl: WebGLRenderingContext, type: number, src: string) {
   const sh = gl.createShader(type)
@@ -299,13 +274,18 @@ export const ShaderField = memo(function ShaderField({
       ripples: gl.getUniformLocation(prog, 'u_ripples'),
     }
 
-    // Palette from CSS variables → works in light or (future) dark mode.
+    // Palette from CSS variables — theme-aware luminance discipline: on
+    // dark the nebula must sit DEEP (low lightness) so content leads; the
+    // bright plasma look destroyed text contrast.
     const readPalette = () => {
-      gl.uniform3fv(U.c1, hslVarToRgb('--accent', [0.72, 0.3, 0.56], 1.35, 0.58))
-      gl.uniform3fv(U.c2, hslVarToRgb('--lime', [0.66, 0.82, 0.45], 1.3, 0.62))
-      gl.uniform3fv(U.c3, hslVarToRgb('--electric', [0.3, 0.5, 0.82], 1.4, 0.58))
-      gl.uniform3fv(U.c4, hslVarToRgb('--amber', [0.46, 0.4, 0.74], 1.35, 0.54))
       const isDark = document.documentElement.classList.contains('dark')
+      const L = isDark
+        ? { c1: 0.4, c2: 0.42, c3: 0.4, c4: 0.36 }
+        : { c1: 0.58, c2: 0.62, c3: 0.58, c4: 0.54 }
+      gl.uniform3fv(U.c1, hslVarToRgb('--accent', [0.72, 0.3, 0.56], 1.35, L.c1))
+      gl.uniform3fv(U.c2, hslVarToRgb('--lime', [0.66, 0.82, 0.45], 1.3, L.c2))
+      gl.uniform3fv(U.c3, hslVarToRgb('--electric', [0.3, 0.5, 0.82], 1.4, L.c3))
+      gl.uniform3fv(U.c4, hslVarToRgb('--amber', [0.46, 0.4, 0.74], 1.35, L.c4))
       gl.uniform1f(U.dark, isDark ? 1 : 0)
     }
     readPalette()
@@ -356,6 +336,24 @@ export const ShaderField = memo(function ShaderField({
     let last = performance.now()
     let contextLost = false
 
+    // Scroll surge — the field's drift speeds up with scroll velocity, so
+    // the whole page feels like it's moving THROUGH the aurora. Listener
+    // only records velocity; the render loop eases + decays it. No layout
+    // reads, no extra draws.
+    let surge = 0
+    let surgeTarget = 0
+    let lastScrollY = window.scrollY
+    let lastScrollT = performance.now()
+    const onScroll = () => {
+      const nowT = performance.now()
+      const dy = Math.abs(window.scrollY - lastScrollY)
+      const dtMs = Math.max(16, nowT - lastScrollT)
+      lastScrollY = window.scrollY
+      lastScrollT = nowT
+      surgeTarget = Math.min(1, (dy / dtMs) * 0.6)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+
     // click shockwaves — a click anywhere sends a ring through the field.
     // Capped at 5 concurrent; aged + pruned each frame. Pure uniform writes.
     const RIPPLE_LIFE = 1.6
@@ -397,7 +395,11 @@ export const ShaderField = memo(function ShaderField({
       }
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
-      elapsed += dt
+      // scroll surge: ease toward the latest velocity, decay it so the
+      // field settles back to its calm drift once scrolling stops
+      surge += (surgeTarget - surge) * 0.06
+      surgeTarget *= 0.92
+      elapsed += dt * (1 + surge * 2.4)
 
       // ease cursor + glow
       mouse.x += (mouse.tx - mouse.x) * 0.08
@@ -438,6 +440,7 @@ export const ShaderField = memo(function ShaderField({
       if (raf) cancelAnimationFrame(raf)
       ro.disconnect()
       mo.disconnect()
+      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('mousemove', onMove)
       document.removeEventListener('mouseleave', onLeave)
       window.removeEventListener('pointerdown', onDown)
@@ -476,6 +479,10 @@ export const ShaderField = memo(function ShaderField({
       {!reduceMotion && !webglFailed && (
         <canvas
           ref={canvasRef}
+          // fresh canvas node when crossing the md breakpoint: the effect
+          // cleanup loses the GL context, and getContext on the SAME node
+          // would return that dead context forever (kills the backdrop).
+          key={isMobile ? 'shader-m' : 'shader-d'}
           className="absolute inset-0 w-full h-full"
           style={{ width: '100%', height: '100%' }}
         />
