@@ -73,7 +73,12 @@ export function BootLoader({
       rafId = requestAnimationFrame(loop)
       if (now - lastPush < 80) return
       lastPush = now
-      const elapsed = (now - startedAt.current) / 1000
+      // Clamped at zero because the rAF timestamp is the frame's START time,
+      // and React now mounts inside an animation frame (see main.tsx) — so
+      // this first callback can carry a time from before startedAt was read
+      // during render. Negative elapsed drove progress negative, and
+      // TypingLine then read phases[-1] and threw on mount.
+      const elapsed = Math.max(0, now - startedAt.current) / 1000
       const eased = 1 - Math.pow(1 - Math.min(elapsed / durSec, 0.995), 3)
       setProgress(eased)
       setTick(Math.floor(elapsed * 10))
