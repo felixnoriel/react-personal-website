@@ -291,7 +291,10 @@ export function BootLoader({
                 : 0
             return (
               <m.div
-                key={`${step.addr}-${realIdx}`}
+                // keyed by SLOT, not by step: as the log window scrolls, each
+                // row updates its text in place instead of remounting, so the
+                // rows never jump (a remounting row reads as a layout shift)
+                key={rowIdx}
                 initial={reduce ? false : { opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
@@ -801,12 +804,20 @@ function TypingLine({
   ]
   const idx = Math.min(Math.floor(progress * phases.length), phases.length - 1)
   const phase = phases[idx]
+  const longest = phases.reduce((a, b) => (b.length > a.length ? b : a))
 
   // Character-reveal within the current phase based on its sub-progress
-  if (reduce) return <span>{phases[phases.length - 2]}</span>
   const within = progress * phases.length - idx
-  const shown = Math.floor(within * phase.length) + 1
-  return <span>{phase.slice(0, shown)}</span>
+  const shown = reduce ? phase.length : Math.floor(within * phase.length) + 1
+  // The growing text sits in a centred column, so each new character nudged
+  // the caret and its neighbours — a layout shift every frame. Reserving the
+  // longest phrase's width up front makes this a fixed box.
+  return (
+    <span className="relative inline-block whitespace-nowrap">
+      <span aria-hidden="true" className="invisible">{longest}</span>
+      <span className="absolute inset-y-0 left-0">{phase.slice(0, shown)}</span>
+    </span>
+  )
 }
 
 // ════════════════════════════════════════════════════════════

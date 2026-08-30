@@ -128,6 +128,21 @@
   size-adjust: 99.98%;
 }
 
+/* Metric-matched fallback for Space Grotesk — the display face, so this is the
+   hero headline's box. Arial's line box is ~13% shorter than Space Grotesk's,
+   so without this the whole hero dropped ~24px the moment the web font swapped
+   in: the largest layout shift on the page (0.36 CLS on desktop, measured).
+   Overrides come from measuring the two live fonts at weight 700 (advance
+   ratio 99.05%, ascent 98/em, descent 29/em), not from estimates. */
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  ascent-override: 98.94%;
+  descent-override: 29.28%;
+  line-gap-override: 0%;
+  size-adjust: 99.05%;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -163,7 +178,7 @@
   /* display face: Space Grotesk — the distinctive geometric voice that
      separates the headlines from the (Montserrat) body text */
   .font-display {
-    font-family: 'Space Grotesk', 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Space Grotesk', 'Space Grotesk Fallback', 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
     letter-spacing: -0.03em;
   }
 

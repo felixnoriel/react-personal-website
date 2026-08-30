@@ -46,11 +46,12 @@ export function HeroHeadline() {
           <KineticHeadline variant="cool" className="aurora-static" text={LINE_1} />
         )}
       </span>
-      {/* staggered second line — the editorial offset that breaks template
-          symmetry and gives the composition its diagonal */}
+      {/* Staggered and smaller second line: the offset breaks template
+          symmetry, and the size drop makes the role lead and this read as its
+          qualifier — one voice speaking, not two competing. */}
       <span
         ref={line2Ref}
-        className="block whitespace-nowrap pl-[6vw] text-[clamp(30px,9.6vw,164px)]"
+        className="block whitespace-nowrap pl-[6vw] text-[clamp(21px,6.6vw,113px)]"
       >
         {particles ? (
           <span className="aurora-text aurora-static aurora-warm">{LINE_2}</span>

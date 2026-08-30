@@ -5,14 +5,21 @@ import { AnimatePresence, LazyMotion, m } from 'framer-motion'
 import { DataProvider } from './contexts/DataContext'
 import { MainLayout } from './components/layout/MainLayout'
 import { ScrollToTop } from './components/ScrollToTop'
-import { BootLoader } from './components/ui/BootLoader'
 
 // Lazy Load Pages
 const Home = lazy(() => import('./pages/Home').then(mod => ({ default: mod.Home })))
-// warm the Home chunk immediately (in parallel with React booting) instead
-// of waiting for the router to mount its Suspense — removes a fetch hop
-// from the LCP critical path
+// Home is fetched in parallel with the entry, not after it: the build injects
+// a modulepreload for this chunk into index.html (see vite.config.ts), which
+// removes a whole round-trip from the hero on a phone connection. This warm
+// import is the belt-and-braces path for browsers without modulepreload.
 import('./pages/Home')
+// The cinematic boot is its own chunk — its matrix-rain canvas must not cost
+// bundle bytes or main-thread time in the window the hero is rendering. Until
+// it lands, the static #boot-static frame (a sibling of #root that React never
+// touches) is what the visitor sees, so nothing flashes on a slow connection.
+const BootLoader = lazy(() =>
+  import('./components/ui/BootLoader').then(mod => ({ default: mod.BootLoader })),
+)
 const Blog = lazy(() => import('./pages/Blog').then(mod => ({ default: mod.Blog })))
 const BlogDetail = lazy(() => import('./pages/BlogDetail').then(mod => ({ default: mod.BlogDetail })))
 const Projects = lazy(() => import('./pages/Projects').then(mod => ({ default: mod.Projects })))
@@ -29,7 +36,8 @@ import { useScrollTracking } from './hooks/useScrollTracking'
 import { useTimeTracking } from './hooks/useTimeTracking'
 
 // framer-motion animation features, loaded as their own async chunk so they
-// don't weigh down the initial bundle (they stream in behind the boot veil).
+// don't weigh down the initial bundle. Modulepreloaded from the HTML too
+// (vite.config.ts), so the chunk streams in parallel with the entry.
 const loadMotionFeatures = () => import('./utils/motionFeatures').then((mod) => mod.default)
 
 // Analytics wrapper component
@@ -88,6 +96,7 @@ function App() {
   // their pre-animation `initial` state (e.g. opacity:0) until domMax loads, so
   // lifting the veil before then could flash a blank hero on a slow connection.
   // Gating on both keeps the reveal clean and preserves the boot's exit-fade.
+  // The chunk is modulepreloaded, so this gate rarely binds in practice.
   const [featuresReady, setFeaturesReady] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setBootTimeUp(true), BOOT_MS)
@@ -105,6 +114,9 @@ function App() {
   // big entrance moment happens where the visitor can actually see it.
   useEffect(() => {
     if (bootDone) {
+      // the pre-hydration boot frame lives OUTSIDE #root (see index.html), so
+      // React never unmounts it — take it down as the veil lifts
+      document.getElementById('boot-static')?.remove()
       ;(window as unknown as { __fxBootDone?: boolean }).__fxBootDone = true
       window.dispatchEvent(new Event('fx:bootdone'))
       try {
@@ -185,7 +197,9 @@ function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
             >
-              <BootLoader durationMs={BOOT_MS} />
+              <Suspense fallback={null}>
+                <BootLoader durationMs={BOOT_MS} />
+              </Suspense>
             </m.div>
           )}
         </AnimatePresence>

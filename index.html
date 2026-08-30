@@ -30,16 +30,12 @@
       />
     </noscript>
 
-    <!-- Google tag (gtag.js) -->
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-JEM0Y5QF76"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JEM0Y5QF76', {
-        send_page_view: false // We'll handle page views in React
-      });
-    </script>
+    <!-- No analytics tag here on purpose: react-ga4 injects gtag.js itself at
+         idle (src/utils/analytics.ts). A static tag pulled the same 170KB of
+         third-party JS during the load window instead — competing with our own
+         assets for a phone's bandwidth, then parsing on the main thread while
+         the hero was still rendering. Nothing is lost: the injected tag fires
+         the same page views, just after the page is usable. -->
   </head>
   <body>
     <!-- Static pre-hydration frame: paints the dark boot screen the instant
@@ -50,6 +46,9 @@
       #boot-static {
         position: fixed;
         inset: 0;
+        /* below the React boot veil (z-100) so the animated boot can take
+           over seamlessly, above all app content while it loads */
+        z-index: 99;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -78,7 +77,7 @@
         position: absolute;
         left: 4vw;
         top: 16vh;
-        font-family: 'Space Grotesk', 'Montserrat', 'Montserrat Fallback', Arial, sans-serif;
+        font-family: 'Space Grotesk', 'Space Grotesk Fallback', 'Montserrat', 'Montserrat Fallback', Arial, sans-serif;
         font-weight: 700;
         /* sized to match the hero h1 so this IS the LCP element at CSS-paint
            time — if the h1 ever gets bigger than this, LCP regresses ~3s */
@@ -113,13 +112,25 @@
         #boot-static .bar::after { animation: none; }
       }
     </style>
-    <div id="root">
-      <div id="boot-static">
-        <div class="ghost" aria-hidden="true">Product Engineer<br />Problem Solver</div>
-        <div class="core">FX</div>
-        <div>BOOTING&nbsp;WORKSPACE</div>
-        <div class="bar"></div>
-      </div>
+    <div id="root"></div>
+    <!-- OUTSIDE #root on purpose: React must never unmount this node. If it
+         lived inside #root, React's first render would destroy and re-create
+         the ghost headline, and Chrome would re-attribute LCP to the (much
+         later) JS paint instead of this CSS paint. App.tsx removes this node
+         directly when the boot veil lifts. -->
+    <div id="boot-static">
+      <!-- Both lines MUST stay one plain text block, split only by <br>, at
+           one size. Chrome measures an LCP text candidate per block box: an
+           inner block (or a smaller second line) splits this into two halves,
+           each smaller than the terminal's bio paragraph — LCP then waits for
+           React and jumps from ~2s to ~5s. Measured, twice. This ghost is
+           never seen next to the real headline (it lives on the boot screen
+           and is removed before the hero shows), so it does not need to match
+           the h1's proportions. -->
+      <div class="ghost" aria-hidden="true">Product Engineer<br />Problem Solver</div>
+      <div class="core">FX</div>
+      <div>BOOTING&nbsp;WORKSPACE</div>
+      <div class="bar"></div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
