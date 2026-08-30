@@ -12,9 +12,12 @@ import App from './App.tsx'
 // site, the DOM was ready at 111ms and nothing appeared until 1268ms — on an
 // unthrottled laptop. A phone pays several times that in blank screen.
 //
-// Two rAFs: the first fires before the pending frame is drawn, the second
-// after it — so by the time we mount, the visitor is looking at the boot
-// screen. Costs one frame; buys back every millisecond of that blank window.
+// We wait for the actual paint event rather than counting animation frames.
+// Counting frames assumes a frame implies a paint, and it does not: when the
+// render-blocking stylesheet is still in flight, frames pass with nothing
+// drawn, the mount starts anyway, and first paint lands a second later.
+// Measured live: paint 30ms after the stylesheet when this works, and about
+// 1000ms after it when the mount wins instead.
 let mounted = false
 const mount = () => {
   if (mounted) return
@@ -26,15 +29,19 @@ const mount = () => {
   )
 }
 
-// A hidden tab never fires rAF, and has nothing to paint anyway — mount now.
-if (document.visibilityState === 'hidden') {
-  mount()
-} else {
-  requestAnimationFrame(() => requestAnimationFrame(mount))
-  // Safety net only, for frames that stop coming (the tab is hidden between
-  // now and the second frame). It must never win the race against a real
-  // frame, which arrives in ~16ms: an earlier version used 120ms here and
-  // the timeout beat the frame on exactly the slow cold loads this is meant
-  // to fix, putting first paint back at ~2.4s on a third of live runs.
-  setTimeout(mount, 2000)
+try {
+  // buffered:true means a paint that already happened still fires this, so
+  // there is no window where we miss the event and wait for the timeout.
+  const observer = new PerformanceObserver(() => {
+    observer.disconnect()
+    mount()
+  })
+  observer.observe({ type: 'paint', buffered: true })
+} catch {
+  mount() // no PerformanceObserver: mount rather than never render
 }
+
+// Backstop for the case where no paint is coming: a hidden tab, which has
+// nothing to draw. Deliberately far longer than any real first paint, so it
+// never robs a visible page of the early frame this exists to protect.
+setTimeout(mount, 2000)
