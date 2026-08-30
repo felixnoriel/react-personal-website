@@ -126,8 +126,11 @@
            React and jumps from ~2s to ~5s. Measured, twice. This ghost is
            never seen next to the real headline (it lives on the boot screen
            and is removed before the hero shows), so it does not need to match
-           the h1's proportions. -->
-      <div class="ghost" aria-hidden="true">Product Engineer<br />Problem Solver</div>
+           the h1's proportions — the second line is deliberately larger here
+           than in the h1, and runs past the right edge on a phone. It is a
+           16%-opacity watermark, and the width it gains from being clipped at
+           the viewport keeps its area comfortably the largest on the page. -->
+      <div class="ghost" aria-hidden="true">Product Engineer<br />Startups · Web3 · Fintech</div>
       <div class="core">FX</div>
       <div>BOOTING&nbsp;WORKSPACE</div>
       <div class="bar"></div>

@@ -174,7 +174,7 @@ export function Intro() {
                 cursor); falls back to the kinetic variable-font treatment
                 where WebGL isn't available. See HeroHeadline. */}
             <h1
-              aria-label="Product Engineer · Problem Solver"
+              aria-label="Product Engineer. Startups, Web3, Fintech."
               className="font-display leading-[0.98] tracking-tighter font-bold mb-10"
             >
               <HeroHeadline />

@@ -19,7 +19,9 @@ import { useFxLevel } from '../../hooks/useFxLevel'
  */
 
 const LINE_1 = 'Product Engineer'
-const LINE_2 = 'Problem Solver'
+// The domains, not an adjective: "problem solver" is a claim any engineer can
+// make, so it told a hiring reader nothing they had not already assumed.
+const LINE_2 = 'Startups · Web3 · Fintech'
 
 export function HeroHeadline() {
   const { reduceMotion, isMobile } = useFxLevel()
@@ -51,7 +53,7 @@ export function HeroHeadline() {
           qualifier — one voice speaking, not two competing. */}
       <span
         ref={line2Ref}
-        className="block whitespace-nowrap pl-[6vw] text-[clamp(21px,6.6vw,113px)]"
+        className="block whitespace-nowrap pl-[6vw] text-[clamp(18px,5.8vw,96px)]"
       >
         {particles ? (
           <span className="aurora-text aurora-static aurora-warm">{LINE_2}</span>
