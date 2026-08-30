@@ -24,7 +24,7 @@ export const projects: Project[] = [
       "title": "Stable",
       "slug": "stable",
       "image": {
-        "url": "https://www.stable.xyz/images/identity/stable-wordmark.svg",
+        "url": "/logos/stable-wordmark.svg",
         "alt": "Stable"
       }
     }

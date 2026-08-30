@@ -12,7 +12,7 @@ export const careers: Career[] = [
     "endDate": "Present",
     "location": "Fully Remote",
     "image": {
-      "url": "https://www.stable.xyz/images/identity/stable-wordmark.svg",
+      "url": "/logos/stable-wordmark.svg",
       "alt": "Stable"
     },
     "color": "bg-gradient-to-r from-emerald-600 to-teal-600",
