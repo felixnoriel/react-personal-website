@@ -15,9 +15,6 @@ import App from './App.tsx'
 // Two rAFs: the first fires before the pending frame is drawn, the second
 // after it — so by the time we mount, the visitor is looking at the boot
 // screen. Costs one frame; buys back every millisecond of that blank window.
-// The timeout is not belt-and-braces: rAF does not fire at all in a
-// background tab, so without it a site opened in a background tab would
-// never mount.
 let mounted = false
 const mount = () => {
   if (mounted) return
@@ -28,5 +25,16 @@ const mount = () => {
     </StrictMode>,
   )
 }
-requestAnimationFrame(() => requestAnimationFrame(mount))
-setTimeout(mount, 120)
+
+// A hidden tab never fires rAF, and has nothing to paint anyway — mount now.
+if (document.visibilityState === 'hidden') {
+  mount()
+} else {
+  requestAnimationFrame(() => requestAnimationFrame(mount))
+  // Safety net only, for frames that stop coming (the tab is hidden between
+  // now and the second frame). It must never win the race against a real
+  // frame, which arrives in ~16ms: an earlier version used 120ms here and
+  // the timeout beat the frame on exactly the slow cold loads this is meant
+  // to fix, putting first paint back at ~2.4s on a third of live runs.
+  setTimeout(mount, 2000)
+}
