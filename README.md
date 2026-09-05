@@ -1,171 +1,39 @@
-# Felix Noriel Personal Website - Modern Stack
+# Felix Noriel - personal site
 
-Modernized personal website migrated from 2018 legacy stack to cutting-edge 2025 technologies.
+A portfolio set like a working engineer's drawing sheet: cream paper, one vertical datum rule, three inks (graphite, ballpoint, red pencil), two typefaces, and a career timeline drawn to a true 2013-to-now axis that you can scrub.
 
-## 🚀 Quick Start
+Live: https://felixnoriel-dashify.vercel.app
+
+## Stack
+
+- React 19.2 with the React Compiler, Vite 8 (Rolldown), TypeScript, react-router 8 in declarative mode.
+- Every route is rendered to real static HTML at build time (`vite-prerender-plugin` + `react-dom/static`), then hydrated. The whole stylesheet is inlined into each page, so the first paint is the finished page.
+- Plain CSS. No Tailwind, no animation library, no icon library. Four runtime dependencies.
+- Two self-hosted OFL typefaces (Fraunces for display, Host Grotesk for text), instanced and subset offline with metric-matched fallbacks.
+- The Sheet Change morph is the browser's View Transition API driven by hand around the router; the career scrubber is a native range input; tech ink uses the CSS Custom Highlight API.
+
+## Commands
 
 ```bash
-# Install dependencies
 bun install
-
-# Start development server
-bun run dev
-
-# Build for production
-bun run build
-
-# Preview production build
-bun run preview
+bun run dev            # http://localhost:9000
+bun run build          # vite build + prerender, then the two gates below
+bun run check:prerender   # every sheet and a sample of routes are in the static HTML
+bun run check:anti-ai     # the compiled CSS has no gradients, blurs, shadows, radii or mono faces
+bun run lint           # eslint incl. a CSS Baseline gate
+bun run images         # re-optimise the content images (outputs are committed)
+bun run blog:split     # regenerate the blog index and per-post content chunks from src/data/blog.ts
 ```
 
-## Tech Stack
+Fonts: `bash scripts/subset-fonts.sh <Fraunces.ttf> <HostGrotesk.ttf> <HostGrotesk-Italic.ttf>` (needs a Python venv with fontTools + brotli). The social card: `python3 scripts/build-og.py`.
 
-### Frontend
-- **React 18** - Modern functional components with hooks
-- **Vite 7** - Lightning-fast build tool and dev server
-- **TypeScript 5.9** - Type-safe development
-- **React Router 7** - Client-side routing
-- **Tailwind CSS 3** - Utility-first CSS framework
-- **Shadcn/ui** - Beautiful, accessible component library
-- **React Helmet Async** - SEO meta tag management
+## Where things live
 
-### Build & Runtime
-- **Bun** - Fast all-in-one JavaScript runtime
-- **TypeScript data files** - Direct imports, zero HTTP requests
-- **Context API** - Simple state management
+- `src/data/` - the content. `career.ts`, `projects.ts` and `blog.ts` are hand-maintained; `blog-index.ts`, `blog-content/` and `images.generated.ts` are generated.
+- `src/styles/` - tokens, fonts, base, the sheet grid, motion.
+- `src/sheets/` - one component + one stylesheet per home sheet, the header, the footer, the sheet index.
+- `src/pages/` and `src/components/{career,project,blog}/` - the index and detail routes.
+- `src/transitions/sheetChange.ts` - the morph. `src/utils/timeline.ts` - the axis math. `src/utils/plot.ts` - the city plot.
+- `scripts/` - image optimisation, blog split, font subsetting, the social card, the two build gates.
 
-### Utilities
-- **Luxon** - Modern date/time library (replaced Moment.js)
-- **Lodash-es** - Utility functions (ES modules)
-
-## Migration from Legacy Stack
-
-### What Changed
-- ❌ Next.js 8 (SSR) → ✅ Vite 7 (CSR with SEO)
-- ❌ Redux + Thunk → ✅ React Context API
-- ❌ Bulma CSS → ✅ Tailwind CSS + Shadcn/ui
-- ❌ Moment.js → ✅ Luxon
-- ❌ Class Components → ✅ Functional + Hooks
-- ❌ Express Server → ✅ Static site
-- ❌ Axios + JSON → ✅ TypeScript imports
-- ❌ Complex data (4-5 layers) → ✅ Flat (1-2 layers)
-- ❌ npm → ✅ Bun
-
-### Data Simplification
-Transformed WordPress JSON structure from 4-5 layers to 1-2 layers:
-
-**Before:**
-```typescript
-post.custom_meta.company.title.rendered
-post._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url
-```
-
-**After:**
-```typescript
-post.company.title
-post.image.url
-```
-
-### SEO Implementation
-- ✅ Dynamic meta tags with `react-helmet-async`
-- ✅ Open Graph tags for social media
-- ✅ Twitter Card support
-- ✅ JSON-LD structured data for blog posts
-- ✅ Sitemap and robots.txt
-- ✅ Proper canonical URLs
-
-## Development
-
-```bash
-# Install dependencies
-bun install
-
-# Start development server
-bun run dev
-
-# Build for production
-bun run build
-
-# Preview production build
-bun run preview
-
-# Format code with Prettier
-bun run format
-
-# Transform data (if updating WordPress JSON)
-bun run transform-data
-```
-
-## Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   ├── blog/           # Blog-specific components
-│   ├── career/         # Career-specific components
-│   ├── project/        # Project-specific components
-│   ├── layout/         # Layout components (Header, Footer)
-│   ├── seo/            # SEO components
-│   └── ui/             # Shadcn UI components
-├── contexts/           # React Context providers
-├── pages/              # Page components (routes)
-├── utils/              # Utility functions
-│   ├── date.ts         # Date formatting (Luxon)
-│   └── wordpress.ts    # WordPress data parsing
-└── lib/                # Library utilities
-
-public/
-└── data/               # Static JSON data files
-    ├── blog.json
-    ├── career.json
-    └── projects.json
-```
-
-## Data Source
-
-The application loads data from static JSON files in `public/data/`. These files contain WordPress API formatted data from the original CMS.
-
-## Deployment
-
-This app can be deployed to any modern hosting platform:
-
-### Vercel
-```bash
-npm install -g vercel
-vercel
-```
-
-### Netlify
-```bash
-npm install -g netlify-cli
-netlify deploy
-```
-
-### Cloudflare Pages
-- Connect your Git repository
-- Build command: `npm run build`
-- Publish directory: `dist`
-
-## Features
-
-- ✅ Fully responsive design
-- ✅ SEO optimized with dynamic meta tags
-- ✅ Fast page loads with Vite
-- ✅ Modern, accessible UI components
-- ✅ Blog with social sharing
-- ✅ Project showcase
-- ✅ Career timeline
-- ✅ Mobile-friendly navigation
-- ✅ Smooth scrolling
-- ✅ TypeScript for type safety
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## License
-
-Created by Felix Noriel © 2025
+The previous site is preserved on the `old-site` branch and the `pre-redesign-2026-09-05` tag.
