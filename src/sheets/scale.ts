@@ -43,13 +43,18 @@ export function initScale(root: HTMLElement): () => void {
   if (!scale || !input || !readout) return () => {}
 
   const rows = Array.from(root.querySelectorAll<HTMLElement>('.career-row'))
-  const min = Number(input.min)
-  const max = Number(input.max)
-  const span = max - min || 1
+  // The input counts whole months from the axis start (so a step is exactly
+  // one month and the last step is now); the rows are drawn in decimal years.
+  const from = Number(input.dataset.from)
+  const to = Number(input.dataset.to)
+  const span = to - from || 1
+  // rounded exactly like the rows' data-start/data-end (4 decimals), so the
+  // last step compares equal to a role that runs to the present
+  const yearAt = (month: number) => Math.round((from + (month + 0.5) / 12) * 10_000) / 10_000
 
   const apply = () => {
-    const t = Number(input.value)
-    scale.style.setProperty('--t', String((t - min) / span))
+    const t = yearAt(Number(input.value))
+    scale.style.setProperty('--t', String(Math.min(1, (t - from) / span)))
     let live = 0
     for (const row of rows) {
       const on = t >= Number(row.dataset.start) && t <= Number(row.dataset.end)
@@ -66,16 +71,22 @@ export function initScale(root: HTMLElement): () => void {
     readout.textContent = ''
   }
 
+  // The pointer leaving the axis ends a pointer scrub, not a keyboard one:
+  // a keyboard user holds :focus-visible, a mouse user does not.
+  const pointerLeft = () => {
+    if (!input.matches(':focus-visible')) rest()
+  }
+
   input.addEventListener('input', apply)
   input.addEventListener('pointerup', rest)
   input.addEventListener('blur', rest)
-  scale.addEventListener('pointerleave', rest)
+  scale.addEventListener('pointerleave', pointerLeft)
 
   return () => {
     input.removeEventListener('input', apply)
     input.removeEventListener('pointerup', rest)
     input.removeEventListener('blur', rest)
-    scale.removeEventListener('pointerleave', rest)
+    scale.removeEventListener('pointerleave', pointerLeft)
     rest()
   }
 }

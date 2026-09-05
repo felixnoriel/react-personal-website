@@ -64,13 +64,15 @@ interface RowProps {
 }
 
 function CareerRow({ career, tenure, gap, expanded, onOpen, onInk }: RowProps) {
-  const tech = (career.techStack ?? []).slice(0, 3)
+  // The home sheet shows the first three; the /career index has room for all.
+  const tech = expanded ? (career.techStack ?? []) : (career.techStack ?? []).slice(0, 3)
   const outcome = career.achievements?.[0]?.title
 
   return (
     <li
       className={`career-row${gap ? ' career-row--gap' : ''}`}
       data-slug={career.slug}
+      data-sheet-source={`/career/${career.slug}`}
       data-start={num(tenure.start)}
       data-end={num(tenure.end)}
     >
@@ -166,6 +168,9 @@ export function CareerScale({ careers, idPrefix, expanded = false }: ScaleProps)
 
   const axis = careerAxis(careers)
   const span = axis.to - axis.from || 1
+  // whole months from the axis start to now; the slider steps in these so
+  // every step is exactly one month and the last step is the present
+  const months = Math.floor(span * 12 + 1e-6)
   const rows = careers.map((career) => ({ career, tenure: tenureOf(career, axis) }))
   const techNames = Array.from(new Set(careers.flatMap((c) => c.techStack ?? [])))
 
@@ -204,7 +209,6 @@ export function CareerScale({ careers, idPrefix, expanded = false }: ScaleProps)
     void sheetChange({
       source: row,
       to: `/career/${slug}`,
-      slug,
       navigate,
       prefetch: () => import('../pages/CareerDetail'),
     })
@@ -231,10 +235,12 @@ export function CareerScale({ careers, idPrefix, expanded = false }: ScaleProps)
           <input
             className="scale__input"
             type="range"
-            min={num(axis.from)}
-            max={num(axis.to)}
-            step="0.0833"
-            defaultValue={num(axis.to)}
+            min={0}
+            max={months}
+            step={1}
+            defaultValue={months}
+            data-from={num(axis.from)}
+            data-to={num(axis.to)}
             aria-label="Scrub the career timeline by month"
             aria-describedby={`${idPrefix}-readout`}
           />

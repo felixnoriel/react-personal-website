@@ -223,3 +223,8 @@
 .tb__socials > span {
   display: inline;
 }
+/* .tb__link is a flex box, which is block-level: inside the row it would
+   drop each name under its dot. Inline keeps name and dot on one line. */
+.tb__socials .tb__link {
+  display: inline-flex;
+}

@@ -19,6 +19,10 @@
   color: inherit;
   padding-block: var(--s-8);
   border-block-start: var(--hair) solid var(--rule);
+  cursor: pointer;
+}
+.work-block__link {
+  color: inherit;
 }
 
 .work-block__title {
@@ -28,7 +32,7 @@
   transition: color var(--t-fast) ease-out;
 }
 .work-block:hover .work-block__title,
-.work-block:focus-visible .work-block__title {
+.work-block__link:focus-visible {
   color: var(--accent);
 }
 
@@ -152,6 +156,10 @@
   padding-block: var(--s-6);
   border-block-start: var(--hair) solid var(--rule-faint);
   color: inherit;
+  cursor: pointer;
+}
+.projects-row__link {
+  color: inherit;
 }
 .projects-row__company {
   color: var(--pen);
@@ -166,7 +174,7 @@
   transition: color var(--t-fast) ease-out;
 }
 .projects-row:hover .projects-row__title,
-.projects-row:focus-visible .projects-row__title {
+.projects-row__link:focus-visible {
   color: var(--accent);
 }
 .projects-row__excerpt {
@@ -466,19 +474,3 @@
   margin-inline-start: auto;
 }
 
-/* --- a short list of projects that belong to another sheet ----------- */
-
-.project-index-list .index-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--s-4);
-  min-height: 44px;
-  color: inherit;
-}
-.project-index-list a:hover .projects-row__title,
-.project-index-list a:focus-visible .projects-row__title {
-  color: var(--accent);
-}
-.project-index-list .projects-row__title {
-  font-size: 20px;
-}

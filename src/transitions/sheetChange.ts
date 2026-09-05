@@ -45,20 +45,28 @@ const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefine
 const supported = () => isBrowser && typeof (document as unknown as { startViewTransition?: StartVT }).startViewTransition === 'function'
 const reduceMotion = () => isBrowser && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** The slug whose list row should pair with the outgoing detail sheet on Back. */
-let returnTarget: string | null = null
-export function getReturnTarget(): string | null {
-  return returnTarget
-}
+/** The route the open detail sheet was entered from. On Back, the row or
+ *  block that opens that route (`[data-sheet-source]`) pairs with the sheet
+ *  being left. Keyed by route, not slug: a company can be both a career row
+ *  and a project block on the same page. */
+let returnTo: string | null = null
 
 /* Location-change signalling. App.tsx calls notifyLocationChange() from an
    effect on every route change, so the transition can wait for the router
-   to have committed the new sheet before the new snapshot is taken. */
+   to have committed the new sheet before the new snapshot is taken. The
+   change is latched in a counter: a traversal commits before the transition
+   callback runs, so a waiter registered inside the callback would otherwise
+   miss it and burn its whole timeout. */
+let locationVersion = 0
 const waiters = new Set<() => void>()
 export function notifyLocationChange(): void {
+  locationVersion += 1
   waiters.forEach((w) => w())
 }
-function nextLocationChange(timeoutMs: number): Promise<void> {
+/** Resolves once the router has committed a change after `seen` (at once if it
+ *  already has), or after `timeoutMs`. */
+function locationChanged(seen: number, timeoutMs: number): Promise<void> {
+  if (locationVersion !== seen) return Promise.resolve()
   return new Promise((resolve) => {
     const done = () => {
       waiters.delete(done)
@@ -70,17 +78,28 @@ function nextLocationChange(timeoutMs: number): Promise<void> {
   })
 }
 
-/** Resolves once `test()` is truthy, polled per frame, or after `timeoutMs`. */
+/** Resolves once `test()` is truthy, polled per frame, or after `timeoutMs`.
+ *  The deadline is a real timer, so a hidden or throttled tab that produces no
+ *  frames cannot hold the transition open. */
 function waitFor(test: () => unknown, timeoutMs: number): Promise<void> {
   return new Promise((resolve) => {
-    const started = performance.now()
+    let frame = 0
+    const deadline = setTimeout(() => {
+      cancelAnimationFrame(frame)
+      resolve()
+    }, timeoutMs)
     const tick = () => {
-      if (test() || performance.now() - started > timeoutMs) resolve()
-      else requestAnimationFrame(tick)
+      if (test()) {
+        clearTimeout(deadline)
+        resolve()
+      } else frame = requestAnimationFrame(tick)
     }
     tick()
   })
 }
+
+/** The new sheet has landed: no route is showing its Suspense fallback. */
+const sheetLanded = () => !document.querySelector('.sheet-loading')
 
 function startVT(update: () => void | Promise<void>, dir: Dir): ViewTransitionLike {
   const start = (document as unknown as { startViewTransition: StartVT }).startViewTransition.bind(document)
@@ -112,18 +131,17 @@ const pairNamesForViewport = (): readonly PairName[] =>
   window.matchMedia('(max-width: 640px)').matches ? ['sheet-title', 'sheet-plate'] : PAIR_NAMES
 
 export interface SheetChangeOptions {
-  /** the clicked row or block; its [data-vt] children are the pairs */
+  /** the clicked row or block; its [data-vt] children are the pairs, and it
+   *  carries data-sheet-source={to} so it can pair again on the way back */
   source: HTMLElement
   /** the route to open */
   to: string
-  /** the row's slug, so the row can pair again on the way back */
-  slug: string
   navigate: NavigateFunction
   /** the target route's chunk, e.g. () => import('../pages/CareerDetail') */
   prefetch?: () => Promise<unknown>
 }
 
-export async function sheetChange({ source, to, slug, navigate, prefetch }: SheetChangeOptions): Promise<void> {
+export async function sheetChange({ source, to, navigate, prefetch }: SheetChangeOptions): Promise<void> {
   const run = () => navigate(to)
   if (!supported() || reduceMotion()) {
     run()
@@ -135,13 +153,15 @@ export async function sheetChange({ source, to, slug, navigate, prefetch }: Shee
     await Promise.race([prefetch().catch(() => undefined), new Promise((r) => setTimeout(r, 700))])
   }
   const named = nameChildren(source, pairNamesForViewport())
-  returnTarget = slug
+  returnTo = to
+  const seen = locationVersion
   const vt = startVT(async () => {
     flushSync(run)
+    await locationChanged(seen, 300)
     // React.lazy resolves on a microtask even when the module is cached, so
     // the first committed frame can be the Suspense fallback. The old
     // snapshot stays on screen while we wait for the real sheet to land.
-    await waitFor(() => document.querySelector('[data-sheet-ready]'), 500)
+    await waitFor(sheetLanded, 500)
   }, 'forward')
   // a skipped transition rejects `finished`; that is fine, the page still swapped
   vt.finished.catch(() => {}).finally(() => unname(named))
@@ -167,14 +187,15 @@ if (isBrowser && 'navigation' in window) {
     const from = nav.currentEntry?.index ?? -1
     const to = e.destination?.index ?? -1
     const dir: Dir = to !== -1 && to < from ? 'back' : 'forward'
-    const target = returnTarget
+    const target = returnTo
+    const seen = locationVersion
     let named: HTMLElement[] = []
     const vt = startVT(async () => {
-      await nextLocationChange(600)
-      await waitFor(() => document.querySelector('[data-sheet-ready]'), 300)
+      await locationChanged(seen, 600)
+      await waitFor(sheetLanded, 300)
       // the row we left from pairs with the sheet we are leaving
       if (dir === 'back' && target) {
-        const row = document.querySelector<HTMLElement>(`[data-slug="${CSS.escape(target)}"]`)
+        const row = document.querySelector<HTMLElement>(`[data-sheet-source="${CSS.escape(target)}"]`)
         if (row) named = nameChildren(row, pairNamesForViewport())
       }
     }, dir)
@@ -182,7 +203,7 @@ if (isBrowser && 'navigation' in window) {
       .catch(() => {})
       .finally(() => {
         unname(named)
-        if (dir === 'back') returnTarget = null
+        if (dir === 'back') returnTo = null
       })
   })
 }

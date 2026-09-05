@@ -8,7 +8,7 @@
 
 export const SITE = {
   name: 'Felix Noriel',
-  title: 'Felix Noriel - Product Engineer',
+  title: 'Felix Noriel - Software Engineer',
   description:
     'Product-Focused Software Engineer who loves solving problems and getting my hands dirty with new technologies. Big foodie, loves cooking and traveling.',
   url: 'https://felixnoriel-dashify.vercel.app',

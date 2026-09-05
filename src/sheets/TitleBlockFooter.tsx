@@ -116,6 +116,7 @@ export function TitleBlockFooter() {
                   {i > 0 && <span aria-hidden="true"> &middot; </span>}
                   <a className="tb__link" href={s.url} target="_blank" rel="noopener noreferrer">
                     {s.name}
+                    <span className="visually-hidden">opens in a new tab</span>
                   </a>
                 </span>
               ))}

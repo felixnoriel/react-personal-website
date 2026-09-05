@@ -1,4 +1,5 @@
-import { Link } from 'react-router'
+import type { MouseEvent } from 'react'
+import { Link, useNavigate } from 'react-router'
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
 import { OUTCOMES, projectTitle } from '../sheets/WorkSheet'
@@ -11,9 +12,18 @@ import '../sheets/work.css'
  * Every project as a row against the datum: the company on the left in
  * ballpoint, the title in the display face, the excerpt at reading measure,
  * and - where the project has them - its real outcome figures. No cards.
+ * The title is the link; a click anywhere else on the row opens the same
+ * sheet.
  */
 export function Projects() {
   const { projects } = useData()
+  const navigate = useNavigate()
+
+  const onRowClick = (e: MouseEvent<HTMLElement>, slug: string) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    if ((e.target as Element).closest('a')) return // the link handles itself
+    void navigate(`/projects/${slug}`)
+  }
 
   return (
     <>
@@ -35,13 +45,14 @@ export function Projects() {
           {projects.map((project: Project) => {
             const outcomes = OUTCOMES[project.slug]
             return (
-              <Link className="projects-row" key={project.slug} to={`/projects/${project.slug}`}>
+              <article className="projects-row" key={project.slug} onClick={(e) => onRowClick(e, project.slug)}>
                 <div className="meta projects-row__company">{project.company?.title ?? ''}</div>
                 <div>
-                  <h2
-                    className="projects-row__title"
-                    dangerouslySetInnerHTML={{ __html: projectTitle(project) }}
-                  />
+                  <h2 className="projects-row__title">
+                    <Link className="projects-row__link" to={`/projects/${project.slug}`}>
+                      <span dangerouslySetInnerHTML={{ __html: projectTitle(project) }} />
+                    </Link>
+                  </h2>
                   <div
                     className="projects-row__excerpt"
                     dangerouslySetInnerHTML={{ __html: project.excerpt }}
@@ -57,7 +68,7 @@ export function Projects() {
                     </div>
                   )}
                 </div>
-              </Link>
+              </article>
             )
           })}
         </div>

@@ -12,7 +12,7 @@ export function Career() {
   return (
     <>
       <SEOHead title="Career" description="Career timeline - Companies I have been a part of" url="/career" />
-      <article className="career-index" data-sheet-ready="">
+      <article className="career-index">
         <div className="career-index__head">
           <h1 className="career-index__title">{EXPERIENCE_TITLE}</h1>
           <p className="meta meta--label">{EXPERIENCE_META}</p>

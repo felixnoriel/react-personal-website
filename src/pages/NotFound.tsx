@@ -10,7 +10,7 @@ export function NotFound() {
   return (
     <>
       <SEOHead title="Not found" description="There is no sheet at this address." url="/404" noindex />
-      <section className="section" id="sheet-404" data-sheet-ready="">
+      <section className="section" id="sheet-404">
         <div className="section__head">
           <h1>Not in this set.</h1>
         </div>

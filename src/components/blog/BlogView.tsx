@@ -7,6 +7,7 @@ import { SITE } from '../seo/SEOHead'
 import { useData } from '../../contexts/DataContext'
 import { formatDate } from '../../utils/date'
 import { decodeEntities } from './decode'
+import { liftHeadings } from '../../utils/headings'
 import './blog.css'
 
 interface BlogViewProps {
@@ -42,7 +43,7 @@ export function BlogView({ blog }: BlogViewProps) {
 
   if (!blog) {
     return (
-      <section className="section blog-detail" data-sheet-ready>
+      <section className="section blog-detail">
         <div className="blog-missing">
           <h1 className="detail__title">Not on the shelf.</h1>
           <p className="ink-2">That post is not in the archive.</p>
@@ -69,7 +70,7 @@ export function BlogView({ blog }: BlogViewProps) {
   ]
 
   return (
-    <article className="section blog-detail" data-sheet-ready>
+    <article className="section blog-detail">
       <p className="blog-detail__crumb">
         <Link className="link" to="/blog">
           The archive
@@ -92,7 +93,7 @@ export function BlogView({ blog }: BlogViewProps) {
         </div>
       )}
 
-      <div className="prose-sheet" dangerouslySetInnerHTML={{ __html: stripLeadingTitle(blog.content) }} />
+      <div className="prose-sheet" dangerouslySetInnerHTML={{ __html: liftHeadings(stripLeadingTitle(blog.content)) }} />
 
       {blog.tags?.length > 0 && (
         <ul className="blog-detail__chips">
@@ -109,6 +110,7 @@ export function BlogView({ blog }: BlogViewProps) {
         {share.map((s) => (
           <a className="link" key={s.label} href={s.href} target="_blank" rel="noreferrer">
             {s.label}
+            <span className="visually-hidden">opens in a new tab</span>
           </a>
         ))}
       </div>

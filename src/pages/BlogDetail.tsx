@@ -2,6 +2,7 @@ import { Suspense, use } from 'react'
 import { useParams } from 'react-router'
 import { useData } from '../contexts/DataContext'
 import { BlogPostSEO } from '../components/seo/SEOHead'
+import { decodeEntities } from '../components/blog/decode'
 import { BlogView } from '../components/blog/BlogView'
 import { filterBySlug } from '../utils/data-filters'
 import { loadBlogContent } from '../data/blog-content'
@@ -36,8 +37,8 @@ export function BlogDetail() {
   return (
     <>
       <BlogPostSEO
-        title={meta.title}
-        excerpt={meta.excerpt.replace(/<[^>]*>/g, '')}
+        title={decodeEntities(meta.title)}
+        excerpt={decodeEntities(meta.excerpt.replace(/<[^>]*>/g, ''))}
         image={meta.image.url}
         slug={slug || ''}
         publishedDate={meta.publishedDate}

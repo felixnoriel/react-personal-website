@@ -15,8 +15,10 @@ import './work.css'
  * Three projects, each a full-width block on the sheet rather than a card:
  * a rule above, the title on the datum with its own rule under it, the real
  * outcome figures at display size, the excerpt at reading measure, the tech
- * as square chips, and the plate out in the right columns. Click anywhere in
- * the block and the block becomes the detail sheet (Sheet Change).
+ * as square chips, and the plate out in the right columns. The title is the
+ * link (so a screen reader hears "StablePay", not the whole block); a click
+ * anywhere else in the block opens the same sheet, and the block becomes the
+ * detail sheet (Sheet Change).
  */
 
 /** Presentation titles for the three home blocks (existing copy). */
@@ -68,13 +70,16 @@ export function WorkSheet({ projects }: { projects: Project[] }) {
   const navigate = useNavigate()
   const shown = projects.slice(0, 3)
 
-  const onBlockClick = (e: MouseEvent<HTMLAnchorElement>, slug: string) => {
+  // Runs for a click anywhere in the block, including on the title link
+  // (the event bubbles up, and preventDefault here still cancels the link's
+  // own navigation). Modified clicks return early so the link keeps its
+  // native open-in-new-tab behaviour.
+  const onBlockClick = (e: MouseEvent<HTMLElement>, slug: string) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     e.preventDefault()
     void sheetChange({
       source: e.currentTarget,
       to: `/projects/${slug}`,
-      slug,
       navigate,
       prefetch: () => import('../pages/ProjectDetail'),
     })
@@ -92,17 +97,19 @@ export function WorkSheet({ projects }: { projects: Project[] }) {
           const title = projectTitle(project)
           const outcomes = OUTCOMES[project.slug]
           return (
-            <a
+            <article
               key={project.slug}
               className="work-block"
-              href={`/projects/${project.slug}`}
               data-slug={project.slug}
+              data-sheet-source={`/projects/${project.slug}`}
               onClick={(e) => onBlockClick(e, project.slug)}
             >
               <div className="cols">
                 <div className="cols__main">
                   <h3 className="work-block__title" data-vt="sheet-title">
-                    {title}
+                    <a className="work-block__link" href={`/projects/${project.slug}`}>
+                      {title}
+                    </a>
                   </h3>
                   <div className="work-block__rule" data-vt="sheet-rule" aria-hidden="true" />
 
@@ -138,7 +145,7 @@ export function WorkSheet({ projects }: { projects: Project[] }) {
                   <div className="meta plate__caption">{title}</div>
                 </div>
               </div>
-            </a>
+            </article>
           )
         })}
       </div>

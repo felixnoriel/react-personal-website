@@ -26,7 +26,7 @@ interface CareerViewProps {
 export function CareerView({ experience, projects, careers }: CareerViewProps) {
   if (!experience) {
     return (
-      <article className="career-sheet" data-sheet-ready="">
+      <article className="career-sheet">
         <h1 className="career-sheet__title">Not on the timeline</h1>
         <p className="career-sheet__where">
           <Link className="link" to="/career">
@@ -41,7 +41,7 @@ export function CareerView({ experience, projects, careers }: CareerViewProps) {
   const tenure = tenureOf(experience, axis)
 
   return (
-    <article className="career-sheet" data-slug={experience.slug} data-sheet-ready="">
+    <article className="career-sheet" data-slug={experience.slug}>
       <Link className="career-sheet__back meta link" to="/career">
         Experience
       </Link>
@@ -68,6 +68,15 @@ export function CareerView({ experience, projects, careers }: CareerViewProps) {
 
       <h2 className="career-sheet__role">{experience.jobTitle}</h2>
       <p className="career-sheet__where meta">{experience.location}</p>
+      {experience.techStack && experience.techStack.length > 0 && (
+        <ul className="career-sheet__tech" aria-label="Tech used in this role">
+          {experience.techStack.map((name) => (
+            <li className="chip" key={name}>
+              {name}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <AchievementList items={experience.achievements} />
 
