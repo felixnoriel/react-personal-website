@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "bun scripts/build-with-timeout.ts",
+    "build": "bun scripts/build-with-timeout.ts && bun scripts/check-prerender.ts && bun scripts/check-anti-ai.ts",
     "build:direct": "vite build",
     "build:check": "tsc -b && vite build",
     "lint": "eslint .",
@@ -17,7 +17,9 @@
     "blog:split": "bun scripts/split-blog.ts",
     "transform-data": "bun scripts/transform-data-optimized.ts",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "check:prerender": "bun scripts/check-prerender.ts",
+    "check:anti-ai": "bun scripts/check-anti-ai.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
