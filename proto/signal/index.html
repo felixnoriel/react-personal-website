@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en" data-signal="boot">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#110E1B" />
+    <title>Felix Noriel — Product Engineer</title>
+    <meta
+      name="description"
+      content="Felix Noriel — product engineer. 13+ years shipping software for startups across Web3, fintech, hospitality and media. Bangkok, remote-friendly."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Async: first paint uses the metric-matched fallbacks below, so the
+         headline is on screen before this round-trip finishes and the swap
+         costs zero layout shift. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <style>
+      /* ---------------------------------------------------------------
+         SIGNAL — a volumetric core of light that becomes his work.
+         Every colour below is a dark-theme token from src/index.css.
+         All of this is inline on purpose: the first screen must paint
+         from HTML + CSS alone, with no second request in the way.
+      ---------------------------------------------------------------- */
+
+      /* Metric-matched fallbacks (values measured for the live site, reused
+         verbatim) so the web fonts swap in without moving a single pixel. */
+      @font-face {
+        font-family: 'Montserrat Fallback';
+        src: local('Arial');
+        ascent-override: 85.8%;
+        descent-override: 22.25%;
+        line-gap-override: 0%;
+        size-adjust: 112.64%;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono Fallback';
+        src: local('Courier New');
+        ascent-override: 102%;
+        descent-override: 30%;
+        line-gap-override: 0%;
+        size-adjust: 99.98%;
+      }
+
+      :root {
+        color-scheme: dark;
+        --bg: 253 30% 8%;
+        --bg-deep: 253 36% 4%;
+        --ink: 79 30% 96%;
+        --ink-muted: 199 18% 68%;
+        --ink-soft: 199 15% 64%;
+        --lime: 79 41% 74%;
+        --electric: 218 58% 64%;
+        --indigo: 253 40% 62%;
+        --magenta: 325 46% 62%;
+        --line: 253 14% 20%;
+
+        --sans: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        --mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, 'SF Mono', Menlo, monospace;
+
+        --pad: clamp(20px, 4.4vw, 68px);
+        --rail: 42px;
+        /* the core's screen anchor — the fx layer reads these too */
+        --core-x: 60%;
+        --core-y: 45%;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+        scrollbar-width: none;
+        /* vertical scroll and pinch-zoom stay the browser's; a horizontal
+           drag reaches the sculpture instead of being swallowed as a scroll */
+        touch-action: pan-y pinch-zoom;
+      }
+      /* dragging the core must not paint a selection across the bio */
+      html[data-drag='1'],
+      html[data-drag='1'] body {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      html::-webkit-scrollbar {
+        display: none;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: var(--sans);
+        color: hsl(var(--ink));
+        background:
+          radial-gradient(120% 90% at var(--core-x) var(--core-y), hsl(253 40% 13%) 0%, transparent 62%),
+          radial-gradient(90% 70% at 8% 0%, hsl(218 44% 12%) 0%, transparent 55%),
+          hsl(var(--bg-deep));
+        background-attachment: fixed;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+
+      /* ---------- the fx layer ---------- */
+      #core {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1);
+        contain: strict;
+      }
+      html[data-fx='live'] #core {
+        opacity: 1;
+      }
+
+      /* The housing: a still, hand-drawn hint of the core that paints with
+         the HTML so the composition is never empty, then hands over. */
+      #housing {
+        position: fixed;
+        left: var(--core-x);
+        top: var(--core-y);
+        width: min(74vw, 700px);
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1);
+        background:
+          radial-gradient(closest-side, hsl(var(--indigo) / 0.16) 0%, hsl(var(--electric) / 0.07) 38%, transparent 70%);
+      }
+      #housing::before,
+      #housing::after {
+        content: '';
+        position: absolute;
+        inset: 27%;
+        border-radius: 50%;
+        border: 1px solid hsl(var(--electric) / 0.22);
+      }
+      #housing::after {
+        inset: 14%;
+        border-color: hsl(var(--indigo) / 0.13);
+        border-style: dashed;
+      }
+      html[data-fx='live'] #housing,
+      html[data-fx='css'] #housing {
+        opacity: 0;
+      }
+
+      /* Third tier (no WebGPU, no WebGL2): the same coil, drawn in CSS.
+         Twenty-one windings from a repeating conic, the ring of current from a
+         1px circle, and one slow rotation. Still a machine, not a blob. */
+      #cssCore {
+        position: fixed;
+        left: var(--core-x);
+        top: var(--core-y);
+        width: min(78vw, 700px);
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        z-index: 0;
+        pointer-events: none;
+        display: none;
+      }
+      html[data-fx='css'] #cssCore {
+        display: block;
+      }
+      #cssCore::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        /* the windings are the mask; the paint underneath is the same
+           electric → indigo → magenta current the GPU tiers draw */
+        background: conic-gradient(
+          from 196deg,
+          hsl(var(--electric) / 0.85) 0deg,
+          hsl(var(--indigo) / 0.9) 96deg,
+          hsl(var(--magenta) / 0.85) 190deg,
+          hsl(var(--indigo) / 0.9) 268deg,
+          hsl(var(--electric) / 0.85) 360deg
+        );
+        mask:
+          repeating-conic-gradient(from 0deg, #000 0deg 3.4deg, transparent 3.4deg 8.571deg),
+          radial-gradient(closest-side, transparent 0 50%, #000 60%, #000 84%, transparent 97%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        filter: blur(6px) saturate(1.35);
+        animation: spin 54s linear infinite;
+      }
+      #cssCore::after {
+        content: '';
+        position: absolute;
+        inset: 22%;
+        border-radius: 50%;
+        border: 1px solid hsl(var(--ink) / 0.7);
+        box-shadow:
+          0 0 26px hsl(var(--ink) / 0.28),
+          inset 0 0 40px hsl(var(--electric) / 0.35);
+        background: radial-gradient(closest-side, hsl(var(--indigo) / 0.1), transparent 70%);
+      }
+      @keyframes spin {
+        to {
+          rotate: 360deg;
+        }
+      }
+
+      /* Film grain — kills banding in the dark gradient, and matches the
+         grainy particle texture of the current headline. */
+      #grain {
+        position: fixed;
+        inset: -50%;
+        z-index: 4;
+        pointer-events: none;
+        opacity: 0.26;
+        background-image: radial-gradient(hsl(var(--ink) / 0.5) 0.5px, transparent 0.6px);
+        background-size: 3px 3px;
+        mix-blend-mode: overlay;
+      }
+
+      /* One scan sweep during ignition. Transform only — compositor work. */
+      #sweep {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 2px;
+        z-index: 6;
+        pointer-events: none;
+        opacity: 0;
+        background: linear-gradient(90deg, transparent, hsl(var(--lime) / 0.75) 30%, hsl(var(--lime) / 0.9) 50%, hsl(var(--lime) / 0.75) 70%, transparent);
+        box-shadow: 0 0 26px hsl(var(--lime) / 0.45);
+      }
+      html[data-ignite='run'] #sweep {
+        animation: sweep 1100ms cubic-bezier(0.22, 0.61, 0.36, 1) 120ms 1 both;
+      }
+      @keyframes sweep {
+        0% {
+          opacity: 0;
+          transform: translateY(-2px);
+        }
+        12% {
+          opacity: 0.85;
+        }
+        88% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(100vh);
+        }
+      }
+
+      /* ---------- shared bits ---------- */
+      .mono {
+        font-family: var(--mono);
+        font-weight: 400;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        font-size: 10.5px;
+      }
+
+      .glass {
+        background: linear-gradient(
+          150deg,
+          hsl(var(--ink) / 0.075) 0%,
+          hsl(var(--ink) / 0.035) 42%,
+          hsl(var(--indigo) / 0.05) 100%
+        );
+        border: 1px solid hsl(var(--ink) / 0.1);
+        -webkit-backdrop-filter: blur(16px) saturate(1.5);
+        backdrop-filter: blur(16px) saturate(1.5);
+        box-shadow:
+          inset 0 1px 0 hsl(var(--ink) / 0.14),
+          inset 0 -1px 0 hsl(var(--bg-deep) / 0.5),
+          0 18px 46px -22px hsl(var(--bg-deep) / 0.9);
+      }
+
+      /* ---------- top rail ---------- */
+      .rail-top {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--rail);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--pad);
+        color: hsl(var(--ink-soft));
+        border-bottom: 1px solid hsl(var(--ink) / 0.05);
+        background: linear-gradient(
+          hsl(var(--bg-deep) / 0.96) 0%,
+          hsl(var(--bg-deep) / 0.9) 52%,
+          hsl(var(--bg-deep) / 0.5) 82%,
+          hsl(var(--bg-deep) / 0) 100%
+        );
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+      }
+      .rail-top b {
+        color: hsl(var(--ink) / 0.86);
+        font-weight: 500;
+        letter-spacing: 0.14em;
+      }
+      .rail-top > div {
+        min-width: 0;
+        white-space: nowrap;
+      }
+      .rail-top .sep {
+        color: hsl(var(--ink) / 0.2);
+        padding: 0 0.7em;
+      }
+      #clock {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ---------- hero ---------- */
+      main {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        padding: calc(var(--rail) + clamp(28px, 6vh, 76px)) var(--pad) calc(var(--rail) + 34px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      /* the scrim that keeps type readable wherever the core passes behind */
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(
+          100deg,
+          hsl(var(--bg-deep) / 0.94) 0%,
+          hsl(var(--bg-deep) / 0.82) 34%,
+          hsl(var(--bg-deep) / 0.34) 56%,
+          transparent 74%
+        );
+      }
+
+      .block {
+        max-width: 880px;
+        position: relative;
+      }
+
+      .status {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: clamp(18px, 3vh, 30px);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 13px 6px 10px;
+        border-radius: 999px;
+        color: hsl(var(--lime));
+        background: hsl(var(--lime) / 0.08);
+        border: 1px solid hsl(var(--lime) / 0.24);
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: hsl(var(--lime));
+        box-shadow: 0 0 10px hsl(var(--lime) / 0.9);
+      }
+      html[data-ignite='run'] .dot,
+      html[data-ignite='done'] .dot {
+        animation: pulse 2.4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+      .where {
+        color: hsl(var(--ink) / 0.62);
+      }
+
+      h1 {
+        position: relative;
+        margin: 0;
+        font-weight: 800;
+        font-size: clamp(42px, 6.1vw, 88px);
+        line-height: 0.94;
+        letter-spacing: -0.036em;
+        text-wrap: balance;
+      }
+      h1 .ink {
+        background-image: linear-gradient(
+          96deg,
+          hsl(var(--electric)) 0%,
+          hsl(var(--indigo)) 38%,
+          hsl(var(--magenta)) 72%,
+          hsl(var(--lime)) 104%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+      /* The headline paints SOLID at first paint — opaque text, so it is a
+         real LCP candidate and reads at full contrast before anything runs.
+         The gradient is already clipped behind it; ignition just fades the
+         ink away and the colour comes through. */
+      h1 .ink {
+        position: relative;
+        color: hsl(var(--ink));
+        transition:
+          color 1000ms cubic-bezier(0.16, 1, 0.3, 1),
+          filter 1600ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      /* The core lights the type. The bleed is drawn from the headline's OWN
+         glyph alpha — three coloured drop shadows — rather than a second,
+         blurred copy of the title. A copy costs twice: the rendered DOM reads
+         the title twice, and its wider box takes over as the LCP element the
+         moment it lights (measured: 4.7 s instead of 0.7 s). */
+      html[data-ignite='done'] h1 .ink {
+        color: transparent;
+        filter:
+          drop-shadow(0 0 9px hsl(var(--indigo) / 0.62)) drop-shadow(0 0 26px hsl(var(--electric) / 0.42))
+          drop-shadow(0 0 52px hsl(var(--magenta) / 0.34));
+      }
+      @supports (text-box-trim: trim-both) {
+        h1 {
+          text-box-trim: trim-both;
+          text-box-edge: cap alphabetic;
+          margin-block: 0.1em 0.24em;
+        }
+      }
+      @supports not (text-box-trim: trim-both) {
+        h1 {
+          margin-block: 0 0.2em;
+        }
+      }
+
+      .sub {
+        margin: 0 0 clamp(18px, 2.6vh, 28px);
+        font-weight: 600;
+        font-size: clamp(18px, 2.05vw, 30px);
+        letter-spacing: -0.012em;
+        color: hsl(var(--ink) / 0.74);
+      }
+
+      .bio {
+        margin: 0 0 clamp(24px, 3.4vh, 38px);
+        padding: 0;
+        list-style: none;
+        max-width: 30.4em;
+        display: grid;
+        gap: 6px;
+        font-size: clamp(14px, 1.05vw, 15.5px);
+        line-height: 1.62;
+        color: hsl(var(--ink-muted));
+      }
+      .bio li strong {
+        color: hsl(var(--ink) / 0.95);
+        font-weight: 600;
+      }
+
+      .ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 13px 22px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+        text-decoration: none;
+        transition:
+          transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+          box-shadow 240ms ease,
+          background-color 240ms ease;
+      }
+      .cta.solid {
+        color: hsl(var(--bg-deep));
+        /* let the browser pick the readable label colour for the lime chip
+           (Baseline since April 2026); the line above stays the fallback */
+        color: contrast-color(hsl(var(--lime)));
+        background: linear-gradient(96deg, hsl(var(--lime)), hsl(79 44% 84%));
+        box-shadow: 0 10px 34px -12px hsl(var(--lime) / 0.7);
+      }
+      .cta.ghost {
+        color: hsl(var(--ink) / 0.94);
+        border-color: hsl(var(--ink) / 0.2);
+      }
+      .cta:hover {
+        transform: translateY(-2px);
+      }
+      .cta.solid:hover {
+        box-shadow: 0 16px 42px -12px hsl(var(--lime) / 0.85);
+      }
+      .cta:focus-visible {
+        outline: 2px solid hsl(var(--lime));
+        outline-offset: 3px;
+      }
+      .cta .arw {
+        font-family: var(--mono);
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      /* ---------- the instrument column (impact numbers as HUD readouts) ---------- */
+      .instr {
+        position: absolute;
+        right: var(--pad);
+        top: 50%;
+        translate: 0 -50%;
+        width: 214px;
+        display: grid;
+        gap: 9px;
+        z-index: 3;
+      }
+      .instr::before {
+        content: '';
+        position: absolute;
+        inset: -74px -80px -66px -160px;
+        z-index: -1;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 76% 50% at 78% 50%,
+          hsl(var(--bg-deep) / 0.97) 0%,
+          hsl(var(--bg-deep) / 0.93) 38%,
+          hsl(var(--bg-deep) / 0.72) 62%,
+          hsl(var(--bg-deep) / 0.3) 84%,
+          transparent 100%
+        );
+      }
+      .readout {
+        position: relative;
+        padding: 11px 13px 12px;
+        border-radius: 12px;
+      }
+      /* the leader line back into the core */
+      .readout::before {
+        content: '';
+        position: absolute;
+        left: -46px;
+        top: 50%;
+        width: 46px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, hsl(var(--electric) / 0.55));
+      }
+      .readout::after {
+        content: '';
+        position: absolute;
+        left: -49px;
+        top: calc(50% - 2px);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: hsl(var(--electric));
+        box-shadow: 0 0 9px hsl(var(--electric) / 0.9);
+      }
+      .readout dt {
+        color: hsl(var(--ink-soft));
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .readout dd {
+        margin: 3px 0 1px;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        font-variant-numeric: tabular-nums;
+        color: hsl(var(--ink));
+      }
+      .readout .note {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.04em;
+        color: hsl(var(--ink) / 0.42);
+      }
+      .instr > .cap {
+        display: flex;
+        justify-content: space-between;
+        color: hsl(var(--ink) / 0.66);
+        padding: 0 2px 1px;
+      }
+
+      /* ---------- telemetry rail ---------- */
+      .rail-bot {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 5;
+        display: flex;
+        gap: 0;
+        padding: 0 var(--pad);
+        height: var(--rail);
+        align-items: center;
+        color: hsl(var(--ink-soft));
+        border-top: 1px solid hsl(var(--ink) / 0.05);
+        background: linear-gradient(
+          hsl(var(--bg-deep) / 0) 0%,
+          hsl(var(--bg-deep) / 0.55) 20%,
+          hsl(var(--bg-deep) / 0.92) 60%,
+          hsl(var(--bg-deep) / 0.96) 100%
+        );
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+      }
+      .tcell {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        padding-right: 20px;
+        margin-right: 20px;
+        border-right: 1px solid hsl(var(--ink) / 0.08);
+        white-space: nowrap;
+      }
+      .tcell:last-child {
+        border-right: 0;
+      }
+      .tcell b {
+        color: hsl(var(--ink) / 0.3);
+        font-weight: 400;
+      }
+      .tcell span {
+        color: hsl(var(--ink) / 0.72);
+        font-variant-numeric: tabular-nums;
+        /* every cell reserves the width its measured value will need, so the
+           rail resolving cannot move a single pixel of the page */
+        display: inline-block;
+        width: var(--w, 4em);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .tcell span.hot {
+        color: hsl(var(--lime));
+      }
+      /* the scroll position of the whole piece, drawn on the compositor */
+      #progress {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        width: 100%;
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+        background: linear-gradient(90deg, hsl(var(--electric)), hsl(var(--magenta)), hsl(var(--lime)));
+        z-index: 6;
+      }
+      @supports (animation-timeline: scroll()) {
+        #progress {
+          animation: grow linear both;
+          animation-timeline: scroll(root block);
+        }
+      }
+      @keyframes grow {
+        to {
+          transform: scaleX(1);
+        }
+      }
+
+      /* ---------- the scroll chapters (the morph) ---------- */
+      .chapter {
+        position: relative;
+        min-height: 100svh;
+        padding: 18vh var(--pad) 16vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .chapter .inner {
+        max-width: 640px;
+        position: relative;
+      }
+      /* chapter 1's copy sits under the letterforms, chapter 3's beside the
+         stack: the sculpture and the sentence never fight for the same space */
+      .chapter[data-shape='1'] {
+        justify-content: flex-end;
+        padding-bottom: 11vh;
+      }
+      .chapter[data-shape='3'] {
+        justify-content: flex-start;
+        padding-top: 19vh;
+      }
+      .chapter.right .inner {
+        margin-left: auto;
+        text-align: right;
+      }
+      .chapter::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(
+          100deg,
+          hsl(var(--bg-deep) / 0.94) 0%,
+          hsl(var(--bg-deep) / 0.86) 34%,
+          hsl(var(--bg-deep) / 0.46) 56%,
+          transparent 80%
+        );
+      }
+      .chapter.right::before {
+        background: linear-gradient(
+          260deg,
+          hsl(var(--bg-deep) / 0.94) 0%,
+          hsl(var(--bg-deep) / 0.86) 34%,
+          hsl(var(--bg-deep) / 0.46) 56%,
+          transparent 80%
+        );
+      }
+      .kicker {
+        color: hsl(var(--lime));
+        display: block;
+        margin-bottom: 14px;
+      }
+      .chapter h2 {
+        margin: 0 0 16px;
+        font-size: clamp(28px, 3.6vw, 50px);
+        font-weight: 800;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+        color: hsl(var(--ink));
+      }
+      .chapter p {
+        margin: 0 0 18px;
+        font-size: clamp(14px, 1.05vw, 16px);
+        line-height: 1.65;
+        color: hsl(var(--ink-muted));
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      .chapter.right .tags {
+        justify-content: flex-end;
+      }
+      .tags li {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        padding: 6px 11px;
+        border-radius: 999px;
+        color: hsl(var(--ink) / 0.7);
+        border: 1px solid hsl(var(--ink) / 0.12);
+        background: hsl(var(--ink) / 0.035);
+      }
+      .tags li.on {
+        color: hsl(var(--lime));
+        border-color: hsl(var(--lime) / 0.3);
+        background: hsl(var(--lime) / 0.07);
+      }
+
+      /* reveal on scroll. The stagger is sibling-index() — cross-browser since
+         August 2026 — so no JavaScript touches these elements' style. */
+      .rev {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+          transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+        transition-delay: calc(sibling-index() * 55ms);
+      }
+      .rev.in {
+        opacity: 1;
+        transform: none;
+      }
+
+      .endcard {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 26px;
+      }
+
+      /* ---------- phone ---------- */
+      @media (max-width: 560px) {
+        .rail-top .sep,
+        .rail-top .sig {
+          display: none;
+        }
+        /* both items on the left: nothing depends on the right edge */
+        .rail-top {
+          justify-content: flex-start;
+          gap: 16px;
+        }
+        .tcell {
+          padding-right: 9px;
+          margin-right: 9px;
+        }
+      }
+      /* between the phone rail and a roomy desktop there is a band where six
+         cells no longer fit on one line: let them wrap rather than run off
+         the right edge */
+      @media (min-width: 861px) and (max-width: 1200px) {
+        .rail-bot {
+          height: auto;
+          flex-wrap: wrap;
+          padding-top: 7px;
+          padding-bottom: 7px;
+          gap: 3px 0;
+        }
+        .rail-bot .tcell {
+          padding-right: 13px;
+          margin-right: 13px;
+        }
+      }
+      @media (max-width: 430px) {
+        .tcell.rndr {
+          flex-basis: 100%;
+          border-right: 0;
+          margin-right: 0;
+          padding-right: 0;
+        }
+      }
+      @media (max-width: 860px) {
+        .mono {
+          font-size: 9.5px;
+          letter-spacing: 0.075em;
+        }
+        :root {
+          --core-x: 50%;
+          --core-y: 26%;
+          --rail: 38px;
+        }
+        .hero {
+          justify-content: flex-end;
+          padding-top: calc(var(--rail) + 21vh);
+          padding-bottom: calc(var(--rail) + 44px);
+        }
+        .hero::before {
+          background: linear-gradient(
+            180deg,
+            hsl(var(--bg-deep) / 0) 0%,
+            hsl(var(--bg-deep) / 0.46) 25%,
+            hsl(var(--bg-deep) / 0.9) 41%,
+            hsl(var(--bg-deep) / 0.95) 56%,
+            hsl(var(--bg-deep) / 0.94) 88%,
+            hsl(var(--bg-deep) / 0) 100%
+          );
+        }
+        h1 {
+          font-size: clamp(38px, 11.6vw, 54px);
+        }
+        .sub {
+          font-size: clamp(17px, 4.6vw, 22px);
+        }
+        .bio {
+          font-size: 13px;
+          gap: 4px;
+        }
+        .instr {
+          position: static;
+          translate: none;
+          width: auto;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          margin-top: 18px;
+        }
+        /* the column is static here, so its scrim would escape and darken the
+           whole hero — the phone already has a full-width scrim of its own */
+        .instr::before {
+          display: none;
+        }
+        .instr > .cap {
+          grid-column: 1 / -1;
+        }
+        .readout::before,
+        .readout::after {
+          display: none;
+        }
+        .readout dd {
+          font-size: 21px;
+        }
+        .rail-bot {
+          height: auto;
+          padding: 8px var(--pad) calc(8px + env(safe-area-inset-bottom));
+          flex-wrap: wrap;
+          gap: 4px 0;
+        }
+        .tcell {
+          padding-right: 12px;
+          margin-right: 12px;
+        }
+        .tcell.wide {
+          border-right: 0;
+        }
+        .chapter .inner,
+        .chapter.right .inner {
+          max-width: none;
+          margin: 0;
+          text-align: left;
+        }
+        .chapter::before,
+        .chapter.right::before {
+          background: linear-gradient(
+            180deg,
+            hsl(var(--bg-deep) / 0) 0%,
+            hsl(var(--bg-deep) / 0.5) 22%,
+            hsl(var(--bg-deep) / 0.88) 36%,
+            hsl(var(--bg-deep) / 0.94) 58%,
+            hsl(var(--bg-deep) / 0.92) 88%,
+            hsl(var(--bg-deep) / 0.2) 100%
+          );
+        }
+        .chapter {
+          padding: 26vh var(--pad) calc(var(--rail) + 46px);
+          justify-content: flex-end;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+        .rev {
+          opacity: 1;
+          transform: none;
+        }
+        #core {
+          opacity: 1;
+        }
+      }
+
+      /* screen-reader-only */
+      .sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      a.skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 20;
+        padding: 10px 16px;
+        background: hsl(var(--lime));
+        color: hsl(var(--bg-deep));
+        border-radius: 0 0 8px 0;
+      }
+      a.skip:focus {
+        left: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="skip" href="#work">Skip to the work</a>
+
+    <canvas id="core" aria-hidden="true"></canvas>
+    <div id="housing" aria-hidden="true"></div>
+    <div id="cssCore" aria-hidden="true"></div>
+    <div id="grain" aria-hidden="true"></div>
+    <div id="sweep" aria-hidden="true"></div>
+    <div id="progress" aria-hidden="true"></div>
+
+    <header class="rail-top mono">
+      <div><b>FELIX NORIEL</b><span class="sep">/</span><span class="sig">SIGNAL</span></div>
+      <div><span id="clockLabel">BKK</span>&nbsp;<span id="clock">--:--:--</span></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="block">
+          <div class="status mono">
+            <span class="pill"><i class="dot"></i>available for work</span>
+            <span class="where">Bangkok · UTC+7 · remote-friendly</span>
+          </div>
+
+          <h1><span class="ink">Product Engineer</span></h1>
+          <p class="sub">Startups · Web3 · Fintech</p>
+
+          <ul class="bio">
+            <li>I'm <strong>Felix</strong> — a senior full-stack engineer and technical co-founder.</li>
+            <li>13+ years shipping software for startups across Web3, fintech, hospitality, and media.</li>
+            <li>Currently based in Asia and digital nomading with the fam.</li>
+          </ul>
+
+          <div class="ctas">
+            <a class="cta solid" href="#work">See selected work <span class="arw">↗</span></a>
+            <a class="cta ghost glass" href="#contact">Get in touch <span class="arw">↗</span></a>
+          </div>
+        </div>
+
+        <dl class="instr">
+          <div class="cap mono"><span>impact</span><span>2013 → now</span></div>
+          <div class="readout glass">
+            <dt>messages / day</dt>
+            <dd data-count="7.5M+">7.5M+</dd>
+            <span class="note">event pipeline → BigQuery</span>
+          </div>
+          <div class="readout glass">
+            <dt>monthly actives</dt>
+            <dd data-count="150k">150k</dd>
+            <span class="note">Genopets · Web3 gaming</span>
+          </div>
+          <div class="readout glass">
+            <dt>faster p95</dt>
+            <dd data-count="80%">80%</dd>
+            <span class="note">latency optimization</span>
+          </div>
+          <div class="readout glass">
+            <dt>users reached</dt>
+            <dd data-count="1.8M+">1.8M+</dd>
+            <span class="note">notification system</span>
+          </div>
+        </dl>
+      </section>
+
+      <section class="chapter" id="work" data-shape="1">
+        <div class="inner">
+          <span class="kicker mono rev">01 — what the core spells</span>
+          <h2 class="rev">Thirteen years of shipping.</h2>
+          <p class="rev">
+            13+ years shipping software for startups across Web3, fintech, hospitality, and media — from a 7.5M
+            messages/day event pipeline into BigQuery to a notification system that reached 1.8M+ users.
+          </p>
+          <ul class="tags rev" id="roles"></ul>
+        </div>
+      </section>
+
+      <section class="chapter right" data-shape="2">
+        <div class="inner">
+          <span class="kicker mono rev">02 — where</span>
+          <h2 class="rev">Currently based in Asia, nomading with the fam.</h2>
+          <p class="rev">Bangkok · UTC+7 · remote-friendly. Fifteen cities on the log so far.</p>
+          <ul class="tags rev" id="cities"></ul>
+        </div>
+      </section>
+
+      <section class="chapter" id="contact" data-shape="3">
+        <div class="inner">
+          <span class="kicker mono rev">03 — the stack</span>
+          <h2 class="rev">Built with the boring parts done right.</h2>
+          <p class="rev">
+            TypeScript and React on the front, Node, Golang and Rust behind it, Postgres and Redis underneath, Solana
+            when it earns its place.
+          </p>
+          <ul class="tags rev" id="stack"></ul>
+          <div class="endcard rev">
+            <a class="cta solid" href="mailto:norielfelixjr@gmail.com">Get in touch <span class="arw">↗</span></a>
+            <a class="cta ghost glass" href="https://www.linkedin.com/in/felixnoriel/" rel="noopener">LinkedIn <span class="arw">↗</span></a>
+            <a class="cta ghost glass" href="https://github.com/felixnoriel" rel="noopener">GitHub <span class="arw">↗</span></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rail-bot mono" id="rail">
+      <div class="tcell rndr"><b>renderer</b><span data-t="renderer" style="--w:16.8em">····</span></div>
+      <div class="tcell"><b>particles</b><span data-t="particles" style="--w:3.1em">····</span></div>
+      <div class="tcell"><b>frame</b><span data-t="frame" style="--w:4.9em">····</span></div>
+      <div class="tcell"><b>ttfb</b><span data-t="ttfb" style="--w:4.4em">····</span></div>
+      <div class="tcell"><b>paint</b><span data-t="paint" style="--w:4.4em">····</span></div>
+      <div class="tcell wide"><b>local</b><span data-t="local" style="--w:13.2em">····</span></div>
+    </footer>
+
+    <script type="module" src="/src/proto/signal/main.ts"></script>
+  </body>
+</html>
