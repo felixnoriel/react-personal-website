@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { globSync } from 'node:fs'
 
 // The landing page's critical chunks (Home + framer's domMax features) are
 // dynamic imports, so by default the browser only discovers them AFTER the
@@ -19,7 +20,9 @@ function preloadCriticalChunks(): Plugin {
       order: 'post',
       handler(html, ctx) {
         const bundle = ctx.bundle
-        if (!bundle) return []
+        // only the main page needs the Home chunk warmed; the hero prototypes
+        // under proto/ are separate entries with their own graphs
+        if (!bundle || ctx.filename.includes('/proto/')) return []
         const files = new Set<string>()
         const addWithDeps = (fileName: string) => {
           if (files.has(fileName)) return
@@ -63,6 +66,16 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1000, // Increase limit for large data files
     rollupOptions: {
+      // multi-page: the site plus every hero prototype under proto/<name>/
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        ...Object.fromEntries(
+          globSync('proto/*/index.html', { cwd: __dirname }).map((f) => [
+            'proto-' + path.basename(path.dirname(f)),
+            path.resolve(__dirname, f),
+          ]),
+        ),
+      },
       output: {
         manualChunks(id) {
           // Split large data files into separate chunks
