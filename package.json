@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "bun scripts/build-with-timeout.ts && bun scripts/finish-404.ts && bun scripts/check-prerender.ts && bun scripts/check-anti-ai.ts",
+    "build": "bun scripts/build-with-timeout.ts && bun scripts/finish-404.ts && bun scripts/build-sitemap.ts && bun scripts/check-prerender.ts && bun scripts/check-anti-ai.ts",
     "build:direct": "vite build",
     "build:check": "tsc -b && vite build",
     "lint": "eslint .",

@@ -41,6 +41,8 @@ interface SEOHeadProps {
   }
   /** extra JSON-LD graph nodes for this page */
   jsonLd?: Record<string, unknown>
+  /** keep the page out of search results (the 404 sheet) */
+  noindex?: boolean
 }
 
 export function SEOHead({
@@ -51,6 +53,7 @@ export function SEOHead({
   type = 'website',
   article,
   jsonLd,
+  noindex = false,
 }: SEOHeadProps) {
   const fullTitle = title ? `${title} | ${SITE.name}` : SITE.title
   const fullUrl = absolute(url)
@@ -87,7 +90,7 @@ export function SEOHead({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImage} />
 
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={noindex ? 'noindex' : 'index, follow'} />
 
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

@@ -9,7 +9,7 @@ import { SEOHead } from '../components/seo/SEOHead'
 export function NotFound() {
   return (
     <>
-      <SEOHead title="Not found" description="There is no sheet at this address." url="/404" />
+      <SEOHead title="Not found" description="There is no sheet at this address." url="/404" noindex />
       <section className="section" id="sheet-404" data-sheet-ready="">
         <div className="section__head">
           <h1>Not in this set.</h1>

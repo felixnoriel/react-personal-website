@@ -4,8 +4,9 @@
  * Reads the build-time manifest (src/data/images.generated.ts) for the
  * original URL and renders AVIF, then WebP, then the largest WebP as the
  * fallback, with the real intrinsic width/height so nothing shifts while it
- * loads, and the blur placeholder painted underneath. Unknown URLs (a few
- * legacy placeholders) fall through to a plain <img>.
+ * loads, and the blur placeholder painted underneath. Local files outside the
+ * manifest fall through to a plain <img>; unknown remote URLs (a few legacy
+ * placeholder hosts) render nothing rather than a broken image.
  */
 import type { CSSProperties, ImgHTMLAttributes } from 'react'
 import { getImage, srcSet } from '../data/images.generated'
@@ -27,7 +28,7 @@ export function Picture({ src, alt, sizes = '100vw', priority = false, className
   const fetchPriority = priority ? 'high' : undefined
 
   if (!img) {
-    if (!src) return null
+    if (!src || /^https?:/.test(src)) return null
     return <img src={src} alt={alt} loading={loading} decoding="async" className={className} style={style} {...rest} />
   }
 
