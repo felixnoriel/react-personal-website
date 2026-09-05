@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ArrowUpRight, MapPin } from 'lucide-react'
 import type { BlogPost } from '../types/data'
 import { formatDate } from '../utils/date'
@@ -30,11 +30,37 @@ function prettyDate(d: string): string {
 
 // Blog titles/excerpts can carry HTML entities (e.g. &#8211; for an en-dash).
 // Decode them so they render as real characters, not literal entity codes.
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: '\u00a0',
+  hellip: '\u2026',
+  ndash: '\u2013',
+  mdash: '\u2014',
+  lsquo: '\u2018',
+  rsquo: '\u2019',
+  ldquo: '\u201c',
+  rdquo: '\u201d',
+}
+
+// Plain string work, not a throwaway <textarea>: these pages are rendered to
+// HTML at build time where there is no DOM, and a decoder that only worked in
+// the browser would make the two renders disagree.
 function decodeEntities(s: string): string {
-  if (typeof document === 'undefined' || !s.includes('&')) return s
-  const el = document.createElement('textarea')
-  el.innerHTML = s
-  return el.value
+  if (!s.includes('&')) return s
+  return s.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body: string) => {
+    if (body[0] === '#') {
+      const code =
+        body[1] === 'x' || body[1] === 'X'
+          ? parseInt(body.slice(2), 16)
+          : parseInt(body.slice(1), 10)
+      return Number.isFinite(code) ? String.fromCodePoint(code) : whole
+    }
+    return NAMED_ENTITIES[body.toLowerCase()] ?? whole
+  })
 }
 
 export function TravelStories({ stories }: TravelStoriesProps) {
@@ -81,7 +107,6 @@ export function TravelStories({ stories }: TravelStoriesProps) {
       <div className="mt-8">
         <Link
           to="/blog"
-          viewTransition
           className="group inline-flex items-center gap-2 font-mono text-sm text-ink hover:text-accent transition-colors"
         >
           <span className="text-accent">$</span> open ./archive ·{' '}
@@ -95,7 +120,7 @@ export function TravelStories({ stories }: TravelStoriesProps) {
 
 function FeatureCard({ post }: { post: BlogPost }) {
   return (
-    <Link to={`/blog/${post.slug}`} viewTransition className="group block h-full">
+    <Link to={`/blog/${post.slug}`} className="group block h-full">
       <GlassPanel className="h-full flex flex-col overflow-hidden vt-card">
         <div className="relative aspect-[16/10] overflow-hidden bg-surface">
           {post.image?.url && (
@@ -136,7 +161,7 @@ function FeatureCard({ post }: { post: BlogPost }) {
 
 function Postcard({ post }: { post: BlogPost }) {
   return (
-    <Link to={`/blog/${post.slug}`} viewTransition className="group block h-full">
+    <Link to={`/blog/${post.slug}`} className="group block h-full">
       <GlassPanel accentTop={false} className="h-full flex flex-col overflow-hidden vt-card">
         <div className="relative aspect-[16/10] overflow-hidden bg-surface">
           {post.image?.url && (

@@ -393,25 +393,15 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       raf = requestAnimationFrame(render)
     }
     const pendingTimers: ReturnType<typeof setTimeout>[] = []
-    let bootDoneListener: EventListener | undefined
     // gate on the ACTUAL display face — document.fonts.ready can resolve
     // against an empty pending set before the async stylesheet even starts
     const fontsReady: Promise<unknown> = Promise.race([
       document.fonts?.load?.('700 1em "Space Grotesk"') ?? Promise.resolve(),
       new Promise((r) => pendingTimers.push(setTimeout(r, 2500))),
     ])
-    const bootDone = (window as unknown as { __fxBootDone?: boolean }).__fxBootDone
-      ? Promise.resolve()
-      : Promise.race([
-          new Promise<void>((r) => {
-            bootDoneListener = () => r()
-            window.addEventListener('fx:bootdone', bootDoneListener, { once: true })
-          }),
-          new Promise((r) => pendingTimers.push(setTimeout(r, 3200))),
-        ])
     let launchT: ReturnType<typeof setTimeout> | undefined
-    Promise.all([fontsReady, bootDone]).then(() => {
-      // small beat after the veil fades so the swarm-in is actually seen
+    Promise.resolve(fontsReady).then(() => {
+      // small beat after the fonts settle so the swarm-in is actually seen
       if (!disposed) launchT = setTimeout(launch, 120)
     })
     // late font arrivals reflow the text — re-sample so the swarm can
@@ -520,9 +510,6 @@ export const ParticleHeadline = memo(function ParticleHeadline({
       clearTimeout(roT)
       ro.disconnect()
       pendingTimers.forEach(clearTimeout)
-      if (bootDoneListener) {
-        window.removeEventListener('fx:bootdone', bootDoneListener)
-      }
       document.removeEventListener('visibilitychange', onVis)
       io.disconnect()
       canvas.removeEventListener('webglcontextlost', onLost as EventListener)

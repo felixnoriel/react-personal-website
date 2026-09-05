@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { m } from 'framer-motion'
+import { m } from 'motion/react'
 import { useScrollSpy } from '../../../hooks/useDetailPage'
 
 export interface SubNavItem {

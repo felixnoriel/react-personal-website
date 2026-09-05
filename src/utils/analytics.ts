@@ -30,7 +30,15 @@ const withGA = (fn: (g: GAModule) => void) => {
  */
 export const initGA = () => {
   import('react-ga4')
-    .then(({ default: ReactGA }) => {
+    .then((mod) => {
+      // react-ga4 is an old CommonJS package. Bundlers disagree about how deep
+      // its default export sits: Vite 8 hands back the raw module object, whose
+      // own `default` is the tracker. Take whichever level actually has the
+      // methods, so a bundler change can never silently switch analytics off.
+      const nested = (mod.default as unknown as { default?: GAModule }).default
+      const ReactGA: GAModule =
+        typeof mod.default?.initialize === 'function' ? mod.default : (nested as GAModule)
+
       ReactGA.initialize(GA_MEASUREMENT_ID, {
         gaOptions: {
           // Anonymize IP addresses for privacy

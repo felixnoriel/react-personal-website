@@ -1,6 +1,6 @@
 import { useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { m } from 'framer-motion'
+import { Link } from 'react-router'
+import { m } from 'motion/react'
 import {
   ArrowLeft,
   Briefcase,

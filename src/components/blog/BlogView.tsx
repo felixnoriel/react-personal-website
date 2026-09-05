@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { m, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { useEffect, useId, useRef, useState } from 'react'
+import { Link } from 'react-router'
+import { m, useReducedMotion, useScroll, useSpring } from 'motion/react'
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -60,13 +60,19 @@ function stableMeta(slug: string) {
   return { code, lat, lng, dispatchNum, wx, readMin, freq }
 }
 
-function useLiveTime() {
-  const [now, setNow] = useState(() => new Date())
+// The page ships as prerendered HTML, so the first render in the browser has
+// to produce exactly what the build produced. A real clock cannot: the build
+// ran hours or weeks ago. So it starts blank and only starts ticking after the
+// page has taken over from the static markup.
+function useUtcClock() {
+  const [utc, setUtc] = useState('--:--')
   useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 30_000)
+    const tick = () => setUtc(new Date().toISOString().slice(11, 16))
+    tick()
+    const id = window.setInterval(tick, 30_000)
     return () => window.clearInterval(id)
   }, [])
-  return now
+  return utc
 }
 
 // ============================================================
@@ -74,7 +80,9 @@ function useLiveTime() {
 // ============================================================
 
 function Postmark({ date, code, size = 100 }: { date: string; code: string; size?: number }) {
-  const id = useMemo(() => `bv-pm-${Math.random().toString(36).slice(2, 9)}`, [])
+  // useId, not Math.random: a random id would differ between the prerendered
+  // HTML and the browser and break hydration.
+  const id = useId()
   return (
     <div className="relative text-ink/80" style={{ width: size, height: size }}>
       <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -194,8 +202,7 @@ function DispatchHero({
 }) {
   const meta = stableMeta(blog.slug)
   const reduce = useReducedMotion()
-  const now = useLiveTime()
-  const utc = now.toISOString().slice(11, 16)
+  const utc = useUtcClock()
 
   return (
     <section className="relative border-b border-ink/10 bg-surface overflow-hidden">

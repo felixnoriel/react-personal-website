@@ -3,7 +3,7 @@ import {
   useMotionValue,
   useSpring,
   type HTMLMotionProps,
-} from 'framer-motion'
+} from 'motion/react'
 import { useRef, type ReactNode } from 'react'
 
 interface MagneticButtonProps extends Omit<HTMLMotionProps<'button'>, 'ref'> {

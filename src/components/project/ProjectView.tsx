@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   m,
   useMotionTemplate,
   useMotionValue,
   useScroll,
   useSpring,
-} from 'framer-motion'
+} from 'motion/react'
 import {
   ArrowLeft,
   ChevronLeft,

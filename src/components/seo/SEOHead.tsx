@@ -1,4 +1,10 @@
-import { Helmet } from 'react-helmet-async'
+// No helmet: React 19 hoists <title>, <meta> and <link> rendered anywhere in
+// the tree straight into <head>, on the server render and on the client alike.
+// React does NOT de-duplicate titles, so exactly ONE of these may render per
+// page — every page component renders a single SEOHead (or BlogPostSEO).
+//
+// The JSON-LD block is deliberately a plain <script> in the body: React only
+// hoists async scripts, and structured data is valid anywhere in the document.
 
 interface SEOHeadProps {
   title?: string
@@ -36,7 +42,7 @@ export function SEOHead({
   const fullUrl = url.startsWith('http') ? url : `${defaultMeta.url}${url}`
 
   return (
-    <Helmet>
+    <>
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
@@ -51,14 +57,17 @@ export function SEOHead({
       <meta property="og:site_name" content={defaultMeta.siteName} />
 
       {/* Article Specific Meta Tags */}
-      {type === 'article' && article && (
-        <>
-          {article.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
-          {article.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime} />}
-          {article.author && <meta property="article:author" content={article.author} />}
-          {article.tags && article.tags.map((tag) => <meta key={tag} property="article:tag" content={tag} />)}
-        </>
+      {type === 'article' && article?.publishedTime && (
+        <meta property="article:published_time" content={article.publishedTime} />
       )}
+      {type === 'article' && article?.modifiedTime && (
+        <meta property="article:modified_time" content={article.modifiedTime} />
+      )}
+      {type === 'article' && article?.author && (
+        <meta property="article:author" content={article.author} />
+      )}
+      {type === 'article' &&
+        article?.tags?.map((tag) => <meta key={tag} property="article:tag" content={tag} />)}
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -69,7 +78,7 @@ export function SEOHead({
       {/* Additional SEO */}
       <meta name="robots" content="index, follow" />
       <meta name="googlebot" content="index, follow" />
-    </Helmet>
+    </>
   )
 }
 
@@ -83,7 +92,31 @@ interface BlogPostSEOProps {
   tags?: string[]
 }
 
-export function BlogPostSEO({ title, excerpt, image, slug, publishedDate, modifiedDate, tags }: BlogPostSEOProps) {
+export function BlogPostSEO({
+  title,
+  excerpt,
+  image,
+  slug,
+  publishedDate,
+  modifiedDate,
+  tags,
+}: BlogPostSEOProps) {
+  const jsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description: excerpt,
+    image: image,
+    datePublished: publishedDate,
+    dateModified: modifiedDate,
+    author: {
+      '@type': 'Person',
+      name: 'Felix Noriel',
+    },
+    keywords: tags?.join(', '),
+    // `</script>` inside a JSON string would end the tag early — neutralise it.
+  }).replace(/</g, '\\u003c')
+
   return (
     <>
       <SEOHead
@@ -100,24 +133,7 @@ export function BlogPostSEO({ title, excerpt, image, slug, publishedDate, modifi
         }}
       />
       {/* JSON-LD Structured Data */}
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            headline: title,
-            description: excerpt,
-            image: image,
-            datePublished: publishedDate,
-            dateModified: modifiedDate,
-            author: {
-              '@type': 'Person',
-              name: 'Felix Noriel',
-            },
-            keywords: tags?.join(', '),
-          })}
-        </script>
-      </Helmet>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
     </>
   )
 }

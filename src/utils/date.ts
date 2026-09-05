@@ -23,16 +23,20 @@ const pad = (n: number) => String(n).padStart(2, '0')
  * Format an ISO date string with luxon-style tokens.
  * Tokens are replaced longest-first so MMMM/MMM/MM don't collide.
  */
+// Read in UTC, never in the reader's local zone. Dates are rendered into the
+// static HTML at build time; a local-zone reading would put "Mar 04" in a US
+// reader's browser next to the "Mar 05" baked into the page, which breaks
+// hydration and shows the wrong day.
 export function formatDate(dateString: string, format: string = 'yyyy-MM-dd'): string {
   const d = new Date(dateString)
   if (isNaN(d.getTime())) return dateString
-  const mo = d.getMonth()
+  const mo = d.getUTCMonth()
   return format
-    .replace(/yyyy/g, String(d.getFullYear()))
+    .replace(/yyyy/g, String(d.getUTCFullYear()))
     .replace(/MMMM/g, MONTHS[mo])
     .replace(/MMM/g, MONTHS[mo].slice(0, 3))
     .replace(/MM/g, pad(mo + 1))
-    .replace(/dd/g, pad(d.getDate()))
+    .replace(/dd/g, pad(d.getUTCDate()))
 }
 
 /**

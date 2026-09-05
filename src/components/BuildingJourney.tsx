@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ArrowUpRight, MapPin } from 'lucide-react'
 import type { Career } from '../types/data'
 import {
@@ -86,7 +86,6 @@ export function BuildingJourney({
         <div className="mt-8">
           <Link
             to="/career"
-            viewTransition
             className="group inline-flex items-center gap-2 font-mono text-sm text-ink hover:text-accent transition-colors"
           >
             <span className="text-accent">$</span> cd ./full-experience

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
 import { CareerView } from '../components/career/CareerView'

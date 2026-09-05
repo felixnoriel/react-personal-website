@@ -1,10 +1,15 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 import type { BlogPost, Career, Project } from '../types/data'
 import { careers } from '../data/career'
 import { projects } from '../data/projects'
-// Blog is by far the largest dataset (~50KB gz). It's loaded lazily off the
-// critical path — the home only needs a few previews (below the fold) and the
-// blog routes are themselves lazy — so initial paint isn't blocked on it.
+import { blogPosts } from '../data/blog'
+
+// Blog used to stream in after mount. It cannot any more: the blog pages are
+// prerendered to static HTML at build time, and an effect never runs during
+// that render — the shipped HTML would be an empty list. Loading it after
+// mount on the client would then disagree with that HTML and break hydration.
+// So all three datasets are imported up front and the build keeps blog in its
+// own chunk (see vite.config.ts) to bound the parse cost.
 
 interface DataState {
   blog: BlogPost[]
@@ -21,31 +26,17 @@ interface DataContextType extends DataState {
 const DataContext = createContext<DataContextType | undefined>(undefined)
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  // career + projects ship with the bundle (small); blog streams in after mount
-  const [blog, setBlog] = useState<BlogPost[]>([])
-  const [error, setError] = useState<string | null>(null)
-
-  const loadBlog = () => {
-    import('../data/blog')
-      .then((m) => setBlog(m.blogPosts))
-      .catch((e) => {
-        console.error('Error loading blog data:', e)
-        setError('Failed to load blog data')
-      })
-  }
-
-  useEffect(() => {
-    loadBlog()
-  }, [])
-
-  const value: DataContextType = {
-    blog,
-    career: careers,
-    projects,
-    loading: false,
-    error,
-    refetch: loadBlog,
-  }
+  const value = useMemo<DataContextType>(
+    () => ({
+      blog: blogPosts,
+      career: careers,
+      projects,
+      loading: false,
+      error: null,
+      refetch: () => {},
+    }),
+    [],
+  )
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>
 }

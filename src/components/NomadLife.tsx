@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { m } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { m } from 'motion/react'
 import { Coffee, MapPin, Plane, Utensils } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatedNumber } from './ui/AnimatedNumber'
@@ -212,8 +212,13 @@ const PLACES: {
 ]
 
 function useUtcMinute() {
-  // computed once — a heading-adjacent value must not change under the reader
-  const [t] = useState(() => new Date().toISOString().slice(11, 16))
+  // Blank on the first render, filled in after mount: the page ships as
+  // prerendered HTML, and a build-time clock would not match what the reader's
+  // browser computes. Set once, so the value never shifts under the reader.
+  const [t, setT] = useState('--:--')
+  useEffect(() => {
+    setT(new Date().toISOString().slice(11, 16))
+  }, [])
   return t
 }
 

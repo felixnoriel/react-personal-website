@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+/* Tailwind v4 scans for class names itself; point it at exactly what v3's
+   `content` array covered so nothing under public/ or dist/ is walked. */
+@source "../index.html";
+@source "./**/*.{js,ts,jsx,tsx}";
+
+/* Long-form article styling for the blog + career pages (`prose` classes). */
+@plugin "@tailwindcss/typography";
+
+/* v3's darkMode: 'class'. The class goes on <html> (see index.html). */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {
@@ -101,6 +109,101 @@
   }
 }
 
+/* ============================================================
+   Design tokens, Tailwind v4 style.
+   ------------------------------------------------------------
+   The raw `--ink: 253 38% 12%` triples above stay exactly as they
+   were, because dozens of inline styles do `hsl(var(--ink) / 0.5)`.
+   This block layers the Tailwind colour names on top of them, so
+   `text-ink`, `bg-surface/60` and `border-lime/30` keep resolving.
+
+   These wrap the triples with hsl() at :root, which is also where
+   the `.dark` class lives — so flipping that class re-computes every
+   colour below. Keep `.dark` on <html>; on a nested element the
+   theme colours would not follow it.
+   ============================================================ */
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-surface: hsl(var(--surface));
+  --color-surface-strong: hsl(var(--surface-strong));
+
+  --color-ink: hsl(var(--ink));
+  --color-ink-muted: hsl(var(--ink-muted));
+  --color-ink-soft: hsl(var(--ink-soft));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-soft: hsl(var(--accent-soft));
+
+  --color-lime: hsl(var(--lime));
+  --color-lime-soft: hsl(var(--lime-soft));
+  --color-electric: hsl(var(--electric));
+  --color-amber: hsl(var(--amber));
+  --color-plum: hsl(var(--plum));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --font-display: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', 'SF Mono', 'Monaco', 'Menlo', ui-monospace, monospace;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --tracking-tightest: -0.04em;
+  --tracking-tighter: -0.03em;
+}
+
+/* v3's `container: { center: true, padding: '1.5rem', screens: { 2xl: 1280px } }`.
+   v4 has no container config — the utility is redefined instead. */
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  @media (width >= 40rem) {
+    max-width: 40rem;
+  }
+  @media (width >= 48rem) {
+    max-width: 48rem;
+  }
+  @media (width >= 64rem) {
+    max-width: 64rem;
+  }
+  @media (width >= 80rem) {
+    max-width: 80rem;
+  }
+}
+
+@layer base {
+  /* v4's reset drops the pointer cursor on buttons; put it back. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 /* Metric-matched fallback for Montserrat (Arial re-scaled to Montserrat's
    ascent/descent/advance metrics). Slotted right after 'Montserrat' in every
    stack so that, before the web font loads, the fallback occupies the SAME box
@@ -168,9 +271,11 @@
     letter-spacing: -0.02em;
   }
 
-  ::selection {
-    background-color: hsl(var(--accent) / 0.25);
-    color: hsl(var(--ink));
+  @supports selector(::selection) {
+    ::selection {
+      background-color: hsl(var(--accent) / 0.25);
+      color: hsl(var(--ink));
+    }
   }
 }
 
@@ -186,8 +291,10 @@
     font-family: 'Montserrat', 'Montserrat Fallback', ui-sans-serif, system-ui, sans-serif;
   }
 
-  .text-balance {
-    text-wrap: balance;
+  @supports (text-wrap: balance) {
+    .text-balance {
+      text-wrap: balance;
+    }
   }
 
 
@@ -324,9 +431,11 @@
    on first paint, and its NodeNetwork SVG would briefly
    un-paint during early scroll if we let it skip-render.
    ============================================================ */
-section:not(#hero) {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 1800px;
+@supports (content-visibility: auto) {
+  section:not(#hero) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 1800px;
+  }
 }
 
 /* ================================================================
@@ -372,7 +481,12 @@ section:not(#hero) {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   padding: 10px;
-  backdrop-filter: blur(6px);
+}
+@supports (backdrop-filter: blur(6px)) {
+  .yarl__navigation_prev,
+  .yarl__navigation_next {
+    backdrop-filter: blur(6px);
+  }
 }
 .yarl__navigation_prev:hover,
 .yarl__navigation_next:hover {
@@ -391,10 +505,14 @@ section:not(#hero) {
   border: 1px solid hsl(var(--lime) / 0.45);
   padding: 6px 10px;
   border-radius: 6px;
-  backdrop-filter: blur(8px);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
     0 8px 24px -10px rgba(0, 0, 0, 0.6);
+}
+@supports (backdrop-filter: blur(8px)) {
+  .yarl__counter {
+    backdrop-filter: blur(8px);
+  }
 }
 
 /* Captions — description text block */
@@ -589,14 +707,15 @@ section:not(#hero) {
   }
 
   /* prettier paragraph rag everywhere it's supported */
-  p {
-    text-wrap: pretty;
+  @supports (text-wrap: pretty) {
+    p {
+      text-wrap: pretty;
+    }
   }
 
   /* terminal entries grow in natively (interpolate-size + @starting-style,
      the no-keyframes entry-animation pattern) */
   .term-entry {
-    interpolate-size: allow-keywords;
     height: auto;
     overflow: clip;
     transition:
@@ -605,6 +724,11 @@ section:not(#hero) {
     @starting-style {
       height: 0;
       opacity: 0;
+    }
+  }
+  @supports (interpolate-size: allow-keywords) {
+    .term-entry {
+      interpolate-size: allow-keywords;
     }
   }
 
@@ -656,11 +780,15 @@ section:not(#hero) {
     background-size: 160% 160%;
     background-position: 30% 50%;
     -webkit-background-clip: text;
-    background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 24px hsl(var(--accent) / 0.28))
       drop-shadow(0 2px 12px hsl(var(--electric) / 0.18));
+  }
+  @supports (background-clip: text) {
+    .aurora-text {
+      background-clip: text;
+    }
   }
   /* cool-blue + warm-magenta retints — keep the hero's two lines distinct */
   .aurora-cool {
@@ -703,7 +831,11 @@ section:not(#hero) {
 .liquid-glass {
   background: linear-gradient(157deg, hsl(var(--background) / 0.5), hsl(var(--background) / 0.26));
   -webkit-backdrop-filter: blur(14px) saturate(180%);
-  backdrop-filter: blur(14px) saturate(180%);
+}
+@supports (backdrop-filter: blur(14px)) {
+  .liquid-glass {
+    backdrop-filter: blur(14px) saturate(180%);
+  }
 }
 .liquid-gloss {
   background:
@@ -717,7 +849,11 @@ section:not(#hero) {
 }
 .liquid-refract {
   -webkit-backdrop-filter: url(#liquid-glass-filter);
-  backdrop-filter: url(#liquid-glass-filter);
+}
+@supports (backdrop-filter: url(#liquid-glass-filter)) {
+  .liquid-refract {
+    backdrop-filter: url(#liquid-glass-filter);
+  }
 }
 @media (max-width: 767px), (prefers-reduced-motion: reduce) {
   .liquid-refract {
@@ -735,7 +871,8 @@ section:not(#hero) {
    never fights framer-motion's inline entrance transforms or
    the parallax rig's `translate` (separate property).
    ============================================================ */
-@supports (animation-timeline: view()) {
+@supports (animation-timeline: view()) and (view-timeline-name: --probe) and
+  (animation-range: cover 0% cover 100%) {
   #hero {
     view-timeline-name: --hero-vt;
   }
@@ -785,7 +922,8 @@ section:not(#hero) {
    browsers keep framer's trigger-based entrances (section.tsx picks
    ONE owner per environment so the two never fight).
    ============================================================ */
-@supports (animation-timeline: view()) {
+@supports (animation-timeline: view()) and (view-timeline-name: --probe) and
+  (animation-range: cover 0% cover 100%) {
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
     /* career timeline spine — draws itself as the list scrolls through */
     .spine-host {
@@ -834,11 +972,14 @@ section:not(#hero) {
    without the API just navigate normally.
    ============================================================ */
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root) {
-    animation: vt-out 0.26s cubic-bezier(0.4, 0, 1, 1) both;
-  }
-  ::view-transition-new(root) {
-    animation: vt-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @supports selector(::view-transition-old(root)) and
+    selector(::view-transition-new(root)) {
+    ::view-transition-old(root) {
+      animation: vt-out 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+    }
+    ::view-transition-new(root) {
+      animation: vt-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
   }
   @keyframes vt-out {
     to {

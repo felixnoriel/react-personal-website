@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   ArrowUpRight,
   Code2,
@@ -119,7 +119,6 @@ export function ProductsBuilt({
         <div className="mt-8">
           <Link
             to="/projects"
-            viewTransition
             className="group inline-flex items-center gap-2 font-mono text-sm text-ink hover:text-accent transition-colors"
           >
             <span className="text-accent">$</span> cd ./all-projects
@@ -203,7 +202,6 @@ function ProjectCard({
     <GlassPanel className="overflow-hidden vt-card">
       <Link
         to={`/projects/${project.slug}`}
-        viewTransition
         onClick={() => trackProjectView(project.title)}
         className="group grid grid-cols-1 lg:grid-cols-2 items-stretch"
       >

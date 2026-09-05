@@ -9,6 +9,6 @@
 //
 // `domMax` (not `domAnimation`) because the app uses layout animations
 // (the Header nav pill `layoutId`), which `domAnimation` does not include.
-import { domMax } from 'framer-motion'
+import { domMax } from 'motion/react'
 
 export default domMax

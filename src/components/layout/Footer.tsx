@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { m } from 'framer-motion'
+import { Link } from 'react-router'
+import { m } from 'motion/react'
 import { ArrowUpRight, Terminal } from 'lucide-react'
 import { Socials } from '../Socials'
 import { trackNavigation, trackEmailClick } from '../../utils/analytics'

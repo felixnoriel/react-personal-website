@@ -5,8 +5,8 @@ import {
   useScroll,
   useSpring,
   useTransform,
-} from 'framer-motion'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+} from 'motion/react'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { Menu, X, ArrowUpRight, Search } from 'lucide-react'
 import { MagneticButton } from '../ui/MagneticButton'
 
@@ -154,7 +154,7 @@ export function Header() {
           return
         }
         if (redirectPath !== location.pathname) {
-          navigate(redirectPath, { viewTransition: true })
+          navigate(redirectPath)
           window.scrollTo({ top: 0, behavior: 'smooth' })
           return
         }
@@ -173,7 +173,7 @@ export function Header() {
   const handleContactClick = () => {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false)
-      navigate('/about', { viewTransition: true })
+      navigate('/about')
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }

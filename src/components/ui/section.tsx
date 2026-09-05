@@ -1,4 +1,4 @@
-import { m } from 'framer-motion'
+import { m } from 'motion/react'
 import { useRef, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react'
 import { ACCENT, EASE, type Accent } from './section-tokens'
 import { useFxLevel } from '../../hooks/useFxLevel'

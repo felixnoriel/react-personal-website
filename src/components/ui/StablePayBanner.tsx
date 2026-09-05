@@ -1,4 +1,4 @@
-import { m } from 'framer-motion'
+import { m } from 'motion/react'
 import { Banknote, Globe2, Send, Zap } from 'lucide-react'
 
 const PANELS = [

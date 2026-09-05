@@ -1,4 +1,4 @@
-import { AnimatePresence, m } from 'framer-motion'
+import { AnimatePresence, m } from 'motion/react'
 import {
   ArrowRight,
   Briefcase,
@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 type GroupName = 'Navigate' | 'Jump to' | 'Contact'
 type FilterName = 'All' | GroupName
