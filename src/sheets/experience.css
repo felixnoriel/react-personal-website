@@ -539,3 +539,8 @@
     font-size: 24px;
   }
 }
+
+/* the sidenote's figure and its date range never touch */
+.career-sheet__note > * + * {
+  margin-block-start: var(--s-2);
+}

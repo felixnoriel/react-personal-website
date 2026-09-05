@@ -19,15 +19,6 @@
   color: inherit;
   padding-block: var(--s-8);
   border-block-start: var(--hair) solid var(--rule);
-  /* the measured height of a block at 412px is 546-683px; `auto` replaces this
-     guess with the real one the moment a block has been rendered once */
-  contain-intrinsic-size: auto 560px;
-}
-/* Default first: an engine without it just renders every block. */
-@supports (content-visibility: auto) {
-  .work-block {
-    content-visibility: auto;
-  }
 }
 
 .work-block__title {

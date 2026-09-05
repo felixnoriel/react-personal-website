@@ -213,3 +213,13 @@
     margin-block-end: var(--s-12);
   }
 }
+
+/* the four social links share one line, separated by middots */
+.tb__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+}
+.tb__socials > span {
+  display: inline;
+}

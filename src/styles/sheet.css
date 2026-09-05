@@ -264,8 +264,8 @@
   }
 }
 
-/* the Stable wordmark is drawn near-white: its plate goes to ink so the mark
-   reads, everywhere that logo sits */
-[data-slug='stable'] .plate {
-  background: var(--ink);
+/* the Stable wordmark is drawn near-white on transparent: invert it so it
+   sits on the same light plate as every other logo, everywhere it appears */
+[data-slug='stable'] .plate img {
+  filter: invert(1) hue-rotate(180deg);
 }

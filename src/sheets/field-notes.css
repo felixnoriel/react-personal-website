@@ -231,3 +231,8 @@
     min-height: 44px;
   }
 }
+
+/* the writing sub-head keeps its own breathing room above the intro */
+.fn-writing h3 + .section__intro {
+  margin-block-start: var(--s-3);
+}
