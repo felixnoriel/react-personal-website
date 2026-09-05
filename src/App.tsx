@@ -12,10 +12,11 @@ import { usePageTracking } from './hooks/usePageTracking'
 
 // Every page is prerendered to static HTML at build time, so the same tree
 // renders in Node (StaticRouter, given the URL) and in the browser
-// (BrowserRouter). Routes are code-split; the Home chunk is modulepreloaded
-// from the HTML (vite.config.ts) so it streams in parallel with the entry.
+// (BrowserRouter). Routes are code-split; each page's own route chunks are
+// modulepreloaded from its HTML (scripts/route-preloads.ts) so they stream in
+// parallel with the entry, and the home page starts its import at once.
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
-if (typeof window !== 'undefined') void import('./pages/Home')
+if (typeof window !== 'undefined' && window.location.pathname === '/') void import('./pages/Home')
 const Blog = lazy(() => import('./pages/Blog').then((m) => ({ default: m.Blog })))
 const BlogDetail = lazy(() => import('./pages/BlogDetail').then((m) => ({ default: m.BlogDetail })))
 const Projects = lazy(() => import('./pages/Projects').then((m) => ({ default: m.Projects })))

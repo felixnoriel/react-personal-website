@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { Picture } from '../Picture'
+import { liftHeadings } from '../../utils/headings'
+import { IMAGES as galleryImages } from '../../data/images/galleries.generated'
 import { ProjectPlate, countWord, projectTitle } from '../../sheets/WorkSheet'
 import { ArrowMark, ChevronMark, CloseMark } from '../../marks'
 import type { Image as ImageAsset, Project } from '../../types/data'
@@ -29,7 +31,6 @@ const pad = (n: number) => String(n).padStart(2, '0')
 /** The prose is authored with <h3> sub-heads. The page's own heading is the
  *  <h1>, so they are promoted one level to keep the outline in order. Only
  *  the tag changes; not one word of the copy does. */
-const liftHeadings = (html: string) => html.replace(/<(\/?)h3(\s|>)/gi, '<$1h2$2')
 
 interface ProjectViewProps {
   project: Project | null
@@ -45,7 +46,7 @@ export function ProjectView({ project, total, prev, next }: ProjectViewProps) {
 
   if (!project) {
     return (
-      <article className="detail" data-sheet-ready>
+      <article className="detail">
         <Link className="detail__crumb meta" to="/projects">
           <ArrowMark /> {`All ${countWord(total)} projects`}
         </Link>
@@ -84,7 +85,7 @@ export function ProjectView({ project, total, prev, next }: ProjectViewProps) {
   const shown = gallery[active]
 
   return (
-    <article className="detail" data-sheet-ready>
+    <article className="detail">
       <Link className="detail__crumb meta" to="/projects">
         <ArrowMark /> {`All ${countWord(total)} projects`}
       </Link>
@@ -126,7 +127,7 @@ export function ProjectView({ project, total, prev, next }: ProjectViewProps) {
                         onClick={() => openPlate(index)}
                       >
                         <span className="plate">
-                          <Picture src={img.url} alt={img.alt || title} sizes="272px" />
+                          <Picture src={img.url} from={galleryImages} alt={img.alt || title} sizes="272px" />
                         </span>
                       </button>
                       <figcaption className="meta">{pad(index + 1)}</figcaption>
@@ -161,7 +162,7 @@ export function ProjectView({ project, total, prev, next }: ProjectViewProps) {
               </button>
             </div>
             <figure className="lightbox__figure">
-              {shown && <Picture src={shown.url} alt={shown.alt || title} sizes="90vw" />}
+              {shown && <Picture src={shown.url} from={galleryImages} alt={shown.alt || title} sizes="90vw" />}
             </figure>
             <div className="lightbox__foot">
               <button

@@ -1,5 +1,5 @@
 // GENERATED support types for scripts/optimize-images.ts - do not edit
-// (this file itself is hand-written; only src/data/images.generated.ts is generated)
+// (this file itself is hand-written; only src/data/images/*.generated.ts are generated)
 
 /** One resolution variant of an optimized image, for a <source srcset> entry. */
 export interface ImageVariant {

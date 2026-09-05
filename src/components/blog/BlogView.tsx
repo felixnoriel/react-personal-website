@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router'
 import type { BlogPost } from '../../types/data'
 import { Picture } from '../Picture'
+import { IMAGES as blogImages } from '../../data/images/blog.generated'
 import { SITE } from '../seo/SEOHead'
 import { useData } from '../../contexts/DataContext'
 import { formatDate } from '../../utils/date'
@@ -83,7 +84,8 @@ export function BlogView({ blog }: BlogViewProps) {
         <div className="plate detail__plate">
           <Picture
             src={blog.image.url}
-            alt={blog.image.alt || title}
+            from={blogImages}
+            alt={blog.image.alt ? decodeEntities(blog.image.alt) : title}
             sizes="(min-width: 900px) 704px, 100vw"
             priority
           />

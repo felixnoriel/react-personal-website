@@ -2,6 +2,7 @@ import { useEffect, useRef, type CSSProperties, type MouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Section } from './Section'
 import { Picture } from '../components/Picture'
+import { IMAGES as careerImages } from '../data/images/career.generated'
 import { sheetChange } from '../transitions/sheetChange'
 import { careerAxis, gapBefore, pct, tenureOf, type Axis, type Tenure } from '../utils/timeline'
 import { initScale } from './scale'
@@ -75,7 +76,7 @@ function CareerRow({ career, tenure, gap, expanded, onOpen, onInk }: RowProps) {
     >
       <div className="career-row__line1">
         <span className="career-row__plate plate" data-vt="sheet-plate">
-          <Picture src={career.image.url} alt={career.image.alt || career.title} sizes="88px" />
+          <Picture src={career.image.url} from={careerImages} alt={career.image.alt || career.title} sizes="88px" />
         </span>
         <Link
           className="career-row__name"

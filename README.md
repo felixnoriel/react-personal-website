@@ -29,7 +29,7 @@ Fonts: `bash scripts/subset-fonts.sh <Fraunces.ttf> <HostGrotesk.ttf> <HostGrote
 
 ## Where things live
 
-- `src/data/` - the content. `career.ts`, `projects.ts` and `blog.ts` are hand-maintained; `blog-index.ts`, `blog-content/` and `images.generated.ts` are generated.
+- `src/data/` - the content. `career.ts`, `projects.ts` and `blog.ts` are hand-maintained; `blog-index.ts`, `blog-content/` and `images/*.generated.ts` are generated.
 - `src/styles/` - tokens, fonts, base, the sheet grid, motion.
 - `src/sheets/` - one component + one stylesheet per home sheet, the header, the footer, the sheet index.
 - `src/pages/` and `src/components/{career,project,blog}/` - the index and detail routes.

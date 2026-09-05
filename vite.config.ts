@@ -3,52 +3,6 @@ import react from '@vitejs/plugin-react'
 import { vitePrerenderPlugin } from 'vite-prerender-plugin'
 import path from 'path'
 
-// The landing page's critical chunk (Home) is a
-// dynamic imports, so by default the browser only discovers them AFTER the
-// entry chunk has downloaded and executed — a serial round-trip that real
-// phone networks pay for in full. This plugin injects <link rel="modulepreload">
-// tags for them (and their static dep chains) into index.html at build time,
-// so they stream in parallel with the entry, starting from the HTML.
-// (The chunks stay split — spreading parse/exec across chunks keeps
-// main-thread tasks short — only the fetches are parallelized.)
-const PRELOAD_FACADES = ['src/pages/Home.tsx']
-
-function preloadCriticalChunks(): Plugin {
-  return {
-    name: 'preload-critical-chunks',
-    transformIndexHtml: {
-      order: 'post',
-      handler(html, ctx) {
-        const bundle = ctx.bundle
-        if (!bundle) return []
-        const files = new Set<string>()
-        const addWithDeps = (fileName: string) => {
-          if (files.has(fileName)) return
-          files.add(fileName)
-          const chunk = bundle[fileName]
-          if (chunk?.type === 'chunk') chunk.imports.forEach(addWithDeps)
-        }
-        for (const chunk of Object.values(bundle)) {
-          if (
-            chunk.type === 'chunk' &&
-            chunk.facadeModuleId &&
-            PRELOAD_FACADES.some((f) => chunk.facadeModuleId!.endsWith(f))
-          ) {
-            addWithDeps(chunk.fileName)
-          }
-        }
-        return [...files]
-          .filter((file) => !html.includes(file))
-          .map((file) => ({
-            tag: 'link',
-            attrs: { rel: 'modulepreload', crossorigin: true, href: `/${file}` },
-            injectTo: 'head' as const,
-          }))
-      },
-    },
-  }
-}
-
 // The stylesheet is small by design (no gradients, blurs or shadows to
 // serialise), so it is inlined into every prerendered page. That removes the
 // one render-blocking request between the HTML and the first paint, which on
@@ -127,7 +81,6 @@ export default defineConfig({
       renderTarget: '#root',
       additionalPrerenderRoutes: ['/about', '/404'],
     }),
-    preloadCriticalChunks(),
     preloadFonts(),
     inlineCriticalCss(),
   ],
@@ -147,6 +100,12 @@ export default defineConfig({
     target: ['chrome111', 'edge111', 'firefox114', 'safari16.4'],
     // Every browser in that target list supports modulepreload natively.
     modulePreload: { polyfill: false },
+    // Written to dist/.vite/manifest.json and read by scripts/route-preloads.ts,
+    // which gives every prerendered page <link rel=modulepreload> tags for its
+    // own route chunks (a plugin could only see the one shared template, so
+    // every page used to preload the home page's chunks). The script deletes
+    // the manifest afterwards so it is not deployed.
+    manifest: true,
     chunkSizeWarningLimit: 1000, // Increase limit for large data files
     rolldownOptions: {
       output: {

@@ -58,9 +58,6 @@
 .cols__side {
   grid-column: 9 / span 4;
 }
-.cols__side--narrow {
-  grid-column: 9 / span 3;
-}
 @media (max-width: 899px) {
   .cols {
     display: block;
@@ -102,9 +99,6 @@
   height: var(--hair);
   background: var(--rule);
   border: 0;
-}
-.rule--faint {
-  background: var(--rule-faint);
 }
 
 /* --- the key line: words separated by short vertical ticks. Honest

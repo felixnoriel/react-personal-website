@@ -171,9 +171,6 @@ h3 {
 .ink-2 {
   color: var(--ink-2);
 }
-.ink-3 {
-  color: var(--ink-3);
-}
 
 .measure {
   max-width: var(--measure);

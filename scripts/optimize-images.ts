@@ -2,11 +2,14 @@
  * Build-time image optimization pipeline.
  *
  * Walks the STRUCTURED image fields of the content data (career.ts, projects.ts,
- * blog.ts, and the hard-coded travel photos in NomadLife.tsx) - never the inline
- * HTML `content` strings - downloads each source once, converts it to AVIF + WebP
- * at capped widths, writes the files under public/img/, and emits a typed
- * manifest (src/data/images.generated.ts) so components can render a zero-CLS
- * <picture> with real width/height and small bytes.
+ * blog.ts, and the hard-coded travel photos in FieldNotesSheet.tsx) - never the
+ * inline HTML `content` strings - downloads each source once, converts it to
+ * AVIF + WebP at capped widths, writes the files under public/img/, and emits
+ * one typed manifest per content group (src/data/images/<group>.generated.ts)
+ * so components can render a zero-CLS <picture> with real width/height and
+ * small bytes. The manifests are split so a page only ships the entries it can
+ * render: the project galleries alone are three quarters of the total and are
+ * only ever drawn on /projects/:slug.
  *
  * Run: `bun scripts/optimize-images.ts` (also wired up as `bun run images`,
  * and as the first step of `bun run build`).
@@ -40,10 +43,16 @@ const ROOT = join(import.meta.dirname, '..')
 const OUT_DIR = join(ROOT, 'public', 'img')
 const CACHE_DIR = join(ROOT, '.cache', 'images')
 const CACHE_FILE = join(CACHE_DIR, 'cache.json')
-const MANIFEST_FILE = join(ROOT, 'src', 'data', 'images.generated.ts')
-const NOMAD_LIFE_FILE = join(ROOT, 'src', 'components', 'NomadLife.tsx')
+const MANIFEST_DIR = join(ROOT, 'src', 'data', 'images')
+const FIELD_NOTES_FILE = join(ROOT, 'src', 'sheets', 'FieldNotesSheet.tsx')
 
-const WIDTHS = [480, 960, 1600] as const
+/** Which pages can draw an image. Each group becomes its own manifest file. */
+type Group = 'career' | 'projects' | 'galleries' | 'blog' | 'site'
+const GROUPS: Group[] = ['career', 'projects', 'galleries', 'blog', 'site']
+
+// 200 exists for the fixed small slots (company logos at 88px, gallery thumbs);
+// without it the browser's smallest choice for an 88px logo was the 480 file.
+const WIDTHS = [200, 480, 960, 1600] as const
 const AVIF_QUALITY = 55
 const WEBP_QUALITY = 78
 const LQIP_WIDTH = 24
@@ -65,6 +74,8 @@ const FETCH_TIMEOUT_MS = 20_000
 // ---------------------------------------------------------------------------
 
 interface CacheEntry {
+  /** the width ladder the outputs were encoded with; a changed ladder re-encodes */
+  widths?: string
   etag?: string
   lastModified?: string
   contentLength?: number
@@ -83,6 +94,7 @@ type Cache = Record<string, CacheEntry>
 interface ImageRef {
   url: string
   refs: string[] // human-readable "where this came from", for logging only
+  groups: Set<Group> // which manifests the entry is written to
 }
 
 type Outcome =
@@ -96,36 +108,37 @@ type Outcome =
 
 function collectImageRefs(): ImageRef[] {
   const byUrl = new Map<string, ImageRef>()
-  const add = (url: string | undefined, ref: string) => {
+  const add = (url: string | undefined, ref: string, group: Group) => {
     if (!url) return
     const existing = byUrl.get(url)
-    if (existing) existing.refs.push(ref)
-    else byUrl.set(url, { url, refs: [ref] })
+    if (existing) {
+      existing.refs.push(ref)
+      existing.groups.add(group)
+    } else byUrl.set(url, { url, refs: [ref], groups: new Set([group]) })
   }
 
   for (const c of careers) {
-    add(c.image?.url, `career:${c.slug}.image`)
-    add(c.banner?.url, `career:${c.slug}.banner`)
+    add(c.image?.url, `career:${c.slug}.image`, 'career')
+    add(c.banner?.url, `career:${c.slug}.banner`, 'career')
   }
   for (const p of projects) {
-    add(p.image?.url, `project:${p.slug}.image`)
-    add(p.company?.image?.url, `project:${p.slug}.company.image`)
+    add(p.image?.url, `project:${p.slug}.image`, 'projects')
+    add(p.company?.image?.url, `project:${p.slug}.company.image`, 'projects')
     for (const [i, g] of (p.gallery ?? []).entries()) {
-      add(g.url, `project:${p.slug}.gallery[${i}]`)
+      add(g.url, `project:${p.slug}.gallery[${i}]`, 'galleries')
     }
   }
   for (const b of blogPosts) {
-    add(b.image?.url, `blog:${b.slug}.image`)
+    add(b.image?.url, `blog:${b.slug}.image`, 'blog')
   }
 
-  // NomadLife.tsx hard-codes its travel photos in a local, non-exported
-  // PLACES array. We cannot import a .tsx component here (and are not
-  // allowed to modify it to export the array), so pull the 4 Unsplash URLs
+  // FieldNotesSheet.tsx hard-codes its travel photos in a local PLACES array.
+  // A .tsx component cannot be imported here, so the Unsplash URLs are pulled
   // straight out of the source text instead.
-  const nomadSource = readFileSync(NOMAD_LIFE_FILE, 'utf-8')
-  const unsplashUrls = nomadSource.match(/https:\/\/images\.unsplash\.com\/[^'"]+/g) ?? []
+  const fieldNotesSource = readFileSync(FIELD_NOTES_FILE, 'utf-8')
+  const unsplashUrls = fieldNotesSource.match(/https:\/\/images\.unsplash\.com\/[^'"]+/g) ?? []
   for (const [i, url] of unsplashUrls.entries()) {
-    add(url, `NomadLife.tsx:PLACES[${i}].image`)
+    add(url, `FieldNotesSheet.tsx:PLACES[${i}].image`, 'site')
   }
 
   return [...byUrl.values()]
@@ -192,8 +205,12 @@ async function getRequest(url: string): Promise<Response> {
   }
 }
 
-function outputsExist(outputs: string[]): boolean {
-  return outputs.length > 0 && outputs.every((p) => existsSync(p))
+const WIDTH_KEY = WIDTHS.join(',')
+
+/** the cache entry is reusable only if every output is on disk AND it was
+ *  encoded with the current width ladder */
+function outputsCurrent(entry: CacheEntry): boolean {
+  return entry.widths === WIDTH_KEY && entry.outputs.length > 0 && entry.outputs.every((p) => existsSync(p))
 }
 
 // ---------------------------------------------------------------------------
@@ -338,7 +355,7 @@ async function processOne(
   const cached = cache[url]
 
   // Fast path: HEAD request + validator comparison, no download at all.
-  if (cached && outputsExist(cached.outputs)) {
+  if (cached && outputsCurrent(cached)) {
     const head = await headRequest(url)
     if (head && head.ok) {
       const etag = head.headers.get('etag') ?? undefined
@@ -376,7 +393,7 @@ async function processOne(
   const buffer = Buffer.from(arrayBuffer)
   const sourceHash = createHash('sha256').update(buffer).digest('hex')
 
-  if (cached && cached.sourceHash === sourceHash && outputsExist(cached.outputs)) {
+  if (cached && cached.sourceHash === sourceHash && outputsCurrent(cached)) {
     manifest[url] = cached.manifest
     console.log(`  = cached (same content hash): ${url}`)
     return { status: 'ok', url, cached: true, inputBytes: cached.inputBytes, outputBytes: cached.outputBytes }
@@ -394,6 +411,7 @@ async function processOne(
     const outputBytes = outputs.reduce((sum, p) => sum + statSync(p).size, 0)
 
     cache[url] = {
+      widths: WIDTH_KEY,
       etag: res.headers.get('etag') ?? undefined,
       lastModified: res.headers.get('last-modified') ?? undefined,
       contentLength: Number(res.headers.get('content-length') ?? buffer.byteLength),
@@ -422,35 +440,29 @@ async function processOne(
 // 8. Manifest emission
 // ---------------------------------------------------------------------------
 
-function emitManifest(manifest: Record<string, OptimizedImage>) {
-  const lines: string[] = []
-  lines.push('// GENERATED by scripts/optimize-images.ts - do not edit')
-  lines.push('//')
-  lines.push('// Maps each original image URL (exactly as it appears in src/data/*.ts and')
-  lines.push('// src/components/NomadLife.tsx) to its optimized AVIF/WebP variants, so')
-  lines.push('// components can render a zero-CLS <picture> with real width/height.')
-  lines.push('// Re-run `bun run images` to regenerate.')
-  lines.push('')
-  lines.push("import type { ImageVariant, OptimizedImage } from '../types/images.ts'")
-  lines.push('')
-  lines.push('export const IMAGES: Record<string, OptimizedImage> = ')
-  lines.push(JSON.stringify(manifest, null, 2))
-  lines.push('')
-  lines.push('/** Look up the optimized variants for a source URL. Returns undefined for')
-  lines.push(' *  local paths or sources that failed to download (components should fall')
-  lines.push(' *  back to rendering `<img src={url}>` directly in that case). */')
-  lines.push('export function getImage(url: string | undefined): OptimizedImage | undefined {')
-  lines.push('  if (!url) return undefined')
-  lines.push('  return IMAGES[url]')
-  lines.push('}')
-  lines.push('')
-  lines.push('/** Build a `srcset` attribute value from a list of image variants. */')
-  lines.push('export function srcSet(sources: ImageVariant[]): string {')
-  lines.push("  return sources.map((s) => `${s.src} ${s.w}w`).join(', ')")
-  lines.push('}')
-  lines.push('')
-
-  writeFileSync(MANIFEST_FILE, lines.join('\n'))
+function emitManifests(refs: ImageRef[], manifest: Record<string, OptimizedImage>) {
+  mkdirSync(MANIFEST_DIR, { recursive: true })
+  for (const group of GROUPS) {
+    const entries: Record<string, OptimizedImage> = {}
+    for (const ref of refs) {
+      if (ref.groups.has(group) && manifest[ref.url]) entries[ref.url] = manifest[ref.url]
+    }
+    const lines = [
+      '// GENERATED by scripts/optimize-images.ts - do not edit',
+      '//',
+      `// The "${group}" images: each original URL (exactly as it appears in the`,
+      '// content data) mapped to its optimized AVIF/WebP variants, so <Picture>',
+      '// can render a zero-CLS <picture> with real width/height.',
+      '// Re-run `bun run images` to regenerate.',
+      '',
+      "import type { OptimizedImage } from '../../types/images.ts'",
+      '',
+      `export const IMAGES: Record<string, OptimizedImage> = ${JSON.stringify(entries, null, 2)}`,
+      '',
+    ]
+    writeFileSync(join(MANIFEST_DIR, `${group}.generated.ts`), lines.join('\n'))
+    console.log(`  manifest ${group}: ${Object.keys(entries).length} images`)
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -467,7 +479,7 @@ async function main() {
   console.log('Image optimization pipeline\n')
 
   const refs = collectImageRefs()
-  console.log(`Found ${refs.length} unique image URLs across career.ts, projects.ts, blog.ts, NomadLife.tsx\n`)
+  console.log(`Found ${refs.length} unique image URLs across career.ts, projects.ts, blog.ts, FieldNotesSheet.tsx\n`)
 
   const cache = loadCache()
   const manifest: Record<string, OptimizedImage> = {}
@@ -475,7 +487,8 @@ async function main() {
   const outcomes = await pool(refs, CONCURRENCY, (ref) => processOne(ref, cache, manifest))
 
   saveCache(cache)
-  emitManifest(manifest)
+  console.log('')
+  emitManifests(refs, manifest)
 
   const ok = outcomes.filter((o) => o.status === 'ok') as Extract<Outcome, { status: 'ok' }>[]
   const failed = outcomes.filter((o) => o.status === 'failed') as Extract<Outcome, { status: 'failed' }>[]
@@ -501,7 +514,7 @@ async function main() {
     for (const f of failed) console.log(`  - ${f.url}  (${f.reason})`)
   }
 
-  console.log(`\nManifest written to ${MANIFEST_FILE}`)
+  console.log(`\nManifests written to ${MANIFEST_DIR}`)
   console.log(`Cache written to ${CACHE_FILE}`)
   // Never fail the build - failures are logged above and simply omitted from the manifest.
   process.exit(0)

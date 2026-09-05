@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { Picture } from '../Picture'
+import { IMAGES as careerImages } from '../../data/images/career.generated'
 import { ArrowMark } from '../../marks'
 import { AchievementList, TenureRule } from '../../sheets/ExperienceSheet'
 import { careerAxis, formatDuration, tenureOf } from '../../utils/timeline'
@@ -61,7 +62,7 @@ export function CareerView({ experience, projects, careers }: CareerViewProps) {
 
       {experience.image?.url && (
         <span className="career-sheet__plate detail__plate plate">
-          <Picture src={experience.image.url} alt={experience.image.alt || experience.title} sizes="220px" />
+          <Picture src={experience.image.url} from={careerImages} alt={experience.image.alt || experience.title} sizes="220px" />
         </span>
       )}
 

@@ -1,18 +1,23 @@
 /**
  * <Picture> - every raster on the site goes through here.
  *
- * Reads the build-time manifest (src/data/images.generated.ts) for the
- * original URL and renders AVIF, then WebP, then the largest WebP as the
- * fallback, with the real intrinsic width/height so nothing shifts while it
- * loads, and the blur placeholder painted underneath. Local files outside the
- * manifest fall through to a plain <img>; unknown remote URLs (a few legacy
- * placeholder hosts) render nothing rather than a broken image.
+ * Looks the original URL up in the manifest the caller hands over (one of
+ * src/data/images/*.generated.ts, so a page only ships the entries it can
+ * draw) and renders AVIF, then WebP, then the largest WebP as the fallback,
+ * with the real intrinsic width/height so nothing shifts while it loads, and
+ * the blur placeholder painted underneath. Local files outside the manifest
+ * fall through to a plain <img>; unknown remote URLs (a few legacy placeholder
+ * hosts) render nothing rather than a broken image.
  */
 import type { CSSProperties, ImgHTMLAttributes } from 'react'
-import { getImage, srcSet } from '../data/images.generated'
+import type { ImageVariant, OptimizedImage } from '../types/images'
+
+const srcSet = (sources: ImageVariant[]) => sources.map((s) => `${s.src} ${s.w}w`).join(', ')
 
 type Props = Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet' | 'width' | 'height'> & {
   src?: string
+  /** the manifest this image belongs to (src/data/images/<group>.generated.ts) */
+  from: Record<string, OptimizedImage>
   alt: string
   /** the `sizes` attribute, e.g. "(min-width: 768px) 40vw, 100vw" */
   sizes?: string
@@ -22,8 +27,8 @@ type Props = Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet' | 'width
   style?: CSSProperties
 }
 
-export function Picture({ src, alt, sizes = '100vw', priority = false, className, style, ...rest }: Props) {
-  const img = src ? getImage(src) : undefined
+export function Picture({ src, from, alt, sizes = '100vw', priority = false, className, style, ...rest }: Props) {
+  const img = src ? from[src] : undefined
   const loading = priority ? 'eager' : 'lazy'
   const fetchPriority = priority ? 'high' : undefined
 

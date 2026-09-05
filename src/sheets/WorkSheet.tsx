@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Section } from './Section'
 import { Picture } from '../components/Picture'
+import { IMAGES as projectImages } from '../data/images/projects.generated'
 import { StablePaySchematic } from './StablePaySchematic'
 import { ArrowMark } from '../marks'
 import { sheetChange } from '../transitions/sheetChange'
@@ -60,7 +61,7 @@ export function ProjectPlate({
   if (project.slug === 'stable') {
     return <StablePaySchematic title={project.image?.alt || title} />
   }
-  return <Picture src={project.image?.url} alt={project.image?.alt || title} sizes={sizes} priority={priority} />
+  return <Picture src={project.image?.url} from={projectImages} alt={project.image?.alt || title} sizes={sizes} priority={priority} />
 }
 
 export function WorkSheet({ projects }: { projects: Project[] }) {

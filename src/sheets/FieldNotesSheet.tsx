@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { Picture } from '../components/Picture'
+import { IMAGES as siteImages } from '../data/images/site.generated'
 import { LiveClock } from '../components/ui/LiveClock'
 import { useData } from '../contexts/DataContext'
 import { decodeEntities } from '../components/blog/decode'
@@ -81,7 +82,7 @@ export function FieldNotesSheet() {
     >
       <figure className="fn-photo">
         <div className="plate">
-          <Picture src={opener.image} alt={`${opener.title} · ${opener.location}`} sizes="100vw" />
+          <Picture src={opener.image} from={siteImages} alt={`${opener.title} · ${opener.location}`} sizes="100vw" />
         </div>
         <figcaption className="plate__caption fn-caption">
           <span className="fn-caption__title">{opener.title}</span>
@@ -139,6 +140,7 @@ export function FieldNotesSheet() {
             <div className="plate">
               <Picture
                 src={p.image}
+                from={siteImages}
                 alt={`${p.title} · ${p.location}`}
                 sizes="(min-width: 900px) 25vw, 45vw"
               />
