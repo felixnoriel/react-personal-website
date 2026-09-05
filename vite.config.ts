@@ -66,16 +66,20 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1000, // Increase limit for large data files
     rollupOptions: {
-      // multi-page: the site plus every hero prototype under proto/<name>/
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-        ...Object.fromEntries(
-          globSync('proto/*/index.html', { cwd: __dirname }).map((f) => [
-            'proto-' + path.basename(path.dirname(f)),
-            path.resolve(__dirname, f),
-          ]),
-        ),
-      },
+      // multi-page: the site plus every hero prototype under proto/<name>/.
+      // PROTO_ONLY=<name> builds just that prototype (owners build in
+      // parallel and must not trip over each other's half-written entries).
+      input: process.env.PROTO_ONLY
+        ? { ['proto-' + process.env.PROTO_ONLY]: path.resolve(__dirname, 'proto', process.env.PROTO_ONLY, 'index.html') }
+        : {
+            main: path.resolve(__dirname, 'index.html'),
+            ...Object.fromEntries(
+              globSync('proto/*/index.html', { cwd: __dirname }).map((f) => [
+                'proto-' + path.basename(path.dirname(f)),
+                path.resolve(__dirname, f),
+              ]),
+            ),
+          },
       output: {
         manualChunks(id) {
           // Split large data files into separate chunks
