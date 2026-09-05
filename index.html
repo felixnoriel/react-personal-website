@@ -1,52 +1,29 @@
 <!doctype html>
-<!-- Light theme (Felix's call). Every fx layer (aurora shader, galaxy,
-     particle headline) is theme-aware and reads its palette from the CSS
-     tokens — add class="dark" here to flip the whole site back to the
-     cinematic dark variant. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#14141A" />
-    <!-- Each page's own title is written into this tag at build time, so the
-         tab and every crawler get the right one before any code runs. React
-         puts its own live copy in front of it once the page takes over. -->
-    <title>Felix Noriel - Software Engineer</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Variable fonts (wght ranges): ONE file per family instead of 7 static
-         Montserrat weights — fewer bytes + requests, and the continuous wght
-         axis powers the hero's kinetic (cursor-swell) headline. -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
+    <!-- viewport-fit=cover lets the sheet's rules run to the screen edge on
+         phones with a notch; every edge-anchored element pays it back with
+         env(safe-area-inset-*). interactive-widget keeps the contact form
+         usable under the on-screen keyboard on Android. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
     />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Montserrat:wght@300..900&family=JetBrains+Mono:wght@400..600&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
-
-    <!-- No analytics tag here on purpose: react-ga4 injects gtag.js itself at
-         idle (src/utils/analytics.ts). A static tag pulled the same 170KB of
-         third-party JS during the load window instead — competing with our own
-         assets for a phone's bandwidth, then parsing on the main thread while
-         the hero was still rendering. Nothing is lost: the injected tag fires
-         the same page views, just after the page is usable. -->
+    <meta name="text-scale" content="scale" />
+    <meta name="theme-color" content="#f5f2ea" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <!-- Each route's real title, description, canonical and social tags are
+         written in here at build time (React 19 hoists them; the prerender
+         step lifts them into the head). This is only the template. -->
+    <title>Felix Noriel - Product Engineer</title>
+    <!-- No analytics tag here on purpose: it is injected at idle from
+         src/utils/analytics.ts, after the page is usable. -->
   </head>
   <body>
-    <!-- The build writes each route's real, fully rendered markup in here, so
-         the first paint is the finished page rather than a blank box waiting
-         on JavaScript. React hydrates that markup in place. -->
+    <!-- The build writes each route's fully rendered markup in here, so the
+         first paint is the finished page. React hydrates it in place. -->
     <div id="root"></div>
-    <!-- The `prerender` attribute tells vite-prerender-plugin which module
-         exports the build-time render function. -->
     <script prerender type="module" src="/src/main.tsx"></script>
   </body>
 </html>

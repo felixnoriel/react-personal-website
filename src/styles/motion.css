@@ -1,0 +1,119 @@
+/* ==========================================================================
+   Motion - the page is still after load.
+
+   No entrance animations, no scroll reveals, no counters, no loops. The whole
+   vocabulary is: hover and focus colour changes, one drawn line, opacity on
+   disclosures, and the Sheet Change view transition on navigation. Nothing
+   exceeds 320ms and nothing animates anything but transform, opacity and
+   colour, so every animation composites and layout shift is impossible by
+   construction.
+   ========================================================================== */
+
+/* --- the showpiece: Sheet Change --------------------------------------
+   Click a career row or a project block and it becomes the next sheet: the
+   title travels into the H1, the tenure rule re-draws itself at the new
+   scale, the plate grows into the header plate, and the datum re-draws to
+   the new sheet's length. Names are assigned to the source element in JS
+   the instant before the transition (src/transitions/sheetChange.ts) and are
+   static on the target. */
+
+.detail__title {
+  view-transition-name: sheet-title;
+}
+.detail__rule {
+  view-transition-name: sheet-rule;
+}
+.detail__plate {
+  view-transition-name: sheet-plate;
+}
+.datum {
+  view-transition-name: datum;
+}
+
+/* View transitions snapshot elements as images. A hairline stretched across
+   its width blurs, so every rule opts out; the datum is the one exception
+   because it only ever changes length along its own axis. */
+.rule,
+.dimline::before,
+.callout__rule,
+.tenure,
+.leader,
+.notes > dt,
+.notes > dd {
+  view-transition-name: none;
+}
+
+::view-transition-group(sheet-title),
+::view-transition-group(sheet-rule),
+::view-transition-group(sheet-plate),
+::view-transition-group(datum) {
+  animation-duration: var(--t-sheet);
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(root) {
+  animation: vt-fade-out var(--t-draw) ease-out both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in var(--t-draw) ease-out both;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Back runs in reverse: eased in, not out. Chrome 125 / Firefox 147 / Safari 18.2. */
+:root:active-view-transition-type(back)::view-transition-group(sheet-title),
+:root:active-view-transition-type(back)::view-transition-group(sheet-rule),
+:root:active-view-transition-type(back)::view-transition-group(sheet-plate),
+:root:active-view-transition-type(back)::view-transition-group(datum) {
+  animation-timing-function: var(--ease-in);
+}
+
+/* --- disclosures: opacity only. Animating to auto height is Chrome-only. */
+details > .disclosure-body {
+  transition: opacity var(--t-draw) ease-out;
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* --- dialogs */
+dialog {
+  transition:
+    opacity var(--t-fast) ease-out,
+    display var(--t-fast) allow-discrete,
+    overlay var(--t-fast) allow-discrete;
+  opacity: 0;
+}
+dialog[open] {
+  opacity: 1;
+  @starting-style {
+    opacity: 0;
+  }
+}
+dialog::backdrop {
+  background: rgb(26 23 20 / 0.28);
+  transition: opacity var(--t-fast) ease-out;
+}
+
+/* --- reduced motion: the motion is removed and the end state is shown */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

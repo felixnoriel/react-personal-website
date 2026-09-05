@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Sheet - the drawing frame, the grid, the datum, and the drawing devices
+   shared by more than one section (rules, dimension callouts, plates).
+
+   Layout in one sentence: a 1280px sheet, a 1152px content field inside it,
+   and one vertical hairline (the datum) at the field's left edge that every
+   heading, paragraph and table starts on. Nothing on the site is centred.
+   ========================================================================== */
+
+.sheet {
+  position: relative;
+  max-width: var(--sheet-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter-left) var(--gutter-right);
+}
+
+.field {
+  position: relative;
+  max-width: var(--field-max);
+  /* the rail sits outside the field, to its left, when there is room */
+  margin-inline-start: var(--rail);
+}
+
+/* the datum: one rule from the top of <main> to the foot of the footer */
+.datum {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--hair);
+  background: var(--rule);
+  pointer-events: none;
+}
+
+.field > * {
+  /* content clears the datum by exactly one gutter step */
+  padding-inline-start: var(--s-6);
+}
+
+@media (min-width: 1472px) {
+  :root {
+    --rail: var(--s-40);
+  }
+  .rail {
+    display: block;
+  }
+}
+
+/* margin rail notes: outside the field, above 1472px; inline beneath their
+   referent everywhere else */
+.rail {
+  display: none;
+  position: absolute;
+  left: calc(-1 * var(--rail));
+  width: calc(var(--rail) - var(--s-6));
+  color: var(--ink-3);
+}
+
+/* --- section rhythm ------------------------------------------------- */
+
+.section {
+  position: relative;
+  padding-block: var(--section-gap);
+  border-block-start: var(--hair) solid var(--rule);
+}
+.section:first-child {
+  border-block-start: 0;
+}
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3) var(--s-6);
+  margin-block-end: var(--s-8);
+}
+.section__head h2 {
+  max-width: 22ch;
+}
+.section__meta {
+  color: var(--ink-3);
+}
+.section__intro {
+  max-width: var(--measure);
+  color: var(--ink-2);
+  margin-block-start: var(--s-4);
+}
+
+/* --- rules --------------------------------------------------------- */
+
+.rule {
+  height: var(--hair);
+  background: var(--rule);
+  border: 0;
+}
+.rule--faint {
+  background: var(--rule-faint);
+}
+
+/* --- the dimension callout: a figure with a tick-ended rule beneath it
+   and the two sub-lines that say what it measures. Only ever holds a real
+   number from the data. */
+.callout {
+  display: grid;
+  gap: var(--s-2);
+  min-width: 0;
+}
+.callout__figure {
+  font-size: 40px;
+}
+.callout__rule {
+  position: relative;
+  height: var(--hair);
+  background: var(--rule);
+  margin-block: var(--s-1) var(--s-2);
+}
+.callout__rule::before,
+.callout__rule::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: var(--hair);
+  height: 9px;
+  background: var(--ink-3);
+}
+.callout__rule::before {
+  left: 0;
+}
+.callout__rule::after {
+  right: 0;
+}
+.callout__label {
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.3;
+}
+.callout__sub {
+  color: var(--ink-3);
+}
+@media (max-width: 767px) {
+  .callout__figure {
+    font-size: 32px;
+  }
+}
+
+/* --- the dimension line: words sitting in gaps knocked into a rule,
+   with a tick at each end. Used for the three markets under the H1. */
+.dimline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  color: var(--pen);
+}
+.dimline::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: var(--hair);
+  background: var(--rule);
+}
+.dimline > span {
+  position: relative;
+  background: var(--paper);
+  padding-inline: 14px;
+}
+.dimline > span:first-child {
+  padding-inline-start: 0;
+}
+.dimline > span:last-child {
+  padding-inline-end: 0;
+}
+.dimline::after,
+.dimline > i {
+  content: '';
+  position: absolute;
+  top: calc(50% - 4px);
+  width: var(--hair);
+  height: 9px;
+  background: var(--ink-3);
+}
+.dimline::after {
+  right: 0;
+}
+.dimline > i {
+  left: 0;
+}
+
+/* --- plates: a framed image with a caption in the margin */
+.plate {
+  border: var(--hair) solid var(--rule);
+  padding: 2px;
+  background: var(--paper-inset);
+}
+.plate img {
+  width: 100%;
+  height: auto;
+  background: var(--paper-inset);
+}
+.plate__caption {
+  margin-block-start: var(--s-2);
+  color: var(--ink-3);
+}
+
+/* --- status squares: filled = live, open = legacy. Never a dot, never a pulse. */
+.sq {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  vertical-align: middle;
+}
+.sq--open {
+  background: transparent;
+  border: var(--hair) solid var(--ink-3);
+}
+
+/* --- square chips for tech tags: paper-inset fill, 24px minimum target,
+   44px on touch */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 8px;
+  background: var(--paper-inset);
+  color: var(--ink-2);
+  border: var(--hair) solid transparent;
+}
+@media (any-pointer: coarse) {
+  .chip {
+    min-height: 44px;
+    padding-inline: 12px;
+  }
+}
+
+/* --- generic index rows (list pages, writing index): date, title, meta */
+.index-row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+  gap: var(--s-4) var(--s-6);
+  align-items: baseline;
+  padding-block: var(--s-4);
+  border-block-end: var(--hair) solid var(--rule-faint);
+}
+@media (max-width: 640px) {
+  .index-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .index-row > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* dot leaders: what a table of contents actually uses - a dotted rule */
+.leader {
+  flex: 1 1 auto;
+  min-width: var(--s-6);
+  border-block-end: 1px dotted var(--rule);
+  transform: translateY(-0.35em);
+}
+
+/* --- the notes table: a two-column definition list with rules between rows */
+.notes {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: var(--s-6);
+}
+.notes > dt,
+.notes > dd {
+  padding-block: var(--s-3);
+  border-block-end: var(--hair) solid var(--rule-faint);
+}
+.notes > dt {
+  color: var(--ink-3);
+}
+
+/* below-the-fold sheets skip layout until they approach the viewport */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--cv-height, 800px);
+}

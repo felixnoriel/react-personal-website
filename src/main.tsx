@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import './index.css'
+import './styles/index.css'
 import App from './App.tsx'
 
 // Every route is prerendered to static HTML at build time by
@@ -19,7 +20,7 @@ if (typeof window !== 'undefined') {
   // a second one. Clearing them here leaves exactly one set, always current.
   // They have already done their job by this point: the browser read them while
   // parsing the page.
-  document.querySelectorAll('head [data-prerender-head]').forEach((el) => el.remove())
+  document.querySelectorAll('head [data-prerender-head], head > title').forEach((el) => el.remove())
 
   const target = document.getElementById('root')!
   const app = (

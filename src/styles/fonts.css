@@ -1,0 +1,85 @@
+/* ==========================================================================
+   Fonts - three faces, all OFL, all self-hosted through Vite's asset
+   pipeline (imported from src/, so they land in /assets/ with a content hash
+   and inherit the one-year immutable cache header; a file in public/ would be
+   served with max-age=0).
+
+   Every face is pinned and subset offline (see scripts/subset-fonts.sh):
+     Fraunces        opsz 144, SOFT 0, WONK 1, wght 500-600 variable, latin   26.5 KB
+     Host Grotesk    wght 400-600 variable, latin (+ an italic for prose)      19.3 KB
+     Monaspace Xenon wght 500, wdth 100, slnt 0, latin, texture healing kept   18.8 KB
+
+   The fallback faces are metric-matched with numbers MEASURED from the shipped
+   instances (fontTools, advance widths of the real copy at the weights used),
+   not estimated. Safari supports size-adjust but not the ascent/descent
+   overrides; every text block also sets an explicit unitless line-height, so
+   the line box does not depend on font metrics and the swap cannot re-wrap
+   or re-flow. That is what lets these faces use `swap` (real type on the
+   first visit) instead of `optional`.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Fraunces';
+  src: url('../assets/fonts/fraunces-display.woff2') format('woff2');
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Host Grotesk';
+  src: url('../assets/fonts/host-grotesk.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Host Grotesk';
+  src: url('../assets/fonts/host-grotesk-italic.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Monaspace Xenon';
+  src: url('../assets/fonts/monaspace-xenon.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fraunces fallback. Times is the right metric donor for a serif: measured
+   against the shipped instance at wght 600 (the H1), Times needs a 4.3%
+   shrink to match Fraunces' advance widths, where Arial would need 13.7%.
+   Measured 2026-09-05 with fontTools on the real headline copy. */
+@font-face {
+  font-family: 'Fraunces Fallback';
+  src: local('Times New Roman'), local('Times');
+  size-adjust: 95.71%;
+  ascent-override: 102.18%;
+  descent-override: 26.64%;
+  line-gap-override: 0%;
+}
+
+/* Host Grotesk fallback. Arial, measured at wght 400 on the bio copy. */
+@font-face {
+  font-family: 'Host Fallback';
+  src: local('Arial'), local('Helvetica');
+  size-adjust: 105.06%;
+  ascent-override: 96.61%;
+  descent-override: 29.98%;
+  line-gap-override: 0%;
+}
+
+/* Monaspace fallback. Menlo on macOS, Courier New elsewhere; both land within
+   half a percent of each other against Xenon's 0.6em advance. */
+@font-face {
+  font-family: 'Monaspace Fallback';
+  src: local('Menlo'), local('Courier New');
+  size-adjust: 103%;
+  ascent-override: 91.7%;
+  descent-override: 19.4%;
+  line-gap-override: 9.7%;
+}

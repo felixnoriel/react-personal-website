@@ -50,6 +50,61 @@ function preloadCriticalChunks(): Plugin {
   }
 }
 
+// The stylesheet is small by design (no gradients, blurs or shadows to
+// serialise), so it is inlined into every prerendered page. That removes the
+// one render-blocking request between the HTML and the first paint, which on
+// a throttled phone is worth roughly 300ms of LCP. The file stays in the
+// bundle for anything that still links to it; only the tag changes.
+const INLINE_CSS_LIMIT = 48_000
+
+function inlineCriticalCss(): Plugin {
+  return {
+    name: 'inline-critical-css',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        const bundle = ctx.bundle
+        if (!bundle) return html
+        return html.replace(
+          /<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"[^>]*>/g,
+          (tag, file) => {
+            const asset = bundle[file]
+            if (!asset || asset.type !== 'asset') return tag
+            const css = String(asset.source)
+            if (css.length > INLINE_CSS_LIMIT) return tag
+            return `<style>${css}</style>`
+          },
+        )
+      },
+    },
+  }
+}
+
+// The two faces that render above the fold are preloaded from the HTML, so
+// they arrive alongside the document rather than after the stylesheet has
+// been parsed. Hashed names are only known at build time, hence a plugin.
+const PRELOAD_FONTS = [/fraunces-display-[\w-]+\.woff2$/, /host-grotesk-[\w-]+\.woff2$/]
+
+function preloadFonts(): Plugin {
+  return {
+    name: 'preload-fonts',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, ctx) {
+        const bundle = ctx.bundle
+        if (!bundle) return []
+        return Object.keys(bundle)
+          .filter((file) => PRELOAD_FONTS.some((re) => re.test(file)) && !/italic/.test(file))
+          .map((file) => ({
+            tag: 'link',
+            attrs: { rel: 'preload', as: 'font', type: 'font/woff2', crossorigin: true, href: `/${file}` },
+            injectTo: 'head' as const,
+          }))
+      },
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -68,6 +123,8 @@ export default defineConfig({
       additionalPrerenderRoutes: ['/about'],
     }),
     preloadCriticalChunks(),
+    preloadFonts(),
+    inlineCriticalCss(),
   ],
   resolve: {
     alias: {
