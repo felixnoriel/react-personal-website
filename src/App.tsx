@@ -23,6 +23,7 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail').then((m) => ({ 
 const Career = lazy(() => import('./pages/Career').then((m) => ({ default: m.Career })))
 const CareerDetail = lazy(() => import('./pages/CareerDetail').then((m) => ({ default: m.CareerDetail })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
+const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
 
 function AppRouter({ url, children }: { url?: string; children: React.ReactNode }) {
   if (typeof window === 'undefined') return <StaticRouter location={url ?? '/'}>{children}</StaticRouter>
@@ -79,6 +80,7 @@ function App({ url }: { url?: string } = {}) {
                   <Route path="/career" element={<Career />} />
                   <Route path="/career/:slug" element={<CareerDetail />} />
                   <Route path="/about" element={<About />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </main>

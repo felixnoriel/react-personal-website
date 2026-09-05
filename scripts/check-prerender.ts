@@ -46,6 +46,7 @@ const PAGES: Array<[string, string]> = [
   ['dist/career/index.html', 'Yondu'],
   ['dist/projects/index.html', 'The CEO Magazine Intranet'],
   ['dist/blog/index.html', 'Macau'],
+  ['dist/404.html', 'Not in this set.'],
 ]
 
 const failures: string[] = []

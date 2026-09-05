@@ -120,12 +120,12 @@ export default defineConfig({
     react({ compiler: true }),
     // Renders every route to real HTML at build time. The crawler starts at "/"
     // and follows the links it finds, which reaches the project and blog pages.
-    // /about is only reachable from the header menu, so it is named here; the
-    // per-company career pages are added by the render itself (src/main.tsx),
-    // which already has the company list to hand.
+    // /about is only reachable from the header menu and /404 from nothing, so
+    // both are named here; the per-company career pages are added by the
+    // render itself (src/main.tsx), which already has the company list.
     vitePrerenderPlugin({
       renderTarget: '#root',
-      additionalPrerenderRoutes: ['/about'],
+      additionalPrerenderRoutes: ['/about', '/404'],
     }),
     preloadCriticalChunks(),
     preloadFonts(),
