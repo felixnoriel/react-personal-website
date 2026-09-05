@@ -2,14 +2,14 @@
    Motion - the page is still after load.
 
    No entrance animations, no scroll reveals, no counters, no loops. The whole
-   vocabulary is: hover and focus colour changes, one drawn line, opacity on
-   disclosures, and the Sheet Change view transition on navigation. Nothing
-   exceeds 320ms and nothing animates anything but transform, opacity and
-   colour, so every animation composites and layout shift is impossible by
-   construction.
+   vocabulary is: hover and focus colour changes (120ms), The Scale's colour
+   cascade, opacity on dialogs, and the Sheet Change view transition on
+   navigation. Nothing exceeds 320ms and nothing animates anything but
+   transform, opacity and colour, so every animation composites and layout
+   shift is impossible by construction.
    ========================================================================== */
 
-/* --- the showpiece: Sheet Change --------------------------------------
+/* --- Sheet Change ------------------------------------------------------
    Click a career row or a project block and it becomes the next sheet: the
    title travels into the H1, the tenure rule re-draws itself at the new
    scale, the plate grows into the header plate, and the datum re-draws to
@@ -34,28 +34,34 @@
    its width blurs, so every rule opts out; the datum is the one exception
    because it only ever changes length along its own axis. */
 .rule,
-.dimline::before,
-.callout__rule,
-.tenure,
+.keyline,
 .leader,
 .notes > dt,
 .notes > dd {
   view-transition-name: none;
 }
 
-::view-transition-group(sheet-title),
-::view-transition-group(sheet-rule),
-::view-transition-group(sheet-plate),
-::view-transition-group(datum) {
+/* the morph, typed `sheet`; a `back` type is added on a history traversal */
+:root:active-view-transition-type(sheet)::view-transition-group(sheet-title),
+:root:active-view-transition-type(sheet)::view-transition-group(sheet-rule),
+:root:active-view-transition-type(sheet)::view-transition-group(sheet-plate),
+:root:active-view-transition-type(sheet)::view-transition-group(datum) {
   animation-duration: var(--t-sheet);
   animation-timing-function: var(--ease-out);
 }
-::view-transition-old(root) {
+:root:active-view-transition-type(sheet)::view-transition-old(root) {
   animation: vt-fade-out var(--t-draw) ease-out both;
 }
-::view-transition-new(root) {
+:root:active-view-transition-type(sheet)::view-transition-new(root) {
   animation: vt-fade-in var(--t-draw) ease-out both;
 }
+
+/* the blog tag filter re-orders its rows in place */
+:root:active-view-transition-type(reorder)::view-transition-group(*) {
+  animation-duration: var(--t-sheet);
+  animation-timing-function: var(--ease-out);
+}
+
 @keyframes vt-fade-out {
   to {
     opacity: 0;
@@ -67,29 +73,13 @@
   }
 }
 
-/* Back runs in reverse: eased in, not out. Chrome 125 / Firefox 147 / Safari 18.2. */
-:root:active-view-transition-type(back)::view-transition-group(sheet-title),
-:root:active-view-transition-type(back)::view-transition-group(sheet-rule),
-:root:active-view-transition-type(back)::view-transition-group(sheet-plate),
-:root:active-view-transition-type(back)::view-transition-group(datum) {
-  animation-timing-function: var(--ease-in);
-}
-
-/* --- disclosures: opacity only. Animating to auto height is Chrome-only. */
-details > .disclosure-body {
-  transition: opacity var(--t-draw) ease-out;
-  @starting-style {
-    opacity: 0;
-  }
-}
-
 /* --- dialogs */
 dialog {
+  opacity: 0;
   transition:
     opacity var(--t-fast) ease-out,
     display var(--t-fast) allow-discrete,
     overlay var(--t-fast) allow-discrete;
-  opacity: 0;
 }
 dialog[open] {
   opacity: 1;
@@ -99,10 +89,11 @@ dialog[open] {
 }
 dialog::backdrop {
   background: rgb(26 23 20 / 0.28);
-  transition: opacity var(--t-fast) ease-out;
 }
 
-/* --- reduced motion: the motion is removed and the end state is shown */
+/* --- reduced motion: the motion is removed and the end state is shown.
+   The Scale keeps working (it is information, not decoration); only its
+   colour transitions become instant. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -110,6 +101,7 @@ dialog::backdrop {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
   ::view-transition-group(*),
   ::view-transition-old(*),

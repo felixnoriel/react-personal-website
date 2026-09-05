@@ -84,9 +84,11 @@ function waitFor(test: () => unknown, timeoutMs: number): Promise<void> {
 
 function startVT(update: () => void | Promise<void>, dir: Dir): ViewTransitionLike {
   const start = (document as unknown as { startViewTransition: StartVT }).startViewTransition.bind(document)
+  // `sheet` selects the morph's CSS; `back` is added on a history traversal.
+  const types = dir === 'back' ? ['sheet', 'back'] : ['sheet']
   try {
     // object form with `types`: Baseline 2026-01-13. Older engines throw.
-    return start({ update, types: [dir] })
+    return start({ update, types })
   } catch {
     return start(update)
   }

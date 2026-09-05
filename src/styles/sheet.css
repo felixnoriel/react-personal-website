@@ -1,10 +1,13 @@
 /* ==========================================================================
    Sheet - the drawing frame, the grid, the datum, and the drawing devices
-   shared by more than one section (rules, dimension callouts, plates).
+   shared by more than one section (rules, key lines, callouts, plates,
+   chips, index rows, the notes table, the sidenote slot).
 
    Layout in one sentence: a 1280px sheet, a 1152px content field inside it,
    and one vertical hairline (the datum) at the field's left edge that every
    heading, paragraph and table starts on. Nothing on the site is centred.
+   Content lives in columns 1-8 of a 12-column field; columns 9-12 are bare
+   paper unless a plate or the one sidenote sits there.
    ========================================================================== */
 
 .sheet {
@@ -17,8 +20,6 @@
 .field {
   position: relative;
   max-width: var(--field-max);
-  /* the rail sits outside the field, to its left, when there is room */
-  margin-inline-start: var(--rail);
 }
 
 /* the datum: one rule from the top of <main> to the foot of the footer */
@@ -32,28 +33,38 @@
   pointer-events: none;
 }
 
-.field > * {
-  /* content clears the datum by exactly one gutter step */
+/* content clears the datum by one gutter step */
+.field > main,
+.field > footer {
   padding-inline-start: var(--s-6);
 }
-
-@media (min-width: 1472px) {
-  :root {
-    --rail: var(--s-40);
-  }
-  .rail {
-    display: block;
+@media (max-width: 640px) {
+  .field > main,
+  .field > footer {
+    padding-inline-start: var(--s-4);
   }
 }
 
-/* margin rail notes: outside the field, above 1472px; inline beneath their
-   referent everywhere else */
-.rail {
-  display: none;
-  position: absolute;
-  left: calc(-1 * var(--rail));
-  width: calc(var(--rail) - var(--s-6));
-  color: var(--ink-3);
+/* the 12-column field: content in 1-8, the right columns for plates and the
+   one sidenote. Collapses to a single column under 900px. */
+.cols {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+}
+.cols__main {
+  grid-column: 1 / span 8;
+}
+.cols__side {
+  grid-column: 9 / span 4;
+}
+.cols__side--narrow {
+  grid-column: 9 / span 3;
+}
+@media (max-width: 899px) {
+  .cols {
+    display: block;
+  }
 }
 
 /* --- section rhythm ------------------------------------------------- */
@@ -78,13 +89,11 @@
 .section__head h2 {
   max-width: 22ch;
 }
-.section__meta {
-  color: var(--ink-3);
-}
 .section__intro {
   max-width: var(--measure);
   color: var(--ink-2);
-  margin-block-start: var(--s-4);
+  margin-block-start: calc(-1 * var(--s-4));
+  margin-block-end: var(--s-8);
 }
 
 /* --- rules --------------------------------------------------------- */
@@ -98,37 +107,41 @@
   background: var(--rule-faint);
 }
 
-/* --- the dimension callout: a figure with a tick-ended rule beneath it
-   and the two sub-lines that say what it measures. Only ever holds a real
-   number from the data. */
+/* --- the key line: words separated by short vertical ticks. Honest
+   punctuation set in the drawing's own hand; it measures nothing. */
+.keyline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  width: max-content;
+  max-width: 100%;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: var(--pen);
+}
+.keyline > span + span::before {
+  content: '';
+  display: inline-block;
+  inline-size: var(--hair);
+  block-size: 9px;
+  margin-inline-end: 14px;
+  background: var(--rule);
+  vertical-align: -1px;
+}
+
+/* --- a figure standing alone with its unit and sub-line beneath. No rule
+   under it: the four hero figures are not commensurable, so a rule would be
+   an underline with serifs. */
 .callout {
   display: grid;
   gap: var(--s-2);
   min-width: 0;
 }
 .callout__figure {
-  font-size: 40px;
-}
-.callout__rule {
-  position: relative;
-  height: var(--hair);
-  background: var(--rule);
-  margin-block: var(--s-1) var(--s-2);
-}
-.callout__rule::before,
-.callout__rule::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  width: var(--hair);
-  height: 9px;
-  background: var(--ink-3);
-}
-.callout__rule::before {
-  left: 0;
-}
-.callout__rule::after {
-  right: 0;
+  font-size: 56px;
 }
 .callout__label {
   color: var(--ink);
@@ -140,56 +153,11 @@
 }
 @media (max-width: 767px) {
   .callout__figure {
-    font-size: 32px;
+    font-size: 40px;
   }
 }
 
-/* --- the dimension line: words sitting in gaps knocked into a rule,
-   with a tick at each end. Used for the three markets under the H1. */
-.dimline {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: max-content;
-  max-width: 100%;
-  color: var(--pen);
-}
-.dimline::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  top: 50%;
-  height: var(--hair);
-  background: var(--rule);
-}
-.dimline > span {
-  position: relative;
-  background: var(--paper);
-  padding-inline: 14px;
-}
-.dimline > span:first-child {
-  padding-inline-start: 0;
-}
-.dimline > span:last-child {
-  padding-inline-end: 0;
-}
-.dimline::after,
-.dimline > i {
-  content: '';
-  position: absolute;
-  top: calc(50% - 4px);
-  width: var(--hair);
-  height: 9px;
-  background: var(--ink-3);
-}
-.dimline::after {
-  right: 0;
-}
-.dimline > i {
-  left: 0;
-}
-
-/* --- plates: a framed image with a caption in the margin */
+/* --- plates: a framed image with a caption beneath */
 .plate {
   border: var(--hair) solid var(--rule);
   padding: 2px;
@@ -205,13 +173,20 @@
   color: var(--ink-3);
 }
 
+/* --- the sidenote slot: columns 9-11 beside its referent, inline beneath
+   it below 900px. Used exactly where a genuine aside exists. */
+.sidenote {
+  color: var(--ink-3);
+  max-width: 18rem;
+}
+
 /* --- status squares: filled = live, open = legacy. Never a dot, never a pulse. */
 .sq {
   display: inline-block;
   width: 8px;
   height: 8px;
   background: var(--accent);
-  vertical-align: middle;
+  vertical-align: 0;
 }
 .sq--open {
   background: transparent;
@@ -227,7 +202,9 @@
   padding: 2px 8px;
   background: var(--paper-inset);
   color: var(--ink-2);
-  border: var(--hair) solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 @media (any-pointer: coarse) {
   .chip {
@@ -236,11 +213,11 @@
   }
 }
 
-/* --- generic index rows (list pages, writing index): date, title, meta */
+/* --- index rows (list pages, writing index): date, title, meta */
 .index-row {
   display: grid;
   grid-template-columns: 112px minmax(0, 1fr) auto;
-  gap: var(--s-4) var(--s-6);
+  gap: var(--s-2) var(--s-6);
   align-items: baseline;
   padding-block: var(--s-4);
   border-block-end: var(--hair) solid var(--rule-faint);
@@ -259,7 +236,7 @@
   flex: 1 1 auto;
   min-width: var(--s-6);
   border-block-end: 1px dotted var(--rule);
-  transform: translateY(-0.35em);
+  margin-block-end: 0.35em;
 }
 
 /* --- the notes table: a two-column definition list with rules between rows */
@@ -279,6 +256,10 @@
 
 /* below-the-fold sheets skip layout until they approach the viewport */
 .cv-auto {
-  content-visibility: auto;
   contain-intrinsic-size: auto var(--cv-height, 800px);
+}
+@supports (content-visibility: auto) {
+  .cv-auto {
+    content-visibility: auto;
+  }
 }

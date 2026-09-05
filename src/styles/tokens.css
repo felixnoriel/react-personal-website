@@ -4,7 +4,7 @@
    The site is set like a working engineer's drawing sheet: cream paper,
    graphite for the writing, blue ballpoint for the annotations, red pencil
    for the few things that matter. Three inks with a physical reason, not a
-   hue ramp.
+   hue ramp. Two typefaces, no monospace.
 
    Text and background colours are hex on purpose: Lighthouse's axe-core still
    parses some modern colour syntaxes badly, so anything that carries a
@@ -25,32 +25,33 @@
   --ink-3: #6b625a; /* captions, meta. 5.4:1 - the floor for any text */
 
   /* blue ballpoint - the annotations */
-  --pen: #3e4c5a; /* dimension figures, part codes, coordinates. 7.9:1 */
+  --pen: #3e4c5a; /* dates, part codes, coordinates. 7.9:1 */
 
   /* red pencil - what matters */
-  --accent: #a82f1c; /* availability mark, live squares, current nav, focus. 6.1:1 */
+  --accent: #a82f1c; /* availability mark, live squares, current nav, focus,
+                        the scrub indicator, the now tick. 6.1:1 */
 
   /* rules - never text */
   --rule: #cfc7ba;
   --rule-faint: #ded7ca;
 
-  /* type */
+  /* type: two families */
   --font-display: 'Fraunces', 'Fraunces Fallback', 'Times New Roman', Times, serif;
   --font-text: 'Host Grotesk', 'Host Fallback', Arial, Helvetica, sans-serif;
-  --font-mono: 'Monaspace Xenon', 'Monaspace Fallback', ui-monospace, Menlo, 'Courier New', monospace;
 
   /* a drafting scale on base 4 */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
   --s-4: 16px;
+  --s-5: 20px;
   --s-6: 24px;
+  --s-7: 28px;
   --s-8: 32px;
   --s-12: 48px;
   --s-16: 64px;
   --s-24: 96px;
   --s-32: 128px;
-  --s-40: 160px;
 
   /* the sheet */
   --sheet-max: 1280px;
@@ -58,9 +59,9 @@
   --gutter: clamp(20px, 5vw, 64px);
   --gutter-left: max(var(--gutter), env(safe-area-inset-left, 0px));
   --gutter-right: max(var(--gutter), env(safe-area-inset-right, 0px));
-  --rail: 0px; /* the margin rail only exists above 1472px, see sheet.css */
   --header-h: 56px;
   --section-gap: var(--s-24);
+  --col-gap: 24px;
 
   /* measure */
   --measure: 34rem;
@@ -71,7 +72,6 @@
 
   /* motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
   --t-fast: 120ms;
   --t-draw: 180ms;
   --t-sheet: 320ms;

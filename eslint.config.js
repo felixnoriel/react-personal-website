@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'src/styles/scroll-state.css']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -73,6 +73,29 @@ export default defineConfig([
           //  - `@property` and `@starting-style` cannot be feature-detected;
           //    browsers that do not know them skip the block, which is the
           //    behaviour we want anyway.
+          allowAtRules: ['property', 'starting-style'],
+          allowPropertyValues: { 'font-family': ['ui-sans-serif', 'ui-monospace'] },
+        },
+      ],
+    },
+  },
+  {
+    // The redesign's own stylesheets. Baseline "newly" is the floor here:
+    // everything this design uses reached all three engines within the last
+    // two years, and "widely" is a 30-month lag that would ban light-dark(),
+    // view transitions, progress(), sibling-index() and text-box-trim, which
+    // is the point of the build. Two-engine and Chromium-only features still
+    // have to sit behind @supports, and the one scroll-state() rule lives in
+    // its own ignored file because this parser cannot read it.
+    files: ['src/styles/**/*.css', 'src/sheets/**/*.css', 'src/pages/**/*.css', 'src/components/**/*.css'],
+    plugins: { css },
+    language: 'css/css',
+    languageOptions: { tolerant: true },
+    rules: {
+      'css/use-baseline': [
+        'error',
+        {
+          available: 'newly',
           allowAtRules: ['property', 'starting-style'],
           allowPropertyValues: { 'font-family': ['ui-sans-serif', 'ui-monospace'] },
         },

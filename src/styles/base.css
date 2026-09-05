@@ -14,38 +14,25 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
   /* a keyboard-focused heading is never hidden under the sticky bar */
   scroll-padding-top: calc(var(--header-h) + 16px);
-  scroll-behavior: auto;
 }
 
 body {
   min-height: 100svh;
   background-color: var(--paper);
+  /* paper grain: a 64px pre-rendered tile that scrolls with the page, the
+     way paper does. Never background-attachment: fixed. */
+  background-image: url('../assets/grain.png');
+  background-size: 64px 64px;
   color: var(--ink);
   font-family: var(--font-text);
   font-size: 17px;
   line-height: 1.55;
-  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
-}
-
-/* paper grain - a tiny pre-rendered tile, repeated normally (never
-   background-attachment: fixed, which repaints the whole viewport per scroll) */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-color: var(--paper);
-  background-image: url('../assets/grain.png');
-  background-size: 64px 64px;
-  opacity: 1;
 }
 
 img,
@@ -148,32 +135,37 @@ h3 {
   }
 }
 
-p,
-li,
-dd,
-.prose {
-  text-wrap: pretty;
+/* prettier paragraph rags: Chrome and Safari; Firefox wraps normally */
+@supports (text-wrap: pretty) {
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
 }
 
-.mono {
-  font-family: var(--font-mono);
+/* small meta set in the text face: dates, part codes, captions, labels.
+   Host Grotesk's digits are all the same width, so columns of figures line
+   up with no feature and no class. */
+.meta {
+  font-size: 12.5px;
   font-weight: 500;
-  font-size: 13px;
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-  /* a typewriter, not a console: default lining figures in fixed cells */
-  font-variant-numeric: lining-nums tabular-nums;
-  font-feature-settings: 'calt' 1;
-}
-
-.mono--label {
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  line-height: 1.4;
+  letter-spacing: 0.03em;
   color: var(--ink-3);
 }
-
-.mono--pen {
+.meta--pen {
   color: var(--pen);
+}
+.meta--label {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+.meta--head {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  color: var(--ink-2);
 }
 
 .ink-2 {
@@ -187,11 +179,12 @@ dd,
   max-width: var(--measure);
 }
 
+/* a single large figure standing alone: the four metrics, the nomad stats,
+   a project's outcome number. Fraunces, proportional lining. */
 .figure {
   font-family: var(--font-display);
   font-weight: 600;
-  font-variant-numeric: lining-nums tabular-nums;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
@@ -224,6 +217,7 @@ dd,
   border: var(--hair) solid var(--ink);
   transition:
     background-color var(--t-fast) ease-out,
+    border-color var(--t-fast) ease-out,
     color var(--t-fast) ease-out;
 }
 .btn--solid {
@@ -240,24 +234,17 @@ dd,
   background: var(--accent);
   border-color: var(--accent);
 }
-.btn--ghost {
-  background: transparent;
-  color: var(--ink);
-}
-.btn--ghost:hover,
-.btn--ghost:focus-visible {
-  border-color: var(--accent);
-  color: var(--accent);
-}
 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-::selection {
-  background: var(--paper-inset);
-  color: var(--ink);
+@supports selector(::selection) {
+  ::selection {
+    background: var(--paper-inset);
+    color: var(--ink);
+  }
 }
 
 /* the first focusable element on every page */
@@ -269,7 +256,6 @@ dd,
   padding: var(--s-3) var(--s-4);
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--font-mono);
   font-size: 13px;
   transform: translateY(-200%);
 }
