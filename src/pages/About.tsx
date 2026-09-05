@@ -1,17 +1,17 @@
 import { SEOHead } from '../components/seo/SEOHead'
 import { AboutWebsite } from '../components/AboutWebsite'
-import { ContactSheet } from '../sheets/ContactSheet'
+import { ContactSection } from '../components/ContactSection'
 
 export function About() {
   return (
     <>
       <SEOHead
         title="About"
-        description="About Felix Noriel and this website. Built with React 19, Vite 8, react-router 8 and TypeScript, prerendered to static HTML."
+        description="About Felix Noriel and this website. Built with React, Vite, Tailwind CSS, and modern web technologies."
         url="/about"
       />
       <AboutWebsite />
-      <ContactSheet />
+      <ContactSection />
     </>
   )
 }

@@ -1,53 +1,42 @@
-import { Suspense, use } from 'react'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { useData } from '../contexts/DataContext'
 import { BlogPostSEO } from '../components/seo/SEOHead'
-import { decodeEntities } from '../components/blog/decode'
 import { BlogView } from '../components/blog/BlogView'
 import { filterBySlug } from '../utils/data-filters'
-import { loadBlogContent } from '../data/blog-content'
-import type { BlogPost, BlogPostMeta } from '../types/data'
-
-function DetailLoading() {
-  return <div className="section" aria-label="Loading" />
-}
-
-// Reads the post body via React 19's `use()`. Suspends until the content
-// chunk for this slug has loaded - during build-time prerendering, that
-// wait is what lets the crawler get full HTML instead of a loading state.
-function BlogBody({ meta }: { meta: BlogPostMeta }) {
-  const content = use(loadBlogContent(meta.slug))
-  const blog: BlogPost = { ...meta, content }
-  return <BlogView blog={blog} />
-}
+import type { BlogPost } from '../types/data'
 
 export function BlogDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const { blog: blogIndex } = useData()
+  const { blog, loading } = useData()
 
-  const metas = filterBySlug<BlogPostMeta>(slug || '', blogIndex)
-  const meta = metas[0] || null
-
-  // No matching post - render the "not found" state directly rather than
-  // suspending on a slug that has no content chunk to load.
-  if (!meta) {
-    return <BlogView blog={null} />
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
   }
+
+  const blogPosts = filterBySlug<BlogPost>(slug || '', blog)
+  const blogPost = blogPosts[0] || null
 
   return (
     <>
-      <BlogPostSEO
-        title={decodeEntities(meta.title)}
-        excerpt={decodeEntities(meta.excerpt.replace(/<[^>]*>/g, ''))}
-        image={meta.image.url}
-        slug={slug || ''}
-        publishedDate={meta.publishedDate}
-        modifiedDate={meta.modifiedDate}
-        tags={meta.tags.map((tag) => tag.name)}
-      />
-      <Suspense fallback={<DetailLoading />}>
-        <BlogBody meta={meta} />
-      </Suspense>
+      {blogPost && (
+        <BlogPostSEO
+          title={blogPost.title}
+          excerpt={blogPost.excerpt.replace(/<[^>]*>/g, '')}
+          image={blogPost.image.url}
+          slug={slug || ''}
+          publishedDate={blogPost.publishedDate}
+          modifiedDate={blogPost.modifiedDate}
+          tags={blogPost.tags.map((tag) => tag.name)}
+        />
+      )}
+      <BlogView blog={blogPost} />
     </>
   )
 }

@@ -1,116 +1,47 @@
 import { StrictMode } from 'react'
-import { createRoot, hydrateRoot } from 'react-dom/client'
-import './styles/index.css'
+import { createRoot } from 'react-dom/client'
+import './index.css'
 import App from './App.tsx'
 
-// Every route is prerendered to static HTML at build time by
-// vite-prerender-plugin (see vite.config.ts). The HTML is real content, so the
-// browser paints before React does anything; React then hydrates that markup
-// instead of building it from scratch. In dev there is no prerendered markup,
-// so we mount normally.
-if (typeof window !== 'undefined') {
-  // Hand the <head> back to React before it starts.
-  //
-  // The build writes each page's description, canonical and social tags into
-  // <head> so crawlers and link previews see them without running any code.
-  // React renders the very same tags, and it does not recognise the ones the
-  // build put there — it adds its own alongside, then leaves the build's copies
-  // behind, still describing the first page, after the reader clicks through to
-  // a second one. Clearing them here leaves exactly one set, always current.
-  // They have already done their job by this point: the browser read them while
-  // parsing the page.
-  document.querySelectorAll('head [data-prerender-head], head > title').forEach((el) => el.remove())
-
-  const target = document.getElementById('root')!
-  const app = (
+// Let the browser paint the static boot frame BEFORE React mounts.
+//
+// The module script runs the moment parsing ends, and React's first render
+// (the whole landing page) is one long synchronous task. Chrome does not
+// squeeze a frame in ahead of it, so the boot frame that index.html paints
+// "instantly" was in fact waiting the entire mount out: measured on the live
+// site, the DOM was ready at 111ms and nothing appeared until 1268ms — on an
+// unthrottled laptop. A phone pays several times that in blank screen.
+//
+// We wait for the actual paint event rather than counting animation frames.
+// Counting frames assumes a frame implies a paint, and it does not: when the
+// render-blocking stylesheet is still in flight, frames pass with nothing
+// drawn, the mount starts anyway, and first paint lands a second later.
+// Measured live: paint 30ms after the stylesheet when this works, and about
+// 1000ms after it when the mount wins instead.
+let mounted = false
+const mount = () => {
+  if (mounted) return
+  mounted = true
+  createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <App />
-    </StrictMode>
+    </StrictMode>,
   )
-  if (import.meta.env.DEV) {
-    createRoot(target).render(app)
-  } else {
-    hydrateRoot(target, app)
-  }
 }
 
-// ---------------------------------------------------------------------------
-// Build-time prerender entry (Node). Never runs in a browser.
-// ---------------------------------------------------------------------------
-
-const HTML_ENTITIES: Record<string, string> = {
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#x27;': "'",
-  '&#39;': "'",
-  '&amp;': '&',
-}
-
-/** Undo React's attribute/text escaping (the plugin re-escapes on its side). */
-function decodeEntities(s: string): string {
-  return s.replace(/&(?:lt|gt|quot|#x27|#39|amp);/g, (m) => HTML_ENTITIES[m] ?? m)
-}
-
-/**
- * React 19 hoists <title>/<meta>/<link> to the very front of the rendered
- * string. Peel them off so they can be placed in the document's real <head>
- * rather than left inside #root — otherwise the template's own <title> would
- * still win and every page would share one title.
- *
- * The tags are handed to the plugin as raw strings, which it emits verbatim.
- */
-function splitHoistedHead(rendered: string) {
-  const elements = new Set<string>()
-  let title = ''
-  let html = rendered
-  for (;;) {
-    const titleMatch = /^<title[^>]*>([\s\S]*?)<\/title>/.exec(html)
-    if (titleMatch) {
-      title = decodeEntities(titleMatch[1])
-      html = html.slice(titleMatch[0].length)
-      continue
-    }
-    const tagMatch = /^<(?:meta|link)\b[^>]*>/.exec(html)
-    if (tagMatch) {
-      // Stamped so the browser can find and drop them once React takes over
-      // (see the mount block above).
-      elements.add(tagMatch[0].replace(/^<(meta|link)\b/, '<$1 data-prerender-head'))
-      html = html.slice(tagMatch[0].length)
-      continue
-    }
-    break
-  }
-  return { title, elements, html }
-}
-
-export async function prerender(data: { url: string }) {
-  // Server-only imports stay dynamic so they never inflate the browser bundle.
-  const { prerender: prerenderToStream } = await import('react-dom/static.edge')
-  const { parseLinks } = await import('vite-prerender-plugin/parse')
-  // Each company has its own page, but the career timeline shows companies
-  // inline instead of linking to them — so the link crawler can never find
-  // those pages. Hand them over directly.
-  const { careers } = await import('./data/career')
-
-  // React streams by default: once ~12KB has been written it stops inlining
-  // finished Suspense boundaries and instead parks them in a hidden <div> at
-  // the end of the page for JavaScript to move into place. Pages here are much
-  // bigger than that, so every route came out as a "loading…" placeholder with
-  // the real page hidden underneath. A chunk size larger than any page we will
-  // ever render turns that off: the markup lands where it belongs and the first
-  // paint IS the page, with or without JavaScript.
-  const { prelude } = await prerenderToStream(<App url={data.url} />, {
-    progressiveChunkSize: 1_000_000_000,
+try {
+  // buffered:true means a paint that already happened still fires this, so
+  // there is no window where we miss the event and wait for the timeout.
+  const observer = new PerformanceObserver(() => {
+    observer.disconnect()
+    mount()
   })
-  const rendered = await new Response(prelude).text()
-
-  const { title, elements, html } = splitHoistedHead(rendered)
-
-  return {
-    html,
-    // The crawler follows these to find every other page to prerender.
-    links: new Set([...parseLinks(html), ...careers.map((c) => `/career/${c.slug}`)]),
-    head: { title, elements },
-  }
+  observer.observe({ type: 'paint', buffered: true })
+} catch {
+  mount() // no PerformanceObserver: mount rather than never render
 }
+
+// Backstop for the case where no paint is coming: a hidden tab, which has
+// nothing to draw. Deliberately far longer than any real first paint, so it
+// never robs a visible page of the early frame this exists to protect.
+setTimeout(mount, 2000)

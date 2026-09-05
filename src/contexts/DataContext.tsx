@@ -1,23 +1,13 @@
-import { createContext, useContext, useMemo } from 'react'
-import type { BlogPostMeta, Career, Project } from '../types/data'
+import { createContext, useContext, useState, useEffect } from 'react'
+import type { BlogPost, Career, Project } from '../types/data'
 import { careers } from '../data/career'
 import { projects } from '../data/projects'
-import { blogIndex } from '../data/blog-index'
-
-// Blog used to stream in after mount. It cannot any more: the blog pages are
-// prerendered to static HTML at build time, and an effect never runs during
-// that render — the shipped HTML would be an empty list. Loading it after
-// mount on the client would then disagree with that HTML and break hydration.
-// So all three datasets are imported up front and the build keeps blog in its
-// own chunk (see vite.config.ts) to bound the parse cost.
-//
-// `blog` only carries metadata (see BlogPostMeta) - every post's full HTML
-// body lives in its own chunk under data/blog-content/ and is loaded only by
-// the /blog/:slug page (see src/data/blog-content.ts), so the home page and
-// the /blog list no longer pay for content nobody there reads.
+// Blog is by far the largest dataset (~50KB gz). It's loaded lazily off the
+// critical path — the home only needs a few previews (below the fold) and the
+// blog routes are themselves lazy — so initial paint isn't blocked on it.
 
 interface DataState {
-  blog: BlogPostMeta[]
+  blog: BlogPost[]
   career: Career[]
   projects: Project[]
   loading: boolean
@@ -31,17 +21,31 @@ interface DataContextType extends DataState {
 const DataContext = createContext<DataContextType | undefined>(undefined)
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  const value = useMemo<DataContextType>(
-    () => ({
-      blog: blogIndex,
-      career: careers,
-      projects,
-      loading: false,
-      error: null,
-      refetch: () => {},
-    }),
-    [],
-  )
+  // career + projects ship with the bundle (small); blog streams in after mount
+  const [blog, setBlog] = useState<BlogPost[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  const loadBlog = () => {
+    import('../data/blog')
+      .then((m) => setBlog(m.blogPosts))
+      .catch((e) => {
+        console.error('Error loading blog data:', e)
+        setError('Failed to load blog data')
+      })
+  }
+
+  useEffect(() => {
+    loadBlog()
+  }, [])
+
+  const value: DataContextType = {
+    blog,
+    career: careers,
+    projects,
+    loading: false,
+    error,
+    refetch: loadBlog,
+  }
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>
 }

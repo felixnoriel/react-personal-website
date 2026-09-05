@@ -1,19 +1,46 @@
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
 import { ProjectView } from '../components/project/ProjectView'
+import { filterBySlug } from '../utils/data-filters'
 import type { Project } from '../types/data'
 
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const { projects } = useData()
+  const { projects, loading } = useData()
 
-  const index = projects.findIndex((p) => p.slug === slug)
-  const project: Project | null = index === -1 ? null : projects[index]
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  const projectItems = filterBySlug<Project>(slug || '', projects)
+  const project = projectItems[0] || null
+
+  // Compute navigation context
+  const currentIndex = projects.findIndex((p) => p.slug === slug)
   const total = projects.length
 
-  const prev = index > 0 ? projects[index - 1] : null
-  const next = index !== -1 && index < total - 1 ? projects[index + 1] : null
+  let prev: Project | null = null
+  let next: Project | null = null
+  let otherProjects: Project[] = []
+
+  if (total > 0 && currentIndex !== -1) {
+    prev = projects[(currentIndex - 1 + total) % total]
+    next = projects[(currentIndex + 1) % total]
+    // Keep otherProjects for the sidebar (prev + next)
+    if (total >= 3) {
+      otherProjects = [prev, next]
+    } else if (total === 2) {
+      otherProjects = [projects[(currentIndex + 1) % 2]]
+    }
+  }
 
   return (
     <>
@@ -25,7 +52,14 @@ export function ProjectDetail() {
           url={`/projects/${project.slug}`}
         />
       )}
-      <ProjectView project={project} total={total} prev={prev} next={next} />
+      <ProjectView
+        project={project}
+        otherProjects={otherProjects}
+        index={currentIndex}
+        total={total}
+        prev={prev}
+        next={next}
+      />
     </>
   )
 }
