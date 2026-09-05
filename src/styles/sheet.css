@@ -263,3 +263,9 @@
     content-visibility: auto;
   }
 }
+
+/* the Stable wordmark is drawn near-white: its plate goes to ink so the mark
+   reads, everywhere that logo sits */
+[data-slug='stable'] .plate {
+  background: var(--ink);
+}

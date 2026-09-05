@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Sheet 6 - Contact.
+
+   Three blocks on one sheet: the address at display size on the datum with
+   its copy button, the virtual-coffee note in the right columns beside it,
+   and below a hairline, the form on the left and the notes table on the
+   right. Everything is drawn with the one hairline and the paper-inset tone;
+   there are no boxes here except the input fields, which are objects a
+   reader actually writes into.
+   ========================================================================== */
+
+/* --- the address, and the note beside it ------------------------------- */
+
+.contact__top {
+  align-items: start;
+  row-gap: var(--s-8);
+}
+
+.contact__direct {
+  grid-column: 1 / span 8;
+}
+
+.contact__email-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+/* Fraunces, never under 20px. It shrinks with the viewport so the address
+   stays on one line on a phone instead of breaking mid-word. */
+.contact__email {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(22px, 5.6vw, 28px);
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-underline-offset: 0.16em;
+  overflow-wrap: anywhere;
+}
+
+/* a square 44x44 target, the same size on every pointer */
+.contact__copy {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border: var(--hair) solid var(--rule);
+  color: var(--ink-3);
+  transition:
+    color var(--t-fast) ease-out,
+    border-color var(--t-fast) ease-out;
+}
+.contact__copy:hover,
+.contact__copy:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.contact__copy--done {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.contact__coffee {
+  grid-column: 9 / span 4;
+  border-block-start: var(--hair) solid var(--rule);
+  padding-block-start: var(--s-3);
+  max-width: 22rem;
+}
+.contact__coffee-link {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  transition: text-decoration-color var(--t-fast) ease-out;
+}
+.contact__coffee-link:hover,
+.contact__coffee-link:focus-visible {
+  text-decoration-color: var(--accent);
+}
+.contact__coffee-sub {
+  margin-block-start: var(--s-2);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.contact__rule {
+  margin-block: var(--s-12);
+}
+
+/* --- the form, on the datum -------------------------------------------- */
+
+.contact__body {
+  align-items: start;
+}
+
+.contact__form {
+  grid-column: 1 / span 6;
+  display: grid;
+  gap: var(--s-5);
+  max-width: 30rem;
+}
+
+.contact__field {
+  display: grid;
+  gap: var(--s-2);
+}
+.contact__label {
+  color: var(--ink-2);
+}
+
+/* square fields: paper-inset fill, one hairline, no radius anywhere. 16px
+   text so iOS does not zoom the page when a field takes focus. */
+.contact__input,
+.contact__textarea {
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: 11px var(--s-3);
+  background: var(--paper-inset);
+  border: var(--hair) solid var(--rule);
+  border-radius: 0;
+  appearance: none;
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 1.5;
+  transition: border-color var(--t-fast) ease-out;
+}
+.contact__input:hover,
+.contact__textarea:hover {
+  border-color: var(--ink-3);
+}
+
+/* a drag on the corner handle can grow the box downwards but never past the
+   column it sits in */
+.contact__textarea {
+  min-block-size: 8rem;
+  max-block-size: 24rem;
+  max-inline-size: 100%;
+}
+/* the box grows with what is typed instead of scrolling inside itself */
+@supports (field-sizing: content) {
+  .contact__textarea {
+    field-sizing: content;
+  }
+}
+
+/* a field is only ever marked wrong after the reader has touched it */
+.contact__input:user-valid,
+.contact__textarea:user-valid {
+  border-color: var(--rule);
+}
+.contact__input:user-invalid,
+.contact__textarea:user-invalid {
+  border-color: var(--accent);
+}
+
+/* the message is in the DOM but display:none, so it is announced only while
+   the field it describes is actually wrong */
+.contact__hint {
+  display: none;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--accent);
+}
+.contact__field:has(:user-invalid) .contact__hint {
+  display: block;
+}
+
+.contact__submit {
+  justify-self: start;
+}
+
+/* --- the notes table ---------------------------------------------------- */
+
+.contact__notes {
+  /* wide enough for the longest term on one line */
+  --dt-w: 176px;
+  grid-column: 8 / span 5;
+  grid-template-columns: var(--dt-w) minmax(0, 1fr);
+  /* no column gap: the two cells' hairlines meet, so each row carries one
+     unbroken rule instead of two segments with a hole between them */
+  column-gap: 0;
+}
+.contact__notes > dt {
+  grid-column: 1;
+  padding-inline-end: var(--s-3);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+.contact__notes > dd {
+  grid-column: 2;
+  padding-inline-start: var(--s-6);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+/* a value that continues the row above it: no term, full width, indented to
+   the value column so the rules stay flush */
+.contact__notes > .contact__cont {
+  grid-column: 1 / -1;
+  padding-inline-start: calc(var(--dt-w) + var(--s-6));
+}
+/* the address repeated in the table is a target, not running text, so it
+   carries its own 24px height - and 44px where the pointer is a finger */
+.contact__notes a {
+  display: inline-block;
+  padding-block: 2px;
+}
+@media (any-pointer: coarse) {
+  .contact__notes a {
+    padding-block: 12px;
+  }
+  .contact__coffee-link {
+    padding-block: 10px;
+  }
+  .contact__email {
+    padding-block: 8px;
+  }
+}
+
+/* blue ballpoint: coordinates, the clock, the offset */
+.contact__val--pen {
+  color: var(--pen);
+}
+/* Host Grotesk's digits are all one width, so the clock lines up with no
+   feature and no class. This also overrides the old utility class the shared
+   clock component still carries; there is no monospace face on this site. */
+.contact__clock {
+  font-family: var(--font-text);
+  font-variant-numeric: normal;
+}
+
+/* --- narrow ------------------------------------------------------------- */
+
+/* below 900px .cols is a single block, so the grid gaps are gone */
+@media (max-width: 899px) {
+  .contact__coffee {
+    margin-block-start: var(--s-8);
+  }
+  .contact__notes {
+    margin-block-start: var(--s-12);
+  }
+}
+
+/* on a phone the term sits above its value: a 152px column plus a value
+   column does not fit a 372px track without shredding every line */
+@media (max-width: 640px) {
+  .contact__notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contact__notes > dt {
+    grid-column: 1;
+    border-block-end: 0;
+    padding-block-end: 0;
+    padding-inline-end: 0;
+  }
+  .contact__notes > dd,
+  .contact__notes > .contact__cont {
+    grid-column: 1;
+    padding-inline-start: 0;
+  }
+}

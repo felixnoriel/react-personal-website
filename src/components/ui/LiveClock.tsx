@@ -32,5 +32,5 @@ export function LiveClock({ timezone = 'UTC', className = '' }: LiveClockProps) 
     return () => clearTimeout(timer)
   }, [timezone])
 
-  return <span className={`font-mono tabular-nums ${className}`}>{time}</span>
+  return <span className={className}>{time}</span>
 }

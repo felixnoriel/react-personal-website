@@ -1,0 +1,541 @@
+/* ==========================================================================
+   Sheet 2 - Experience, the scale drawing.
+
+   Nine companies share ONE true 2013 -> now axis. Each row prints its own
+   name, dates, role and outcome, then draws that role's tenure as a segment
+   on a full-width track. Because every track spans the same years, reading
+   down the page draws the staircase of a career, and the two roles that ran
+   at the same time as three others are visible without reading a date.
+
+   Above the rows the axis is draggable (see scale.ts): the red hairline
+   follows the pointer, the month prints at the left with the real number of
+   roles live in it, and the rows that were live that month keep their ink
+   while the rest recede. Only colour changes, so the page cannot move.
+
+   The same drawing sets the /career index sheet and the tenure rule at the
+   top of every /career/:slug sheet.
+   ========================================================================== */
+
+/* Section.tsx labels its right-hand fact with classes the base sheet does not
+   define yet; until it does, this keeps "2014 -> now" at meta size. */
+.experience-sheet .section__meta {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+}
+
+.career-drawing {
+  position: relative;
+}
+
+/* --- The Scale ------------------------------------------------------- */
+
+.scale {
+  position: relative;
+  margin-block-end: var(--s-6);
+}
+
+/* the month under the pointer, printed at the axis's left end. The line is
+   reserved at rest, so filling it can never shift the page. */
+.scale__readout {
+  display: block;
+  min-block-size: 1.4em;
+  color: var(--pen);
+}
+
+.scale__frame {
+  --thumb: 3px;
+  position: relative;
+  block-size: 44px; /* 2.5.8: the scrubber's own hit area */
+}
+
+/* the axis, drawn once, through the middle of the hit area */
+.scale__frame::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  block-size: var(--hair);
+  background: var(--rule);
+}
+
+/* year labels sit above the rule, so nothing knocks a hole in it */
+.scale__tick {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  transform: translateX(-50%);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.scale__tick::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 5px);
+  inline-size: var(--hair);
+  block-size: 5px;
+  background: var(--rule);
+}
+.scale__tick:first-child {
+  transform: none;
+}
+.scale__tick:first-child::after {
+  left: 0;
+}
+.scale__tick--now {
+  transform: translateX(-100%);
+  color: var(--accent);
+}
+.scale__tick--now::after {
+  left: 100%;
+  background: var(--accent);
+}
+
+/* the red pencil line, only while a hand is on the axis. The offset matches
+   the native thumb, which the engine insets by half its own width. */
+.scale__indicator {
+  position: absolute;
+  inset-block: 0;
+  inline-size: var(--hair);
+  background: var(--accent);
+  inset-inline-start: calc(var(--t, 1) * (100% - var(--thumb)) + var(--thumb) / 2);
+  opacity: 0;
+  transition: opacity var(--t-fast) ease-out;
+}
+.scale[data-scrubbing] .scale__indicator {
+  opacity: 1;
+}
+
+/* a native range: keyboard, touch and screen reader come from the platform.
+   Only its handle is drawn - the axis underneath is the track. */
+.scale__input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+}
+.scale__input::-webkit-slider-thumb {
+  appearance: none;
+  inline-size: var(--thumb);
+  block-size: 18px;
+  border: 0;
+  background: var(--pen);
+  cursor: ew-resize;
+}
+.scale__input::-moz-range-thumb {
+  inline-size: var(--thumb);
+  block-size: 18px;
+  border: 0;
+  background: var(--pen);
+  cursor: ew-resize;
+}
+.scale__input::-moz-range-track {
+  background: transparent;
+}
+
+/* --- the rows -------------------------------------------------------- */
+
+.career-row {
+  padding-block: var(--s-5) 14px;
+  border-block-end: var(--hair) solid var(--rule-faint);
+}
+
+/* a real break in the axis: more than six months with no role. The rule
+   above the break firms up and the next row drops 20px. */
+.career-row--gap {
+  margin-block-start: var(--s-5);
+}
+.career-list > .career-row:has(+ .career-row--gap) {
+  border-block-end-color: var(--rule);
+}
+
+.career-row__line1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-3);
+}
+
+.career-row__plate {
+  flex: none;
+  align-self: center;
+}
+.career-row__plate img {
+  block-size: 20px;
+  inline-size: auto;
+  max-inline-size: 88px;
+  object-fit: contain;
+}
+
+.career-row__name {
+  position: relative;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+/* 2.5.8 target size. The name is the row's only link, and its text box is
+   22px tall, so the hit area is grown past the glyphs instead of around
+   them: an overlay moves nothing on the line and keeps the baseline. */
+.career-row__name::before {
+  content: '';
+  position: absolute;
+  inset-block: -1px;
+  inset-inline: 0;
+}
+.career-row__name:hover,
+.career-row__name:focus-visible {
+  text-decoration-color: var(--accent);
+}
+
+.career-row__dates {
+  margin-inline-start: auto;
+  text-align: end;
+}
+
+.career-row__line2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  margin-block-start: var(--s-2);
+}
+.career-row__role {
+  min-inline-size: 0;
+}
+.career-row__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-inline-start: auto;
+}
+/* A tag is a word in pen, not a box: the row reads "TypeScript Solana AWS"
+   with only spacing between them. The button exists for the hit area and the
+   ink it lights, so it carries a target size and no ornament. */
+.career-row__chip {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 24px;
+  min-inline-size: 24px;
+  transition: color var(--t-fast) ease-out;
+}
+.career-row__chip:hover,
+.career-row__chip:focus-visible {
+  color: var(--accent);
+}
+/* On touch both targets grow to 44px. The name's grows upward into the row's
+   own 20px of top padding, where nothing else can be tapped, so it never
+   reaches the tags on the line below. */
+@media (any-pointer: coarse) {
+  .career-row__chip {
+    min-block-size: 44px;
+  }
+  .career-row__name::before {
+    inset-block-start: -18px;
+    inset-block-end: -4px;
+  }
+}
+
+.career-row__outcome {
+  margin-block-start: var(--s-2);
+  max-inline-size: var(--measure);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+/* --- the shared axis, once per row ----------------------------------- */
+
+.career-row__track {
+  position: relative;
+  display: block;
+  margin-block-start: var(--s-3);
+  block-size: 12px;
+}
+.career-row__track::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  block-size: var(--hair);
+  background: var(--rule-faint);
+}
+
+/* Default: the percentages the component measured at build time. Works in
+   every engine. */
+.career-row__seg {
+  position: absolute;
+  top: calc(50% - 1.5px);
+  block-size: 3px;
+  background: var(--ink);
+  inset-inline-start: var(--fallback-x, 0%);
+  /* Tech Pilot Fund is four months, 2.5% of the axis: without a floor a real
+     role would be invisible. */
+  inline-size: max(6px, var(--fallback-w, 6px));
+}
+
+/* Enhancement: the browser does the arithmetic from the real dates, so a
+   data edit moves the drawing with no rebuild. */
+@supports (width: calc(progress(1, 0, 2) * 1px)) {
+  .career-row__seg {
+    --a: clamp(0, progress(var(--start), var(--axis-from), var(--axis-to)), 1);
+    --b: clamp(0, progress(var(--end), var(--axis-from), var(--axis-to)), 1);
+    inset-inline-start: calc(var(--a) * 100%);
+    inline-size: max(6px, calc((var(--b) - var(--a)) * 100%));
+  }
+}
+
+/* --- the scrub state: colour only ------------------------------------ */
+
+.career-row__name,
+.career-row__outcome,
+.career-row__seg {
+  transition:
+    color var(--t-fast) ease-out,
+    background-color var(--t-fast) ease-out;
+  transition-delay: var(--row-delay, 0ms);
+}
+
+.scale[data-scrubbing] ~ .career-list .career-row .career-row__name,
+.scale[data-scrubbing] ~ .career-list .career-row .career-row__outcome {
+  color: var(--ink-3);
+}
+.scale[data-scrubbing] ~ .career-list .career-row .career-row__seg {
+  background: var(--rule);
+}
+.scale[data-scrubbing] ~ .career-list .career-row[data-live] .career-row__name {
+  color: var(--ink);
+}
+.scale[data-scrubbing] ~ .career-list .career-row[data-live] .career-row__outcome {
+  color: var(--ink-2);
+}
+.scale[data-scrubbing] ~ .career-list .career-row[data-live] .career-row__seg {
+  background: var(--accent);
+}
+
+/* The ink flows down the sheet instead of snapping, with no delay maths in
+   JavaScript. Without sibling-index() every row changes together, which is
+   correct-looking. */
+@supports (transition-delay: calc(sibling-index() * 1ms)) {
+  .career-row {
+    --row-delay: calc(sibling-index() * 12ms);
+  }
+}
+
+/* --- tech ink: the same technology, wherever else it appears --------- */
+
+::highlight(tech-ink) {
+  background-color: color-mix(in oklab, var(--accent) 18%, transparent);
+  color: var(--ink);
+}
+
+/* --- achievements, expanded on /career and on a role sheet ----------- */
+
+.career-ach {
+  display: grid;
+  gap: var(--s-3);
+  margin-block-start: var(--s-3);
+  max-inline-size: var(--measure);
+}
+.career-ach__item {
+  padding-inline-start: var(--s-4);
+  border-inline-start: var(--hair) solid var(--rule-faint);
+}
+.career-ach__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-1) var(--s-3);
+}
+.career-ach__title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.career-ach__desc {
+  margin-block-start: var(--s-1);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.experience-sheet__more {
+  margin-block-start: var(--s-8);
+}
+
+/* --- /career, the index sheet ---------------------------------------- */
+
+.career-index {
+  display: block;
+  padding-block: var(--s-12) var(--s-24);
+}
+.career-index__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3) var(--s-6);
+}
+.career-index__title {
+  font-size: clamp(32px, 5.5vw, 48px);
+  max-width: 22ch;
+}
+.career-index__intro {
+  max-width: var(--measure);
+  margin-block: var(--s-4) var(--s-8);
+  color: var(--ink-2);
+}
+
+/* --- /career/:slug, the role sheet ----------------------------------- */
+
+.career-sheet {
+  display: block;
+  padding-block: var(--s-12) var(--s-24);
+}
+.career-sheet__back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  margin-block-end: var(--s-6);
+}
+.career-sheet__title {
+  font-size: clamp(36px, 7vw, 64px);
+}
+.career-sheet__rule {
+  margin-block-start: var(--s-5);
+}
+.career-sheet__note {
+  margin-block-start: var(--s-4);
+}
+.career-sheet__figure {
+  font-size: 28px;
+  color: var(--ink);
+}
+.career-sheet__plate {
+  margin-block-start: var(--s-8);
+  inline-size: max-content;
+  max-inline-size: 100%;
+}
+.career-sheet__plate img {
+  block-size: 40px;
+  inline-size: auto;
+  max-inline-size: 220px;
+  object-fit: contain;
+}
+.career-sheet__role {
+  margin-block-start: var(--s-8);
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.career-sheet__where {
+  margin-block-start: var(--s-2);
+}
+.career-sheet__projects {
+  margin-block-start: var(--s-16);
+  padding-block-start: var(--s-6);
+  border-block-start: var(--hair) solid var(--rule);
+}
+.career-sheet__projects h2 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin-block-end: var(--s-4);
+}
+.career-sheet__project-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.career-sheet__project {
+  grid-template-columns: max-content minmax(var(--s-6), 1fr) auto;
+  transition: color var(--t-fast) ease-out;
+}
+.career-sheet__project:hover .career-sheet__project-title,
+.career-sheet__project:focus-visible .career-sheet__project-title {
+  color: var(--accent);
+}
+.career-sheet__mark {
+  color: var(--ink-3);
+  align-self: center;
+}
+
+/* --- role prose ------------------------------------------------------ */
+
+.career-sheet .prose-sheet {
+  max-inline-size: var(--measure-prose);
+  margin-block-start: var(--s-6);
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.career-sheet .prose-sheet :where(h3) {
+  margin-block: var(--s-8) var(--s-3);
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.career-sheet .prose-sheet :where(p) {
+  margin-block-start: var(--s-4);
+}
+.career-sheet .prose-sheet :where(ul, ol) {
+  margin-block-start: var(--s-4);
+  display: grid;
+  gap: var(--s-2);
+}
+.career-sheet .prose-sheet :where(li) {
+  position: relative;
+  padding-inline-start: var(--s-4);
+}
+.career-sheet .prose-sheet :where(li)::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.75em;
+  inline-size: 7px;
+  block-size: var(--hair);
+  background: var(--rule);
+}
+.career-sheet .prose-sheet :where(strong) {
+  font-weight: 600;
+  color: var(--ink);
+}
+.career-sheet .prose-sheet :where(a) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color var(--t-fast) ease-out;
+}
+.career-sheet .prose-sheet :where(a):hover,
+.career-sheet .prose-sheet :where(a):focus-visible {
+  text-decoration-color: var(--accent);
+}
+
+/* --- 412px: the drawing is the same, because nothing here is fixed --- */
+
+@media (max-width: 640px) {
+  .career-row__dates {
+    margin-inline-start: 0;
+    text-align: start;
+    flex-basis: 100%;
+  }
+  .career-row__tech {
+    margin-inline-start: 0;
+  }
+  .career-sheet__role,
+  .career-sheet__projects h2 {
+    font-size: 24px;
+  }
+}

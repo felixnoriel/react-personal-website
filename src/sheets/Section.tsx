@@ -34,7 +34,7 @@ export function Section({
     >
       <div className="section__head">
         <h2 id={`${id}-title`}>{title}</h2>
-        {meta && <div className="mono mono--label section__meta">{meta}</div>}
+        {meta && <div className="meta meta--label section__meta">{meta}</div>}
       </div>
       {intro && <p className="section__intro">{intro}</p>}
       {children}

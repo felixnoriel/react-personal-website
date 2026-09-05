@@ -1,0 +1,74 @@
+/* ==========================================================================
+   /about - the about sheet.
+
+   A page title on the datum, two lines of copy at reading measure, and the
+   website's own bill of materials underneath. No cards, no boxes, no icons.
+   ========================================================================== */
+
+.about__title {
+  font-size: clamp(36px, 6vw, 56px);
+  max-width: 20ch;
+}
+
+.about__lead {
+  display: grid;
+  gap: var(--s-4);
+  max-width: var(--measure);
+  margin-block-start: var(--s-6);
+  color: var(--ink-2);
+  font-size: 19px;
+  line-height: 1.55;
+}
+@media (max-width: 767px) {
+  .about__lead {
+    font-size: 17px;
+  }
+}
+
+.about__site {
+  margin-block-start: var(--s-24);
+  border-block-start: var(--hair) solid var(--rule);
+  padding-block-start: var(--s-8);
+}
+
+.about__site-title {
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+/* the parts list: item number, name, one hairline under each row. Every row
+   is a real part of the build, so the numbers are positions in a real bill
+   of materials rather than decoration. */
+.about__parts {
+  counter-reset: part;
+  margin-block-start: var(--s-6);
+  max-width: 26rem;
+}
+.about__part {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--s-3);
+  min-block-size: 24px;
+  padding-block: var(--s-2);
+  border-block-end: var(--hair) solid var(--rule-faint);
+}
+.about__part::before {
+  counter-increment: part;
+  content: counter(part, decimal-leading-zero);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+}
+.about__part-name {
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.about__credit {
+  margin-block-start: var(--s-6);
+}

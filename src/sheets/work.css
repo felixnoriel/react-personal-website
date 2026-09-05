@@ -1,0 +1,493 @@
+/* ==========================================================================
+   Work - the selected-work sheet, the /projects index, and the project
+   detail sheet.
+
+   A project is not a card. It is a block on the sheet: a rule above it, the
+   title on the datum with its own rule beneath, the real outcome figures at
+   display size, the excerpt at reading measure, and the plate out in the
+   right columns. No border around the block, no shadow, no zig-zag.
+   ========================================================================== */
+
+/* --- the block ------------------------------------------------------- */
+
+.work-list {
+  display: block;
+}
+
+.work-block {
+  display: block;
+  color: inherit;
+  padding-block: var(--s-8);
+  border-block-start: var(--hair) solid var(--rule);
+  /* the measured height of a block at 412px is 546-683px; `auto` replaces this
+     guess with the real one the moment a block has been rendered once */
+  contain-intrinsic-size: auto 560px;
+}
+/* Default first: an engine without it just renders every block. */
+@supports (content-visibility: auto) {
+  .work-block {
+    content-visibility: auto;
+  }
+}
+
+.work-block__title {
+  font-size: 34px;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  transition: color var(--t-fast) ease-out;
+}
+.work-block:hover .work-block__title,
+.work-block:focus-visible .work-block__title {
+  color: var(--accent);
+}
+
+/* the rule under the title: the exact hairline that re-draws itself as the
+   detail sheet's rule during a Sheet Change */
+.work-block__rule {
+  height: var(--hair);
+  background: var(--rule);
+  margin-block: var(--s-4) var(--s-6);
+}
+
+/* the project's real outcome numbers. Fraunces, proportional lining: these
+   are standalone figures, not a column, so nothing needs to line up. */
+.work-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5) var(--s-12);
+  margin-block-end: var(--s-6);
+}
+.work-figure {
+  display: grid;
+  gap: var(--s-1);
+  min-width: 0;
+}
+.work-figure__value {
+  font-size: 34px;
+}
+.work-figure__label {
+  color: var(--ink-3);
+}
+
+.work-block__excerpt {
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 17px;
+  margin-block-end: var(--s-5);
+}
+
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+/* the plate: the banner in a 1px frame with a 2px mat, caption beneath */
+.work-plate {
+  display: block;
+}
+.work-plate .plate img,
+.work-plate .schematic {
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 899px) {
+  .work-plate {
+    margin-block-start: var(--s-6);
+    max-width: 420px;
+  }
+}
+
+.work-out {
+  padding-block-start: var(--s-6);
+  border-block-start: var(--hair) solid var(--rule);
+}
+.work-out .link,
+.detail__crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 24px;
+}
+@media (any-pointer: coarse) {
+  .work-out .link,
+  .detail__crumb {
+    min-height: 44px;
+  }
+}
+
+/* --- the StablePay schematic ----------------------------------------- */
+
+.schematic {
+  display: block;
+  color: var(--ink);
+  aspect-ratio: 800 / 500;
+}
+.schematic__ground {
+  fill: var(--paper-inset);
+}
+.schematic__accent {
+  stroke: var(--accent);
+}
+.schematic__leader,
+.schematic__dot {
+  color: var(--ink-3);
+}
+.schematic__dot {
+  fill: currentcolor;
+}
+.schematic__label {
+  font-family: var(--font-text);
+  /* SVG units, not CSS px. The plate is ~349px wide on a 412px phone, so the
+     viewBox scales by ~0.44 and this reads at ~13px there; on a 375px phone
+     the detail plate is narrower and it reads at ~11.7px, still above the
+     sheet's 11px floor. */
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  fill: var(--ink);
+  stroke: none;
+}
+
+/* --- /projects: the index sheet -------------------------------------- */
+
+.projects-index {
+  display: block;
+}
+.projects-row {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  column-gap: var(--s-6);
+  padding-block: var(--s-6);
+  border-block-start: var(--hair) solid var(--rule-faint);
+  color: inherit;
+}
+.projects-row__company {
+  color: var(--pen);
+  padding-block-start: 6px;
+}
+.projects-row__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  transition: color var(--t-fast) ease-out;
+}
+.projects-row:hover .projects-row__title,
+.projects-row:focus-visible .projects-row__title {
+  color: var(--accent);
+}
+.projects-row__excerpt {
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 15px;
+  margin-block-start: var(--s-2);
+}
+.projects-row .work-figures {
+  margin-block: var(--s-4) 0;
+  gap: var(--s-4) var(--s-8);
+}
+.projects-row .work-figure__value {
+  font-size: 28px;
+}
+@media (max-width: 640px) {
+  .projects-row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--s-2);
+  }
+  .projects-row__company {
+    padding-block-start: 0;
+  }
+}
+
+/* --- the detail sheet ------------------------------------------------ */
+
+.detail {
+  display: block;
+  padding-block: var(--s-12) var(--s-16);
+}
+.detail__crumb {
+  color: var(--ink-3);
+  margin-block-end: var(--s-6);
+}
+.detail__crumb svg {
+  transform: rotate(180deg);
+}
+.detail__title {
+  font-size: clamp(34px, 6vw, 56px);
+  line-height: 1.08;
+}
+.detail__rule {
+  height: var(--hair);
+  background: var(--rule);
+  margin-block: var(--s-5) var(--s-4);
+}
+.detail__excerpt {
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 17px;
+}
+.detail__plate {
+  display: block;
+  margin-block-start: var(--s-8);
+  max-width: 720px;
+}
+.detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-block-start: var(--s-8);
+}
+
+/* --- prose: plain scoped class selectors, never @scope --------------- */
+
+.prose-sheet {
+  max-width: var(--measure-prose);
+  margin-block-start: var(--s-12);
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.65;
+}
+.prose-sheet :where(p, ul, ol) {
+  margin-block-end: var(--s-5);
+}
+.prose-sheet :where(h2) {
+  font-size: 24px;
+  color: var(--ink);
+  margin-block: var(--s-8) var(--s-3);
+}
+.prose-sheet :where(h3) {
+  font-size: 20px;
+  color: var(--ink);
+  margin-block: var(--s-6) var(--s-3);
+}
+.prose-sheet :where(li) {
+  position: relative;
+  padding-inline-start: var(--s-5);
+  margin-block-end: var(--s-2);
+}
+.prose-sheet :where(li)::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.75em;
+  width: 10px;
+  height: var(--hair);
+  background: var(--rule);
+}
+.prose-sheet :where(strong, b) {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose-sheet :where(a) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color var(--t-fast) ease-out;
+}
+.prose-sheet :where(a):hover,
+.prose-sheet :where(a):focus-visible {
+  text-decoration-color: var(--accent);
+}
+.prose-sheet :where(img) {
+  border: var(--hair) solid var(--rule);
+  padding: 2px;
+  background: var(--paper-inset);
+}
+
+/* --- the gallery: a plate strip, not a masonry grid ------------------ */
+
+.gallery {
+  margin-block-start: var(--s-16);
+}
+.gallery__group {
+  margin-block-start: var(--s-8);
+}
+.gallery__head {
+  font-size: 20px;
+  margin-block-end: var(--s-4);
+}
+.gallery-strip {
+  display: flex;
+  gap: var(--s-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block-end: var(--s-3);
+}
+.gallery-strip > li {
+  flex: 0 0 auto;
+  width: min(272px, 74vw);
+  scroll-snap-align: start;
+}
+.gallery-plate {
+  display: block;
+}
+.gallery-plate__btn {
+  display: block;
+  width: 100%;
+  text-align: start;
+  color: inherit;
+  cursor: pointer;
+}
+.gallery-plate__btn .plate {
+  display: block;
+  transition: border-color var(--t-fast) ease-out;
+}
+.gallery-plate__btn .plate img {
+  height: 180px;
+  width: 100%;
+  object-fit: contain;
+}
+.gallery-plate__btn:hover .plate,
+.gallery-plate__btn:focus-visible .plate {
+  border-color: var(--accent);
+}
+.gallery-plate figcaption {
+  display: flex;
+  gap: var(--s-3);
+  margin-block-start: var(--s-2);
+  color: var(--ink-3);
+}
+
+/* Chromium garnish: real markers under the strip. Everywhere else a plain
+   snap strip, which is the correct-looking default. */
+@supports selector(::scroll-marker) {
+  .gallery-strip > li::scroll-marker {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border: var(--hair) solid var(--rule);
+  }
+}
+@supports (scroll-marker-group: after) {
+  .gallery-strip {
+    scroll-marker-group: after;
+  }
+}
+@supports selector(::scroll-marker-group) {
+  .gallery-strip::scroll-marker-group {
+    display: flex;
+    gap: 6px;
+    padding-block-start: var(--s-3);
+  }
+}
+@supports selector(::scroll-marker) and selector(:target-current) {
+  .gallery-strip > li:target-current::scroll-marker {
+    background: var(--accent);
+  }
+}
+
+/* --- the lightbox: a native dialog, opened by the platform ----------- */
+
+.lightbox {
+  width: min(1100px, 92vw);
+  max-width: 92vw;
+  max-height: 92svh;
+  padding: var(--s-4);
+  border: var(--hair) solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+}
+.lightbox__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block-end: var(--s-3);
+  border-block-end: var(--hair) solid var(--rule);
+}
+.lightbox__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--ink);
+  transition: color var(--t-fast) ease-out;
+}
+.lightbox__btn:hover,
+.lightbox__btn:focus-visible {
+  color: var(--accent);
+}
+.lightbox__btn--prev svg {
+  transform: rotate(90deg);
+}
+.lightbox__btn--next svg {
+  transform: rotate(-90deg);
+}
+.lightbox__figure {
+  margin-block: var(--s-4);
+}
+.lightbox__figure img {
+  max-height: 66svh;
+  width: auto;
+  object-fit: contain;
+  background: var(--paper-inset);
+}
+.lightbox__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block-start: var(--s-3);
+  border-block-start: var(--hair) solid var(--rule);
+}
+
+/* --- prev / next on the bottom rule ---------------------------------- */
+
+.detail__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-4) var(--s-8);
+  margin-block-start: var(--s-16);
+  padding-block-start: var(--s-4);
+  border-block-start: var(--hair) solid var(--rule);
+}
+.detail__nav a {
+  display: grid;
+  gap: var(--s-1);
+  min-height: 44px;
+  max-width: 22rem;
+}
+.detail__nav-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.2;
+  transition: color var(--t-fast) ease-out;
+}
+.detail__nav a:hover .detail__nav-title,
+.detail__nav a:focus-visible .detail__nav-title {
+  color: var(--accent);
+}
+.detail__nav-next {
+  text-align: end;
+}
+.detail__nav-prev svg {
+  transform: rotate(180deg);
+}
+.detail__nav-next svg {
+  margin-inline-start: auto;
+}
+
+/* --- a short list of projects that belong to another sheet ----------- */
+
+.project-index-list .index-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  min-height: 44px;
+  color: inherit;
+}
+.project-index-list a:hover .projects-row__title,
+.project-index-list a:focus-visible .projects-row__title {
+  color: var(--accent);
+}
+.project-index-list .projects-row__title {
+  font-size: 20px;
+}

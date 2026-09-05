@@ -13,21 +13,29 @@ const MONTHS: Record<string, number> = {
   jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
 }
 
-/** the moment the build ran, as a decimal year - stable across the page */
-export const NOW_YEAR = decimalYear(new Date())
+/** The moment the build ran, as a decimal year. Injected by vite.config.ts
+ *  so the prerendered HTML and the browser agree to the digit; a live clock
+ *  here would put a hydration mismatch on every current role the month
+ *  after a deploy. Falls back to the wall clock in tests. */
+declare const __NOW_YEAR__: number | undefined
+export const NOW_YEAR: number =
+  typeof __NOW_YEAR__ === 'number' ? __NOW_YEAR__ : decimalYear(new Date())
 
 export function decimalYear(d: Date): number {
   return d.getUTCFullYear() + (d.getUTCMonth() + 0.5) / 12
 }
 
-/** "Dec 2025" -> 2025.96, "2014" -> 2014.0 (start) / 2015.0 (end), "Present" -> now */
+/** "Dec 2025" -> 2025.96, "2014" -> 2014.0, "Present" -> now (the build year) */
 export function parseCareerDate(s: string, edge: 'start' | 'end'): number {
+  void edge // both edges read a bare year the same way; the parameter stays for the callers
   const t = s.trim().toLowerCase()
   if (t === 'present' || t === 'now' || t === '') return NOW_YEAR
   const m = /^([a-z]{3})[a-z]*\s+(\d{4})$/.exec(t)
   if (m && m[1] in MONTHS) return Number(m[2]) + (MONTHS[m[1]] + 0.5) / 12
+  // a bare year is read as that year's start on both edges: "2014 - 2015" is
+  // one year of work, not two
   const y = /^(\d{4})$/.exec(t)
-  if (y) return edge === 'start' ? Number(y[1]) : Number(y[1]) + 1
+  if (y) return Number(y[1])
   const asDate = new Date(s)
   return Number.isNaN(asDate.getTime()) ? NOW_YEAR : decimalYear(asDate)
 }

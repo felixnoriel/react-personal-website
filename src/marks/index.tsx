@@ -84,7 +84,7 @@ export const Monogram = ({ size = 20, label = 'Felix Noriel', ...rest }: MarkPro
     aria-label={label}
     {...rest}
   >
-    <rect x="0.5" y="0.5" width="19" height="19" />
+    <rect x="0.5" y="0.5" width="19" height="19" stroke="var(--rule)" />
     <path d="M6.5 15.5v-11h8M6.5 9.5h5.5" strokeWidth="1.25" />
   </svg>
 )

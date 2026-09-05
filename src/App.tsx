@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { DataProvider } from './contexts/DataContext'
 import { SheetHeader } from './sheets/SheetHeader'
 import { TitleBlockFooter } from './sheets/TitleBlockFooter'
+import { SheetIndex } from './sheets/SheetIndex'
 import { ScrollToTop } from './components/ScrollToTop'
 import { notifyLocationChange } from './transitions/sheetChange'
 import { initGA, trackError } from './utils/analytics'
@@ -63,6 +64,7 @@ function App({ url }: { url?: string } = {}) {
           Skip to content
         </a>
         <SheetHeader />
+        <SheetIndex />
         <div className="sheet">
           <div className="field">
             <div className="datum" aria-hidden="true" />

@@ -1,49 +1,42 @@
-import { Cloud, Layout, Server } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
-import {
-  FxWord,
-  HudDot,
-  Reveal,
-  SectionHeading,
-  SectionShell,
-} from './ui/section'
-import type { Accent } from './ui/section-tokens'
-import { TechSphere, type SphereGroup, type SphereWord } from './ui/TechSphere'
+/**
+ * The toolbox, as a bill of materials.
+ *
+ * Every tool carries the real number of years it has been in use, whether it
+ * is still in daily use (`live`), and whether it is only kept around for
+ * legacy work (`note: 'legacy'`). A tool with neither flag is simply used
+ * when the job calls for it - it is not marked, because the data does not
+ * say either way and the drawing never invents a mark.
+ *
+ * Moved out of the old TechToolbelt component unchanged: same names, same
+ * years, same live/legacy flags, same order.
+ */
 
-// ============================================================
-// TechToolbelt — "Tools and tech I reach for every day."
-//
-// Rebuilt from a ~1,000-line pile (orbital core-reactor, htop process
-// tables, a skill heatmap) into one interactive 3D constellation that
-// holds all three stacks — color-coded by domain, filterable, with the
-// sphere reforming to each stack on demand. Same real skill data.
-// ============================================================
-
-type Skill = {
+export type Skill = {
   name: string
   years?: number
+  /** currently in daily use */
   live?: boolean
+  /** 'legacy' where the tool is kept only for older work */
   note?: string
 }
 
-type Stack = {
-  id: 'frontend' | 'backend' | 'infra'
-  title: string
-  number: string
-  caption: string
-  icon: LucideIcon
-  accent: Accent
-  groups: { label: string; items: Skill[] }[]
+export type SkillGroup = {
+  label: string
+  items: Skill[]
 }
 
-const STACKS: Stack[] = [
+export type Stack = {
+  id: 'frontend' | 'backend' | 'infra'
+  title: string
+  caption: string
+  groups: SkillGroup[]
+}
+
+export const STACKS: Stack[] = [
   {
     id: 'frontend',
     title: 'Front end',
-    number: '01',
     caption: 'interfaces & experience',
-    icon: Layout,
-    accent: 'accent',
     groups: [
       {
         label: 'Frameworks',
@@ -86,10 +79,7 @@ const STACKS: Stack[] = [
   {
     id: 'backend',
     title: 'Back end',
-    number: '02',
     caption: 'services & data',
-    icon: Server,
-    accent: 'lime',
     groups: [
       {
         label: 'Languages',
@@ -126,10 +116,7 @@ const STACKS: Stack[] = [
   {
     id: 'infra',
     title: 'Infrastructure',
-    number: '03',
     caption: 'cloud & delivery',
-    icon: Cloud,
-    accent: 'electric',
     groups: [
       {
         label: 'Google Cloud',
@@ -175,59 +162,13 @@ const STACKS: Stack[] = [
   },
 ]
 
-const countItems = (s: Stack) =>
-  s.groups.reduce((m, g) => m + g.items.length, 0)
-const countLive = (s: Stack) =>
-  s.groups.reduce((m, g) => m + g.items.filter((i) => i.live).length, 0)
+const allSkills: Skill[] = STACKS.flatMap((stack) => stack.groups.flatMap((group) => group.items))
 
-// Flatten the stacks into the constellation's data: one node per skill
-// (tagged with its domain), plus per-domain totals for the filter chips.
-const SPHERE_GROUPS: SphereGroup[] = STACKS.map((s) => ({
-  id: s.id,
-  title: s.title,
-  accent: s.accent,
-  total: countItems(s),
-  live: countLive(s),
-}))
-const SPHERE_WORDS: SphereWord[] = STACKS.flatMap((s) =>
-  s.groups.flatMap((g) =>
-    g.items.map((it) => ({
-      name: it.name,
-      years: it.years,
-      groupId: s.id,
-      legacy: it.note === 'legacy',
-    })),
-  ),
-)
+/** Every tool in the list. */
+export const TOOL_COUNT = allSkills.length
 
-export function TechToolbelt() {
-  const toolCount = STACKS.reduce((n, s) => n + countItems(s), 0)
-  const liveCount = STACKS.reduce((n, s) => n + countLive(s), 0)
+/** The ones still in daily use. */
+export const LIVE_COUNT = allSkills.filter((skill) => skill.live).length
 
-  return (
-    <SectionShell>
-      <SectionHeading
-        eyebrow="capabilities"
-        index="01"
-        meta={
-          <span className="inline-flex items-center gap-2">
-            <HudDot accent="lime" />
-            {toolCount} tools · {liveCount} live
-          </span>
-        }
-        title={
-          <>
-            Tools and tech I reach for{' '}
-            <FxWord className="italic font-extrabold">every day.</FxWord>
-          </>
-        }
-        intro="A decade of shipping across startups, media, and Web3 — here's what's in the current toolbox, booted and running."
-      />
-
-      <Reveal className="mt-12">
-        <TechSphere words={SPHERE_WORDS} groups={SPHERE_GROUPS} />
-      </Reveal>
-    </SectionShell>
-  )
-}
-
+/** The longest-running tool, so the years hairline is drawn to a real scale. */
+export const MAX_YEARS = allSkills.reduce((max, skill) => Math.max(max, skill.years ?? 0), 0)

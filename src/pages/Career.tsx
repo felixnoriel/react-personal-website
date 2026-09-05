@@ -1,25 +1,25 @@
 import { useData } from '../contexts/DataContext'
 import { SEOHead } from '../components/seo/SEOHead'
-import { BuildingJourney } from '../components/BuildingJourney'
+import { CareerScale, EXPERIENCE_INTRO, EXPERIENCE_META, EXPERIENCE_TITLE } from '../sheets/ExperienceSheet'
 
+/**
+ * /career - the same nine-row scale drawing as Sheet 2, scrubber included,
+ * with every achievement expanded under its row. An index sheet, not cards.
+ */
 export function Career() {
-  const { career, loading } = useData()
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    )
-  }
+  const { career } = useData()
 
   return (
     <>
       <SEOHead title="Career" description="Career timeline - Companies I have been a part of" url="/career" />
-      <BuildingJourney experiences={career} showViewAllLink={false} />
+      <article className="career-index" data-sheet-ready="">
+        <div className="career-index__head">
+          <h1 className="career-index__title">{EXPERIENCE_TITLE}</h1>
+          <p className="meta meta--label">{EXPERIENCE_META}</p>
+        </div>
+        <p className="career-index__intro">{EXPERIENCE_INTRO}</p>
+        <CareerScale careers={career} idPrefix="career-index" expanded />
+      </article>
     </>
   )
 }

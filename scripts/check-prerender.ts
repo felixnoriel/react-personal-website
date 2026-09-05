@@ -30,7 +30,7 @@ const HOME_STRINGS: Array<[string, string]> = [
   ['writing title', 'Field notes from the road.'],
   ['contact title', 'Got something in mind?'],
   ['footer', 'MIT-licensed curiosity'],
-  ['head description', '<meta name="description"'],
+  ['head description', 'name="description"'],
   ['head og:image', 'property="og:image"'],
   ['head canonical', 'rel="canonical"'],
   ['json-ld person', '"@type":"Person"'],

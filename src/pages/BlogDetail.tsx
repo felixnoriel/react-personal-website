@@ -8,14 +8,7 @@ import { loadBlogContent } from '../data/blog-content'
 import type { BlogPost, BlogPostMeta } from '../types/data'
 
 function DetailLoading() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        <p className="mt-4 text-muted-foreground">Loading...</p>
-      </div>
-    </div>
-  )
+  return <div className="section" aria-label="Loading" />
 }
 
 // Reads the post body via React 19's `use()`. Suspends until the content
@@ -29,11 +22,7 @@ function BlogBody({ meta }: { meta: BlogPostMeta }) {
 
 export function BlogDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const { blog: blogIndex, loading } = useData()
-
-  if (loading) {
-    return <DetailLoading />
-  }
+  const { blog: blogIndex } = useData()
 
   const metas = filterBySlug<BlogPostMeta>(slug || '', blogIndex)
   const meta = metas[0] || null

@@ -1,10 +1,9 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 import { vitePrerenderPlugin } from 'vite-prerender-plugin'
 import path from 'path'
 
-// The landing page's critical chunks (Home + motion's domMax features) are
+// The landing page's critical chunk (Home) is a
 // dynamic imports, so by default the browser only discovers them AFTER the
 // entry chunk has downloaded and executed — a serial round-trip that real
 // phone networks pay for in full. This plugin injects <link rel="modulepreload">
@@ -12,7 +11,7 @@ import path from 'path'
 // so they stream in parallel with the entry, starting from the HTML.
 // (The chunks stay split — spreading parse/exec across chunks keeps
 // main-thread tasks short — only the fetches are parallelized.)
-const PRELOAD_FACADES = ['src/pages/Home.tsx', 'src/utils/motionFeatures.ts']
+const PRELOAD_FACADES = ['src/pages/Home.tsx']
 
 function preloadCriticalChunks(): Plugin {
   return {
@@ -105,14 +104,20 @@ function preloadFonts(): Plugin {
   }
 }
 
+// The career axis ends "now". That value is fixed at build time so the
+// prerendered HTML and the browser draw the same segments (see
+// src/utils/timeline.ts); every deploy rebuilds it.
+const now = new Date()
+const NOW_YEAR = now.getUTCFullYear() + (now.getUTCMonth() + 0.5) / 12
+
 // https://vite.dev/config/
 export default defineConfig({
+  define: { __NOW_YEAR__: JSON.stringify(Math.round(NOW_YEAR * 10000) / 10000) },
   plugins: [
     // `compiler: true` runs React Compiler through oxc-transform-react (Rust),
     // so components memoise themselves and the hand-written useMemo/useCallback
     // work stops being load-bearing.
     react({ compiler: true }),
-    tailwindcss(),
     // Renders every route to real HTML at build time. The crawler starts at "/"
     // and follows the links it finds, which reaches the project and blog pages.
     // /about is only reachable from the header menu, so it is named here; the

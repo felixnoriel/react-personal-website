@@ -1,0 +1,170 @@
+/* ==========================================================================
+   Sheet 4 - the parts list.
+
+   The toolbox drawn as a bill of materials: three stacks side by side on the
+   sheet, sub-grouped, every tool visible. Each row is item number, name, dot
+   leader, years, the same years drawn as a hairline to a real scale, and a
+   square saying whether the tool is still in daily use.
+
+   Two things this file will not do. It will not size a column in `ch` - the
+   text face's digits are all one width, so fixed px tracks line the figures
+   up and `ch` would only make the tracks drift with the fallback font. And it
+   will not move: there is no transition, no transform and no animation here.
+   ========================================================================== */
+
+/* The section's own fact - "{N} tools · {M} live" - sits at the right end of
+   the heading row. Scoped here because the shared .section__meta slot has no
+   styling of its own yet (see the report). */
+#sheet-parts .section__meta {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* --- the legend: the key to the one mark this drawing uses ------------- */
+
+.parts__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-6);
+  align-items: center;
+  margin-block-end: var(--s-8);
+}
+.parts__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+/* --- three stacks, three columns -------------------------------------- */
+
+.parts {
+  /* the longest run in the list; the component writes the real value */
+  --y-max: 11;
+
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 48px so the column rule sits dead centre with 24px clear either side */
+  column-gap: var(--s-12);
+  row-gap: var(--s-16);
+}
+.parts__stack {
+  position: relative;
+  min-inline-size: 0;
+}
+.parts__stack + .parts__stack::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(-1 * var(--s-6));
+  inline-size: var(--hair);
+  background: var(--rule);
+}
+
+/* Chromium 149+ gap decorations draw the same rule held 24px clear of the top
+   and bottom of the gap, which a border cannot do. Every other engine keeps
+   the full-height rule above, which is the correct-looking default. */
+@supports (column-rule-inset: 1px) {
+  .parts__stack + .parts__stack::before {
+    content: none;
+  }
+  .parts {
+    column-rule: var(--hair) solid var(--rule);
+    column-rule-inset: var(--s-6);
+  }
+}
+
+/* --- stack head ------------------------------------------------------- */
+
+.parts__caption {
+  margin-block-start: var(--s-1);
+}
+
+/* --- sub-group head: a rule where the register changes ----------------- */
+
+.parts__group {
+  /* stated, not inherited: a heading element picks up the display face from
+     the base sheet, and this one is small meta set in the text face */
+  font-family: var(--font-text);
+  margin-block: var(--s-6) var(--s-2);
+  padding-block-end: var(--s-1);
+  border-block-end: var(--hair) solid var(--rule);
+}
+
+/* --- the rows --------------------------------------------------------- */
+
+.parts__list {
+  counter-reset: part;
+  font-size: 13px;
+}
+
+.part {
+  /* item no. | name | leader | years | years hairline | status */
+  display: grid;
+  grid-template-columns: 22px minmax(0, max-content) minmax(var(--s-6), 1fr) 26px 48px 8px;
+  column-gap: var(--s-2);
+  align-items: baseline;
+  min-block-size: 24px;
+  padding-block: 3px;
+  counter-increment: part;
+}
+
+.part__no {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.part__no::before {
+  content: counter(part, decimal-leading-zero);
+}
+
+.part__name {
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.part__years {
+  font-size: 12px;
+  text-align: end;
+}
+
+/* The years, drawn. The track is the full scale; the bar inside it is this
+   tool's real value. No fake progress bar exists anywhere on this site. */
+.part__track {
+  inline-size: 48px;
+  block-size: var(--hair);
+}
+.part__bar {
+  display: block;
+  block-size: var(--hair);
+  background: var(--pen);
+  inline-size: var(--fallback-w);
+}
+
+/* progress() reached Baseline newly available 2026-09-01. The build-time
+   percentage above is the base, so an engine without it draws the same bar. */
+@supports (width: calc(progress(1, 0, 2) * 1px)) {
+  .part__bar {
+    inline-size: calc(clamp(0, progress(var(--y), 0, var(--y-max)), 1) * 100%);
+  }
+}
+
+.part__status {
+  inline-size: 8px;
+}
+
+/* --- one column on the phone ------------------------------------------ */
+
+@media (max-width: 899px) {
+  .parts {
+    grid-template-columns: minmax(0, 1fr);
+    column-rule: none;
+  }
+  .parts__stack + .parts__stack::before {
+    content: none;
+  }
+}

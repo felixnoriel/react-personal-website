@@ -143,7 +143,8 @@ export async function sheetChange({ source, to, slug, navigate, prefetch }: Shee
     // snapshot stays on screen while we wait for the real sheet to land.
     await waitFor(() => document.querySelector('[data-sheet-ready]'), 500)
   }, 'forward')
-  vt.finished.finally(() => unname(named))
+  // a skipped transition rejects `finished`; that is fine, the page still swapped
+  vt.finished.catch(() => {}).finally(() => unname(named))
 }
 
 /* Back and Forward. The router owns history; the Navigation API is only READ
@@ -177,9 +178,11 @@ if (isBrowser && 'navigation' in window) {
         if (row) named = nameChildren(row, pairNamesForViewport())
       }
     }, dir)
-    vt.finished.finally(() => {
-      unname(named)
-      if (dir === 'back') returnTarget = null
-    })
+    vt.finished
+      .catch(() => {})
+      .finally(() => {
+        unname(named)
+        if (dir === 'back') returnTarget = null
+      })
   })
 }
