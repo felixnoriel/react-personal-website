@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "transform-data": "bun scripts/transform-data-optimized.ts",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "images": "bun scripts/optimize-images.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -47,6 +48,7 @@
     "globals": "^16.5.0",
     "postcss": "^8.5.10",
     "prettier": "^3.8.3",
+    "sharp": "^0.35.4",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
