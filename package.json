@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "images": "bun scripts/optimize-images.ts",
+    "blog:split": "bun scripts/split-blog.ts",
     "transform-data": "bun scripts/transform-data-optimized.ts",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\""

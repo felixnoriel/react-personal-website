@@ -93,7 +93,14 @@ export default defineConfig({
         // for long, and so a data-only edit does not invalidate app code.
         advancedChunks: {
           groups: [
-            { name: 'data-blog', test: /src[\\/]data[\\/]blog/ },
+            // Matches only blog.ts (unused at runtime; kept as the hand-
+            // maintained source) and blog-index.ts (metadata, shipped on
+            // every page). Deliberately narrower than a plain /blog/ match:
+            // that would also catch blog-content.ts and every file under
+            // blog-content/ and merge all 18 post bodies into this one
+            // chunk, undoing the per-post code splitting those files exist
+            // for (see src/data/blog-content.ts).
+            { name: 'data-blog', test: /src[\\/]data[\\/]blog(-index)?\.ts$/ },
             { name: 'data-career', test: /src[\\/]data[\\/]career/ },
             { name: 'data-projects', test: /src[\\/]data[\\/]projects/ },
           ],

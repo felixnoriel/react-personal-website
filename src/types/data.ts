@@ -30,6 +30,10 @@ export interface BlogPost {
   tags: Tag[]
 }
 
+// Blog post metadata only (no `content`) - what the home page and /blog list
+// need. The full post body only loads on /blog/:slug (see src/data/blog-content.ts).
+export type BlogPostMeta = Omit<BlogPost, 'content'>
+
 // Career/Company type (simplified)
 export interface Career {
   slug: string

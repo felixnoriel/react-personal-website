@@ -13,10 +13,10 @@ import {
   Stamp,
 } from 'lucide-react'
 import { ViewAllLink } from '../ViewAllLink'
-import type { BlogPost } from '../../types/data'
+import type { BlogPostMeta } from '../../types/data'
 
 interface BlogListProps {
-  blogList: BlogPost[]
+  blogList: BlogPostMeta[]
   indexPage?: boolean
 }
 
@@ -371,7 +371,7 @@ function FilterBar({
 // ============================================================
 
 // Variant A — tall polaroid
-function PolaroidCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
+function PolaroidCard({ post, delay = 0 }: { post: BlogPostMeta; delay?: number }) {
   const meta = stableMeta(post.slug)
   const reduce = useReducedMotion()
   return (
@@ -450,7 +450,7 @@ function PolaroidCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
 }
 
 // Variant B — horizontal postcard
-function PostcardCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
+function PostcardCard({ post, delay = 0 }: { post: BlogPostMeta; delay?: number }) {
   const meta = stableMeta(post.slug)
   const reduce = useReducedMotion()
   return (
@@ -529,7 +529,7 @@ function PostcardCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
 }
 
 // Variant C — luggage tag (wider, overlay)
-function LuggageCard({ post, delay = 0 }: { post: BlogPost; delay?: number }) {
+function LuggageCard({ post, delay = 0 }: { post: BlogPostMeta; delay?: number }) {
   const meta = stableMeta(post.slug)
   const reduce = useReducedMotion()
   return (
@@ -678,7 +678,7 @@ export function BlogList({ blogList, indexPage }: BlogListProps) {
   )
 }
 
-function BlogGrid({ posts }: { posts: BlogPost[] }) {
+function BlogGrid({ posts }: { posts: BlogPostMeta[] }) {
   if (!posts.length) return null
 
   // First post = featured luggage tag (full width on md), rest cycle through variants
@@ -714,7 +714,7 @@ function FeaturedHero({
   post,
   meta,
 }: {
-  post: BlogPost
+  post: BlogPostMeta
   meta: ReturnType<typeof stableMeta>
 }) {
   const reduce = useReducedMotion()

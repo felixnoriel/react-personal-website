@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
 import { ArrowUpRight, MapPin } from 'lucide-react'
-import type { BlogPost } from '../types/data'
+import type { BlogPostMeta } from '../types/data'
 import { formatDate } from '../utils/date'
 import {
   FxWord,
@@ -21,7 +21,7 @@ import {
 // ============================================================
 
 interface TravelStoriesProps {
-  stories: BlogPost[]
+  stories: BlogPostMeta[]
 }
 
 function prettyDate(d: string): string {
@@ -118,7 +118,7 @@ export function TravelStories({ stories }: TravelStoriesProps) {
   )
 }
 
-function FeatureCard({ post }: { post: BlogPost }) {
+function FeatureCard({ post }: { post: BlogPostMeta }) {
   return (
     <Link to={`/blog/${post.slug}`} className="group block h-full">
       <GlassPanel className="h-full flex flex-col overflow-hidden vt-card">
@@ -159,7 +159,7 @@ function FeatureCard({ post }: { post: BlogPost }) {
   )
 }
 
-function Postcard({ post }: { post: BlogPost }) {
+function Postcard({ post }: { post: BlogPostMeta }) {
   return (
     <Link to={`/blog/${post.slug}`} className="group block h-full">
       <GlassPanel accentTop={false} className="h-full flex flex-col overflow-hidden vt-card">

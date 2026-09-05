@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo } from 'react'
-import type { BlogPost, Career, Project } from '../types/data'
+import type { BlogPostMeta, Career, Project } from '../types/data'
 import { careers } from '../data/career'
 import { projects } from '../data/projects'
-import { blogPosts } from '../data/blog'
+import { blogIndex } from '../data/blog-index'
 
 // Blog used to stream in after mount. It cannot any more: the blog pages are
 // prerendered to static HTML at build time, and an effect never runs during
@@ -10,9 +10,14 @@ import { blogPosts } from '../data/blog'
 // mount on the client would then disagree with that HTML and break hydration.
 // So all three datasets are imported up front and the build keeps blog in its
 // own chunk (see vite.config.ts) to bound the parse cost.
+//
+// `blog` only carries metadata (see BlogPostMeta) - every post's full HTML
+// body lives in its own chunk under data/blog-content/ and is loaded only by
+// the /blog/:slug page (see src/data/blog-content.ts), so the home page and
+// the /blog list no longer pay for content nobody there reads.
 
 interface DataState {
-  blog: BlogPost[]
+  blog: BlogPostMeta[]
   career: Career[]
   projects: Project[]
   loading: boolean
@@ -28,7 +33,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined)
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<DataContextType>(
     () => ({
-      blog: blogPosts,
+      blog: blogIndex,
       career: careers,
       projects,
       loading: false,

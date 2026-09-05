@@ -1,0 +1,21 @@
+# Felix Noriel
+
+> Product Engineer. Startups, Web3, Fintech. Senior full-stack engineer and technical co-founder with 13+ years shipping software for startups across Web3, fintech, hospitality, and media. Based in Bangkok (UTC+7), remote-friendly, available for work.
+
+Site: https://felixnoriel-dashify.vercel.app - every page is static HTML, so it reads fine without JavaScript.
+
+## Pages
+
+- [Home](https://felixnoriel-dashify.vercel.app/): role, bio, four production metrics, tools, career, selected work, contact.
+- [Selected work](https://felixnoriel-dashify.vercel.app/projects): StablePay, Genopets Gaming Platform, Dashify Hospitality Platform, Zookal Platform, The CEO Magazine website, intranet and shop, and more. Each has its own page under /projects/.
+- [Experience](https://felixnoriel-dashify.vercel.app/career): nine roles from 2013 to now (Stable, Genopets, Dashify, Zookal, The CEO Magazine, Tech Pilot Fund, KForce Global Solutions, iServe Solutions, Yondu). Each has its own page under /career/.
+- [Field notes](https://felixnoriel-dashify.vercel.app/blog): travel and food writing from Asia. Each post has its own page under /blog/.
+- [About](https://felixnoriel-dashify.vercel.app/about): about Felix and how this site is built.
+
+## Facts
+
+- Current role: Senior Full Stack Engineer at Stable, building StablePay (USDT as everyday money) with React Native, Golang, AWS, Datadog and EVM integrations.
+- Also Technical Co-Founder of Dashify, a hospitality SaaS serving 20+ venues.
+- Production numbers: 7.5M+ messages/day event pipeline into BigQuery; 150k monthly actives (Genopets, Web3 gaming); 80% faster p95 latency; notification system reaching 1.8M+ users.
+- Core stack: TypeScript, React, React Native, Node.js, Next.js, Golang, Rust, PostgreSQL, Solana, EVM, AWS, GCP, GraphQL, Python, Redis, Datadog.
+- Contact: norielfelixjr@gmail.com. LinkedIn: https://www.linkedin.com/in/felixnoriel/. GitHub: https://github.com/felixnoriel.
