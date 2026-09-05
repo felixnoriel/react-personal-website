@@ -46,25 +46,28 @@
   font-display: swap;
 }
 
-/* Fraunces fallback. Times is the right metric donor for a serif: measured
-   against the shipped instance at wght 600 (the H1), Times needs a 4.3%
-   shrink to match Fraunces' advance widths, where Arial would need 13.7%.
-   Measured 2026-09-05 with fontTools on the real headline copy. */
+/* Fraunces fallback. Times is the right metric donor for a serif. The
+   size-adjust is calibrated on the headline itself ("Product Engineer" at
+   wght 600, measured in Chrome with canvas measureText: 281.8px in Fraunces
+   vs 266.8px in Times at the previous 95.71% adjust, at 40px), because the H1 is the largest
+   text on the page and the one whose line count must not change when the
+   real face arrives. Figures set in the serif land within 4%. */
 @font-face {
   font-family: 'Fraunces Fallback';
   src: local('Times New Roman'), local('Times');
-  size-adjust: 95.71%;
-  ascent-override: 102.18%;
-  descent-override: 26.64%;
+  size-adjust: 101.09%;
+  ascent-override: 96.75%;
+  descent-override: 25.22%;
   line-gap-override: 0%;
 }
 
-/* Host Grotesk fallback. Arial, measured at wght 400 on the bio copy. */
+/* Host Grotesk fallback. Arial, calibrated on the bio copy at 17px (505.1px
+   in Host Grotesk vs 511.7px in Arial at the previous 105.06% adjust). */
 @font-face {
   font-family: 'Host Fallback';
   src: local('Arial'), local('Helvetica');
-  size-adjust: 105.06%;
-  ascent-override: 96.61%;
-  descent-override: 29.98%;
+  size-adjust: 103.7%;
+  ascent-override: 97.88%;
+  descent-override: 30.38%;
   line-gap-override: 0%;
 }

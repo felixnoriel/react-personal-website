@@ -6,3 +6,20 @@
 @import './sheet.css';
 @import './motion.css';
 @import './scroll-state.css';
+
+/* Every sheet's and page's stylesheet is part of the critical CSS too: the
+   whole site's CSS is inlined into each prerendered page, so a route never
+   paints once with the foundation alone and re-lays out when its chunk's
+   CSS arrives. Components keep their own imports for dev ergonomics; Vite
+   emits each file once. */
+@import '../sheets/contact.css';
+@import '../sheets/experience.css';
+@import '../sheets/field-notes.css';
+@import '../sheets/footer.css';
+@import '../sheets/header.css';
+@import '../sheets/hero.css';
+@import '../sheets/parts.css';
+@import '../sheets/sheet-index.css';
+@import '../sheets/work.css';
+@import '../components/about-website.css';
+@import '../components/blog/blog.css';
