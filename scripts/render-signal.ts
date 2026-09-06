@@ -1,40 +1,64 @@
 /**
- * Renders proto/signal/index.html from proto/signal/template.html and the
- * section renderers under src/proto/signal/sections/*.html.ts, so every
- * section's markup is real HTML at first paint and comes from the same
- * data files the rest of the site uses. Re-run after changing content or a
- * section: `bun run proto:render`.
+ * Renders every route of the SIGNAL site to a static HTML file under
+ * proto/signal/<path>/index.html, from proto/signal/template.html, the
+ * section renderers (home) and the page groups (career, projects, blog,
+ * about, 404). Re-run after changing content or any renderer:
+ * `bun run proto:render`.
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { PAGE } from '../src/proto/signal/sections/all'
+import { allPages } from '../src/proto/signal/site/pages/index'
+import { renderPage } from '../src/proto/signal/site/layout'
 
 const ROOT = join(import.meta.dirname, '..')
-const DIR = join(ROOT, 'src', 'proto', 'signal', 'sections')
-const template = readFileSync(join(ROOT, 'proto', 'signal', 'template.html'), 'utf8')
+const OUT = join(ROOT, 'proto', 'signal')
+const SECTIONS = join(ROOT, 'src', 'proto', 'signal', 'sections')
+const ctx = {
+  template: readFileSync(join(ROOT, 'proto', 'signal', 'template.html'), 'utf8'),
+  css(key: string) {
+    const f = join(SECTIONS, `${key}.css`)
+    return existsSync(f) ? `      /* ---- ${key} ---- */\n` + readFileSync(f, 'utf8') : ''
+  },
+}
 
-const styles: string[] = []
-const bodies: string[] = []
-for (const s of PAGE.sections) {
-  const css = join(DIR, `${s.key}.css`)
-  if (existsSync(css)) styles.push(`      /* ---- ${s.key} ---- */\n` + readFileSync(css, 'utf8'))
+const shared = {
+  header: safe(() => PAGE.header(), '<header class="rail-top mono"><b>FELIX NORIEL</b></header>'),
+  after: safe(() => PAGE.after(), ''),
+  consoleCss: ctx.css('console'),
+}
+
+function safe<T>(fn: () => T, fallback: T, label = 'shared'): T {
   try {
-    bodies.push(s.render())
+    return fn()
   } catch (e) {
-    // one section mid-edit must not block the others: keep its slot, say so
-    console.warn(`render-signal: ${s.key} failed to render (${e instanceof Error ? e.message : e}); left empty`)
-    bodies.push(`      <!-- ${s.key}: render failed -->`)
+    console.warn(`render-signal: ${label} failed (${e instanceof Error ? e.message : e})`)
+    return fallback
   }
 }
-const headerCss = join(DIR, 'console.css')
-if (existsSync(headerCss)) styles.push(`      /* ---- console ---- */\n` + readFileSync(headerCss, 'utf8'))
 
-let html = template
-  .replace('<!--@styles-->', styles.join('\n'))
-  .replace('<!--@header-->', PAGE.header())
-  .replace('<!--@sections-->', bodies.join('\n'))
-  .replace('<!--@after-->', PAGE.after())
+let pages
+try {
+  pages = allPages()
+} catch (e) {
+  console.error(`render-signal: a page group failed to load: ${e instanceof Error ? e.message : e}`)
+  process.exit(1)
+}
 
-const out = join(ROOT, 'proto', 'signal', 'index.html')
-writeFileSync(out, html)
-console.log(`render-signal: ${PAGE.sections.length} sections, ${Math.round(html.length / 1024)} KB -> proto/signal/index.html`)
+let written = 0
+const seen = new Set<string>()
+for (const p of pages) {
+  if (seen.has(p.path)) {
+    console.warn(`render-signal: duplicate route ${p.path} skipped`)
+    continue
+  }
+  seen.add(p.path)
+  const html = safe(() => renderPage(p, shared, ctx), '', p.path)
+  if (!html) continue
+  const dir = join(OUT, p.path)
+  mkdirSync(dir, { recursive: true })
+  const file = join(dir, 'index.html')
+  if (!existsSync(file) || readFileSync(file, 'utf8') !== html) writeFileSync(file, html)
+  written++
+}
+console.log(`render-signal: ${written} pages under proto/signal/`)

@@ -223,9 +223,12 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo)
   // interleave the shape targets so one particle is one contiguous run
   const inter = new Float32Array(N * 4 * S)
-  for (let i = 0; i < N; i++)
-    for (let s = 0; s < S; s++)
-      for (let k = 0; k < 4; k++) inter[i * 4 * S + s * 4 + k] = opts.shapes[s * N * 4 + i * 4 + k]
+  const interleave = (shapes: Float32Array) => {
+    for (let i = 0; i < N; i++)
+      for (let s = 0; s < S; s++)
+        for (let k = 0; k < 4; k++) inter[i * 4 * S + s * 4 + k] = shapes[s * N * 4 + i * 4 + k]
+  }
+  interleave(opts.shapes)
   gl.bufferData(gl.ARRAY_BUFFER, inter, gl.STATIC_DRAW)
   for (let s = 0; s < S; s++) {
     gl.enableVertexAttribArray(s)
@@ -288,6 +291,12 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
   return {
     label,
     count: N,
+    updateTargets(shapes) {
+      if (dead) return
+      interleave(shapes)
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo)
+      gl.bufferData(gl.ARRAY_BUFFER, inter, gl.STATIC_DRAW)
+    },
     resize(w, h) {
       if (dead) return
       W = Math.max(2, Math.round(w))

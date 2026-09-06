@@ -20,6 +20,7 @@ import { chapterAt, measureChapters, morphAt } from './chapters'
 import { createScene } from './scene'
 import type { Vec3 } from './scene'
 import { initSections } from './sections/index'
+import { initTransitions } from './site/transitions'
 import type { CoreHandle, Frame, RGB } from './types'
 
 const root = document.documentElement
@@ -191,6 +192,7 @@ function pickCount(): number {
 function start() {
   startClock()
   revealOnScroll()
+  initTransitions()
 
   const ttfb = navTiming()
 
@@ -246,13 +248,35 @@ function start() {
       ? (cb) => (window as Window & typeof globalThis).requestIdleCallback(() => cb(), { timeout: 400 })
       : (cb) => setTimeout(cb, 1)
 
-  // Build the sculpture in slices so no task ever blocks a frame.
+  // Build the sculpture in 8 ms slices so no task ever blocks a frame. The
+  // slices chain through a MessageChannel (it yields to rendering and input
+  // but comes straight back, where an idle callback can sit for hundreds of
+  // milliseconds). The core ignites as soon as the coil (shape 0) exists;
+  // the other shapes keep building behind it and land in the GPU when they
+  // are all done. Until then the morph is held at the last finished shape.
+  let booted = false
+  let targetsFinal = false
+  const T = ((window as Window & { __timing?: Record<string, number> }).__timing = {})
+  const mark = (k: string) => (T[k] = Math.round(performance.now()))
+  const channel = new MessageChannel()
+  const soon = (cb: () => void) => {
+    channel.port1.onmessage = () => cb()
+    channel.port2.postMessage(0)
+  }
   const grind = () => {
-    if (build.step(9)) {
-      idle(boot)
+    const done = build.step(8)
+    if (!booted && build.ready >= 1) {
+      booted = true
+      mark('coilReady')
+      void boot()
+    }
+    if (done) {
+      targetsFinal = true
+      mark('allShapes')
+      core?.updateTargets(build.data)
       return
     }
-    idle(grind)
+    soon(grind)
   }
 
   async function boot() {
@@ -273,7 +297,9 @@ function start() {
     // ?fx=webgl or ?fx=css forces a lower tier, so each path can be checked
     // in every browser without faking the platform
     const force = new URLSearchParams(location.search).get('fx')
+    mark('bootStart')
     core = force === 'webgl' || force === 'css' ? null : await createGpuCore(opts)
+    mark('gpuReady')
     if (!core && force !== 'css') {
       // a refused WebGPU attempt can still have claimed the canvas — give the
       // WebGL2 tier a clean one rather than a dead context
@@ -296,6 +322,7 @@ function start() {
     }
     root.dataset.fx = 'live'
     scene.live = true
+    if (targetsFinal) core.updateTargets(build.data)
     resize()
     started = performance.now()
     ;(window as Window & { __signal?: unknown }).__signal = {
@@ -542,7 +569,7 @@ function start() {
       chapterDirty = false
       measureChapters()
     }
-    const want = morphAt(scrollPos)
+    const want = Math.min(morphAt(scrollPos), Math.max(0, build.ready - 1))
     morph += (want - morph) * clamp(dt * 7, 0, 1)
 
     // near a whole number the sculpture is "posed" — slow down and flatten
@@ -654,6 +681,7 @@ function start() {
   // screen; the adapter request is fired first so the driver warms up while
   // the CPU builds the target sets.
   const kick = () => {
+    mark('kick')
     void (navigator as Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }).gpu?.requestAdapter()?.catch(() => {})
     idle(grind)
   }

@@ -486,6 +486,10 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
     resize(w, h) {
       if (!dead) sized(w, h)
     },
+    updateTargets(shapes) {
+      if (dead) return
+      device.queue.writeBuffer(tgtBuf, 0, shapes.buffer as ArrayBuffer, shapes.byteOffset, Math.min(shapes.byteLength, opts.shapes.byteLength))
+    },
     frame(f) {
       if (dead || !sceneTex || !bindComp) return
       const aspect = W / H

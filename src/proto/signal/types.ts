@@ -54,5 +54,7 @@ export interface CoreHandle {
   count: number
   resize(w: number, h: number): void
   frame(f: Frame): void
+  /** replace the morph targets (the shapes finish building after ignition) */
+  updateTargets(shapes: Float32Array): void
   destroy(): void
 }

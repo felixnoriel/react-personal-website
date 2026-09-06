@@ -70,12 +70,17 @@ export default defineConfig({
       // PROTO_ONLY=<name> builds just that prototype (owners build in
       // parallel and must not trip over each other's half-written entries).
       input: process.env.PROTO_ONLY
-        ? { ['proto-' + process.env.PROTO_ONLY]: path.resolve(__dirname, 'proto', process.env.PROTO_ONLY, 'index.html') }
+        ? Object.fromEntries(
+            globSync(`proto/${process.env.PROTO_ONLY}/**/index.html`, { cwd: __dirname }).map((f) => [
+              'proto-' + path.dirname(f).replace(/^proto[\\/]/, '').replace(/[\\/]/g, '-'),
+              path.resolve(__dirname, f),
+            ]),
+          )
         : {
             main: path.resolve(__dirname, 'index.html'),
             ...Object.fromEntries(
-              globSync('proto/*/index.html', { cwd: __dirname }).map((f) => [
-                'proto-' + path.basename(path.dirname(f)),
+              globSync('proto/**/index.html', { cwd: __dirname }).map((f) => [
+                'proto-' + path.dirname(f).replace(/^proto[\\/]/, '').replace(/[\\/]/g, '-'),
                 path.resolve(__dirname, f),
               ]),
             ),

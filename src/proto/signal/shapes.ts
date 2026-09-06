@@ -6,6 +6,8 @@ export { SHAPE, SHAPE_COUNT } from './shapes/index'
 
 export interface ShapeBuild {
   data: Float32Array
+  /** how many shapes (from the first) are finished and safe to morph into */
+  readonly ready: number
   /** spend up to budgetMs; returns true once every shape is finished */
   step(budgetMs: number): boolean
 }
@@ -16,6 +18,9 @@ export function createShapeBuild(n: number, scale: number, ctx: ShapeCtx): Shape
   let t = 0
   return {
     data,
+    get ready() {
+      return t
+    },
     step(budgetMs) {
       const end = performance.now() + budgetMs
       while (t < tasks.length) {
