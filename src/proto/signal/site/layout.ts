@@ -40,10 +40,63 @@ export interface PageSpec {
   noindex?: boolean
 }
 
-/** what the renderer script hands in: the shell template and a section-CSS reader */
+/** what the renderer script hands in: the shell template, a section-CSS reader and the image manifests */
 export interface RenderCtx {
   template: string
   css(key: string): string
+  /** original URL → optimized variants (src/data/images/*.generated.ts, merged) */
+  images: Record<string, OptimizedImage>
+}
+
+export interface ImageVariant {
+  src: string
+  w: number
+}
+export interface OptimizedImage {
+  width: number
+  height: number
+  avif: ImageVariant[]
+  webp: ImageVariant[]
+  fallback: string
+  lqip: string
+  svg?: string
+}
+
+const srcset = (v: ImageVariant[]) => v.map((x) => `${x.src} ${x.w}w`).join(', ')
+
+/**
+ * Every <img> whose src is in the manifests becomes a sized, lazy <picture>
+ * served from this site (AVIF, then WebP): the original hosts refuse every
+ * origin but production, and a remote image can shift layout. Images already
+ * inside a <picture>, and anything without a manifest entry, are left alone.
+ */
+export function localizeImages(html: string, images: Record<string, OptimizedImage>): string {
+  return html.replace(/<picture\b[\s\S]*?<\/picture>|<img\b[^>]*>/g, (tag) => {
+    if (tag.startsWith('<picture')) return tag
+    const m = tag.match(/\bsrc=(?:"([^"]*)"|'([^']*)')/)
+    const url = m?.[1] ?? m?.[2]
+    if (!url) return tag
+    const img = images[url]
+    if (!img) return tag
+    if (img.svg) return tag.replace(url, img.svg)
+    const attr = (name: string) => tag.match(new RegExp(`\\b${name}=(?:"([^"]*)"|'([^']*)')`))
+    const alt = attr('alt')?.[1] ?? attr('alt')?.[2] ?? ''
+    const cls = attr('class')?.[1] ?? attr('class')?.[2]
+    const sizes = attr('sizes')?.[1] ?? attr('sizes')?.[2] ?? '(min-width: 900px) 720px, 100vw'
+    const style = attr('style')?.[1] ?? attr('style')?.[2]
+    const eager = /\bloading=["']eager["']|\bfetchpriority=["']high["']/.test(tag)
+    const w = attr('width')?.[1] ?? String(img.width)
+    const h = attr('height')?.[1] ?? String(img.height)
+    const extra = tag.match(/\bdata-[a-z0-9-]+=(?:"[^"]*"|'[^']*')/g)?.join(' ') ?? ''
+    return (
+      `<picture>` +
+      (img.avif.length ? `<source type="image/avif" srcset="${srcset(img.avif)}" sizes="${sizes}">` : '') +
+      (img.webp.length ? `<source type="image/webp" srcset="${srcset(img.webp)}" sizes="${sizes}">` : '') +
+      `<img src="${img.fallback}" alt="${esc(alt)}" width="${w}" height="${h}"${cls ? ` class="${cls}"` : ''}` +
+      `${style ? ` style="${style}"` : img.lqip ? ` style="background:url(${img.lqip}) center/cover"` : ''}` +
+      ` loading="${eager ? 'eager' : 'lazy'}" decoding="async"${eager ? ' fetchpriority="high"' : ''}${extra ? ' ' + extra : ''}></picture>`
+    )
+  })
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
@@ -80,7 +133,7 @@ export function renderPage(p: PageSpec, shared: { header: string; after: string;
   const html = ctx.template.replace('<!--@head-->', head(p))
     .replace('<!--@styles-->', styles)
     .replace('<!--@header-->', shared.header)
-    .replace('<!--@main-->', main)
+    .replace('<!--@main-->', localizeImages(main, ctx.images))
     .replace('<!--@after-->', shared.after)
   return rebase(html)
 }

@@ -14,7 +14,16 @@ import { renderPage } from '../src/proto/signal/site/layout'
 const ROOT = join(import.meta.dirname, '..')
 const OUT = join(ROOT, 'proto', 'signal')
 const SECTIONS = join(ROOT, 'src', 'proto', 'signal', 'sections')
+const IMAGE_GROUPS = ['career', 'projects', 'galleries', 'blog', 'site', 'prose']
+const images: Record<string, unknown> = {}
+for (const g of IMAGE_GROUPS) {
+  const f = join(ROOT, 'src', 'data', 'images', `${g}.generated.ts`)
+  if (!existsSync(f)) continue
+  const mod = (await import(f)) as { IMAGES: Record<string, unknown> }
+  Object.assign(images, mod.IMAGES)
+}
 const ctx = {
+  images: images as Parameters<typeof renderPage>[2]['images'],
   template: readFileSync(join(ROOT, 'proto', 'signal', 'template.html'), 'utf8'),
   css(key: string) {
     const f = join(SECTIONS, `${key}.css`)
@@ -61,4 +70,8 @@ for (const p of pages) {
   if (!existsSync(file) || readFileSync(file, 'utf8') !== html) writeFileSync(file, html)
   written++
 }
-console.log(`render-signal: ${written} pages under proto/signal/`)
+// a sitemap of the routes actually rendered (the 404 stays out of it)
+import { SITE } from '../src/proto/signal/site/layout'
+const urls = pages.filter((p) => !p.noindex).map((p) => `  <url><loc>${SITE.url}${SITE.base}${p.path}</loc></url>`)
+writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`)
+console.log(`render-signal: ${written} pages under proto/signal/ (+ sitemap.xml)`)
