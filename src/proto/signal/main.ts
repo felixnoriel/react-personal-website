@@ -11,10 +11,15 @@
  *   4. Everything the telemetry rail prints is measured, never invented.
  */
 
-import { METRICS, CITIES, TECH, ROLES } from '../shared/content'
+import { METRICS } from '../shared/content'
 import { createShapeBuild } from './shapes'
 import { createGpuCore } from './gpu'
 import { createGlCore } from './gl'
+import { mul, perspectiveGPU, viewMatrix } from './math'
+import { chapterAt, measureChapters, morphAt } from './chapters'
+import { createScene } from './scene'
+import type { Vec3 } from './scene'
+import { initSections } from './sections/index'
 import type { CoreHandle, Frame, RGB } from './types'
 
 const root = document.documentElement
@@ -143,28 +148,6 @@ function countUp(el: HTMLElement, target: string, instant: boolean) {
 
 /* ------------------------------------------------------------- chapter UI */
 
-function fillTags() {
-  const set = (id: string, items: readonly string[], highlight?: (s: string) => boolean) => {
-    const ul = document.getElementById(id)
-    if (!ul) return
-    ul.replaceChildren(
-      ...items.map((t) => {
-        const li = document.createElement('li')
-        li.textContent = t
-        if (highlight?.(t)) li.className = 'on'
-        return li
-      }),
-    )
-  }
-  set(
-    'roles',
-    ROLES.map((r) => r.company),
-    (c) => c === 'Stable',
-  )
-  set('cities', CITIES, (c) => c === 'Bangkok')
-  set('stack', TECH)
-}
-
 function revealOnScroll() {
   const items = Array.from(document.querySelectorAll<HTMLElement>('.rev'))
   if (reduced || !('IntersectionObserver' in window)) {
@@ -207,10 +190,30 @@ function pickCount(): number {
 
 function start() {
   startClock()
-  fillTags()
   revealOnScroll()
 
   const ttfb = navTiming()
+
+  // ---- the scene the sections talk to (works on every tier, GPU or not)
+  const ctl = {
+    well: { p: null as Vec3 | null, strength: 1 },
+    fire: (p?: Vec3) => fireAt(p),
+    spin: (dx: number, dy: number) => {
+      yawV += dx * 0.00042
+      pitchV += dy * 0.0003
+    },
+    print: (key: string, value: string, hot?: boolean) => printCell(key, value, true, hot),
+    vp: null as Float32Array | null,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }
+  const scene = createScene({ reduced, phone, coarse }, ctl)
+  ;(window as Window & { __scene?: unknown }).__scene = scene
+  measureChapters()
+  let chapterDirty = false
+  if ('ResizeObserver' in window) new ResizeObserver(() => (chapterDirty = true)).observe(document.body)
+  addEventListener('load', measureChapters)
+  initSections(scene)
 
   if (!canvas) return
   let canvasRef: HTMLCanvasElement = canvas
@@ -227,7 +230,7 @@ function start() {
 
   const font = getComputedStyle(document.body).fontFamily || 'sans-serif'
   const N = pickCount()
-  const build = createShapeBuild(N, 1.0, font, phone ? 3.2 : 4.6)
+  const build = createShapeBuild(N, 1.0, { font, wordWidth: phone ? 3.2 : 4.6, phone })
 
   let core: CoreHandle | null = null
   let started = 0
@@ -292,6 +295,7 @@ function start() {
       return
     }
     root.dataset.fx = 'live'
+    scene.live = true
     resize()
     started = performance.now()
     ;(window as Window & { __signal?: unknown }).__signal = {
@@ -348,6 +352,9 @@ function start() {
     canvasRef.width = vw
     canvasRef.height = vh
     core?.resize(vw, vh)
+    ctl.width = w
+    ctl.height = h
+    chapterDirty = true
   }
   let rt = 0
   addEventListener('resize', () => {
@@ -454,9 +461,13 @@ function start() {
   /** a shockwave from wherever the gravity well currently is */
   let wellWorld: [number, number, number] = [0, 0, 0]
   function fire() {
+    fireAt()
+  }
+  function fireAt(p?: Vec3) {
     let slot = waves.findIndex((w) => w[3] < 0)
     if (slot < 0) slot = 0
-    waves[slot] = [wellWorld[0], wellWorld[1], wellWorld[2], 0]
+    const at = p ?? ctl.well.p ?? wellWorld
+    waves[slot] = [at[0], at[1], at[2], 0]
   }
 
   /* -------------------------------------------------------------- scroll */
@@ -526,10 +537,12 @@ function start() {
     // so the wide rush-in cannot blow out the text it passes behind
     const settle = reduced || repeat ? 1 : smoothstep(0, 1, clamp(t / 1.85, 0, 1))
 
-    // ---- the morph, driven by how far down the piece you are
-    const s = scrollPos / Math.max(1, window.innerHeight)
-    // pose 1 (the words) lands when chapter 1 fills the screen, and so on
-    const want = s <= 0.42 ? 0 : s < 1 ? (s - 0.42) / 0.58 : Math.min(3, s)
+    // ---- the morph, driven by which chapter is on screen
+    if (chapterDirty) {
+      chapterDirty = false
+      measureChapters()
+    }
+    const want = morphAt(scrollPos)
     morph += (want - morph) * clamp(dt * 7, 0, 1)
 
     // near a whole number the sculpture is "posed" — slow down and flatten
@@ -549,13 +562,16 @@ function start() {
     pitch *= Math.pow(0.992, dt * 60)
     pitch = clamp(pitch, -0.5, 0.5)
 
-    const ANCH_X = phone ? [-0.04, -0.02, 0.0, 0.0] : [0.2, 0.08, -0.3, 0.26]
-    const ANCH_Y = phone ? [0.48, 0.26, 0.44, 0.72] : [0.06, 0.34, 0.0, -0.02]
-    const mi = Math.min(3, Math.max(0, Math.floor(morph)))
-    const mj = Math.min(3, mi + 1)
+    // where the sculpture sits on screen for each shape (x, y in NDC), so the
+    // copy and the core share the viewport instead of fighting for it
+    const ANCH_X = phone ? [-0.04, -0.02, 0.3, 0.32, 0.0, 0.0, 0.0, 0.0] : [0.2, 0.08, 0.3, 0.32, -0.28, -0.3, 0.3, 0.0]
+    const ANCH_Y = phone ? [0.48, 0.26, 0.55, 0.55, 0.5, 0.44, 0.5, 0.35] : [0.06, 0.34, 0.06, 0.02, 0.0, 0.0, 0.02, 0.0]
+    const LAST = ANCH_X.length - 1
+    const mi = Math.min(LAST, Math.max(0, Math.floor(morph)))
+    const mj = Math.min(LAST, mi + 1)
     const mf = smoothstep(0, 1, morph - mi)
-    const globeOn = 1 - clamp(Math.abs(morph - 2) * 1.6, 0, 1)
-    const stackOn = smoothstep(2.3, 3, morph)
+    const globeOn = 1 - clamp(Math.abs(morph - 5) * 1.6, 0, 1)
+    const stackOn = smoothstep(2.3, 3, morph) * (1 - smoothstep(3, 4, morph))
 
     // ---- pointer easing (a light spring, so the well has weight)
     const k = clamp(dt * 6.5, 0, 1)
@@ -571,6 +587,10 @@ function start() {
     const tilt = (-0.5 + Math.sin(t * 0.109) * 0.13) * (1 - 0.9 * faceOn) + pitch
     const shiftX = mix(ANCH_X[mi], ANCH_X[mj], mf)
     const shiftY = mix(ANCH_Y[mi], ANCH_Y[mj], mf)
+
+    // the same camera the GPU uses, so HTML labels land on the sculpture
+    const [viewM] = viewMatrix(dist, tilt, spin + yaw)
+    ctl.vp = mul(perspectiveGPU(fov, vw / Math.max(1, vh), 0.1, 60, shiftX, shiftY), viewM)
 
     // remember where the well is in sculpture space so a click can use it
     const aspect = vw / vh
@@ -598,7 +618,12 @@ function start() {
       flowScale: 1.05,
       px,
       py,
-      pointer: reduced ? 0 : ptrStr * (0.88 - 0.72 * smoothstep(0.15, 0.9, morph)) * (dragging ? 1.6 : 1),
+      pointer: ctl.well.p
+        ? ctl.well.strength
+        : reduced
+          ? 0
+          : ptrStr * (0.88 - 0.72 * smoothstep(0.15, 0.9, Math.min(1, morph))) * (dragging ? 1.6 : 1),
+      well: ctl.well.p ?? undefined,
       dist,
       fov,
       tilt,
@@ -621,6 +646,7 @@ function start() {
       waves,
     }
     core.frame(f)
+    scene._tick({ morph, chapter: chapterAt(scrollPos), time: t, dt, scrollY: scrollPos })
   }
 
   // Heavy work starts one frame AFTER the first paint — not at `load`, which

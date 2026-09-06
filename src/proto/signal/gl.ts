@@ -14,13 +14,12 @@
  */
 
 import type { CoreHandle, CoreOpts } from './types'
+import { mul, perspectiveGL as perspective, viewMatrix } from './math'
 
-const VERT = /* glsl */ `#version 300 es
+/** the vertex shader for S interleaved shape targets (t0..tS-1 as attributes) */
+const VERT = (S: number) => /* glsl */ `#version 300 es
 precision highp float;
-layout(location = 0) in vec4 t0;
-layout(location = 1) in vec4 t1;
-layout(location = 2) in vec4 t2;
-layout(location = 3) in vec4 t3;
+${Array.from({ length: S }, (_, i) => `layout(location = ${i}) in vec4 t${i};`).join('\n')}
 
 uniform mat4 uVP;
 uniform vec4 uPtr;      // xyz well, w strength
@@ -43,11 +42,11 @@ vec3 flow(vec3 p, float t, float k) {
 }
 
 void main() {
-  float s = clamp(uParams.y, 0.0, 3.0);
+  float s = clamp(uParams.y, 0.0, ${(S - 1).toFixed(1)});
   float si = floor(s);
   float f = smoothstep(0.0, 1.0, s - si);
-  vec4 a = si < 0.5 ? t0 : (si < 1.5 ? t1 : (si < 2.5 ? t2 : t3));
-  vec4 b = si < 0.5 ? t1 : (si < 1.5 ? t2 : t3);
+  vec4 a = ${Array.from({ length: S - 1 }, (_, i) => `si < ${i}.5 ? t${i} : `).join('')}t${S - 1};
+  vec4 b = ${Array.from({ length: S - 2 }, (_, i) => `si < ${i}.5 ? t${i + 1} : `).join('')}t${S - 1};
   vec4 tgt = mix(a, b, f);
   vec3 target = tgt.xyz;
   float hot = tgt.w;
@@ -188,52 +187,6 @@ function compile(gl: WebGL2RenderingContext, vs: string, fs: string) {
   return p
 }
 
-function perspective(fovy: number, aspect: number, near: number, far: number, sx: number, sy: number) {
-  const f = 1 / Math.tan(fovy / 2)
-  const nf = 1 / (near - far)
-  const m = new Float32Array(16)
-  m[0] = f / aspect
-  m[5] = f
-  m[8] = -sx
-  m[9] = -sy
-  m[10] = (far + near) * nf
-  m[11] = -1
-  m[14] = 2 * far * near * nf
-  return m
-}
-
-function viewMatrix(dist: number, tilt: number, spin: number): [Float32Array, Float32Array] {
-  const cs = Math.cos(spin)
-  const ss = Math.sin(spin)
-  const ct = Math.cos(tilt)
-  const st = Math.sin(tilt)
-  const r = new Float32Array([cs, 0, -ss, st * ss, ct, st * cs, ct * ss, -st, ct * cs])
-  const m = new Float32Array(16)
-  m[0] = r[0]
-  m[4] = r[1]
-  m[8] = r[2]
-  m[1] = r[3]
-  m[5] = r[4]
-  m[9] = r[5]
-  m[2] = r[6]
-  m[6] = r[7]
-  m[10] = r[8]
-  m[14] = -dist
-  m[15] = 1
-  return [m, r]
-}
-
-function mul(a: Float32Array, b: Float32Array) {
-  const o = new Float32Array(16)
-  for (let c = 0; c < 4; c++)
-    for (let r = 0; r < 4; r++) {
-      let s = 0
-      for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]
-      o[c * 4 + r] = s
-    }
-  return o
-}
-
 export function createGlCore(opts: CoreOpts): CoreHandle | null {
   const gl = opts.canvas.getContext('webgl2', {
     alpha: true,
@@ -246,10 +199,12 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
   if (!gl.getExtension('EXT_color_buffer_float')) return null
   gl.getExtension('OES_texture_float_linear')
 
+  const N = opts.count
+  const S = Math.max(1, Math.round(opts.shapes.length / (N * 4)))
   let prog: WebGLProgram
   let post: WebGLProgram
   try {
-    prog = compile(gl, VERT, FRAG)
+    prog = compile(gl, VERT(S), FRAG)
     post = compile(gl, POST_VERT, POST_FRAG)
   } catch {
     return null
@@ -262,20 +217,19 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
   const chip = (raw.match(/\(([^,]+),\s*([^,]+)/)?.[2]?.trim() || raw).replace(/^[A-Za-z ]*Renderer:\s*/, '')
   const label = 'WebGL2 · ' + chip.slice(0, 22)
 
-  const N = opts.count
   const vao = gl.createVertexArray()!
   gl.bindVertexArray(vao)
   const vbo = gl.createBuffer()!
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo)
-  // interleave the four shape targets so one particle is one cache line pair
-  const inter = new Float32Array(N * 16)
+  // interleave the shape targets so one particle is one contiguous run
+  const inter = new Float32Array(N * 4 * S)
   for (let i = 0; i < N; i++)
-    for (let s = 0; s < 4; s++)
-      for (let k = 0; k < 4; k++) inter[i * 16 + s * 4 + k] = opts.shapes[s * N * 4 + i * 4 + k]
+    for (let s = 0; s < S; s++)
+      for (let k = 0; k < 4; k++) inter[i * 4 * S + s * 4 + k] = opts.shapes[s * N * 4 + i * 4 + k]
   gl.bufferData(gl.ARRAY_BUFFER, inter, gl.STATIC_DRAW)
-  for (let s = 0; s < 4; s++) {
+  for (let s = 0; s < S; s++) {
     gl.enableVertexAttribArray(s)
-    gl.vertexAttribPointer(s, 4, gl.FLOAT, false, 64, s * 16)
+    gl.vertexAttribPointer(s, 4, gl.FLOAT, false, 16 * S, s * 16)
   }
   gl.bindVertexArray(null)
 
@@ -364,7 +318,8 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
       gl.blendFunc(gl.ONE, gl.ONE)
       gl.useProgram(prog)
       gl.uniformMatrix4fv(u.vp, false, vp)
-      gl.uniform4f(u.ptr, R[0] * vx + R[3] * vy, R[1] * vx + R[4] * vy, R[2] * vx + R[5] * vy, f.pointer)
+      if (f.well) gl.uniform4f(u.ptr, f.well[0], f.well[1], f.well[2], f.pointer)
+      else gl.uniform4f(u.ptr, R[0] * vx + R[3] * vy, R[1] * vx + R[4] * vy, R[2] * vx + R[5] * vy, f.pointer)
       gl.uniform4f(u.params, f.time, f.morph, f.ignite, f.brightness)
       gl.uniform4f(u.phys, f.flowAmp * 0.055, f.flowScale, f.sizePx, f.dist)
       gl.uniform2f(u.res, W, H)

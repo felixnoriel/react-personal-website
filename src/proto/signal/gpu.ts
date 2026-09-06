@@ -14,6 +14,7 @@
  */
 
 import type { CoreHandle, CoreOpts } from './types'
+import { mul, perspectiveGPU as perspective, viewMatrix } from './math'
 
 /* The uniform block, shared verbatim by the sim and draw modules. */
 const UNI = /* wgsl */ `
@@ -72,10 +73,10 @@ fn cs(@builtin(global_invocation_id) gid : vec3<u32>) {
   if (i >= n) { return; }
 
   // the morph: one continuous slide across the four shapes
-  let s  = clamp(U.params.z, 0.0, 3.0);
+  let s  = clamp(U.params.z, 0.0, SHAPES_MAX_F);
   let si = floor(s);
   let s0 = u32(si);
-  let s1 = min(s0 + 1u, 3u);
+  let s1 = min(s0 + 1u, SHAPES_MAX_U);
   let f  = smoothstep(0.0, 1.0, s - si);
   let a  = tgt[s0 * n + i];
   let b  = tgt[s1 * n + i];
@@ -258,55 +259,6 @@ fn composite(i : FOut) -> @location(0) vec4<f32> {
 }
 `
 
-type Mat4 = Float32Array
-
-function perspective(fovy: number, aspect: number, near: number, far: number, sx: number, sy: number): Mat4 {
-  const f = 1 / Math.tan(fovy / 2)
-  const nf = 1 / (near - far)
-  const m = new Float32Array(16)
-  m[0] = f / aspect
-  m[5] = f
-  m[8] = -sx
-  m[9] = -sy
-  m[10] = far * nf
-  m[11] = -1
-  m[14] = far * near * nf
-  return m
-}
-
-/** view = translate(0,0,-dist) · rotX(tilt) · rotY(spin); also returns R (row-major 3x3) */
-function viewMatrix(dist: number, tilt: number, spin: number): [Mat4, Float32Array] {
-  const cs = Math.cos(spin)
-  const ss = Math.sin(spin)
-  const ct = Math.cos(tilt)
-  const st = Math.sin(tilt)
-  const r = new Float32Array([cs, 0, -ss, st * ss, ct, st * cs, ct * ss, -st, ct * cs])
-  const m = new Float32Array(16)
-  m[0] = r[0]
-  m[4] = r[1]
-  m[8] = r[2]
-  m[1] = r[3]
-  m[5] = r[4]
-  m[9] = r[5]
-  m[2] = r[6]
-  m[6] = r[7]
-  m[10] = r[8]
-  m[14] = -dist
-  m[15] = 1
-  return [m, r]
-}
-
-function mul(a: Mat4, b: Mat4): Mat4 {
-  const o = new Float32Array(16)
-  for (let c = 0; c < 4; c++)
-    for (let r = 0; r < 4; r++) {
-      let s = 0
-      for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]
-      o[c * 4 + r] = s
-    }
-  return o
-}
-
 export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> {
   const gpu = (navigator as Navigator & { gpu?: GPU }).gpu
   if (!gpu) return null
@@ -329,7 +281,11 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
   const label = ['WebGPU', info?.vendor, info?.architecture].filter(Boolean).join(' · ') || 'WebGPU'
 
   const N = opts.count
-  const simMod = device.createShaderModule({ code: SIM_WGSL })
+  // the morph slides across however many shapes the build carries
+  const shapes = Math.max(1, Math.round(opts.shapes.length / (N * 4)))
+  const simMod = device.createShaderModule({
+    code: SIM_WGSL.replace('SHAPES_MAX_F', (shapes - 1).toFixed(1)).replace('SHAPES_MAX_U', `${shapes - 1}u`),
+  })
   const drawMod = device.createShaderModule({ code: DRAW_WGSL })
   const postMod = device.createShaderModule({ code: POST_WGSL })
 
@@ -540,9 +496,15 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
       const fq = 1 / Math.tan(f.fov / 2)
       const vx = ((f.px - f.shiftX) * aspect * f.dist) / fq
       const vy = ((f.py - f.shiftY) * f.dist) / fq
-      uni[16] = R[0] * vx + R[3] * vy
-      uni[17] = R[1] * vx + R[4] * vy
-      uni[18] = R[2] * vx + R[5] * vy
+      if (f.well) {
+        uni[16] = f.well[0]
+        uni[17] = f.well[1]
+        uni[18] = f.well[2]
+      } else {
+        uni[16] = R[0] * vx + R[3] * vy
+        uni[17] = R[1] * vx + R[4] * vy
+        uni[18] = R[2] * vx + R[5] * vy
+      }
       uni[19] = f.pointer
       uni[20] = f.time
       uni[21] = f.dt

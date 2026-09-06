@@ -31,6 +31,8 @@ export interface Frame {
   px: number
   py: number
   pointer: number
+  /** when set, the gravity well sits at this sculpture-space point instead of under the pointer */
+  well?: [number, number, number]
   /** camera */
   dist: number
   fov: number
