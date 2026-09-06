@@ -248,8 +248,13 @@ fn composite(i : FOut) -> @location(0) vec4<f32> {
   let halo = vec3<f32>(mix(bl.r, blr, 0.6), bl.g, mix(bl.b, blb, 0.6));
   var c = scene + halo * PP.cfg.w;
   c = tonemap(c * PP.cfg.x);
-  // premultiplied alpha 0 = this canvas ADDS to the page behind it
-  return vec4<f32>(srgb(c), 0.0);
+  let o = srgb(c);
+  // The canvas is premultiplied. Colour with alpha 0 is not a valid
+  // premultiplied pixel: Chrome happened to add it onto the page, Safari
+  // drops it entirely (the core rendered at 60 fps and was never seen).
+  // alpha = the brightest channel keeps colour <= alpha, so the light adds
+  // onto the dark ground the same way in every browser.
+  return vec4<f32>(o, max(o.r, max(o.g, o.b)));
 }
 `
 

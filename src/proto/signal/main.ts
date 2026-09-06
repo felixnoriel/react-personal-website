@@ -267,8 +267,11 @@ function start() {
       bloomThreshold: 0.5,
       bloomStrength: 1.15,
     }
-    core = await createGpuCore(opts)
-    if (!core) {
+    // ?fx=webgl or ?fx=css forces a lower tier, so each path can be checked
+    // in every browser without faking the platform
+    const force = new URLSearchParams(location.search).get('fx')
+    core = force === 'webgl' || force === 'css' ? null : await createGpuCore(opts)
+    if (!core && force !== 'css') {
       // a refused WebGPU attempt can still have claimed the canvas — give the
       // WebGL2 tier a clean one rather than a dead context
       const fresh = canvas!.cloneNode(false) as HTMLCanvasElement

@@ -165,7 +165,9 @@ void main() {
     float bb = texture(texB, vUv - off).b;
     vec3 halo = vec3(mix(bl.r, br, 0.6), bl.g, mix(bl.b, bb, 0.6));
     vec3 c = tonemap((scene + halo * uCfg.w) * uCfg.x);
-    o = vec4(srgb(c), 0.0);
+    vec3 s = srgb(c);
+    // premultiplied: alpha must be >= every colour channel (see gpu.ts)
+    o = vec4(s, max(s.r, max(s.g, s.b)));
   }
 }
 `
