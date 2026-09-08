@@ -1,9 +1,9 @@
 /**
- * Renders every route of the SIGNAL site to a static HTML file under
- * proto/signal/<path>/index.html, from proto/signal/template.html, the
+ * Renders every route of the site to a static HTML file at <path>/index.html
+ * from the repo root, from proto/signal/template.html, the
  * section renderers (home) and the page groups (career, projects, blog,
  * about, 404). Re-run after changing content or any renderer:
- * `bun run proto:render`.
+ * `bun run site:render`.
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
@@ -12,7 +12,8 @@ import { allPages } from '../src/proto/signal/site/pages/index'
 import { renderPage } from '../src/proto/signal/site/layout'
 
 const ROOT = join(import.meta.dirname, '..')
-const OUT = join(ROOT, 'proto', 'signal')
+// pages are written at the repo root so Vite emits them at the same paths
+const OUT = ROOT
 const SECTIONS = join(ROOT, 'src', 'proto', 'signal', 'sections')
 const IMAGE_GROUPS = ['career', 'projects', 'galleries', 'blog', 'site', 'prose']
 const images: Record<string, unknown> = {}
@@ -73,5 +74,5 @@ for (const p of pages) {
 // a sitemap of the routes actually rendered (the 404 stays out of it)
 import { SITE } from '../src/proto/signal/site/layout'
 const urls = pages.filter((p) => !p.noindex).map((p) => `  <url><loc>${SITE.url}${SITE.base}${p.path}</loc></url>`)
-writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`)
-console.log(`render-signal: ${written} pages under proto/signal/ (+ sitemap.xml)`)
+writeFileSync(join(ROOT, 'public', 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`)
+console.log(`render-signal: ${written} pages at the site root (+ public/sitemap.xml)`)

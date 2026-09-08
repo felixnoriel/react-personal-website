@@ -1,2 +1,4 @@
-Sitemap: https://whoisfelix.com/sitemap.xml
 User-agent: *
+Allow: /
+
+Sitemap: https://felixnoriel-dashify.vercel.app/sitemap.xml

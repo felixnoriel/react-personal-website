@@ -10,8 +10,8 @@
 export const SITE = {
   name: 'Felix Noriel',
   url: 'https://felixnoriel-dashify.vercel.app',
-  /** the site lives under this prefix while it is a preview next to the old site */
-  base: '/proto/signal',
+  /** '' now that the site is the root of the domain (it previewed under /proto/signal) */
+  base: '',
   description:
     'Product-Focused Software Engineer who loves solving problems and getting my hands dirty with new technologies. Big foodie, loves cooking and traveling.',
   image: '/og.png',
