@@ -160,10 +160,18 @@ function revealOnScroll() {
   // Everything is visible until this runs (so the static paint, and the LCP,
   // never wait for JavaScript). Whatever is already on screen is marked shown
   // BEFORE reveals are switched on, so nothing that was painted blinks.
-  // read every rect first, then write the classes: interleaving the two
-  // forces a layout per element
+  // Only the sections near the first screen are measured: reading a rect
+  // inside a content-visibility: auto section far below would force that
+  // whole section to lay out, which is exactly the work that property skips.
   const vh = window.innerHeight
+  const near = new Set<Element>()
+  for (const sec of Array.from(document.querySelectorAll('main > section, main > article, main > div'))) {
+    const r = sec.getBoundingClientRect()
+    if (r.bottom > 0 && r.top < vh * 1.05) near.add(sec)
+  }
   const shown = items.filter((el) => {
+    const sec = el.closest('main > section, main > article, main > div')
+    if (sec && !near.has(sec)) return false
     const r = el.getBoundingClientRect()
     return r.bottom > 0 && r.top < vh * 1.05
   })
