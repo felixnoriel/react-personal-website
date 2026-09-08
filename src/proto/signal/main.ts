@@ -24,6 +24,8 @@ import { initTransitions } from './site/transitions'
 import type { CoreHandle, Frame, RGB } from './types'
 
 const root = document.documentElement
+/** measured milestones, readable as window.__timing (never invented) */
+const TIMING: Record<string, number> = ((window as Window & { __timing?: Record<string, number> }).__timing = {})
 const canvas = document.getElementById('core') as HTMLCanvasElement | null
 const railEl = document.getElementById('rail')
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -155,6 +157,18 @@ function revealOnScroll() {
     items.forEach((i) => i.classList.add('in'))
     return
   }
+  // Everything is visible until this runs (so the static paint, and the LCP,
+  // never wait for JavaScript). Whatever is already on screen is marked shown
+  // BEFORE reveals are switched on, so nothing that was painted blinks.
+  // read every rect first, then write the classes: interleaving the two
+  // forces a layout per element
+  const vh = window.innerHeight
+  const shown = items.filter((el) => {
+    const r = el.getBoundingClientRect()
+    return r.bottom > 0 && r.top < vh * 1.05
+  })
+  for (const el of shown) el.classList.add('in')
+  root.dataset.rev = '1'
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries)
@@ -256,15 +270,22 @@ function start() {
   // are all done. Until then the morph is held at the last finished shape.
   let booted = false
   let targetsFinal = false
-  const T = ((window as Window & { __timing?: Record<string, number> }).__timing = {})
+  const T = TIMING
   const mark = (k: string) => (T[k] = Math.round(performance.now()))
   const channel = new MessageChannel()
   const soon = (cb: () => void) => {
     channel.port1.onmessage = () => cb()
     channel.port2.postMessage(0)
   }
+  let worst = 0
   const grind = () => {
+    const s0 = performance.now()
     const done = build.step(8)
+    const ms = performance.now() - s0
+    if (ms > worst) {
+      worst = ms
+      T['worstSlice'] = Math.round(ms)
+    }
     if (!booted && build.ready >= 1) {
       booted = true
       mark('coilReady')

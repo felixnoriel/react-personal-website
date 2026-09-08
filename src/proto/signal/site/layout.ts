@@ -130,9 +130,13 @@ export function head(p: PageSpec): string {
 export function renderPage(p: PageSpec, shared: { header: string; after: string; consoleCss: string }, ctx: RenderCtx): string {
   const styles = [...p.css.map((k) => ctx.css(k)), shared.consoleCss].filter(Boolean).join('\n')
   const main = `    <main${p.shape !== undefined ? ` data-shape="${p.shape}"` : ''} data-page="${p.path}">\n${p.main}\n    </main>`
+  // the header knows from the markup whether it is on a subpage, so its
+  // phone layout is right at first paint (a class added later by script
+  // re-laid the header and rescaled the mobile viewport: a layout shift)
+  const header = p.path === '/' ? shared.header : shared.header.replace('class="rail-top mono hdr', 'class="rail-top mono hdr subpage')
   const html = ctx.template.replace('<!--@head-->', head(p))
     .replace('<!--@styles-->', styles)
-    .replace('<!--@header-->', shared.header)
+    .replace('<!--@header-->', header)
     .replace('<!--@main-->', localizeImages(main, ctx.images))
     .replace('<!--@after-->', shared.after)
   return rebase(html)

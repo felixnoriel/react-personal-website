@@ -1,0 +1,775 @@
+      /* EXPERIENCE — the decade map and the nine roles.
+         Left column holds every word; the right half of a wide screen belongs
+         to the orbit and its anchored labels, exactly like the hero. */
+
+      .xp {
+        position: relative;
+        /* the whole block is below the fold: skip its layout until it is near.
+           `auto` remembers the real height once it has been rendered, so the
+           estimate only ever matters for the very first measure. Not nested on
+           anything, and nothing the sculpture's labels anchor to lives in here
+           — the labels are fixed overlays on <body>. */
+        content-visibility: auto;
+        contain-intrinsic-size: auto 5200px;
+      }
+
+      /* ---------- the header (chapter 1: the core spells the words) ---------- */
+      .xp-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: clamp(16px, 3vw, 44px);
+        margin: clamp(20px, 3.4vh, 32px) 0 0;
+        padding-top: clamp(14px, 2vh, 20px);
+        border-top: 1px solid hsl(var(--ink) / 0.09);
+      }
+      .xp-stat dt {
+        color: hsl(var(--ink) / 0.44);
+      }
+      .xp-stat dd {
+        margin: 5px 0 0;
+        font-size: clamp(24px, 2.5vw, 34px);
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        color: hsl(var(--ink));
+        font-variant-numeric: tabular-nums;
+      }
+      .xp-stat dd span {
+        display: inline-block;
+        min-width: 1.1ch;
+      }
+
+      /* ---------- the body column ---------- */
+      .xp-body {
+        position: relative;
+        max-width: 668px;
+        padding: 0 var(--pad) clamp(90px, 14vh, 170px);
+      }
+      /* the scrim that keeps the cards readable wherever the orbit passes */
+      .xp-body::before {
+        content: '';
+        position: absolute;
+        inset: -14vh -300px -8vh -100vw;
+        z-index: -1;
+        pointer-events: none;
+        /* a flat dark field that gives out over its last 420px, so the falloff
+           lands in the same place whatever the window is doing */
+        background: linear-gradient(
+          90deg,
+          hsl(var(--bg-deep) / 0.95) 0%,
+          hsl(var(--bg-deep) / 0.94) calc(100% - 420px),
+          hsl(var(--bg-deep) / 0.5) calc(100% - 170px),
+          transparent 100%
+        );
+        /* and no seam where it meets the chapter above or the one below */
+        -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
+        mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
+      }
+
+      /* ---------- the decade map ---------- */
+      .xp-map {
+        margin: 0 0 clamp(26px, 4.4vh, 46px);
+        padding: clamp(14px, 1.7vw, 20px) clamp(14px, 1.8vw, 22px) clamp(12px, 1.5vw, 16px);
+        border-radius: 16px;
+        border: 1px solid hsl(var(--ink) / 0.09);
+        /* the map sits at the very top of the column, where the scrim is still
+           fading in and the core can pass right through it — so it carries its
+           own ground rather than borrowing the page's */
+        background:
+          linear-gradient(160deg, hsl(var(--ink) / 0.06) 0%, hsl(var(--ink) / 0.02) 48%, hsl(var(--indigo) / 0.07) 100%),
+          hsl(var(--bg-deep) / 0.88);
+        box-shadow:
+          inset 0 1px 0 hsl(var(--ink) / 0.07),
+          0 22px 50px -38px hsl(var(--bg-deep));
+      }
+      .xp-map figcaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: hsl(var(--ink) / 0.46);
+        margin-bottom: 12px;
+      }
+      .map-scale,
+      .map-bar {
+        display: grid;
+        grid-template-columns: clamp(86px, 12vw, 116px) minmax(0, 1fr) 58px;
+        align-items: center;
+        gap: 0 12px;
+      }
+      .map-scale {
+        height: 14px;
+        margin-bottom: 3px;
+      }
+      .map-scale .map-track {
+        position: relative;
+        height: 14px;
+        background: none;
+      }
+      .map-scale b {
+        position: absolute;
+        left: var(--a);
+        top: 0;
+        translate: -50% 0;
+        font-weight: 400;
+        font-size: 9.5px;
+        color: hsl(var(--ink) / 0.33);
+      }
+      .map-rows {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .map-bar {
+        width: 100%;
+        border: 0;
+        padding: 4px 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .map-bar:focus-visible {
+        outline: 2px solid hsl(var(--lime));
+        outline-offset: 2px;
+      }
+      .map-co {
+        font-family: var(--sans);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+        color: hsl(var(--ink) / 0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 260ms ease;
+      }
+      .map-track {
+        position: relative;
+        height: 9px;
+        border-radius: 999px;
+        background:
+          repeating-linear-gradient(90deg, hsl(var(--ink) / 0.09) 0 1px, transparent 1px var(--step)),
+          hsl(var(--ink) / 0.05);
+      }
+      /* today, drawn once per row so it reads as a single dotted rule */
+      .map-track::after {
+        content: '';
+        position: absolute;
+        left: var(--now);
+        top: -4px;
+        bottom: -4px;
+        width: 1px;
+        background: hsl(var(--lime) / 0.2);
+      }
+      .map-track i {
+        position: absolute;
+        left: var(--a);
+        width: var(--w);
+        top: 0;
+        bottom: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, hsl(var(--electric) / 0.8), hsl(var(--indigo) / 0.92));
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition:
+          transform 820ms cubic-bezier(0.16, 1, 0.3, 1),
+          filter 260ms ease,
+          box-shadow 260ms ease;
+        transition-delay: calc(var(--i, 0) * 55ms), 0ms, 0ms;
+      }
+      .xp-map.in .map-track i {
+        transform: scaleX(1);
+      }
+      .map-bar.now .map-track i {
+        background: linear-gradient(90deg, hsl(var(--indigo) / 0.85), hsl(var(--lime) / 0.95));
+        box-shadow: 0 0 14px -2px hsl(var(--lime) / 0.5);
+      }
+      /* the two roles that have not ended keep a live head on today's line */
+      .map-bar.now .map-track::before {
+        content: '';
+        position: absolute;
+        left: var(--now);
+        top: 50%;
+        width: 9px;
+        height: 9px;
+        margin: -4.5px 0 0 -4.5px;
+        border-radius: 50%;
+        background: hsl(var(--lime));
+        box-shadow: 0 0 12px hsl(var(--lime) / 0.95);
+        animation: xp-now 2.6s ease-in-out infinite;
+      }
+      @keyframes xp-now {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.34;
+          transform: scale(0.7);
+        }
+      }
+      .map-len {
+        font-size: 9.5px;
+        color: hsl(var(--ink) / 0.38);
+        text-align: right;
+        white-space: nowrap;
+      }
+      .map-bar:hover .map-co,
+      .map-bar.on .map-co {
+        color: hsl(var(--lime));
+      }
+      .map-bar:hover .map-track i,
+      .map-bar.on .map-track i {
+        filter: brightness(1.5) saturate(1.15);
+        box-shadow: 0 0 18px -1px hsl(var(--electric) / 0.75);
+      }
+      .map-bar:hover .map-len,
+      .map-bar.on .map-len {
+        color: hsl(var(--ink) / 0.72);
+      }
+
+      /* ---------- the timeline ---------- */
+      .xp-track {
+        position: relative;
+        padding-left: 28px;
+      }
+      .xp-spine {
+        position: absolute;
+        left: 8px;
+        top: 10px;
+        bottom: 34px;
+        width: 1px;
+        background: hsl(var(--ink) / 0.1);
+        overflow: hidden;
+      }
+      .xp-spine i {
+        position: absolute;
+        inset: 0;
+        transform-origin: 50% 0;
+        background: linear-gradient(
+          hsl(var(--electric) / 0.95) 0%,
+          hsl(var(--indigo) / 0.8) 42%,
+          hsl(var(--magenta) / 0.6) 78%,
+          hsl(var(--lime) / 0.5) 100%
+        );
+      }
+      /* the line fills as the section passes the viewport — compositor only,
+         and Firefox (no scroll-driven animations yet) simply gets it lit */
+      @supports (animation-timeline: view()) {
+        .xp-spine i {
+          transform: scaleY(0);
+          animation: xp-fill linear both;
+          animation-timeline: view(block);
+          animation-range: cover 2% cover 88%;
+        }
+      }
+      @keyframes xp-fill {
+        to {
+          transform: scaleY(1);
+        }
+      }
+
+      .xp-roles {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .role {
+        position: relative;
+        margin: 0 0 clamp(14px, 2.2vh, 24px);
+      }
+      .role-mark {
+        position: absolute;
+        left: -28px;
+        top: 30px;
+        width: 17px;
+        height: 17px;
+        display: grid;
+        place-items: center;
+      }
+      /* the dot's size is the ring's radius on the sculpture: same data, twice */
+      .role-mark i {
+        width: calc(5px + var(--r) * 6px);
+        height: calc(5px + var(--r) * 6px);
+        border-radius: 50%;
+        background: hsl(var(--ink) / 0.34);
+        box-shadow: 0 0 0 3px hsl(var(--bg-deep));
+        transition:
+          background-color 280ms ease,
+          box-shadow 280ms ease;
+      }
+      .role.on .role-mark i {
+        background: hsl(var(--lime));
+        box-shadow:
+          0 0 0 3px hsl(var(--bg-deep)),
+          0 0 0 6px hsl(var(--lime) / 0.14),
+          0 0 16px hsl(var(--lime) / 0.8);
+      }
+
+      .role-card {
+        position: relative;
+        padding: clamp(15px, 1.9vw, 21px) clamp(15px, 1.9vw, 22px) clamp(13px, 1.6vw, 18px);
+        border-radius: 15px;
+        border: 1px solid hsl(var(--ink) / 0.085);
+        background:
+          linear-gradient(158deg, hsl(var(--ink) / 0.06) 0%, hsl(var(--ink) / 0.022) 46%, hsl(var(--indigo) / 0.06) 100%),
+          hsl(var(--bg-deep) / 0.55);
+        box-shadow:
+          inset 0 1px 0 hsl(var(--ink) / 0.06),
+          0 20px 44px -34px hsl(var(--bg-deep));
+        transition:
+          transform 340ms cubic-bezier(0.16, 1, 0.3, 1),
+          border-color 300ms ease,
+          box-shadow 340ms ease;
+      }
+      /* the light that runs along the edge of the active card */
+      @supports ((-webkit-mask-composite: xor) or (mask-composite: exclude)) {
+        .role-card::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          padding: 1px;
+          pointer-events: none;
+          background: linear-gradient(
+            136deg,
+            hsl(var(--electric) / 0.9) 0%,
+            hsl(var(--magenta) / 0.5) 38%,
+            hsl(var(--lime) / 0.35) 60%,
+            transparent 78%
+          );
+          -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+          mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 340ms ease;
+        }
+        .role.on .role-card::before {
+          opacity: 1;
+        }
+      }
+      .role.on .role-card {
+        transform: translateY(-3px);
+        border-color: hsl(var(--electric) / 0.2);
+        box-shadow:
+          inset 0 1px 0 hsl(var(--ink) / 0.13),
+          0 28px 62px -38px hsl(var(--electric) / 0.7);
+      }
+
+      .role-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .role-ix {
+        color: hsl(var(--ink) / 0.28);
+        font-size: 10px;
+      }
+      /* a fixed box: the logo letterboxes inside it, so a slow image can never
+         move a pixel of the card */
+      .role-logo {
+        position: relative;
+        display: block;
+        width: 124px;
+        height: 28px;
+        flex: none;
+      }
+      /* the identity chip is the base state: several of the logo files are
+         gone, and a card must never show a broken image or a hole */
+      .role-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+        padding: 0 9px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        color: hsl(var(--ink) / 0.7);
+        border: 1px solid hsl(var(--ink) / 0.16);
+        background: hsl(var(--ink) / 0.05);
+        transition:
+          color 280ms ease,
+          border-color 280ms ease;
+      }
+      .role.on .role-chip {
+        color: hsl(var(--lime));
+        border-color: hsl(var(--lime) / 0.34);
+      }
+      .role-logo img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: left center;
+        /* nine logos, nine brand palettes, one dark page: white them all out */
+        filter: brightness(0) invert(1);
+        opacity: 0;
+        transition: opacity 400ms ease;
+      }
+      .role-logo.ok .role-chip {
+        display: none;
+      }
+      .role-logo.ok img {
+        opacity: 0.78;
+      }
+      .role.on .role-logo.ok img {
+        opacity: 1;
+      }
+      .role-now {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px 4px 8px;
+        border-radius: 999px;
+        font-size: 9px;
+        color: hsl(var(--lime));
+        background: hsl(var(--lime) / 0.08);
+        border: 1px solid hsl(var(--lime) / 0.24);
+      }
+      .role-now .dot {
+        width: 5px;
+        height: 5px;
+      }
+
+      .role-co {
+        margin: 0;
+        font-size: clamp(19px, 1.6vw, 25px);
+        font-weight: 800;
+        letter-spacing: -0.028em;
+        line-height: 1.1;
+        color: hsl(var(--ink));
+      }
+      .role-co a {
+        color: inherit;
+        text-decoration: none;
+        background-image: linear-gradient(hsl(var(--lime)), hsl(var(--lime)));
+        background-size: 0% 1px;
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        transition: background-size 320ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .role-co a:hover,
+      .role-co a:focus-visible {
+        background-size: 100% 1px;
+      }
+      .role-job {
+        margin: 5px 0 0;
+        font-size: clamp(13.5px, 1.05vw, 15px);
+        font-weight: 600;
+        color: hsl(var(--ink) / 0.82);
+      }
+      .role-when {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        margin: 8px 0 0;
+        font-size: 9.5px;
+        color: hsl(var(--ink) / 0.46);
+      }
+      .role-sep {
+        padding: 0 0.66em;
+        color: hsl(var(--ink) / 0.2);
+      }
+      .role-sum {
+        margin: 12px 0 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: hsl(var(--ink-muted));
+      }
+
+      .ach {
+        list-style: none;
+        margin: 14px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 11px 22px;
+      }
+      .ach-i {
+        position: relative;
+        padding-left: 17px;
+      }
+      /* the highlights arrive one after another as the card reveals. The stagger
+         is sibling-index() — cross-browser since August 2026 — and the whole
+         rule is behind @supports, so a browser without it simply shows them. */
+      @supports (transition-delay: calc(sibling-index() * 1ms)) {
+        .ach-i {
+          opacity: 0;
+          transform: translateY(9px);
+          transition:
+            opacity 540ms cubic-bezier(0.16, 1, 0.3, 1),
+            transform 540ms cubic-bezier(0.16, 1, 0.3, 1);
+          transition-delay: calc(sibling-index() * 70ms);
+        }
+        .role.in .ach-i {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      /* a ring with a knot in it: the same object the core is drawing */
+      .ach-i::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 5px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: 1px solid hsl(var(--electric) / 0.5);
+      }
+      .ach-i::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 5px;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: hsl(var(--lime) / 0.9);
+        box-shadow: 0 0 6px hsl(var(--lime) / 0.7);
+      }
+      .ach-i b {
+        font-size: 13px;
+        font-weight: 600;
+        color: hsl(var(--ink) / 0.96);
+      }
+      .ach-b {
+        display: inline-block;
+        margin-left: 7px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-style: normal;
+        color: hsl(var(--lime));
+        background: hsl(var(--lime) / 0.07);
+        border: 1px solid hsl(var(--lime) / 0.24);
+        white-space: nowrap;
+      }
+      .ach-i span {
+        display: block;
+        margin-top: 4px;
+        font-size: 12.5px;
+        line-height: 1.52;
+        color: hsl(var(--ink-muted));
+      }
+
+      .role .tags {
+        margin-top: 15px;
+      }
+      .role .tags li {
+        font-size: 9.5px;
+        padding: 5px 9px;
+      }
+      .role-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 14px;
+        color: hsl(var(--ink) / 0.5);
+        text-decoration: none;
+        transition: color 240ms ease;
+      }
+      .role-more .arw {
+        transition: translate 240ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .role-more:hover,
+      .role-more:focus-visible,
+      .role.on .role-more {
+        color: hsl(var(--lime));
+      }
+      .role-more:hover .arw {
+        translate: 2px -2px;
+      }
+
+      /* ---------- the labels pinned to the sculpture ---------- */
+      .xp-node {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 3;
+        display: none;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 10px 4px 8px;
+        border-radius: 999px;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: hsl(var(--ink) / 0.74);
+        background: hsl(var(--bg-deep) / 0.66);
+        border: 1px solid hsl(var(--ink) / 0.11);
+        cursor: pointer;
+        visibility: hidden;
+        translate: -50% -50%;
+        scale: 1;
+        transform: translate(var(--ax, 0px), var(--ay, 0px));
+        /* A real head-up display does not label the far side of the object.
+           --aw is the scene's depth for this knot, so the labels facing away
+           fade out on their own and the front ones never fight for space.
+           The one you are pointing at is always readable, wherever it is. */
+        opacity: calc((var(--aw, 1) - 0.56) * 4.2 * var(--aa, 0));
+        transition:
+          color 240ms ease,
+          scale 340ms cubic-bezier(0.16, 1, 0.3, 1),
+          border-color 240ms ease,
+          background-color 240ms ease;
+      }
+      html[data-fx='live'] .xp-node {
+        display: inline-flex;
+      }
+      .xp-node i {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: hsl(var(--electric));
+        box-shadow: 0 0 8px hsl(var(--electric) / 0.9);
+      }
+      .xp-node.live i {
+        background: hsl(var(--lime));
+        box-shadow: 0 0 9px hsl(var(--lime) / 0.95);
+      }
+      .xp-node em {
+        font-style: normal;
+        color: hsl(var(--ink) / 0.86);
+      }
+      /* nine full names would pile on top of each other out there. Every knot
+         keeps its year; the one you are pointing at says who it was. */
+      .xp-node span {
+        display: inline-block;
+        max-width: 0;
+        overflow: hidden;
+        opacity: 0;
+        white-space: nowrap;
+        transition:
+          max-width 420ms cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 260ms ease;
+      }
+      .xp-node.on span {
+        max-width: 24ch;
+        opacity: 1;
+      }
+      .xp-node.on {
+        opacity: calc(0.5 + 0.5 * var(--aa, 1));
+        color: hsl(var(--lime));
+        border-color: hsl(var(--lime) / 0.42);
+        background: hsl(var(--bg-deep) / 0.92);
+        scale: 1.12;
+      }
+      .xp-node.on em {
+        color: hsl(var(--lime) / 0.6);
+      }
+      /* the leader line from the page's edge out to the live node */
+      .xp-beam {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 1px;
+        width: var(--ax, 0px);
+        z-index: 2;
+        pointer-events: none;
+        visibility: hidden;
+        opacity: var(--aa, 0);
+        transform: translateY(var(--ay, 0px));
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          hsl(var(--electric) / 0) 22%,
+          hsl(var(--electric) / 0.34) 74%,
+          hsl(var(--lime) / 0.85) 100%
+        );
+      }
+
+      /* ---------- phone ---------- */
+      @media (max-width: 860px) {
+        .xp-body {
+          max-width: none;
+          padding-bottom: clamp(70px, 10vh, 120px);
+        }
+        .xp-body::before {
+          inset: -6vh -100vw -4vh -100vw;
+          -webkit-mask-image: none;
+          mask-image: none;
+          background: linear-gradient(
+            180deg,
+            hsl(var(--bg-deep) / 0) 0%,
+            hsl(var(--bg-deep) / 0.72) 6%,
+            hsl(var(--bg-deep) / 0.93) 14%,
+            hsl(var(--bg-deep) / 0.95) 90%,
+            hsl(var(--bg-deep) / 0.5) 100%
+          );
+        }
+        .map-scale,
+        .map-bar {
+          grid-template-columns: 90px minmax(0, 1fr);
+          gap: 0 10px;
+        }
+        .map-len {
+          display: none;
+        }
+        .map-co {
+          font-size: 10.5px;
+        }
+        .xp-track {
+          padding-left: 22px;
+        }
+        .xp-spine {
+          left: 5px;
+        }
+        .role-mark {
+          left: -22px;
+          top: 26px;
+        }
+        .role-when {
+          font-size: 9px;
+        }
+        .role-sep {
+          padding: 0 0.5em;
+        }
+        /* the sculpture sits behind the copy on a phone, so a callout pinned
+           out there would land on top of the words. The core still reaches for
+           whatever card you tap — that is the connection here. */
+        html[data-fx='live'] .xp-node,
+        .xp-beam {
+          display: none;
+        }
+      }
+      /* roomy cards get two columns of highlights */
+      @media (min-width: 620px) {
+        .ach {
+          grid-template-columns: 1fr 1fr;
+        }
+        .ach-i:only-child {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .map-track i {
+          transform: scaleX(1);
+        }
+        .ach-i {
+          opacity: 1;
+          transform: none;
+        }
+        .xp-spine i {
+          transform: scaleY(1);
+          animation: none;
+        }
+        .role.on .role-card {
+          transform: none;
+        }
+      }

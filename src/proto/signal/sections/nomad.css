@@ -1,0 +1,777 @@
+      /* ================================================================
+         NOMAD — the globe chapter. The sculpture holds the left half of
+         the screen; every instrument in this file lives in the right
+         column, and the HUD that rides the globe is a fixed overlay that
+         is empty of flow (it can never move the page).
+      ================================================================= */
+
+      .nomad.chapter .inner,
+      .nomad.chapter.right .inner {
+        max-width: min(660px, 48vw);
+        text-align: left;
+        z-index: 1;
+      }
+      .nomad h2 {
+        max-width: 15ch;
+      }
+      .nomad > .inner > p {
+        max-width: 46ch;
+      }
+
+      /* the little section headers above each instrument */
+      .nomad .cap {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        color: hsl(var(--ink) / 0.44);
+        padding-bottom: 9px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid hsl(var(--ink) / 0.09);
+      }
+      .nomad .cap .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: hsl(var(--lime) / 0.9);
+      }
+      .nomad .cap .live .dot {
+        width: 5px;
+        height: 5px;
+      }
+
+      /* ---------------- the live readout ---------------- */
+      .nmd-now {
+        position: relative;
+        border-radius: 14px;
+        padding: 13px 16px 14px;
+        margin: 6px 0 18px;
+        overflow: hidden;
+      }
+      .nmd-now::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(hsl(var(--lime) / 0.9), hsl(var(--electric) / 0.5));
+        transition: background 400ms ease;
+      }
+      .nmd-now.away::after {
+        background: linear-gradient(hsl(var(--electric) / 0.9), hsl(var(--magenta) / 0.55));
+      }
+      .nmd-now .cap {
+        margin-bottom: 10px;
+      }
+      .nmd-now .who {
+        margin: 0 0 12px;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 15px;
+        color: hsl(var(--ink) / 0.92);
+      }
+      .nmd-now .who b {
+        font-family: var(--mono);
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: hsl(var(--lime));
+        text-shadow: 0 0 22px hsl(var(--lime) / 0.35);
+        transition: color 300ms ease;
+      }
+      .nmd-now.away .who b {
+        color: hsl(var(--electric));
+        text-shadow: 0 0 22px hsl(var(--electric) / 0.4);
+      }
+      .nmd-now .who span {
+        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: -0.01em;
+      }
+      .nmd-now .who i {
+        font-style: normal;
+        color: hsl(var(--ink) / 0.4);
+      }
+      .nmd-now .read {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin: 0;
+      }
+      .nmd-now .read dt {
+        color: hsl(var(--ink) / 0.38);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .nmd-now .read dd {
+        margin: 4px 0 0;
+        font-size: 12.5px;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        color: hsl(var(--ink) / 0.86);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      /* ---------------- the four numbers ---------------- */
+      .nmd-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin: 0 0 22px;
+      }
+      .nmd-stats .stat {
+        position: relative;
+        border-radius: 12px;
+        padding: 12px 14px 13px;
+        overflow: hidden;
+      }
+      .nmd-stats .stat::before {
+        content: '';
+        position: absolute;
+        inset: -40% -60% auto auto;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(closest-side, hsl(var(--indigo) / 0.22), transparent);
+        pointer-events: none;
+      }
+      .nmd-stats dd {
+        margin: 0;
+        font-size: clamp(24px, 2.4vw, 31px);
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        color: hsl(var(--ink));
+      }
+      .nmd-stats dt {
+        margin-top: 6px;
+        font-size: 12.5px;
+        line-height: 1.3;
+        color: hsl(var(--ink) / 0.7);
+      }
+      .nmd-stats .note {
+        display: block;
+        margin-top: 3px;
+        color: hsl(var(--ink) / 0.34);
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.06em;
+      }
+
+      /* With no GPU there is no frame loop to drive the aircraft, so the
+         manifest flies on its own — the section still reads as live. */
+      .nomad:not(.driven) .nmd-legs .bar {
+        animation: nmd-fly 11s linear infinite;
+      }
+      .nomad:not(.driven) .nmd-legs li:nth-child(2) .bar {
+        animation-duration: 8.6s;
+      }
+      .nomad:not(.driven) .nmd-legs li:nth-child(3) .bar {
+        animation-duration: 7.8s;
+      }
+      @keyframes nmd-fly {
+        from {
+          transform: scaleX(0);
+        }
+        to {
+          transform: scaleX(1);
+        }
+      }
+
+      /* No GPU: the globe's half of the screen is empty, so the log takes the
+         whole width instead of hugging a sculpture that is not there. */
+      html[data-fx='css'] .nomad.chapter .inner,
+      html[data-fx='css'] .nomad.chapter.right .inner {
+        margin-left: 0;
+        max-width: min(760px, 92vw);
+      }
+      html[data-fx='css'] .nomad .nmd-places ul,
+      html[data-fx='css'] .nomad .nmd-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      /* ---------------- the flight manifest ---------------- */
+      .nmd-legs {
+        margin-bottom: 22px;
+      }
+      .nmd-legs ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 7px;
+      }
+      .nmd-legs li {
+        display: grid;
+        grid-template-columns: auto auto auto minmax(60px, 1fr) auto;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 11px;
+        border-radius: 9px;
+        border: 1px solid hsl(var(--ink) / 0.08);
+        background: hsl(var(--ink) / 0.025);
+        transition:
+          border-color 260ms ease,
+          background-color 260ms ease;
+      }
+      .nmd-legs li b {
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: hsl(var(--ink) / 0.88);
+      }
+      .nmd-legs li .arw {
+        font-style: normal;
+        color: hsl(var(--lime) / 0.8);
+      }
+      .nmd-legs li .track {
+        position: relative;
+        height: 2px;
+        border-radius: 2px;
+        background: hsl(var(--ink) / 0.12);
+        overflow: hidden;
+      }
+      .nmd-legs li .bar {
+        position: absolute;
+        inset: 0;
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+        background: linear-gradient(90deg, hsl(var(--lime) / 0), hsl(var(--lime)));
+      }
+      .nmd-legs li .km {
+        color: hsl(var(--ink) / 0.45);
+        font-variant-numeric: tabular-nums;
+      }
+      .nmd-legs li.on {
+        border-color: hsl(var(--lime) / 0.35);
+        background: hsl(var(--lime) / 0.06);
+      }
+
+      /* ---------------- the city index ---------------- */
+      .nmd-map {
+        margin-bottom: 24px;
+      }
+      .nmd-map .cities {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .nmd-map .ct {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 7px;
+        padding: 6px 11px 6px 9px;
+        border-radius: 999px;
+        border: 1px solid hsl(var(--ink) / 0.12);
+        background: hsl(var(--ink) / 0.035);
+        color: hsl(var(--ink) / 0.66);
+        font-family: var(--sans);
+        font-size: 12px;
+        letter-spacing: -0.005em;
+        cursor: pointer;
+        transition:
+          border-color 200ms ease,
+          background-color 200ms ease,
+          color 200ms ease,
+          transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .nmd-map .ct b {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        color: hsl(var(--ink) / 0.42);
+        transition: color 200ms ease;
+      }
+      .nmd-map .ct:hover,
+      .nmd-map .ct:focus-visible,
+      .nmd-map .ct.on {
+        color: hsl(var(--ink));
+        border-color: hsl(var(--electric) / 0.5);
+        background: hsl(var(--electric) / 0.1);
+        transform: translateY(-1px);
+      }
+      .nmd-map .ct:hover b,
+      .nmd-map .ct:focus-visible b,
+      .nmd-map .ct.on b {
+        color: hsl(var(--electric));
+      }
+      .nmd-map .ct:focus-visible {
+        outline: 2px solid hsl(var(--lime));
+        outline-offset: 2px;
+      }
+      .nmd-map .ct.now {
+        border-color: hsl(var(--lime) / 0.3);
+        background: hsl(var(--lime) / 0.07);
+        color: hsl(var(--ink) / 0.9);
+      }
+      .nmd-map .ct.now b {
+        color: hsl(var(--lime));
+      }
+      .nmd-map .ct[aria-pressed='true'] {
+        border-color: hsl(var(--lime) / 0.55);
+        box-shadow: 0 0 0 1px hsl(var(--lime) / 0.18);
+      }
+
+      /* the fifteen legs actually flown; hovering one traces it on the globe */
+      .nmd-map .flown {
+        list-style: none;
+        margin: 11px 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 5px;
+      }
+      .nmd-map .lg {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.06em;
+        padding: 3px 7px;
+        border-radius: 5px;
+        color: hsl(var(--ink) / 0.4);
+        background: hsl(var(--ink) / 0.03);
+        cursor: default;
+        transition:
+          color 180ms ease,
+          background-color 180ms ease;
+      }
+      .nmd-map .lg i {
+        font-style: normal;
+        padding: 0 3px;
+        opacity: 0.5;
+      }
+      .nmd-map .lg:hover,
+      .nmd-map .lg.on {
+        color: hsl(var(--electric));
+        background: hsl(var(--electric) / 0.12);
+      }
+
+      /* ---------------- the photographs ---------------- */
+      .nmd-places {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 460px;
+      }
+      .nmd-places ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .nmd-places .card {
+        position: relative;
+        margin: 0;
+        border-radius: 13px;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+        border: 1px solid hsl(var(--ink) / 0.1);
+        background: hsl(var(--bg) / 0.6);
+        transform: translateZ(0);
+        transition:
+          transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+          border-color 420ms ease,
+          box-shadow 420ms ease;
+      }
+      .nmd-places .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: saturate(0.72) contrast(1.04) brightness(0.82);
+        transition:
+          transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+          filter 500ms ease;
+      }
+      .nmd-places .card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          195deg,
+          hsl(var(--indigo) / 0.22) 0%,
+          transparent 42%,
+          hsl(var(--bg-deep) / 0.62) 70%,
+          hsl(var(--bg-deep) / 0.94) 100%
+        );
+      }
+      .nmd-places figcaption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 12px 13px 12px;
+        display: grid;
+        gap: 2px;
+        z-index: 1;
+      }
+      .nmd-places figcaption b {
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: hsl(var(--ink));
+      }
+      .nmd-places figcaption .where {
+        color: hsl(var(--lime) / 0.85);
+        font-size: 9.5px;
+      }
+      .nmd-places figcaption .desc {
+        font-size: 11.5px;
+        line-height: 1.4;
+        color: hsl(var(--ink) / 0.62);
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition:
+          max-height 420ms cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 300ms ease;
+      }
+      .nmd-places .card:hover,
+      .nmd-places .card:focus-within {
+        transform: translateY(-3px);
+        border-color: hsl(var(--lime) / 0.32);
+        box-shadow: 0 22px 44px -26px hsl(var(--bg-deep));
+      }
+      .nmd-places .card:hover img,
+      .nmd-places .card:focus-within img {
+        transform: scale(1.055);
+        filter: saturate(0.95) contrast(1.02) brightness(0.95);
+      }
+      .nmd-places .card:hover .desc,
+      .nmd-places .card:focus-within .desc {
+        max-height: 3.2em;
+        opacity: 1;
+      }
+
+      /* ================================================================
+         The HUD that rides the sculpture. position: fixed, no flow, and
+         hidden until nomad.ts sees real frames (so the CSS tier never
+         shows an empty overlay).
+      ================================================================= */
+      .nmd-hud {
+        position: fixed;
+        inset: 0;
+        /* below the copy: a pin may drift behind a panel, never across it */
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 500ms ease;
+      }
+      .nmd-hud.on {
+        opacity: 1;
+        visibility: visible;
+      }
+      .nmd-hud .threads {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .nmd-hud .lane path {
+        fill: none;
+        stroke-linecap: round;
+      }
+      .nmd-hud .lane .glow {
+        stroke: hsl(var(--lime) / 0.16);
+        stroke-width: 5;
+      }
+      .nmd-hud .lane .core {
+        stroke: hsl(var(--lime) / 0.85);
+        stroke-width: 1.3;
+        stroke-dasharray: 2 7;
+        animation: nmd-dash 1.5s linear infinite;
+      }
+      .nmd-hud .lane.hov .glow {
+        stroke: hsl(var(--electric) / 0.2);
+      }
+      .nmd-hud .lane.hov .core {
+        stroke: hsl(var(--electric) / 0.95);
+        stroke-dasharray: none;
+        animation: none;
+      }
+      @keyframes nmd-dash {
+        to {
+          stroke-dashoffset: -9;
+        }
+      }
+
+      /* a city pin: a dot exactly on the city, a hairline, then the label */
+      .nmd-hud .pin {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      .nmd-hud .pip {
+        position: absolute;
+        left: -3px;
+        top: -3px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: hsl(var(--electric));
+        box-shadow: 0 0 10px hsl(var(--electric) / 0.9);
+      }
+      .nmd-hud .tag {
+        position: absolute;
+        left: 12px;
+        top: -9px;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        white-space: nowrap;
+        pointer-events: auto;
+        padding: 2px 7px 3px;
+        border-radius: 6px;
+        background: hsl(var(--bg-deep) / 0.34);
+        text-shadow: 0 1px 8px hsl(var(--bg-deep));
+        -webkit-backdrop-filter: blur(3px);
+        backdrop-filter: blur(3px);
+        transition:
+          background-color 220ms ease,
+          box-shadow 220ms ease;
+      }
+      .nmd-hud .tag::before {
+        content: '';
+        position: absolute;
+        left: -9px;
+        top: 50%;
+        width: 9px;
+        height: 1px;
+        background: hsl(var(--electric) / 0.55);
+      }
+      .nmd-hud .tag b {
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        color: hsl(var(--electric));
+      }
+      .nmd-hud .tag em {
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: -0.005em;
+        color: hsl(var(--ink) / 0.78);
+      }
+      /* when a nearer label already covers this one, only the beacon stays */
+      .nmd-hud .pin.bare .tag {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .nmd-hud .pin.bare .pip {
+        width: 4px;
+        height: 4px;
+        left: -2px;
+        top: -2px;
+        opacity: 0.7;
+      }
+      .nmd-hud .tag {
+        transition:
+          opacity 200ms ease,
+          background-color 220ms ease,
+          box-shadow 220ms ease;
+      }
+      /* the label swaps sides near the copy, but the code stays first */
+      .nmd-hud .pin.flip .tag {
+        left: auto;
+        right: 12px;
+      }
+      .nmd-hud .pin.flip .tag::before {
+        left: auto;
+        right: -9px;
+      }
+      .nmd-hud .pin.on .tag {
+        background: hsl(var(--bg-deep) / 0.8);
+        box-shadow: 0 0 0 1px hsl(var(--electric) / 0.45);
+      }
+      .nmd-hud .pin.on .pip {
+        background: hsl(var(--ink));
+        box-shadow: 0 0 16px hsl(var(--electric));
+      }
+
+      /* home: Bangkok, with the clock that is actually ticking there */
+      .nmd-hud .pin.home .pip {
+        background: hsl(var(--lime));
+        box-shadow: 0 0 14px hsl(var(--lime));
+      }
+      .nmd-hud .pin.home .pip::after {
+        content: '';
+        position: absolute;
+        inset: -5px;
+        border-radius: 50%;
+        border: 1px solid hsl(var(--lime) / 0.7);
+        animation: nmd-ping 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+      @keyframes nmd-ping {
+        0% {
+          transform: scale(0.5);
+          opacity: 0.9;
+        }
+        70%,
+        100% {
+          transform: scale(2.6);
+          opacity: 0;
+        }
+      }
+      .nmd-hud .pin.home .tag {
+        background: hsl(var(--bg-deep) / 0.72);
+        box-shadow: 0 0 0 1px hsl(var(--lime) / 0.32);
+      }
+      .nmd-hud .pin.home .tag::before {
+        background: hsl(var(--lime) / 0.65);
+      }
+      .nmd-hud .pin.home .tag b {
+        color: hsl(var(--lime));
+      }
+      .nmd-hud .pin.home .tag u {
+        text-decoration: none;
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        color: hsl(var(--lime) / 0.8);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* the aircraft on the active threads */
+      .nmd-hud .jet {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      .nmd-hud .dotj {
+        position: absolute;
+        left: -3.5px;
+        top: -3.5px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: hsl(var(--ink));
+        box-shadow:
+          0 0 10px hsl(var(--lime)),
+          0 0 26px hsl(var(--lime) / 0.6);
+      }
+      .nmd-hud .jt {
+        position: absolute;
+        left: 10px;
+        top: -7px;
+        display: flex;
+        gap: 3px;
+        white-space: nowrap;
+        font-size: 8.5px;
+        letter-spacing: 0.1em;
+        color: hsl(var(--lime) / 0.85);
+      }
+      .nmd-hud .jt i {
+        font-style: normal;
+        opacity: 0.6;
+      }
+
+      /* ---------------- phone ---------------- */
+      @media (max-width: 860px) {
+        .nomad {
+          /* the globe sits above the copy: keep the top of the screen clear */
+          padding-top: 52vh;
+        }
+        .nomad .inner {
+          max-width: none;
+        }
+        .nomad h2,
+        .nomad > .inner > p {
+          max-width: none;
+        }
+        .nmd-now .read {
+          grid-template-columns: 1fr 1fr;
+          gap: 9px 12px;
+        }
+        .nmd-now .read div:last-child {
+          grid-column: 1 / -1;
+        }
+        .nmd-stats {
+          gap: 7px;
+        }
+        .nmd-stats dd {
+          font-size: 23px;
+        }
+        .nmd-stats dt {
+          font-size: 11.5px;
+        }
+        .nmd-legs li {
+          grid-template-columns: auto auto auto minmax(40px, 1fr) auto;
+          gap: 7px;
+          padding: 7px 9px;
+        }
+        .nmd-places {
+          contain-intrinsic-size: auto 620px;
+        }
+        .nmd-places .card {
+          aspect-ratio: 1 / 1;
+        }
+        .nmd-places figcaption .desc {
+          max-height: 3.2em;
+          opacity: 1;
+        }
+        /* on a small globe the names collide: the codes carry it, and they
+           have to hold their own against a bright planet behind them */
+        .nmd-hud .tag em {
+          display: none;
+        }
+        .nmd-hud .tag {
+          padding: 3px 7px 4px;
+          background: hsl(var(--bg-deep) / 0.62);
+        }
+        .nmd-hud .tag b {
+          font-size: 11px;
+          color: hsl(var(--ink) / 0.95);
+        }
+        .nmd-hud .pin.home .tag b,
+        .nmd-hud .pin.home .tag u {
+          color: hsl(var(--lime));
+        }
+        .nmd-hud .pin.on .tag b {
+          color: hsl(var(--electric));
+        }
+        .nmd-hud .jt {
+          display: none;
+        }
+        .nmd-hud .lane .glow {
+          stroke-width: 4;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .nmd-hud .pin.home .pip::after,
+        .nmd-hud .lane .core,
+        .nomad:not(.driven) .nmd-legs .bar {
+          animation: none;
+        }
+        .nomad:not(.driven) .nmd-legs .bar {
+          transform: scaleX(0.5);
+        }
+        .nmd-places .card img,
+        .nmd-places .card {
+          transition-duration: 1ms;
+        }
+        .nmd-places figcaption .desc {
+          max-height: 3.2em;
+          opacity: 1;
+        }
+      }

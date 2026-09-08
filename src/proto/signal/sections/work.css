@@ -1,0 +1,880 @@
+/* ================================================================
+   work — THE BENCH. Three product modules on glass, then six more.
+   The core sits behind these plates: the cards are translucent on
+   purpose, so when a hover pulls the swarm into a product's cell the
+   light blooms through that plate.
+   ================================================================ */
+
+#work {
+  /* the block is three screens tall — it starts at the top and runs */
+  justify-content: flex-start;
+  min-height: 0;
+  padding-top: 15vh;
+  padding-bottom: 12vh;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 3420px;
+}
+#work .inner {
+  max-width: none;
+  width: 100%;
+}
+
+/* ---------------------------------------------------------- header */
+.wk-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 20px 40px;
+  padding-bottom: 26px;
+  margin-bottom: clamp(26px, 3.4vw, 46px);
+  border-bottom: 1px solid hsl(var(--ink) / 0.08);
+}
+.wk-head h2 {
+  max-width: 15ch;
+}
+.wk-intro {
+  max-width: 46ch;
+  margin-bottom: 0 !important;
+}
+.wk-count {
+  position: relative;
+  color: hsl(var(--ink) / 0.5);
+  white-space: nowrap;
+  margin: 0;
+  padding-bottom: 4px;
+}
+.wk-count::before {
+  content: '';
+  position: absolute;
+  inset: -14px -22px -10px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(closest-side, hsl(var(--bg-deep) / 0.92), hsl(var(--bg-deep) / 0));
+}
+.wk-count b {
+  color: hsl(var(--lime));
+  font-weight: 500;
+}
+.wk-count .sep,
+.wk-meta .sep,
+.wk-sub .sep {
+  color: hsl(var(--ink) / 0.2);
+  padding: 0 0.65em;
+}
+
+/* ------------------------------------------------------- the plates */
+.wk-mods {
+  display: grid;
+  gap: clamp(16px, 1.8vw, 26px);
+}
+
+.wk-card {
+  position: relative;
+  overflow: clip;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
+  gap: clamp(20px, 2.6vw, 46px);
+  align-items: center;
+  padding: clamp(18px, 2.1vw, 30px);
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  isolation: isolate;
+  overflow: hidden;
+  /* a sheen over a thin dark base: the core still blooms through the plate,
+     but never washes out a line of type */
+  background:
+    linear-gradient(148deg, hsl(var(--ink) / 0.062) 0%, hsl(var(--ink) / 0.022) 46%, hsl(var(--indigo) / 0.055) 100%),
+    hsl(var(--bg-deep) / 0.34);
+  border: 1px solid hsl(var(--ink) / 0.09);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--ink) / 0.11),
+    0 30px 64px -40px hsl(var(--bg-deep));
+  transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+@media (min-width: 861px) {
+  .wk-card {
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
+  }
+}
+.wk-mod.on .wk-card,
+.wk-min.on .wk-card {
+  border-color: hsl(var(--electric) / 0.34);
+  transition:
+    transform 110ms linear,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+.wk-card:focus-visible {
+  outline: 2px solid hsl(var(--lime));
+  outline-offset: 4px;
+}
+
+/* the rim that lights when the core locks onto this product */
+.wk-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--electric) / 0.4),
+    inset 0 0 60px -26px hsl(var(--electric) / 0.9);
+}
+.wk-mod.on .wk-rim,
+.wk-min.on .wk-rim {
+  opacity: 1;
+}
+
+/* the pointer's own light — transform only, so it rides the compositor */
+.wk-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: -1;
+  background: radial-gradient(closest-side, hsl(var(--electric) / 0.2), hsl(var(--indigo) / 0.09) 52%, transparent 78%);
+  /* --gx/--gy are an offset from the card's centre, so a keyboard focus
+     (which has no pointer) still lights the plate from the middle */
+  transform: translate3d(var(--gx, 0px), var(--gy, 0px), 0);
+  transition: opacity 340ms ease;
+}
+.wk-mod.on .wk-glow,
+.wk-min.on .wk-glow {
+  opacity: 1;
+  will-change: transform;
+}
+
+/* ---------------------------------------------------------- the copy */
+.wk-body {
+  min-width: 0;
+}
+.wk-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 0 0 14px;
+  color: hsl(var(--ink) / 0.5);
+}
+.wk-meta b {
+  color: hsl(var(--lime));
+  font-weight: 500;
+  padding-right: 0.9em;
+}
+.wk-meta .wk-co {
+  color: hsl(var(--ink) / 0.88);
+}
+.wk-title {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 800;
+  line-height: 1.03;
+  letter-spacing: -0.032em;
+  color: hsl(var(--ink));
+}
+.wk-ex {
+  margin: 0 !important;
+  max-width: 44ch;
+  font-size: clamp(13.5px, 1vw, 15px) !important;
+  line-height: 1.6;
+  color: hsl(var(--ink-muted));
+}
+
+.wk-out {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 20px 0 20px;
+  padding: 0;
+}
+.wk-out > div {
+  padding: 10px 12px 12px;
+  border-radius: 11px;
+  background: hsl(var(--ink) / 0.035);
+  border: 1px solid hsl(var(--ink) / 0.075);
+  transition: border-color 300ms ease;
+}
+.wk-mod.on .wk-out > div {
+  border-color: hsl(var(--electric) / 0.24);
+}
+.wk-out dt {
+  color: hsl(var(--ink-soft));
+  font-size: 9px;
+  letter-spacing: 0.11em;
+}
+.wk-out dd {
+  margin: 5px 0 0;
+  font-size: clamp(20px, 2vw, 27px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--ink));
+  min-width: 3ch;
+}
+.wk-out.words dd {
+  font-family: var(--mono);
+  font-size: clamp(11px, 1vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: hsl(var(--lime) / 0.94);
+  padding-top: 2px;
+}
+
+.wk-hi {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+.wk-hi li {
+  position: relative;
+  padding-left: 17px;
+  font-size: 12.8px;
+  line-height: 1.52;
+  color: hsl(var(--ink-muted));
+}
+.wk-hi li::before {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 1px;
+  background: hsl(var(--electric) / 0.85);
+  rotate: 45deg;
+}
+
+.wk-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: hsl(var(--lime));
+}
+.wk-go i {
+  font-style: normal;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wk-card:hover .wk-go i,
+.wk-card:focus-visible .wk-go i {
+  transform: translate(3px, -3px);
+}
+
+/* -------------------------------------------------------- the screen */
+.wk-screen {
+  position: relative;
+  aspect-ratio: 676 / 356;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--ink) / 0.08);
+  background:
+    radial-gradient(130% 150% at 26% -10%, hsl(var(--indigo) / 0.2) 0%, transparent 60%),
+    hsl(var(--bg-deep) / 0.5);
+  transition: border-color 300ms ease;
+}
+.wk-mod.on .wk-screen {
+  border-color: hsl(var(--electric) / 0.3);
+}
+.wk-screen .sv {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sv text {
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+}
+.sv-fig {
+  font-size: 9px;
+  fill: hsl(var(--ink) / 0.4);
+}
+.sv-fig.hot {
+  fill: hsl(var(--lime) / 0.85);
+}
+.sv-key {
+  font-size: 9.5px;
+  fill: hsl(var(--ink) / 0.52);
+}
+.sv-key.sm {
+  font-size: 8.5px;
+}
+.sv-key.lit {
+  fill: hsl(var(--lime) / 0.92);
+}
+.sv-nm {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  fill: hsl(var(--ink) / 0.92);
+}
+.sv-nm.sm {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  fill: hsl(var(--ink) / 0.74);
+}
+.sv-cap {
+  font-size: 9.5px;
+  fill: hsl(var(--ink) / 0.44);
+}
+.sv-node {
+  fill: hsl(var(--ink) / 0.05);
+  stroke: hsl(var(--ink) / 0.16);
+}
+.sv-pill {
+  fill: hsl(var(--lime) / 0.07);
+  stroke: hsl(var(--lime) / 0.24);
+}
+.sv-chip {
+  fill: hsl(var(--ink) / 0.05);
+  stroke: hsl(var(--ink) / 0.14);
+}
+.sv-chip.ok {
+  fill: hsl(var(--lime) / 0.08);
+  stroke: hsl(var(--lime) / 0.32);
+}
+.sv-plate {
+  fill: none;
+  stroke: hsl(var(--ink) / 0.11);
+  stroke-dasharray: 3 5;
+}
+.sv-rule {
+  fill: none;
+  stroke: hsl(var(--ink) / 0.09);
+}
+.sv-wire {
+  fill: none;
+  stroke: hsl(var(--ink) / 0.2);
+  stroke-width: 1.2;
+}
+.sv-wire.lit {
+  stroke: hsl(var(--electric) / 0.55);
+}
+.sv-wire.dot {
+  stroke: hsl(var(--ink) / 0.2);
+  stroke-dasharray: 2 4;
+}
+.sv-chev {
+  fill: none;
+  stroke: hsl(var(--electric) / 0.7);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sv-ev {
+  fill: hsl(var(--indigo) / 0.55);
+}
+.sv-bar {
+  fill: hsl(var(--ink) / 0.1);
+}
+.sv-bar.ok {
+  fill: hsl(var(--lime) / 0.5);
+}
+.sv-tile {
+  fill: hsl(var(--ink) / 0.05);
+  stroke: hsl(var(--ink) / 0.13);
+}
+.sv-hub {
+  fill: hsl(var(--electric) / 0.75);
+}
+
+/* the lock readout: what the core is holding while you hover */
+.wk-lock {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--lime));
+  background: hsl(var(--lime) / 0.08);
+  border: 1px solid hsl(var(--lime) / 0.28);
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity 260ms ease,
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.wk-mod.on .wk-lock {
+  opacity: 1;
+  transform: none;
+}
+
+/* a slow scan down each screen as it crosses the viewport — the scroll
+   itself drives it, on the compositor (Chrome 115+, Safari 26+; Firefox
+   simply never runs it and the screen is unchanged) */
+.wk-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.wk-scan::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(var(--electric) / 0.75) 32%, hsl(var(--lime) / 0.6) 62%, transparent);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wk-scan {
+      animation: wk-scan linear both;
+      animation-timeline: view();
+      animation-range: entry 6% exit 94%;
+    }
+  }
+}
+@keyframes wk-scan {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  16% {
+    opacity: 0.7;
+  }
+  84% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------- the lights on the screen */
+.wk-p {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.wk-p::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px;
+  border-radius: 50%;
+  background: hsl(79 60% 88%);
+  box-shadow:
+    0 0 10px hsl(var(--lime) / 0.9),
+    0 0 26px hsl(var(--lime) / 0.4);
+}
+/* where each light rests when nothing is running (reduced motion, off screen) */
+.p-pay {
+  transform: translate3d(89.4%, 50%, 0);
+}
+.p-tap {
+  transform: translate3d(50%, 64%, 0);
+}
+.p-ev1 {
+  transform: translate3d(26.3%, 50.8%, 0);
+}
+.p-ev2 {
+  transform: translate3d(52.4%, 50.8%, 0);
+}
+.p-ev3 {
+  transform: translate3d(74.3%, 50.8%, 0);
+}
+.p-hub {
+  transform: translate3d(27.8%, 48.9%, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wk-mod.live .p-pay {
+    animation: wk-pay 4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+  .wk-mod.live .p-tap {
+    animation: wk-tap 4s ease-out infinite;
+  }
+  .wk-mod.live .p-ev1,
+  .wk-mod.live .p-ev2,
+  .wk-mod.live .p-ev3 {
+    animation: wk-ev 3.3s linear infinite;
+  }
+  .wk-mod.live .p-ev2 {
+    animation-delay: 1.1s;
+  }
+  .wk-mod.live .p-ev3 {
+    animation-delay: 2.2s;
+  }
+  .wk-mod.live .p-hub {
+    animation: wk-hub 2.8s ease-in-out infinite;
+  }
+  .wk-mod.live .sv-chip.ok {
+    animation: wk-ok 4s ease-out infinite;
+  }
+  .wk-mod.live .sv-tile {
+    animation: wk-tile 4.4s ease-in-out infinite;
+    animation-delay: calc(sibling-index() * 90ms);
+  }
+  .wk-mod.live .sv-hub {
+    animation: wk-tile 2.8s ease-in-out infinite;
+  }
+  .wk-mod.live .sv-hub.s1 {
+    animation-delay: 0.28s;
+  }
+  .wk-mod.live .sv-hub.s2 {
+    animation-delay: 0.56s;
+  }
+  .wk-mod.live .sv-hub.s3 {
+    animation-delay: 0.84s;
+  }
+  .wk-mod.live .sv-hub.s4 {
+    animation-delay: 1.12s;
+  }
+  /* hovering a product runs its machine faster */
+  .wk-mod.on.live .wk-p,
+  .wk-mod.on.live .sv-tile,
+  .wk-mod.on.live .sv-hub {
+    animation-duration: 1.9s;
+  }
+}
+
+@keyframes wk-pay {
+  0% {
+    transform: translate3d(16.9%, 50%, 0);
+    opacity: 0;
+  }
+  7% {
+    opacity: 1;
+  }
+  28% {
+    transform: translate3d(50%, 50%, 0);
+  }
+  40% {
+    transform: translate3d(50%, 50%, 0);
+  }
+  66% {
+    transform: translate3d(83.1%, 50%, 0);
+  }
+  92% {
+    transform: translate3d(83.1%, 50%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(83.1%, 50%, 0);
+    opacity: 0;
+  }
+}
+@keyframes wk-tap {
+  0%,
+  42% {
+    transform: translate3d(50%, 58.4%, 0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  62% {
+    transform: translate3d(50%, 70.8%, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(50%, 70.8%, 0);
+    opacity: 0;
+  }
+}
+@keyframes wk-ev {
+  0% {
+    transform: translate3d(14.2%, 50.8%, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(86.1%, 50.8%, 0);
+    opacity: 0;
+  }
+}
+@keyframes wk-hub {
+  0% {
+    transform: translate3d(21.3%, 48.9%, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(31.7%, 48.9%, 0);
+    opacity: 0;
+  }
+}
+@keyframes wk-ok {
+  0%,
+  60% {
+    opacity: 0.45;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+@keyframes wk-tile {
+  0%,
+  70%,
+  100% {
+    opacity: 0.5;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------- the other six */
+.wk-restwrap {
+  margin-top: clamp(34px, 4.6vw, 66px);
+}
+.wk-sub {
+  display: flex;
+  align-items: baseline;
+  margin: 0 0 16px !important;
+  padding-bottom: 12px;
+  border-bottom: 1px solid hsl(var(--ink) / 0.08);
+  color: hsl(var(--ink) / 0.44);
+  font-size: 10.5px !important;
+}
+.wk-sub b {
+  color: hsl(var(--lime));
+  font-weight: 500;
+}
+.wk-rest {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.1vw, 16px);
+}
+@media (min-width: 1080px) {
+  .wk-rest {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.wk-card.sm {
+  /* the compact cards are all type, so they hold more of the light back */
+  background:
+    linear-gradient(148deg, hsl(var(--ink) / 0.06) 0%, hsl(var(--ink) / 0.02) 46%, hsl(var(--indigo) / 0.05) 100%),
+    hsl(var(--bg-deep) / 0.68);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 18px 18px 16px;
+  border-radius: 16px;
+  height: 100%;
+}
+.wk-mgo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid hsl(var(--ink) / 0.07);
+  color: hsl(var(--ink) / 0.56);
+}
+.wk-mgo i {
+  font-style: normal;
+  color: hsl(var(--lime));
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wk-card.sm:hover .wk-mgo i,
+.wk-card.sm:focus-visible .wk-mgo i {
+  transform: translate(3px, -3px);
+}
+.wk-card.sm .tags {
+  margin-bottom: 14px;
+}
+.wk-card.sm .wk-meta {
+  margin-bottom: 0;
+  justify-content: space-between;
+  color: hsl(var(--ink) / 0.4);
+}
+.wk-mark {
+  display: block;
+  width: 42px;
+  height: 42px;
+  margin: 12px 0 12px;
+  overflow: visible;
+}
+.wk-mark circle {
+  fill: hsl(var(--ink) / 0.36);
+}
+.wk-mark circle.lit {
+  fill: hsl(var(--lime) / 0.9);
+}
+.wk-min.on .wk-mark circle.lit {
+  fill: hsl(var(--lime));
+}
+/* hovering a card runs a pulse down its trace, node by node */
+@media (prefers-reduced-motion: no-preference) {
+  .wk-min.on .wk-mark circle {
+    animation: wk-tile 1.4s ease-in-out infinite;
+  }
+  .wk-min.on .wk-mark circle:nth-of-type(2) {
+    animation-delay: 0.14s;
+  }
+  .wk-min.on .wk-mark circle:nth-of-type(3) {
+    animation-delay: 0.28s;
+  }
+  .wk-min.on .wk-mark circle:nth-of-type(4) {
+    animation-delay: 0.42s;
+  }
+}
+.wk-mark.m1 {
+  transform: scaleX(-1);
+}
+.wk-mark.m2 {
+  transform: rotate(90deg);
+}
+.wk-mark.m3 {
+  transform: scaleY(-1);
+}
+.wk-mark.m4 {
+  transform: rotate(-90deg);
+}
+.wk-mark.m5 {
+  transform: rotate(180deg);
+}
+.wk-mt {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -0.022em;
+  color: hsl(var(--ink));
+}
+.wk-mc {
+  margin: 0 0 10px !important;
+  font-size: 9.5px !important;
+  color: hsl(var(--lime) / 0.78) !important;
+}
+.wk-mx {
+  margin: 0 0 12px !important;
+  font-size: 12.6px !important;
+  line-height: 1.55;
+  color: hsl(var(--ink-muted));
+}
+.wk-card.sm .tags li {
+  font-size: 9.5px;
+  padding: 4px 8px;
+}
+
+/* ------------------------------------------------------------- phone */
+@media (max-width: 980px) {
+  .wk-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .wk-screen {
+    order: -1;
+  }
+}
+@media (max-width: 860px) {
+  #work {
+    padding-top: 12vh;
+    contain-intrinsic-size: auto 5900px;
+  }
+  .wk-head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 14px;
+    /* the core passes behind this copy on a phone — hold a scrim under it
+       that fades out to the right rather than drawing a band */
+    margin-inline: calc(var(--pad) * -1);
+    padding-inline: var(--pad);
+    padding-top: 26px;
+    padding-bottom: 32px;
+    border-bottom-color: transparent;
+    background: radial-gradient(
+      118% 104% at 3% 46%,
+      hsl(var(--bg-deep) / 0.96) 0%,
+      hsl(var(--bg-deep) / 0.9) 38%,
+      hsl(var(--bg-deep) / 0.48) 72%,
+      hsl(var(--bg-deep) / 0) 100%
+    );
+  }
+  .wk-head h2 {
+    max-width: none;
+  }
+  .wk-count {
+    white-space: normal;
+    padding-bottom: 0;
+  }
+  .wk-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .wk-out {
+    gap: 6px;
+    margin: 16px 0;
+  }
+  .wk-out > div {
+    padding: 9px 9px 10px;
+  }
+  .wk-out dt {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+  .wk-out dd {
+    font-size: 19px;
+  }
+  .wk-out.words dd {
+    font-size: 10px;
+  }
+  .sv-nm {
+    font-size: 17px;
+  }
+  .sv-nm.sm {
+    font-size: 14px;
+  }
+  .sv-key,
+  .sv-cap,
+  .sv-fig {
+    font-size: 11px;
+  }
+  .sv-key.sm {
+    font-size: 10px;
+  }
+  .wk-rest {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .wk-card {
+    transform: none !important;
+  }
+  .wk-glow {
+    display: none;
+  }
+}

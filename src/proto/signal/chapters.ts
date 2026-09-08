@@ -19,8 +19,14 @@ let anchors: Anchor[] = []
 export function measureChapters() {
   const vh = window.innerHeight
   const y0 = window.scrollY
-  const list: Anchor[] = [{ shape: 0, start: -1e9, end: vh * 0.42 }]
-  for (const el of Array.from(document.querySelectorAll<HTMLElement>('[data-shape]'))) {
+  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-shape]'))
+  // The hero is the implicit first anchor — but only on a page that HAS a hero.
+  // A subpage's own first anchor starts at the top of the document, and the
+  // implicit shape-0 anchor would otherwise hold the coil over it for the
+  // first half screen (a /404/ asking for the beam would show the coil).
+  const firstTop = els.length ? els[0].getBoundingClientRect().top + y0 : Infinity
+  const list: Anchor[] = firstTop > vh * 0.5 ? [{ shape: 0, start: -1e9, end: vh * 0.42 }] : []
+  for (const el of els) {
     const shape = Number(el.dataset.shape)
     if (!Number.isFinite(shape)) continue
     const r = el.getBoundingClientRect()

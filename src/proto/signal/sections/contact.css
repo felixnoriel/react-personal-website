@@ -1,0 +1,1144 @@
+/* ================================================================
+   CONTACT — the transmission console, and the end of the page.
+
+   The beam rises through the middle of the viewport (shape 7 sits at
+   NDC x = 0), so the console is built as two equal columns with a wide
+   corridor between them: the sculpture threads the gap, and the glass
+   panels sit on top of the parts it passes behind. Every animation
+   below is transform/opacity only.
+   ================================================================ */
+
+#contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1120px;
+  justify-content: center;
+  padding-top: 15vh;
+  padding-bottom: 12vh;
+  gap: clamp(28px, 4vh, 52px);
+}
+/* the chapter scrim is a left-to-right wash; contact needs the middle
+   left open so the beam is visible in the corridor, and both flanks
+   dark enough to read against */
+#contact::before {
+  background:
+    radial-gradient(58% 48% at 50% 46%, hsl(var(--electric) / 0.07), transparent 70%),
+    linear-gradient(
+      90deg,
+      hsl(var(--bg-deep) / 0.95) 0%,
+      hsl(var(--bg-deep) / 0.86) 22%,
+      hsl(var(--bg-deep) / 0.24) 44%,
+      hsl(var(--bg-deep) / 0.24) 56%,
+      hsl(var(--bg-deep) / 0.86) 78%,
+      hsl(var(--bg-deep) / 0.95) 100%
+    );
+}
+
+.ct-head,
+.ct-grid {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+}
+.ct-headrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+#contact .kicker {
+  margin-bottom: 0;
+}
+.ct-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  color: hsl(var(--lime));
+  background: hsl(var(--lime) / 0.07);
+  border: 1px solid hsl(var(--lime) / 0.22);
+}
+/* four bars that read the carrier — transform only, so it never leaves
+   the compositor */
+.eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 9px;
+}
+.eq i {
+  width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background: hsl(var(--lime) / 0.85);
+  transform-origin: 50% 100%;
+  transform: scaleY(0.3);
+  animation: eqbar 1.15s ease-in-out infinite alternate;
+  animation-delay: calc(sibling-index() * -190ms);
+}
+@keyframes eqbar {
+  from {
+    transform: scaleY(0.22);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+#contact h2 {
+  margin: 18px 0 14px;
+  max-width: 15ch;
+}
+#contact h2 em {
+  font-style: italic;
+  font-weight: 800;
+  background-image: linear-gradient(96deg, hsl(var(--electric)), hsl(var(--indigo)) 44%, hsl(var(--magenta)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ct-intro {
+  max-width: 46ch;
+}
+
+/* ---------------- the two columns and the corridor ---------------- */
+.ct-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(30px, 8.5vw, 128px);
+  align-items: start;
+}
+
+/* ---------------- the composer ---------------- */
+.ct-form {
+  border-radius: 18px;
+  padding: 20px clamp(16px, 1.6vw, 24px) 22px;
+  position: relative;
+  overflow: hidden;
+}
+.ct-form::after {
+  /* a hairline of current down the left edge; it runs on send */
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(hsl(var(--electric) / 0), hsl(var(--electric) / 0.6), hsl(var(--electric) / 0));
+  transform: scaleY(0.4);
+  transform-origin: 50% 0;
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ct-form:focus-within::after {
+  transform: scaleY(1);
+}
+.ct-formhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  color: hsl(var(--ink) / 0.4);
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid hsl(var(--ink) / 0.07);
+}
+.ct-dest {
+  color: hsl(var(--electric) / 0.85);
+  text-transform: none;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ct-field {
+  display: block;
+  position: relative;
+  margin-top: 14px;
+  padding-left: 12px;
+}
+.ct-lab {
+  display: block;
+  color: hsl(var(--ink) / 0.44);
+  margin-bottom: 7px;
+  transition: color 220ms ease;
+}
+.ct-field:focus-within .ct-lab {
+  color: hsl(var(--lime));
+}
+/* a field that holds something says so on every tier, beam or no beam */
+.ct-lab::after {
+  content: ' ·';
+  color: hsl(var(--ink) / 0.25);
+  transition: color 240ms ease;
+}
+.ct-field:has(.ct-in:not(:placeholder-shown)) .ct-lab::after {
+  content: ' ✓';
+  color: hsl(var(--lime));
+}
+.ct-edge {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: 2px;
+  background: hsl(var(--lime));
+  box-shadow: 0 0 10px hsl(var(--lime) / 0.7);
+  transform: scaleY(0);
+  transform-origin: 50% 50%;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ct-field:focus-within .ct-edge {
+  transform: scaleY(1);
+}
+.ct-in {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: hsl(var(--ink));
+  background: hsl(var(--bg-deep) / 0.55);
+  border: 1px solid hsl(var(--ink) / 0.1);
+  border-radius: 10px;
+  padding: 10px 13px;
+  outline: none;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease;
+}
+.ct-in::placeholder {
+  color: hsl(var(--ink) / 0.3);
+}
+.ct-in:hover {
+  border-color: hsl(var(--ink) / 0.18);
+}
+.ct-in:focus {
+  border-color: hsl(var(--electric) / 0.65);
+  background: hsl(var(--bg-deep) / 0.75);
+  box-shadow: 0 0 0 3px hsl(var(--electric) / 0.13);
+}
+/* the UA ring is turned off above, so a keyboard focus gets a stronger one
+   of its own — a pointer focus keeps the quiet version */
+.ct-in:focus-visible {
+  border-color: hsl(var(--lime) / 0.8);
+  box-shadow: 0 0 0 3px hsl(var(--lime) / 0.3);
+}
+.ct-in:user-invalid {
+  border-color: hsl(var(--magenta) / 0.6);
+}
+.ct-area {
+  resize: vertical;
+  min-height: 92px;
+  max-height: 260px;
+}
+/* the message box grows with what is typed — cross-browser since
+   June 2026; without it the rows attribute still gives four lines */
+@supports (field-sizing: content) {
+  .ct-area {
+    field-sizing: content;
+    resize: none;
+  }
+}
+
+.ct-meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-left: 12px;
+}
+.ct-meterbar {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: hsl(var(--ink) / 0.08);
+}
+.ct-meterbar i {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  transform: scaleX(var(--fill, 0));
+  transform-origin: 0 50%;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  background:
+    repeating-linear-gradient(90deg, hsl(var(--lime)) 0 3px, transparent 3px 6px),
+    linear-gradient(90deg, hsl(var(--electric)), hsl(var(--lime)));
+}
+.ct-metern {
+  color: hsl(var(--ink) / 0.42);
+  font-variant-numeric: tabular-nums;
+  min-width: 5.4em;
+  text-align: right;
+}
+
+.ct-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-left: 12px;
+}
+.ct-send {
+  position: relative;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--sans);
+  translate: var(--mx, 0px) var(--my, 0px);
+  transition:
+    translate 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 240ms ease;
+}
+/* the launch, read where the eye already is: a sweep across the button for
+   as long as the wave takes to climb the beam */
+.ct-send::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, hsl(var(--bg-deep) / 0.16), hsl(var(--bg-deep) / 0.04));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+#contact.sent .ct-send::after {
+  animation: sendsweep 1020ms cubic-bezier(0.3, 0.02, 0.2, 1) both;
+}
+@keyframes sendsweep {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+.ct-send.pull {
+  transition:
+    translate 90ms linear,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 240ms ease;
+}
+.ct-send:disabled {
+  cursor: default;
+}
+.ct-send .arw {
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ct-send:hover .arw {
+  transform: translate(2px, -2px);
+}
+/* .chapter p sets font-size AND colour at (0,0,1,1); these two mono lines
+   need the section id to outrank it */
+#contact p.ct-wire {
+  font-size: 10.5px;
+  line-height: 1.5;
+  margin: 0;
+  color: hsl(var(--ink) / 0.36);
+  text-transform: none;
+  letter-spacing: 0.05em;
+}
+#contact p.ct-log {
+  font-size: 10.5px;
+  margin: 12px 0 0;
+  color: hsl(var(--lime));
+}
+.ct-log {
+  padding-left: 12px;
+  min-height: 1.3em;
+  text-transform: none;
+  letter-spacing: 0.06em;
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 380ms ease,
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+#contact.logon .ct-log {
+  opacity: 1;
+  transform: none;
+}
+/* the whole panel takes one breath when the message goes */
+#contact.sent .ct-form::after {
+  transform: scaleY(1);
+  background: linear-gradient(hsl(var(--lime) / 0), hsl(var(--lime)), hsl(var(--lime) / 0));
+}
+
+/* ---------------- the station cards ---------------- */
+.ct-side {
+  display: grid;
+  gap: 14px;
+}
+.ct-card {
+  border-radius: 16px;
+  padding: 16px 18px 17px;
+  position: relative;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease;
+}
+.ct-card:hover {
+  transform: translateY(-2px);
+  border-color: hsl(var(--ink) / 0.18);
+}
+.ct-cardhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: hsl(var(--ink) / 0.44);
+  margin-bottom: 10px;
+}
+.dot-lime {
+  background: hsl(var(--lime));
+  box-shadow: 0 0 10px hsl(var(--lime) / 0.9);
+}
+.dot-el {
+  background: hsl(var(--electric));
+  box-shadow: 0 0 10px hsl(var(--electric) / 0.9);
+}
+.dot-mg {
+  background: hsl(var(--magenta));
+  box-shadow: 0 0 10px hsl(var(--magenta) / 0.9);
+}
+.ct-cardhead .dot {
+  flex: none;
+}
+.ct-city {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: hsl(var(--ink));
+}
+.ct-coord {
+  color: hsl(var(--ink) / 0.42);
+  margin-top: 5px;
+  text-transform: none;
+}
+.ct-clockrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 12px;
+  color: hsl(var(--ink-muted));
+  text-transform: none;
+}
+.ct-clockrow b {
+  color: hsl(var(--ink));
+  font-weight: 500;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.ct-tz {
+  color: hsl(var(--ink) / 0.36);
+}
+.ct-day {
+  position: relative;
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 9px;
+  overflow: hidden;
+  background: hsl(var(--ink) / 0.08);
+}
+.ct-day i {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, hsl(var(--indigo)), hsl(var(--lime)));
+  transform: scaleX(var(--day, 0));
+  transform-origin: 0 50%;
+}
+#contact .ct-note {
+  margin: 12px 0 0;
+  padding-top: 11px;
+  border-top: 1px solid hsl(var(--ink) / 0.07);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: hsl(var(--ink-muted));
+}
+
+.ct-mailrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ct-addr {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: hsl(var(--ink));
+  text-decoration: none;
+  word-break: break-all;
+  transition: color 220ms ease;
+}
+.ct-addr:hover {
+  color: hsl(var(--electric));
+}
+.ct-copy {
+  position: relative;
+  margin-left: auto;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid hsl(var(--ink) / 0.14);
+  background: hsl(var(--ink) / 0.04);
+  color: hsl(var(--ink) / 0.6);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease,
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ct-copy:hover {
+  color: hsl(var(--electric));
+  border-color: hsl(var(--electric) / 0.5);
+  transform: translateY(-1px);
+}
+.ct-copy > span {
+  grid-area: 1 / 1;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.ct-copyd {
+  opacity: 0;
+  transform: scale(0.6);
+  color: hsl(var(--lime));
+}
+.ct-copy.done .ct-copyi {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.ct-copy.done .ct-copyd {
+  opacity: 1;
+  transform: none;
+}
+.ct-sub {
+  color: hsl(var(--ink) / 0.36);
+  margin-top: 9px;
+  text-transform: none;
+}
+
+.ct-coffee {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: hsl(var(--ink));
+}
+#contact .ct-coffee + .ct-note {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 6px;
+}
+.ct-brew {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: hsl(var(--ink) / 0.82);
+  text-decoration: none;
+  text-transform: none;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  transition: color 200ms ease;
+}
+.ct-brew b {
+  color: hsl(var(--magenta));
+  font-weight: 400;
+}
+.ct-brew:hover {
+  color: hsl(var(--magenta));
+}
+
+/* ================================================================
+   THE FOOTER — the end of the piece
+   ================================================================ */
+.ftr {
+  position: relative;
+  z-index: 2;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 820px;
+  padding: clamp(56px, 9vh, 104px) var(--pad) calc(var(--rail) + 40px);
+  border-top: 1px solid hsl(var(--ink) / 0.08);
+  isolation: isolate;
+  overflow: hidden;
+}
+/* the same faint lime grid the live footer draws, and two corner glows */
+.ftr::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image:
+    linear-gradient(hsl(var(--lime)) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--lime)) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: linear-gradient(hsl(var(--ink)) 0%, transparent 78%);
+}
+.ftr::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 60% at 92% 0%, hsl(var(--indigo) / 0.2), transparent 62%),
+    radial-gradient(60% 60% at 4% 100%, hsl(var(--lime) / 0.08), transparent 60%),
+    linear-gradient(hsl(var(--bg-deep) / 0.86), hsl(var(--bg-deep) / 0.96));
+}
+.ftr-in {
+  max-width: 1180px;
+  margin-inline: auto;
+  position: relative;
+}
+.ftr-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  color: hsl(var(--ink) / 0.42);
+  margin-bottom: 22px;
+}
+.ftr-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  color: hsl(var(--lime));
+  border: 1px solid hsl(var(--lime) / 0.3);
+  background: hsl(var(--lime) / 0.08);
+  text-transform: none;
+  letter-spacing: 0.05em;
+}
+
+.ftr-h {
+  margin: 0 0 clamp(44px, 7vh, 84px);
+  font-size: clamp(44px, 8.4vw, 118px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.042em;
+  color: hsl(var(--ink));
+  text-wrap: balance;
+  max-width: 15ch;
+}
+@supports (text-box-trim: trim-both) {
+  .ftr-h {
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+    margin-top: 0.06em;
+  }
+}
+.ftr-h .rev {
+  display: inline-block;
+}
+.ftr-hello {
+  font-style: italic;
+  font-weight: 800;
+  text-decoration: none;
+  background-image: linear-gradient(96deg, hsl(var(--electric)), hsl(var(--indigo)) 46%, hsl(var(--magenta)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: filter 320ms ease;
+}
+.ftr-hello:hover,
+.ftr-hello:focus-visible {
+  filter: drop-shadow(0 0 18px hsl(var(--indigo) / 0.55)) drop-shadow(0 0 44px hsl(var(--magenta) / 0.35));
+}
+.ftr-dot {
+  color: hsl(var(--lime));
+}
+/* the headline lifts as it scrolls into view — Chrome and Safari run this
+   on the compositor; Firefox has no scroll timelines yet and simply gets
+   the reveal the IntersectionObserver already gives every .rev element */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ftr-h {
+      animation: ftrlift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+    @keyframes ftrlift {
+      from {
+        transform: translateY(24px);
+      }
+      to {
+        transform: translateY(-14px);
+      }
+    }
+  }
+}
+
+.ftr-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 3fr);
+  gap: clamp(22px, 3.4vw, 46px);
+  padding-bottom: 34px;
+  border-bottom: 1px solid hsl(var(--ink) / 0.09);
+}
+.ftr-id {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 18px;
+}
+.ftr-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 600;
+  color: hsl(var(--bg-deep));
+  background: linear-gradient(140deg, hsl(var(--ink)), hsl(199 20% 82%));
+  box-shadow: 0 8px 26px -12px hsl(var(--ink) / 0.7);
+}
+.ftr-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: hsl(var(--ink));
+}
+.ftr-role {
+  color: hsl(var(--ink) / 0.45);
+  margin-top: 3px;
+  text-transform: none;
+}
+.ftr-blurb {
+  margin: 0 0 20px;
+  max-width: 38ch;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: hsl(var(--ink-muted));
+}
+.ftr-soc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ftr-soc a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px 5px 5px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--ink) / 0.12);
+  background: hsl(var(--ink) / 0.035);
+  color: hsl(var(--ink) / 0.76);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ftr-soc b {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: hsl(var(--ink) / 0.08);
+  color: hsl(var(--ink) / 0.6);
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  transition:
+    color 220ms ease,
+    background-color 220ms ease;
+}
+.ftr-soc .arw {
+  font-family: var(--mono);
+  font-size: 10px;
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.ftr-soc a:hover,
+.ftr-soc a:focus-visible {
+  color: hsl(var(--ink));
+  border-color: hsl(var(--electric) / 0.45);
+  transform: translateY(-2px);
+}
+.ftr-soc a:hover b,
+.ftr-soc a:focus-visible b {
+  color: hsl(var(--bg-deep));
+  background: hsl(var(--electric));
+}
+.ftr-soc a:hover .arw,
+.ftr-soc a:focus-visible .arw {
+  opacity: 0.8;
+  transform: none;
+}
+
+.ftr-cap {
+  color: hsl(var(--ink) / 0.38);
+  margin-bottom: 16px;
+}
+.ftr-nav ul,
+.ftr-con ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 11px;
+  font-size: 13.5px;
+  color: hsl(var(--ink-muted));
+}
+.ftr-nav a,
+.ftr-con a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: hsl(var(--ink) / 0.82);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+.ftr-nav a:hover,
+.ftr-con a:hover,
+.ftr-nav a:focus-visible,
+.ftr-con a:focus-visible {
+  color: hsl(var(--lime));
+}
+.ftr-nav .arw {
+  font-family: var(--mono);
+  font-size: 10px;
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.ftr-nav a:hover .arw,
+.ftr-nav a:focus-visible .arw {
+  opacity: 0.75;
+  transform: none;
+}
+
+.ftr-legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 22px;
+}
+.ftr-legal p {
+  margin: 0;
+  color: hsl(var(--ink) / 0.4);
+  text-transform: none;
+  letter-spacing: 0.05em;
+}
+.ftr-utc {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.ftr-utc b {
+  color: hsl(var(--ink) / 0.7);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.ftr-term {
+  color: hsl(var(--lime));
+  font-style: normal;
+}
+
+/* ================================================================
+   HTML PINNED TO THE SCULPTURE
+   Only on a GPU tier: without one there is no beam to pin to, and the
+   section is complete without them.
+   ================================================================ */
+#beamAnchors {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  /* before the first frame the labels sit at 0,0 with a -50% translate;
+     clipping to the viewport keeps them out of the document's scroll box */
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+html[data-fx='live'] #beamAnchors {
+  display: block;
+}
+#beamAnchors.on {
+  opacity: 1;
+}
+.ba {
+  position: fixed;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.ba-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  color: hsl(var(--ink) / 0.8);
+  background: hsl(var(--bg-deep) / 0.72);
+  border: 1px solid hsl(var(--ink) / 0.12);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.ba-muzzle {
+  transform-origin: 50% 50%;
+}
+.ba-muzzle .ba-chip {
+  translate: -50% -50%;
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.3);
+}
+.ba-base .ba-chip {
+  translate: -50% -50%;
+  color: hsl(var(--ink) / 0.62);
+}
+
+/* the eight ticks that climb the beam — the three numbered ones are the
+   form's fields, and light when that field is focused or filled */
+.ba-rung {
+  gap: 7px;
+  translate: 0 -50%;
+}
+.ba-tick {
+  width: 14px;
+  height: 1px;
+  flex: none;
+  background: hsl(var(--ink) / 0.5);
+  transform-origin: 0 50%;
+  transition:
+    background-color 260ms ease,
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ba-rung b {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: hsl(var(--ink) / 0.62);
+  text-shadow: 0 1px 6px hsl(var(--bg-deep) / 0.95);
+  transition: color 260ms ease;
+}
+.ba-rung.on .ba-tick {
+  background: hsl(var(--lime));
+  box-shadow: 0 0 10px hsl(var(--lime) / 0.8);
+  transform: scaleX(1.9);
+}
+.ba-rung.on b {
+  color: hsl(var(--lime));
+}
+.ba-rung.done .ba-tick {
+  background: hsl(var(--electric) / 0.85);
+}
+.ba-rung.done b {
+  color: hsl(var(--electric) / 0.85);
+}
+/* send: every tick fires in sequence, bottom to top, as the shockwave
+   climbs the column */
+#beamAnchors.tx .ba-rung .ba-tick {
+  animation: rungfire 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#beamAnchors.tx .ba-rung[data-rung='0'] .ba-tick { animation-delay: 0ms; }
+#beamAnchors.tx .ba-rung[data-rung='1'] .ba-tick { animation-delay: 78ms; }
+#beamAnchors.tx .ba-rung[data-rung='2'] .ba-tick { animation-delay: 156ms; }
+#beamAnchors.tx .ba-rung[data-rung='3'] .ba-tick { animation-delay: 234ms; }
+#beamAnchors.tx .ba-rung[data-rung='4'] .ba-tick { animation-delay: 312ms; }
+#beamAnchors.tx .ba-rung[data-rung='5'] .ba-tick { animation-delay: 390ms; }
+#beamAnchors.tx .ba-rung[data-rung='6'] .ba-tick { animation-delay: 468ms; }
+#beamAnchors.tx .ba-rung[data-rung='7'] .ba-tick { animation-delay: 546ms; }
+@keyframes rungfire {
+  0% {
+    transform: scaleX(1);
+    background-color: hsl(var(--ink) / 0.5);
+  }
+  22% {
+    transform: scaleX(3.2);
+    background-color: hsl(var(--lime));
+    box-shadow: 0 0 14px hsl(var(--lime) / 0.9);
+  }
+  100% {
+    transform: scaleX(1);
+    background-color: hsl(var(--ink) / 0.5);
+  }
+}
+
+/* the packet: pinned to the muzzle, and it rides up the beam from the
+   pad on a compositor-only transform when a message is sent */
+.ba-pkt {
+  opacity: 0;
+  /* anchored with `manual: true`, so the position comes in as variables and
+     the transform is ours — which is what lets the packet ride the beam */
+  transform: translate3d(var(--ax, 0px), var(--ay, 0px), 0);
+}
+.ba-car {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  translate: -50% -50%;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: hsl(var(--lime));
+  border: 1px solid hsl(var(--lime) / 0.55);
+  background: hsl(var(--lime) / 0.14);
+  box-shadow:
+    0 0 22px hsl(var(--lime) / 0.45),
+    inset 0 0 12px hsl(var(--lime) / 0.25);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transform: translateY(var(--rise, 0px));
+}
+.ba-car b {
+  color: hsl(var(--bg-deep));
+  background: hsl(var(--lime));
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-weight: 500;
+}
+#beamAnchors.tx .ba-pkt {
+  opacity: var(--aa, 1);
+}
+#beamAnchors.tx .ba-car {
+  animation: pktrise 1020ms cubic-bezier(0.3, 0.02, 0.2, 1) both;
+}
+@keyframes pktrise {
+  0% {
+    transform: translateY(var(--rise, 300px)) scale(0.7);
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1.25);
+    opacity: 0;
+  }
+}
+
+/* ================================================================
+   PHONE
+   ================================================================ */
+@media (max-width: 900px) {
+  .ct-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  #contact::before {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--bg-deep) / 0) 0%,
+      hsl(var(--bg-deep) / 0.5) 16%,
+      hsl(var(--bg-deep) / 0.9) 30%,
+      hsl(var(--bg-deep) / 0.95) 60%,
+      hsl(var(--bg-deep) / 0.94) 100%
+    );
+  }
+}
+@media (max-width: 860px) {
+  #contact {
+    padding-top: 21vh;
+    padding-bottom: calc(var(--rail) + 40px);
+    justify-content: flex-end;
+    gap: 22px;
+  }
+  #contact h2 {
+    max-width: none;
+    margin: 14px 0 12px;
+  }
+  .ct-headrow {
+    gap: 10px;
+  }
+  .ftr-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+  }
+  .ftr-h {
+    max-width: none;
+  }
+  .ftr {
+    padding-bottom: calc(var(--rail) + 54px);
+  }
+  /* one column has no corridor: the labels would float over the copy and
+     under the header, so the phone gets the beam itself and nothing else */
+  html[data-fx='live'] #beamAnchors {
+    display: none;
+  }
+}
+@media (max-width: 560px) {
+  .ct-actions {
+    gap: 10px;
+  }
+  .ct-send {
+    width: 100%;
+    justify-content: center;
+  }
+  .ct-city {
+    font-size: 24px;
+  }
+}
+
+/* ================================================================
+   REDUCED MOTION — still designed, nothing loops
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .eq i {
+    animation: none;
+    transform: scaleY(0.62);
+  }
+  #beamAnchors.tx .ba-car,
+  #beamAnchors.tx .ba-rung .ba-tick,
+  #contact.sent .ct-send::after {
+    animation: none;
+  }
+  #beamAnchors.tx .ba-rung .ba-tick {
+    background: hsl(var(--lime));
+  }
+  .ct-card:hover,
+  .ftr-soc a:hover {
+    transform: none;
+  }
+}

@@ -92,6 +92,10 @@
         touch-action: pan-y pinch-zoom;
       }
       /* dragging the core must not paint a selection across the bio */
+      /* nothing decorative may widen the layout viewport: a wider document makes a phone zoom out, and every fixed layer with it */
+      html {
+        overflow-x: clip;
+      }
       html[data-drag='1'],
       html[data-drag='1'] body {
         -webkit-user-select: none;
@@ -661,6 +665,7 @@
       }
       .tcell span {
         color: hsl(var(--ink) / 0.72);
+        max-width: calc(100vw - 100px);
         font-variant-numeric: tabular-nums;
         /* every cell reserves the width its measured value will need, so the
            rail resolving cannot move a single pixel of the page */
@@ -795,7 +800,7 @@
 
       /* reveal on scroll. The stagger is sibling-index() — cross-browser since
          August 2026 — so no JavaScript touches these elements' style. */
-      .rev {
+      html[data-rev] .rev {
         opacity: 0;
         transform: translateY(22px);
         transition:
@@ -803,7 +808,7 @@
           transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
         transition-delay: calc(sibling-index() * 55ms);
       }
-      .rev.in {
+      html[data-rev] .rev.in {
         opacity: 1;
         transform: none;
       }

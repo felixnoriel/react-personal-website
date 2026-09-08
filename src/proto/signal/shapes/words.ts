@@ -6,7 +6,8 @@ import type { ShapeGen } from './index'
  * 1 — THE WORDS: "PRODUCT" / "ENGINEER" rasterised, sampled in column
  * order, given a slab of depth so the letterforms are volumes not decals.
  * ------------------------------------------------------------------ */
-function rasterColumns(lines: string[], font: string, w: number, h: number): Int16Array | null {
+/** draws the lines and yields the alpha buffer; the column scan happens in the caller, in slices */
+function rasterAlpha(lines: string[], font: string, w: number, h: number): Uint8ClampedArray | null {
   const cvs = document.createElement('canvas')
   cvs.width = w
   cvs.height = h
@@ -27,30 +28,27 @@ function rasterColumns(lines: string[], font: string, w: number, h: number): Int
     }
     ctx.fillText(lines[i], w / 2, lh * (i + 0.5))
   }
-  const img = ctx.getImageData(0, 0, w, h).data
-  let count = 0
-  for (let k = 3; k < img.length; k += 4) if (img[k] > 128) count++
-  if (count < 400) return null
-  const pts = new Int16Array(count * 2)
-  let j = 0
-  // column-major scan → already sorted left to right
-  for (let x = 0; x < w; x++)
-    for (let y = 0; y < h; y++)
-      if (img[(y * w + x) * 4 + 3] > 128) {
-        pts[j++] = x
-        pts[j++] = y
-      }
-  return pts
+  return ctx.getImageData(0, 0, w, h).data
 }
 
 export const words: ShapeGen = function* (out, n, scale, ctx) {
   const font = ctx.font
   const wide = ctx.wordWidth
-  const W = 900
-  const H = 320
-  const pts = rasterColumns(['PRODUCT', 'ENGINEER'], font, W, H)
+  const W = 640
+  const H = 228
+  const img = rasterAlpha(['PRODUCT', 'ENGINEER'], font, W, H)
   const rand = rng(0x9e3779b1)
   yield
+  // column-major scan (already sorted left to right), in slices of columns
+  let pts: Int16Array | null = null
+  if (img) {
+    const tmp: number[] = []
+    for (let x = 0; x < W; x++) {
+      for (let y = 0; y < H; y++) if (img[(y * W + x) * 4 + 3] > 128) tmp.push(x, y)
+      if (x % 40 === 39) yield
+    }
+    if (tmp.length >= 800) pts = Int16Array.from(tmp)
+  }
   if (!pts) {
     for (let i = 0; i < n; i++) {
       const o = i * 4

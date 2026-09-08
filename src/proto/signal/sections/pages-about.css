@@ -1,0 +1,718 @@
+/* ==========================================================================
+   pages-about — /about/ and /404/.
+
+   Both pages sit on the shared shell (template.html): .chapter, .inner,
+   .glass, .kicker, .mono, .rev, .cta, .tags are already defined there and
+   are reused, not redefined. Everything below is only what these two pages
+   add: the build cards with their live cells, the eight-pose strip, the
+   labels pinned to the sculpture, and the 404's index of the site.
+
+   Rules kept: no per-frame layout work (the pinned labels are transformed
+   from four custom properties the scene writes), every value cell reserves
+   its width so a measured number landing cannot move the page, and the
+   whole thing is still designed with no GPU and with reduced motion.
+   ========================================================================== */
+
+/* --------------------------------------------------------------- the head */
+
+.ab-hero .inner {
+  max-width: 680px;
+}
+.ab-lead {
+  font-size: clamp(16px, 1.5vw, 21px) !important;
+  line-height: 1.6;
+  color: hsl(var(--ink) / 0.82) !important;
+  max-width: 26em;
+}
+.ab-lead strong {
+  color: hsl(var(--ink));
+  font-weight: 700;
+}
+.ab-lead .hl {
+  font-weight: 700;
+  color: hsl(var(--magenta));
+  background: linear-gradient(96deg, hsl(var(--indigo)), hsl(var(--magenta)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.ab-emo {
+  font-size: 0.86em;
+  opacity: 0.68;
+  margin-left: 0.15em;
+  filter: saturate(0.75);
+}
+.ab-facts {
+  margin: 22px 0 0;
+}
+.ab-hero .endcard {
+  margin-top: 26px;
+}
+
+/* -------------------------------------------------- labels on the sculpture */
+
+/* One fixed overlay, so nothing here can ever push the article around. The
+   scene writes --ax/--ay (viewport px), --aw (depth 0..1) and --aa (fade);
+   placement and depth cueing happen here in CSS. */
+.ab-pins {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  contain: layout style;
+}
+.ab-pin {
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: -10px 0 0 -8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 3px 5px;
+  border-radius: 999px;
+  white-space: nowrap;
+  visibility: hidden;
+  transform: translate3d(var(--ax, 0px), var(--ay, 0px), 0);
+  /* the sculpture is brightest exactly where these sit, so they keep a floor
+     under the scene's depth fade and carry their own soft plate */
+  opacity: calc(0.45 + 0.55 * var(--aa, 0));
+  background: hsl(var(--bg-deep) / 0.5);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / calc(0.62 + 0.38 * var(--aw, 0.5)));
+  /* the core is brightest exactly where these sit: give every glyph its own
+     shadow rather than a plate, so nothing boxes the sculpture in */
+  text-shadow:
+    0 1px 2px hsl(var(--bg-deep)),
+    0 0 10px hsl(var(--bg-deep) / 0.95),
+    0 0 22px hsl(var(--bg-deep) / 0.8);
+}
+.ab-pin::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  flex: none;
+  border-radius: 50%;
+  background: hsl(var(--electric));
+  box-shadow: 0 0 9px hsl(var(--electric) / 0.9);
+}
+.ab-pin i {
+  font-style: normal;
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, hsl(var(--electric) / 0.5), transparent);
+}
+.ab-pin.lime::before {
+  background: hsl(var(--lime));
+  box-shadow: 0 0 9px hsl(var(--lime) / 0.9);
+}
+
+/* ---------------------------------------------------------- the build block */
+
+.ab-wide {
+  max-width: 1120px !important;
+}
+.ab-build {
+  padding-top: 15vh;
+  padding-bottom: 14vh;
+  justify-content: flex-start;
+}
+.ab-build h2 {
+  max-width: 15ch;
+}
+.ab-sub {
+  max-width: 46ch;
+}
+
+.ab-cards {
+  list-style: none;
+  margin: 34px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(292px, 1fr));
+  gap: 14px;
+}
+.ab-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 18px;
+  border-radius: 16px;
+  overflow: hidden;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+/* the light that runs along the top edge when the card is the live one */
+.ab-card::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 0;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, hsl(var(--electric) / 0.9), hsl(var(--magenta) / 0.7), transparent);
+  transition: opacity 320ms ease;
+}
+.ab-card.on,
+.ab-card:hover,
+.ab-card:focus-within {
+  transform: translateY(-3px);
+  border-color: hsl(var(--ink) / 0.2);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--ink) / 0.18),
+    0 26px 60px -30px hsl(var(--bg-deep));
+}
+.ab-card.on::after,
+.ab-card:hover::after,
+.ab-card:focus-within::after {
+  opacity: 1;
+}
+.ab-n {
+  color: hsl(var(--ink) / 0.28);
+  font-size: 10px;
+}
+.ab-card h3 {
+  margin: 8px 0 8px;
+  font-size: clamp(16px, 1.35vw, 19px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  color: hsl(var(--ink) / 0.96);
+}
+.ab-card p {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.62;
+  color: hsl(var(--ink-muted)) !important;
+}
+
+/* the measured cells. Each reserves its width, so a value landing later
+   cannot reflow the card. */
+.ab-live {
+  /* the measured values line up along the bottom of every card */
+  margin: auto 0 0;
+  padding: 13px 0 0;
+  border-top: 1px solid hsl(var(--ink) / 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+.ab-live > div {
+  min-width: 0;
+}
+.ab-live dt {
+  color: hsl(var(--ink) / 0.32);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.ab-live dd {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: hsl(var(--ink) / 0.78);
+  font-variant-numeric: tabular-nums;
+}
+.ab-live dd span {
+  display: inline-block;
+  width: var(--w, 5em);
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: hsl(var(--ink) / 0.38);
+}
+.ab-live dd span.set {
+  color: hsl(var(--lime));
+}
+.ab-live dd span.warm {
+  color: hsl(var(--magenta));
+}
+
+/* the tier switch — three real links, so it works with no JavaScript */
+.ab-swap {
+  margin: 12px 0 0 !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 9.5px !important;
+  line-height: 1 !important;
+}
+.ab-swap > span {
+  color: hsl(var(--ink) / 0.3);
+  flex-basis: 100%;
+  margin-bottom: 2px;
+}
+.ab-swap a {
+  padding: 6px 10px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: hsl(var(--ink) / 0.66);
+  border: 1px solid hsl(var(--ink) / 0.12);
+  background: hsl(var(--ink) / 0.03);
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+.ab-swap a:hover,
+.ab-swap a:focus-visible {
+  color: hsl(var(--ink));
+  border-color: hsl(var(--ink) / 0.26);
+  background: hsl(var(--ink) / 0.07);
+}
+.ab-swap a[aria-current='true'] {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.34);
+  background: hsl(var(--lime) / 0.08);
+}
+
+/* the three columns the old page had: front end, back end, hosting */
+.ab-spec {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 22px 30px;
+  border-top: 1px solid hsl(var(--ink) / 0.08);
+  padding-top: 24px;
+}
+.ab-col h3 {
+  margin: 0 0 12px;
+  color: hsl(var(--lime));
+  font-size: 10px;
+}
+.ab-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.ab-col li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: hsl(var(--ink-muted));
+}
+.ab-col li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 1px;
+  background: hsl(var(--electric) / 0.7);
+}
+
+/* ------------------------------------------------------- the eight poses */
+
+.ab-poses {
+  position: relative;
+}
+.ab-poses-head {
+  position: relative;
+  padding: 16vh var(--pad) 6vh;
+}
+.ab-poses-head::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    hsl(var(--bg-deep) / 0.94) 0%,
+    hsl(var(--bg-deep) / 0.84) 32%,
+    hsl(var(--bg-deep) / 0.4) 54%,
+    transparent 78%
+  );
+}
+/* Each row's scrim wraps its OWN copy, not the whole band: a full-width
+   scrim per row leaves a hard horizontal seam wherever two rows meet, and
+   these rows alternate sides. This one is a soft ellipse, so it has no edge. */
+.ab-pose-in::after {
+  content: '';
+  position: absolute;
+  inset: -18vh -22% -18vh -14%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 62% 42% at 42% 50%,
+    hsl(var(--bg-deep) / 0.95) 0%,
+    hsl(var(--bg-deep) / 0.88) 34%,
+    hsl(var(--bg-deep) / 0.52) 62%,
+    transparent 84%
+  );
+}
+.ab-pose.r .ab-pose-in::after {
+  inset: -18vh -14% -18vh -22%;
+  background: radial-gradient(
+    ellipse 62% 42% at 58% 50%,
+    hsl(var(--bg-deep) / 0.95) 0%,
+    hsl(var(--bg-deep) / 0.88) 34%,
+    hsl(var(--bg-deep) / 0.52) 62%,
+    transparent 84%
+  );
+}
+.ab-pose-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ab-pose {
+  position: relative;
+  /* tall enough that the core rests on the pose while its row is on screen:
+     chapters.ts holds a shape while the anchor's top sits between 25% and
+     62% of the viewport, which is exactly this row's reading position */
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  padding: 4vh var(--pad);
+}
+.ab-pose.r {
+  justify-content: flex-end;
+  text-align: right;
+}
+.ab-pose-in {
+  position: relative;
+  max-width: 430px;
+  padding-left: 20px;
+  opacity: 0.42;
+  transform: translateY(14px);
+  transition:
+    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ab-pose.r .ab-pose-in {
+  padding-left: 0;
+  padding-right: 20px;
+}
+/* the hairline that marks the pose the core is actually holding */
+.ab-pose-in::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: hsl(var(--ink) / 0.12);
+  transition: background-color 500ms ease;
+}
+.ab-pose.r .ab-pose-in::before {
+  left: auto;
+  right: 0;
+}
+.ab-pose.on .ab-pose-in {
+  opacity: 1;
+  transform: none;
+}
+.ab-pose.on .ab-pose-in::before {
+  background: linear-gradient(hsl(var(--electric)), hsl(var(--magenta)));
+  box-shadow: 0 0 16px hsl(var(--indigo) / 0.7);
+}
+.ab-pose-n {
+  display: block;
+  font-size: 10px;
+  color: hsl(var(--ink) / 0.26);
+  transition: color 500ms ease;
+}
+.ab-pose.on .ab-pose-n {
+  color: hsl(var(--lime));
+}
+.ab-pose h3 {
+  margin: 8px 0 10px;
+  font-size: clamp(24px, 3.1vw, 40px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: hsl(var(--ink));
+}
+.ab-pose p {
+  margin: 0 0 16px;
+  font-size: clamp(13.5px, 1vw, 15px);
+  line-height: 1.62;
+  color: hsl(var(--ink-muted));
+}
+.ab-pose-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 9.5px;
+  color: hsl(var(--ink) / 0.72);
+  border: 1px solid hsl(var(--ink) / 0.13);
+  background: hsl(var(--ink) / 0.035);
+  transition:
+    color 240ms ease,
+    border-color 240ms ease,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ab-pose-go i {
+  font-style: normal;
+  opacity: 0.6;
+}
+.ab-pose-go:hover,
+.ab-pose-go:focus-visible {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.34);
+  transform: translateX(3px);
+}
+.ab-pose.r .ab-pose-go:hover,
+.ab-pose.r .ab-pose-go:focus-visible {
+  transform: translateX(-3px);
+}
+
+/* ------------------------------------------------------------- the ending */
+
+.ab-end {
+  min-height: 62svh;
+  padding-bottom: calc(var(--rail) + 9vh);
+}
+.ab-made {
+  margin: 26px 0 0 !important;
+  color: hsl(var(--ink) / 0.34) !important;
+  font-size: 9.5px !important;
+}
+.ab-heart {
+  color: hsl(var(--magenta));
+}
+
+/* ------------------------------------------------------------------ 404 */
+
+.nf {
+  padding: calc(var(--rail) + 6vh) var(--pad) calc(var(--rail) + 5vh);
+}
+.nf .inner {
+  max-width: 640px;
+}
+.nf-lead {
+  font-size: clamp(15px, 1.25vw, 18px) !important;
+  color: hsl(var(--ink) / 0.78) !important;
+  max-width: 30em;
+}
+.nf-addr {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px !important;
+  padding: 10px 13px;
+  border-radius: 10px;
+  border: 1px solid hsl(var(--magenta) / 0.22);
+  background: hsl(var(--magenta) / 0.06);
+  max-width: 100%;
+  overflow: hidden;
+}
+.nf-k {
+  color: hsl(var(--ink) / 0.34);
+  flex: none;
+}
+.nf-path {
+  color: hsl(var(--ink) / 0.9);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 11.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.nf-x {
+  margin-left: auto;
+  flex: none;
+  color: hsl(var(--magenta));
+}
+.nf-links ul {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  border-top: 1px solid hsl(var(--ink) / 0.08);
+}
+.nf-links li {
+  border-bottom: 1px solid hsl(var(--ink) / 0.08);
+}
+.nf-links a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 6px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    padding-left 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 260ms ease;
+}
+.nf-links a:hover,
+.nf-links a:focus-visible {
+  padding-left: 14px;
+  background: hsl(var(--ink) / 0.04);
+}
+.nf-a {
+  color: hsl(var(--ink) / 0.24);
+  flex: none;
+}
+.nf-links b {
+  font-weight: 600;
+  font-size: 15px;
+  color: hsl(var(--ink) / 0.94);
+  flex: none;
+}
+.nf-links em {
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.4);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nf-go {
+  margin-left: auto;
+  flex: none;
+  font-style: normal;
+  color: hsl(var(--lime));
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 240ms ease,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nf-links a:hover .nf-go,
+.nf-links a:focus-visible .nf-go {
+  opacity: 1;
+  transform: none;
+}
+.nf .cta.ghost {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------- the phone */
+
+@media (max-width: 860px) {
+  .ab-hero .inner,
+  .nf .inner {
+    max-width: none;
+  }
+  .ab-lead {
+    font-size: 15.5px !important;
+    max-width: none;
+  }
+  .ab-build {
+    padding-top: 22vh;
+    padding-bottom: 9vh;
+  }
+  .ab-build h2,
+  .ab-sub {
+    max-width: none;
+  }
+  .ab-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 26px;
+  }
+  .ab-card {
+    padding: 17px 16px 15px;
+  }
+  .ab-spec {
+    margin-top: 26px;
+    gap: 20px;
+  }
+  .ab-poses-head {
+    padding: 20vh var(--pad) 4vh;
+  }
+  .ab-pose {
+    min-height: 62vh;
+    align-items: flex-end;
+    padding-bottom: 8vh;
+  }
+  .ab-pose.r {
+    justify-content: flex-start;
+    text-align: left;
+  }
+  .ab-pose.r .ab-pose-in {
+    padding-left: 20px;
+    padding-right: 0;
+  }
+  .ab-pose.r .ab-pose-in::before {
+    left: 0;
+    right: auto;
+  }
+  .ab-pose-in {
+    max-width: none;
+  }
+  /* the sculpture sits high on a phone and the copy under it, so the scrim
+     runs top-down instead of across */
+  .ab-poses-head::before {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--bg-deep) / 0) 0%,
+      hsl(var(--bg-deep) / 0.5) 20%,
+      hsl(var(--bg-deep) / 0.9) 36%,
+      hsl(var(--bg-deep) / 0.95) 60%,
+      hsl(var(--bg-deep) / 0.9) 92%,
+      hsl(var(--bg-deep) / 0.4) 100%
+    );
+  }
+  .ab-pose-in::after,
+  .ab-pose.r .ab-pose-in::after {
+    inset: -12vh -18% -14vh -18%;
+    background: radial-gradient(
+      ellipse 78% 46% at 46% 52%,
+      hsl(var(--bg-deep) / 0.96) 0%,
+      hsl(var(--bg-deep) / 0.9) 40%,
+      hsl(var(--bg-deep) / 0.55) 68%,
+      transparent 88%
+    );
+  }
+  .ab-pose h3 {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+  .nf-links a {
+    flex-wrap: wrap;
+    gap: 2px 10px;
+  }
+  .nf-links em {
+    flex-basis: 100%;
+  }
+  .nf-go {
+    opacity: 0.55;
+    transform: none;
+  }
+  .ab-pins {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------ no GPU, and calm motion */
+
+/* With no core there is nothing to pin a label to. */
+html[data-fx='css'] .ab-pins {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-pose-in {
+    opacity: 1;
+    transform: none;
+  }
+  .ab-card,
+  .ab-pose-in,
+  .ab-pose-go,
+  .nf-links a,
+  .nf-go {
+    transition: none;
+  }
+}

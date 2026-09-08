@@ -1,0 +1,1566 @@
+/* ============================================================ THE WRITING
+   /blog/ and the eighteen /blog/<slug>/ dispatches.
+
+   One device carries the whole group: the WIRE. On the archive it is a
+   sticky rail of eighteen knots beside the log — the page's copy of the
+   stream the core is holding. On a dispatch the same wire becomes the
+   article's rail: the reading progress runs down it and the contents
+   branch off it as taps.
+
+   Nothing here can move a pixel after paint: every photograph is a
+   <picture> with real width/height inside an aspect-ratio box, the search
+   and sort only reorder a list the reader asked to reorder, and the one
+   label that follows the sculpture is a fixed-position overlay.
+   ==================================================================== */
+
+/* the fixed chrome above the page: the rail, plus the phone chapter strip */
+.bl,
+.bp {
+  --chrome: calc(var(--rail) + 8px);
+  --edge: 1px solid hsl(var(--ink) / 0.09);
+}
+
+/* ============================================================== ARCHIVE */
+
+.bl {
+  justify-content: flex-start;
+  padding-top: calc(var(--chrome) + 8vh);
+  padding-bottom: 12vh;
+  gap: 30px;
+}
+.bl .inner {
+  max-width: 660px;
+}
+.bl h1 {
+  font-size: clamp(38px, 5.4vw, 74px);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  margin-block: 0.06em 0.26em;
+}
+.bl-head > p {
+  max-width: 46ch;
+}
+
+/* ------------------------------------------------------------ the counts */
+.bl-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 26px 0 0;
+  padding: 0;
+}
+.bl-stats > div {
+  padding-right: 22px;
+  margin-right: 22px;
+  border-right: var(--edge);
+}
+.bl-stats > div:last-child {
+  border-right: 0;
+  padding-right: 0;
+  margin-right: 0;
+}
+.bl-stats dd {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--ink));
+  text-transform: none;
+}
+.bl-stats dt {
+  color: hsl(var(--ink) / 0.44);
+  margin-top: 2px;
+}
+
+/* ------------------------------------------------- search and the order */
+.bl-bar {
+  max-width: 1020px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-bottom: 14px;
+  border-bottom: var(--edge);
+}
+.bl-find {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  max-width: 340px;
+  height: 40px;
+  padding: 0 14px 0 34px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--ink) / 0.13);
+  background: hsl(var(--ink) / 0.035);
+  transition:
+    border-color 240ms ease,
+    background-color 240ms ease;
+}
+.bl-find:focus-within {
+  border-color: hsl(var(--lime) / 0.5);
+  background: hsl(var(--lime) / 0.05);
+}
+.bl-mag {
+  position: absolute;
+  left: 13px;
+  font-size: 15px;
+  color: hsl(var(--ink) / 0.42);
+}
+.bl-find:focus-within .bl-mag {
+  color: hsl(var(--lime));
+}
+.bl-find input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: hsl(var(--ink));
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+.bl-find input::placeholder {
+  color: hsl(var(--ink) / 0.34);
+}
+.bl-find input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.bl-sort {
+  display: flex;
+  gap: 6px;
+}
+.bl-chip {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: hsl(var(--ink) / 0.6);
+  border: 1px solid hsl(var(--ink) / 0.12);
+  background: hsl(var(--ink) / 0.03);
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+.bl-chip:hover {
+  color: hsl(var(--ink) / 0.9);
+  border-color: hsl(var(--ink) / 0.24);
+}
+.bl-chip.on {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.36);
+  background: hsl(var(--lime) / 0.08);
+}
+.bl-count {
+  margin-left: auto;
+  color: hsl(var(--ink) / 0.36);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------- the wire */
+.bl-grid {
+  max-width: 1020px;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 0 22px;
+  align-items: start;
+}
+.bl-wire {
+  position: sticky;
+  top: calc(var(--chrome) + 34px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2px;
+  height: min(62svh, 560px);
+  padding: 6px 0;
+}
+.bl-line {
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: linear-gradient(
+    hsl(var(--ink) / 0) 0%,
+    hsl(var(--ink) / 0.2) 12%,
+    hsl(var(--ink) / 0.2) 88%,
+    hsl(var(--ink) / 0) 100%
+  );
+}
+.bl-knot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1 1 0;
+  min-height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+/* the bead on the wire; its weight is the post's word count */
+.bl-knot i {
+  width: calc(5px + var(--l) * 5px);
+  height: calc(5px + var(--l) * 5px);
+  margin-left: calc(7px - var(--l) * 2.5px);
+  flex: none;
+  border-radius: 50%;
+  background: hsl(var(--ink) / calc(0.26 + var(--l) * 0.4));
+  box-shadow: 0 0 0 3px hsl(var(--bg-deep));
+  transition:
+    background-color 260ms ease,
+    box-shadow 260ms ease,
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* the tick: how long that dispatch is */
+.bl-knot em {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: hsl(var(--ink) / 0.22);
+  font-variant-numeric: tabular-nums;
+  transition: color 220ms ease;
+}
+/* the title, revealed beside the wire on hover — absolute, so no reflow */
+.bl-knot b {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  z-index: 3;
+  translate: -6px -50%;
+  max-width: 46ch;
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: hsl(var(--ink) / 0.92);
+  background: hsl(var(--bg-deep) / 0.94);
+  border: 1px solid hsl(var(--lime) / 0.24);
+  box-shadow: 0 14px 34px -18px hsl(var(--bg-deep));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 200ms ease,
+    translate 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bl-knot:hover i,
+.bl-knot:focus-visible i,
+.bl-knot.on i {
+  background: hsl(var(--lime));
+  transform: scale(1.4);
+  box-shadow:
+    0 0 0 3px hsl(var(--bg-deep)),
+    0 0 14px hsl(var(--lime) / 0.8);
+}
+.bl-knot:hover em,
+.bl-knot.on em {
+  color: hsl(var(--lime) / 0.8);
+}
+.bl-knot:hover b,
+.bl-knot:focus-visible b {
+  opacity: 1;
+  translate: 0 -50%;
+}
+.bl-knot:focus-visible {
+  outline: 0;
+}
+.bl-knot:focus-visible i {
+  outline: 2px solid hsl(var(--lime));
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- the log */
+.bl-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.bl-item {
+  margin: 0;
+}
+.bl-item[hidden] {
+  display: none;
+}
+
+.bl-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 20px;
+  padding: 14px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid hsl(var(--ink) / 0.07);
+  background:
+    linear-gradient(150deg, hsl(var(--ink) / 0.05) 0%, hsl(var(--ink) / 0.025) 46%, hsl(var(--indigo) / 0.05) 100%),
+    hsl(var(--bg-deep) / 0.72);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  transition:
+    border-color 320ms ease,
+    background-color 320ms ease,
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bl-card::after {
+  /* the light on the leading edge, lit only when the row is the live one */
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(hsl(var(--electric)), hsl(var(--magenta)), hsl(var(--lime)));
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+.bl-card:hover,
+.bl-card:focus-visible,
+.bl-card.on {
+  border-color: hsl(var(--ink) / 0.16);
+  transform: translateX(4px);
+  outline: 0;
+}
+.bl-card:hover::after,
+.bl-card:focus-visible::after,
+.bl-card.on::after {
+  opacity: 1;
+}
+.bl-card:focus-visible {
+  border-color: hsl(var(--lime) / 0.6);
+}
+
+.bl-shot {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: 11px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    linear-gradient(150deg, hsl(var(--indigo) / 0.34) 0%, hsl(var(--electric) / 0.18) 60%, hsl(var(--bg-deep)) 100%);
+  box-shadow: inset 0 0 0 1px hsl(var(--ink) / 0.08);
+}
+.bl-shot picture {
+  display: block;
+}
+.bl-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 460ms ease;
+  filter: saturate(0.86) contrast(1.02);
+}
+.bl-card:hover .bl-img,
+.bl-card.on .bl-img {
+  transform: scale(1.06);
+  filter: saturate(1.06) contrast(1.04);
+}
+/* the number, and the scrim that keeps it readable on any photograph */
+.bl-shot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(200deg, transparent 42%, hsl(var(--bg-deep) / 0.72) 100%);
+  pointer-events: none;
+}
+.bl-pn {
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+  z-index: 2;
+  font-size: 17px;
+  font-weight: 500;
+  color: hsl(var(--ink) / 0.5);
+  font-variant-numeric: tabular-nums;
+  transition: color 260ms ease;
+}
+.bl-card:hover .bl-pn,
+.bl-card.on .bl-pn {
+  color: hsl(var(--lime) / 0.86);
+}
+
+.bl-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding: 2px 6px 2px 0;
+}
+.bl-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  color: hsl(var(--lime));
+  background: hsl(var(--lime) / 0.08);
+  border: 1px solid hsl(var(--lime) / 0.24);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.bl-title {
+  display: block;
+  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  color: hsl(var(--ink) / 0.95);
+  text-wrap: pretty;
+  transition: color 240ms ease;
+}
+.bl-card:hover .bl-title,
+.bl-card.on .bl-title {
+  color: hsl(var(--ink));
+}
+.bl-ex {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13.5px;
+  line-height: 1.58;
+  color: hsl(var(--ink-muted) / 0.86);
+}
+.bl-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 4px;
+  color: hsl(var(--ink) / 0.4);
+}
+.bl-meta i {
+  font-style: normal;
+  color: hsl(var(--ink) / 0.2);
+}
+.bl-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--lime));
+}
+.bl-go .arw {
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bl-card:hover .bl-go .arw {
+  transform: translate(3px, -3px);
+}
+/* the length of the read, as a hairline under the row */
+.bl-len {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 1px;
+  overflow: hidden;
+}
+.bl-len::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  transform: scaleX(calc(0.08 + var(--l) * 0.92));
+  background: linear-gradient(90deg, hsl(var(--electric) / 0.5), hsl(var(--magenta) / 0.4), transparent);
+  opacity: 0.5;
+  transition: opacity 320ms ease;
+}
+.bl-card:hover .bl-len::before,
+.bl-card.on .bl-len::before {
+  opacity: 1;
+}
+
+/* the newest dispatch reads as the front page of the archive */
+.bl-first .bl-card {
+  grid-template-columns: minmax(0, 46%) minmax(0, 1fr);
+  gap: 24px;
+  padding: 16px;
+  border-color: hsl(var(--ink) / 0.12);
+}
+.bl-first .bl-shot {
+  aspect-ratio: 16 / 9;
+}
+.bl-first .bl-title {
+  font-size: clamp(22px, 2.5vw, 33px);
+  font-weight: 700;
+  letter-spacing: -0.028em;
+  line-height: 1.06;
+}
+.bl-first .bl-ex {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  font-size: 14.5px;
+}
+.bl-first .bl-pn {
+  font-size: 24px;
+}
+
+/* ------------------------------------------------------------ empty state */
+.bl-none {
+  margin: 4px 0 0;
+  color: hsl(var(--ink) / 0.44);
+}
+.bl-clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: hsl(var(--lime));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.bl-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+.bl-foot .cta {
+  border: 1px solid hsl(var(--ink) / 0.14);
+  color: hsl(var(--ink) / 0.9);
+}
+
+/* ============================================================= DISPATCH */
+
+.bp {
+  position: relative;
+  padding: calc(var(--chrome) + 6vh) var(--pad) 12vh;
+  max-width: 1220px;
+  margin: 0 auto;
+}
+/* the same scrim the home page's chapters use: the core keeps its light on
+   the empty side of the page and never gets between the reader and a word */
+.bp::before {
+  content: '';
+  position: absolute;
+  inset: -8vh -6vw -4vh;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    hsl(var(--bg-deep) / 0.82) 0%,
+    hsl(var(--bg-deep) / 0.66) 40%,
+    hsl(var(--bg-deep) / 0.16) 66%,
+    transparent 80%
+  );
+}
+.bp-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 11px;
+  margin-bottom: 26px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: hsl(var(--ink) / 0.72);
+  border: 1px solid hsl(var(--ink) / 0.12);
+  background: hsl(var(--ink) / 0.03);
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bp-back i {
+  font-style: normal;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bp-back:hover {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.36);
+}
+.bp-back:hover i {
+  transform: translateX(-3px);
+}
+
+.bp-headgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 520px;
+  gap: 36px;
+  align-items: start;
+}
+.bp-headl {
+  min-width: 0;
+}
+.bp h1 {
+  margin: 0 0 18px;
+  font-size: clamp(31px, 3.9vw, 56px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.032em;
+  color: hsl(var(--ink));
+  text-wrap: balance;
+}
+.bp-lead {
+  margin: 0 0 24px;
+  max-width: 44ch;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.62;
+  color: hsl(var(--ink-muted));
+  text-wrap: pretty;
+}
+.bp-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  max-width: 520px;
+}
+.bp-facts > div {
+  padding: 9px 11px 10px;
+  border-radius: 11px;
+}
+.bp-facts dt {
+  color: hsl(var(--ink) / 0.42);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.bp-facts dd {
+  margin: 3px 0 0;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: hsl(var(--ink) / 0.94);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------- cover and frames */
+.bp-headr {
+  min-width: 0;
+  /* the cover's top edge lines up with the cap height of the title, not with
+     the kicker above it */
+  margin-top: 26px;
+}
+.bp-cover {
+  position: relative;
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid hsl(var(--ink) / 0.1);
+  background: linear-gradient(150deg, hsl(var(--indigo) / 0.3), hsl(var(--bg-deep)));
+  box-shadow: 0 30px 70px -40px hsl(var(--bg-deep));
+}
+.bp-cover picture {
+  display: block;
+  aspect-ratio: 16 / 9;
+}
+.bp-coverimg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.94);
+}
+.bp-cover figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 12px 10px;
+  border-top: 1px solid hsl(var(--ink) / 0.08);
+  background: hsl(var(--bg-deep) / 0.72);
+  color: hsl(var(--ink) / 0.44);
+}
+.bp-cover figcaption span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bp-covern {
+  flex: none;
+  color: hsl(var(--lime) / 0.7);
+  font-variant-numeric: tabular-nums;
+}
+
+.bp-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  align-items: stretch;
+}
+.bp-th {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 9px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid hsl(var(--ink) / 0.09);
+  background: hsl(var(--indigo) / 0.16);
+  transition:
+    border-color 260ms ease,
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bp-th picture {
+  display: block;
+  height: 100%;
+}
+.bp-thimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.72;
+  transition:
+    opacity 300ms ease,
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bp-th b {
+  position: absolute;
+  left: 6px;
+  bottom: 4px;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: hsl(var(--ink) / 0.8);
+  text-shadow: 0 1px 6px hsl(var(--bg-deep));
+}
+.bp-th:hover {
+  border-color: hsl(var(--lime) / 0.5);
+  transform: translateY(-3px);
+}
+.bp-th:hover .bp-thimg {
+  opacity: 1;
+  transform: scale(1.08);
+}
+.bp-more {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  border-radius: 9px;
+  border: 1px dashed hsl(var(--ink) / 0.14);
+  color: hsl(var(--ink) / 0.4);
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------- the body */
+.bp-body {
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  gap: 48px;
+  margin-top: 56px;
+  padding-top: 34px;
+  border-top: var(--edge);
+  align-items: start;
+}
+.bp-rail {
+  position: sticky;
+  top: calc(var(--chrome) + 26px);
+  max-height: calc(100svh - var(--chrome) - var(--rail) - 40px);
+  overflow: auto;
+  scrollbar-width: none;
+}
+.bp-rail::-webkit-scrollbar {
+  display: none;
+}
+.bp-railin {
+  position: relative;
+  padding-left: 18px;
+}
+/* the wire, and the light travelling down it as the dispatch is read */
+.bp-prog {
+  position: absolute;
+  left: 3px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: hsl(var(--ink) / 0.13);
+  overflow: hidden;
+}
+.bp-prog i {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 0;
+  transform: scaleY(var(--read, 0));
+  background: linear-gradient(hsl(var(--electric)), hsl(var(--indigo)), hsl(var(--magenta)), hsl(var(--lime)));
+  box-shadow: 0 0 10px hsl(var(--indigo) / 0.7);
+}
+@supports (animation-timeline: scroll()) {
+  .bp-prog i {
+    transform: scaleY(0);
+    animation: bp-read linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes bp-read {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.bp-cap {
+  display: block;
+  color: hsl(var(--ink) / 0.34);
+  margin-bottom: 10px;
+}
+.bp-toc {
+  margin: 0 0 26px;
+}
+.bp-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.bp-toc a {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 6px 5px 0;
+  font-size: 12px;
+  line-height: 1.38;
+  text-decoration: none;
+  color: hsl(var(--ink) / 0.5);
+  transition: color 220ms ease;
+}
+.bp-toc a i {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin: 5px 0 0 -18px;
+  border-radius: 50%;
+  background: hsl(var(--ink) / 0.2);
+  box-shadow: 0 0 0 3px hsl(var(--bg-deep));
+  transition:
+    background-color 240ms ease,
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bp-toc a span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.bp-t3 a {
+  padding-left: 12px;
+  font-size: 11.5px;
+  color: hsl(var(--ink) / 0.38);
+}
+.bp-t3 a i {
+  margin-left: -30px;
+  width: 4px;
+  height: 4px;
+}
+.bp-toc a:hover,
+.bp-toc a:focus-visible {
+  color: hsl(var(--ink) / 0.92);
+}
+.bp-toc a.on {
+  color: hsl(var(--lime));
+}
+.bp-toc a.on i {
+  background: hsl(var(--lime));
+  transform: scale(1.5);
+}
+
+/* ------------------------------------------------------------- broadcast */
+.bp-share {
+  display: grid;
+  gap: 5px;
+}
+.bp-sh {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: hsl(var(--ink) / 0.56);
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+.bp-sh b {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  flex: none;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: hsl(var(--ink) / 0.7);
+  border: 1px solid hsl(var(--ink) / 0.14);
+  background: hsl(var(--ink) / 0.04);
+  transition:
+    color 220ms ease,
+    border-color 220ms ease;
+}
+.bp-sh:hover {
+  color: hsl(var(--ink));
+  border-color: hsl(var(--ink) / 0.12);
+  background: hsl(var(--ink) / 0.035);
+}
+.bp-sh:hover b {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.44);
+}
+.bp-copy.done {
+  color: hsl(var(--lime));
+}
+.bp-copy.done b {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.5);
+}
+.bp-mshare {
+  display: none;
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: var(--edge);
+}
+
+/* ================================================================= PROSE */
+
+.bp-prose {
+  min-width: 0;
+  max-width: 640px;
+  font-size: clamp(15.5px, 1.08vw, 17px);
+  line-height: 1.78;
+  color: hsl(var(--ink) / 0.82);
+  text-wrap: pretty;
+}
+.bp-open {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+  color: hsl(var(--ink) / 0.3);
+}
+.bp-open::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, hsl(var(--ink) / 0.16), transparent);
+}
+/* the prose is one long list of siblings: the shell's sibling-index() stagger
+   would put the fortieth paragraph two seconds behind, so each block here
+   reveals on its own as it arrives */
+.bp-prose .rev {
+  transition-delay: 0ms;
+}
+.bp-prose p {
+  margin: 0 0 1.25em;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+/* the first line of the dispatch, set like a first line (only where the
+   paragraph opens with a letter — see the renderer) */
+.bp-prose > p.bp-cap1::first-letter {
+  float: left;
+  margin: 0.06em 0.09em 0 0;
+  font-size: 3.1em;
+  line-height: 0.82;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: hsl(var(--lime));
+}
+.bp-prose strong,
+.bp-prose b {
+  color: hsl(var(--ink));
+  font-weight: 600;
+}
+.bp-prose a {
+  color: hsl(var(--electric));
+  text-decoration: none;
+  background-image: linear-gradient(hsl(var(--electric) / 0.6), hsl(var(--electric) / 0.6));
+  background-size: 100% 1px;
+  background-position: 0 1.15em;
+  background-repeat: no-repeat;
+  transition:
+    color 220ms ease,
+    background-size 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bp-prose a:hover {
+  color: hsl(var(--lime));
+  background-image: linear-gradient(hsl(var(--lime)), hsl(var(--lime)));
+  background-size: 100% 2px;
+}
+.bp-prose a[target='_blank']::after {
+  content: '↗';
+  font-family: var(--mono);
+  font-size: 0.72em;
+  vertical-align: super;
+  margin-left: 0.2em;
+  opacity: 0.55;
+}
+
+.bp-h {
+  position: relative;
+  margin: 2.1em 0 0.7em;
+  font-weight: 800;
+  letter-spacing: -0.028em;
+  line-height: 1.12;
+  color: hsl(var(--ink));
+  scroll-margin-top: calc(var(--chrome) + 42px);
+  text-wrap: balance;
+}
+h2.bp-h {
+  font-size: clamp(23px, 2.1vw, 30px);
+  padding-left: 16px;
+}
+h2.bp-h::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.16em;
+  bottom: 0.16em;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(hsl(var(--lime)), hsl(var(--electric)));
+}
+h3.bp-h {
+  font-size: clamp(18px, 1.5vw, 22px);
+  color: hsl(var(--ink) / 0.92);
+}
+.bp-anchor {
+  margin-left: 0.4em;
+  font-family: var(--mono);
+  font-size: 0.5em;
+  font-weight: 400;
+  color: hsl(var(--lime) / 0.7);
+  text-decoration: none;
+  background: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.bp-h:hover .bp-anchor,
+.bp-anchor:focus-visible {
+  opacity: 1;
+}
+
+.bp-prose ul,
+.bp-prose ol {
+  margin: 0 0 1.4em;
+  padding-left: 1.3em;
+}
+.bp-prose li {
+  margin-bottom: 0.5em;
+}
+.bp-prose li::marker {
+  color: hsl(var(--lime) / 0.75);
+}
+.bp-prose blockquote {
+  position: relative;
+  margin: 1.8em 0;
+  padding: 4px 0 4px 22px;
+  border-left: 2px solid hsl(var(--magenta) / 0.5);
+  font-size: 1.06em;
+  line-height: 1.6;
+  color: hsl(var(--ink) / 0.92);
+}
+.bp-prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+.bp-prose hr {
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px dashed hsl(var(--ink) / 0.16);
+}
+.bp-prose sup {
+  font-size: 0.7em;
+}
+
+/* ------------------------------------------------------------ the frames */
+.bp-fig {
+  position: relative;
+  margin: 2em 0;
+  /* a long dispatch carries eighty of these; skip the ones far off screen */
+  padding-top: 17px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+  scroll-margin-top: calc(var(--chrome) + 28px);
+}
+.bp-fig picture {
+  display: block;
+}
+/* the frame is the image itself, so a portrait shot is held to a readable
+   height without letterboxing and a landscape one still fills the column */
+.bp-shot {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 76svh;
+  margin-inline: auto;
+  border-radius: 13px;
+  border: 1px solid hsl(var(--ink) / 0.09);
+  background: linear-gradient(150deg, hsl(var(--indigo) / 0.2), hsl(var(--bg-deep)));
+  box-shadow: 0 26px 60px -40px hsl(var(--bg-deep));
+}
+.bp-fig figcaption {
+  margin-top: 9px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  color: hsl(var(--ink) / 0.4);
+  padding-left: 2px;
+}
+.bp-fn {
+  position: absolute;
+  left: 1px;
+  top: 0;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: hsl(var(--ink) / 0.24);
+  font-variant-numeric: tabular-nums;
+}
+.bp-inline {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+/* the three sources that are gone from the bucket: draw the plate instead */
+.bp-fig.is-gone picture,
+.bp-fig.is-gone img {
+  display: none;
+}
+.bp-fig.is-gone::before {
+  content: attr(data-alt);
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  padding: 20px;
+  text-align: center;
+  border-radius: 13px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: hsl(var(--ink) / 0.44);
+  border: 1px dashed hsl(var(--ink) / 0.16);
+  background:
+    repeating-linear-gradient(
+      126deg,
+      hsl(var(--indigo) / 0.14) 0 10px,
+      transparent 10px 22px
+    ),
+    linear-gradient(150deg, hsl(var(--indigo) / 0.16), hsl(var(--bg-deep)));
+}
+
+/* --------------------------------------------------------------- the end */
+.bp-close {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 46px;
+  padding-top: 18px;
+  border-top: var(--edge);
+  color: hsl(var(--ink) / 0.36);
+}
+.bp-sign {
+  color: hsl(var(--ink) / 0.24);
+}
+
+.bp-pn {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 56px;
+}
+.bp-sib {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px 18px 18px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 300ms ease,
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+a.bp-sib:hover {
+  transform: translateY(-3px);
+  border-color: hsl(var(--lime) / 0.34);
+}
+.bp-sibcap {
+  color: hsl(var(--lime) / 0.75);
+}
+.bp-sib .bl-title {
+  font-size: 17px;
+}
+.bp-sibmeta {
+  display: flex;
+  gap: 6px;
+  color: hsl(var(--ink) / 0.36);
+}
+.bp-sibmeta i {
+  font-style: normal;
+  color: hsl(var(--ink) / 0.18);
+}
+.bp-sib.is-end {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border: 1px dashed hsl(var(--ink) / 0.12);
+  color: hsl(var(--ink) / 0.3);
+}
+.bp .bl-foot {
+  margin-top: 30px;
+}
+
+/* ==================================================== the label on the wire
+   One chip, pinned to the knot of the dispatch the reader is on. The scene
+   writes --ax/--ay/--aw/--aa; nothing here reads layout. */
+.bl-mark {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 11px 5px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 40ch;
+  overflow: hidden;
+  visibility: hidden;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: hsl(var(--ink) / 0.9);
+  background: hsl(var(--bg-deep) / 0.82);
+  border: 1px solid hsl(var(--lime) / 0.28);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: translate3d(var(--ax, 0), var(--ay, 0), 0) scale(calc(0.86 + var(--aw, 0.5) * 0.2));
+  opacity: calc(var(--aa, 0) * var(--show, 0));
+  transition: opacity 260ms ease;
+}
+.bl-mark i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: hsl(var(--lime));
+  box-shadow: 0 0 9px hsl(var(--lime));
+}
+.bl-mark b {
+  font-weight: 400;
+  color: hsl(var(--lime));
+}
+.bl-mark em {
+  font-style: normal;
+  color: hsl(var(--ink) / 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================= reordering the archive */
+/* the rows fly to their new places; the live canvas behind them is told to
+   hold still, or the browser cross-fades a moving picture against itself */
+html[data-blvt='1'] ::view-transition-old(root),
+html[data-blvt='1'] ::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal;
+}
+.bl-log.vt .bl-item {
+  view-transition-name: match-element;
+}
+
+/* ============================================================= the phone */
+@media (max-width: 860px) {
+  .bl,
+  .bp {
+    --chrome: calc(var(--rail) + 38px);
+  }
+  .bl {
+    justify-content: flex-start;
+    padding-top: calc(var(--chrome) + 4vh);
+    padding-bottom: calc(var(--rail) + 60px);
+    gap: 22px;
+  }
+  /* one column of reading, so the sculpture sits behind a real scrim rather
+     than through the middle of a sentence */
+  .bl::before,
+  .bp::before {
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--bg-deep) / 0.5) 0%,
+      hsl(var(--bg-deep) / 0.86) 11%,
+      hsl(var(--bg-deep) / 0.93) 34%,
+      hsl(var(--bg-deep) / 0.95) 100%
+    );
+  }
+  .bl-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 0;
+  }
+  .bl-stats > div,
+  .bl-stats > div:last-child {
+    padding-right: 14px;
+    margin-right: 0;
+  }
+  .bl-stats > div:nth-child(2n) {
+    border-right: 0;
+  }
+  .bl h1 {
+    font-size: clamp(32px, 9.4vw, 44px);
+  }
+  .bl-stats dd {
+    font-size: 19px;
+  }
+  .bl-bar {
+    gap: 9px;
+  }
+  .bl-find {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .bl-count {
+    margin-left: 0;
+  }
+
+  /* the wire lies down: eighteen knots as a strip above the log */
+  .bl-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .bl-wire {
+    position: static;
+    flex-direction: row;
+    height: 34px;
+    gap: 0;
+    padding: 0;
+    margin: 0 -2px;
+  }
+  .bl-line {
+    left: 4px;
+    right: 4px;
+    top: 50%;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--ink) / 0) 0%,
+      hsl(var(--ink) / 0.2) 8%,
+      hsl(var(--ink) / 0.2) 92%,
+      hsl(var(--ink) / 0) 100%
+    );
+  }
+  .bl-knot {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 34px;
+    justify-content: center;
+    gap: 0;
+  }
+  .bl-knot i {
+    margin: 0;
+  }
+  .bl-knot:hover i,
+  .bl-knot.on i {
+    transform: scale(1.6);
+  }
+  .bl-knot em,
+  .bl-knot b {
+    display: none;
+  }
+
+  .bl-card,
+  .bl-first .bl-card {
+    grid-template-columns: 108px minmax(0, 1fr);
+    gap: 13px;
+    padding: 11px;
+    border-radius: 14px;
+  }
+  .bl-card:hover,
+  .bl-card.on {
+    transform: none;
+  }
+  .bl-shot,
+  .bl-first .bl-shot {
+    aspect-ratio: 1;
+  }
+  .bl-first .bl-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bl-first .bl-shot {
+    aspect-ratio: 16 / 9;
+  }
+  .bl-first .bl-title {
+    font-size: 24px;
+  }
+  .bl-title {
+    font-size: 16px;
+  }
+  .bl-ex {
+    font-size: 13px;
+  }
+  .bl-len {
+    left: 11px;
+    right: 11px;
+    bottom: 4px;
+  }
+  .bl-mark {
+    display: none;
+  }
+
+  /* ---- the dispatch on a phone ---- */
+  .bp {
+    padding-top: calc(var(--chrome) + 3vh);
+    padding-bottom: calc(var(--rail) + 60px);
+  }
+  .bp-back {
+    margin-bottom: 18px;
+  }
+  .bp-headgrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  .bp h1 {
+    font-size: clamp(27px, 7.8vw, 36px);
+  }
+  .bp-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: none;
+  }
+  .bp-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    margin-top: 34px;
+    padding-top: 24px;
+  }
+  /* the rail becomes a strip that stays with the reader: progress only,
+     with the contents folded away behind a disclosure */
+  .bp-rail {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    margin-bottom: 26px;
+  }
+  .bp-railin {
+    padding-left: 16px;
+  }
+  .bp-toc {
+    max-height: 168px;
+    overflow: auto;
+    margin-bottom: 0;
+    scrollbar-width: none;
+  }
+  .bp-toc::-webkit-scrollbar {
+    display: none;
+  }
+  .bp-rail .bp-share {
+    display: none;
+  }
+  .bp-mshare {
+    display: block;
+  }
+  .bp-mshare .bp-share {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bp-prose {
+    max-width: none;
+  }
+  .bp-fig {
+    margin: 1.7em 0;
+  }
+  .bp-pn {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 38px;
+  }
+  .bp-strip {
+    gap: 6px;
+  }
+}
+
+/* wide desktops: the archive gets a second column of rows */
+@media (min-width: 1320px) {
+  .bl-bar,
+  .bl-grid {
+    max-width: 1240px;
+  }
+  .bl-log {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .bl-first {
+    grid-column: 1 / -1;
+  }
+  .bl-card {
+    grid-template-columns: 168px minmax(0, 1fr);
+    height: 100%;
+  }
+  .bl-first .bl-card {
+    grid-template-columns: minmax(0, 44%) minmax(0, 1fr);
+  }
+}
+
+/* ==================================================== calm, when asked for */
+@media (prefers-reduced-motion: reduce) {
+  .bl-card:hover,
+  .bl-card.on,
+  a.bp-sib:hover,
+  .bp-th:hover {
+    transform: none;
+  }
+  .bl-card:hover .bl-img,
+  .bl-card.on .bl-img,
+  .bp-th:hover .bp-thimg {
+    transform: none;
+  }
+  .bp-prog i {
+    animation: none;
+    transform: scaleY(var(--read, 0));
+  }
+}

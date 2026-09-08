@@ -12,7 +12,7 @@
  * slices without ever blocking a frame.
  */
 
-export const CHUNK = 12000
+export const CHUNK = 2000
 
 /** deterministic xorshift so every tier draws the same sculpture */
 export function rng(seed: number) {

@@ -1,0 +1,711 @@
+/* ============================================================ WRITING
+   The archive: one feature and a seventeen-row log, read against the
+   stream sculpture. Cards are dark frosted glass, so the core's light
+   blooms through them as they pass instead of fighting the type.
+   Layout is fixed by the markup (aspect-ratio plates, reserved widths):
+   nothing here can move a pixel once the page has painted.
+   ==================================================================== */
+
+.wr {
+  justify-content: flex-start;
+  padding-top: 15vh;
+  padding-bottom: 13vh;
+  gap: 26px;
+  /* the tallest block on the page; skip its layout until it is near */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1950px;
+}
+.wr .inner {
+  max-width: 660px;
+}
+
+/* ---------------------------------------------------------- the numbers */
+.wr-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 22px 0 0;
+  padding: 0;
+}
+.wr-stats > div {
+  padding-right: 22px;
+  margin-right: 22px;
+  border-right: 1px solid hsl(var(--ink) / 0.09);
+}
+.wr-stats > div:last-child {
+  border-right: 0;
+}
+.wr-stats dd {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--ink));
+  text-transform: none;
+}
+.wr-stats dt {
+  color: hsl(var(--ink) / 0.44);
+  margin-top: 2px;
+}
+
+/* ------------------------------------------- the eighteen-bar index/legend */
+.wr-idxcap {
+  display: flex;
+  justify-content: space-between;
+  max-width: 268px;
+  margin-top: 24px;
+  color: hsl(var(--ink) / 0.34);
+}
+.wr-index {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 46px;
+  margin: 7px 0 2px;
+  padding-bottom: 7px;
+  width: max-content;
+  max-width: 100%;
+}
+.wr-base {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 1px;
+  background: linear-gradient(90deg, hsl(var(--electric) / 0.5), hsl(var(--magenta) / 0.42), transparent);
+}
+.wr-index i {
+  width: 7px;
+  border-radius: 2px 2px 0 0;
+  height: calc(10px + var(--l) * 30px);
+  background: linear-gradient(hsl(var(--electric) / 0.85), hsl(var(--indigo) / 0.45));
+  opacity: 0.62;
+  transition:
+    opacity 240ms ease,
+    height 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 240ms ease;
+}
+.wr-index i.lead {
+  opacity: 0.8;
+}
+.wr-index i.on {
+  opacity: 1;
+  height: calc(15px + var(--l) * 30px);
+  background: linear-gradient(hsl(var(--lime)), hsl(var(--lime) / 0.35));
+  box-shadow: 0 0 12px hsl(var(--lime) / 0.55);
+}
+@media (hover: hover) {
+  .wr-index {
+    pointer-events: auto;
+    cursor: crosshair;
+  }
+}
+
+/* -------------------------------------------------------------- the plate
+   A contour cover drawn from the post's own slug. If the photo ever loads,
+   .wr-photo covers it — same box, so nothing moves either way. */
+.wr-plate {
+  position: relative;
+  display: block;
+  aspect-ratio: var(--ar, 16/9);
+  border-radius: 11px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    linear-gradient(var(--a, 140deg), hsl(var(--c1) / 0.42) 0%, hsl(var(--c2) / 0.24) 58%, hsl(var(--bg-deep) / 0.92) 100%);
+  box-shadow: inset 0 0 0 1px hsl(var(--ink) / 0.09);
+}
+.wr-plate::before {
+  content: '';
+  position: absolute;
+  inset: -34%;
+  background: repeating-radial-gradient(
+    circle at var(--cx, 34%) var(--cy, 64%),
+    transparent 0 7px,
+    hsl(var(--ink) / 0.16) 7px 8px
+  );
+  -webkit-mask-image: radial-gradient(115% 96% at var(--cx, 34%) var(--cy, 64%), #000 18%, transparent 76%);
+  mask-image: radial-gradient(115% 96% at var(--cx, 34%) var(--cy, 64%), #000 18%, transparent 76%);
+  transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wr-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(200deg, transparent 34%, hsl(var(--bg-deep) / 0.72) 100%);
+}
+/* With a photograph in the frame the same overlay becomes a duotone, so
+   eighteen 2018 travel shots sit inside this page's palette instead of
+   shouting over it — and the drawn contours step back but stay as texture. */
+.wr-plate:has(.wr-photo)::after {
+  background:
+    linear-gradient(200deg, transparent 22%, hsl(var(--bg-deep) / 0.82) 100%),
+    linear-gradient(var(--a, 140deg), hsl(var(--c1) / 0.46), hsl(var(--c2) / 0.28) 62%, transparent);
+  mix-blend-mode: multiply;
+}
+.wr-plate:has(.wr-photo)::before {
+  opacity: 0.36;
+}
+.wr-plate.noimg::before {
+  opacity: 1;
+}
+.wr-plate.noimg::after {
+  background: linear-gradient(200deg, transparent 34%, hsl(var(--bg-deep) / 0.72) 100%);
+  mix-blend-mode: normal;
+}
+.wr-pn {
+  position: absolute;
+  right: 7px;
+  bottom: 4px;
+  z-index: 3;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: hsl(var(--ink) / 0.24);
+  font-variant-numeric: tabular-nums;
+  transition: color 260ms ease;
+}
+.wr-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* at rest the archive is one muted, palette-tinted grid; the dispatch you
+     point at is the one that gets its colour back */
+  filter: saturate(0.5) contrast(1.06) brightness(0.92);
+  transition:
+    scale 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 460ms ease;
+}
+.wr-card:hover .wr-photo,
+.wr-card:focus-visible .wr-photo,
+.wr-card.on .wr-photo {
+  scale: 1.06;
+  filter: saturate(1.02) contrast(1.05) brightness(1.02);
+}
+.wr-plate.noimg .wr-photo {
+  display: none;
+}
+.wr-card:hover .wr-plate::before,
+.wr-card:focus-visible .wr-plate::before,
+.wr-card.on .wr-plate::before {
+  transform: scale(1.13) rotate(2.5deg);
+}
+.wr-card:hover .wr-plate:has(.wr-photo)::after,
+.wr-card.on .wr-plate:has(.wr-photo)::after {
+  opacity: 0.72;
+}
+.wr-plate:has(.wr-photo)::after {
+  transition: opacity 460ms ease;
+}
+.wr-card:hover .wr-pn,
+.wr-card.on .wr-pn {
+  color: hsl(var(--lime) / 0.72);
+}
+
+/* ------------------------------------------------------------ the feature */
+.wr-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.wr-feature {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 44%) minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  max-width: min(54vw, 700px);
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(150deg, hsl(var(--bg-deep) / 0.74), hsl(253 34% 9% / 0.62));
+  border: 1px solid hsl(var(--ink) / 0.11);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: 0 24px 60px -34px hsl(var(--bg-deep));
+  transition:
+    translate 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+/* the pointer is a light on the card's surface */
+.wr-feature::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms ease;
+  background: radial-gradient(
+    240px 240px at var(--mx, 50%) var(--my, 50%),
+    hsl(var(--lime) / 0.13),
+    hsl(var(--electric) / 0.07) 46%,
+    transparent 72%
+  );
+}
+.wr-feature:hover,
+.wr-feature.on,
+.wr-feature:focus-visible {
+  translate: 0 -3px;
+  border-color: hsl(var(--lime) / 0.34);
+  box-shadow:
+    0 30px 70px -34px hsl(var(--bg-deep)),
+    0 0 0 1px hsl(var(--lime) / 0.12);
+}
+.wr-feature:hover::after {
+  opacity: 1;
+}
+.wr-fbody {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+.wr-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: hsl(var(--lime));
+}
+.wr-tag .dot {
+  width: 5px;
+  height: 5px;
+}
+.wr-ftitle {
+  margin: 0;
+  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: hsl(var(--ink));
+  text-wrap: balance;
+}
+.wr-fex {
+  font-size: 13px;
+  line-height: 1.58;
+  color: hsl(var(--ink-muted));
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.wr-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--lime));
+}
+.wr-go .arw {
+  font-family: var(--mono);
+  font-size: 11px;
+  transition: translate 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wr-card:hover .wr-go .arw {
+  translate: 3px -3px;
+}
+
+.wr-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: hsl(var(--ink) / 0.44);
+  font-variant-numeric: tabular-nums;
+}
+.wr-meta i {
+  font-style: normal;
+  color: hsl(var(--ink) / 0.22);
+}
+
+/* --------------------------------------------------------- the sort bar */
+.wr-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  max-width: min(54vw, 700px);
+  padding-bottom: 2px;
+  border-bottom: 1px solid hsl(var(--ink) / 0.08);
+}
+.wr-barlab {
+  color: hsl(var(--ink) / 0.42);
+}
+.wr-sort {
+  display: inline-flex;
+  gap: 6px;
+}
+.wr-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: hsl(var(--ink) / 0.6);
+  background: hsl(var(--ink) / 0.04);
+  border: 1px solid hsl(var(--ink) / 0.12);
+  transition:
+    color 200ms ease,
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+.wr-chip:hover {
+  color: hsl(var(--ink) / 0.92);
+  border-color: hsl(var(--ink) / 0.24);
+}
+.wr-chip.on {
+  color: hsl(var(--lime));
+  border-color: hsl(var(--lime) / 0.34);
+  background: hsl(var(--lime) / 0.08);
+}
+.wr-chip:focus-visible {
+  outline: 2px solid hsl(var(--lime));
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- the log */
+.wr-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: min(54vw, 700px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.wr-item {
+  min-width: 0;
+}
+.wr-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px 62px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  padding: 9px 12px 11px 9px;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--ink) / 0.08);
+  background: linear-gradient(150deg, hsl(var(--bg-deep) / 0.86), hsl(253 30% 11% / 0.74));
+  transition:
+    translate 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 260ms ease,
+    background-color 260ms ease;
+}
+.wr-row:hover,
+.wr-row.on,
+.wr-row:focus-visible {
+  translate: 4px 0;
+  border-color: hsl(var(--lime) / 0.3);
+}
+.wr-card:focus-visible {
+  outline: 2px solid hsl(var(--lime));
+  outline-offset: 3px;
+}
+.wr-num {
+  color: hsl(var(--ink) / 0.3);
+  font-variant-numeric: tabular-nums;
+  align-self: start;
+  padding-top: 3px;
+  transition: color 240ms ease;
+}
+.wr-row:hover .wr-num,
+.wr-row.on .wr-num {
+  color: hsl(var(--lime) / 0.85);
+}
+.wr-row .wr-plate {
+  border-radius: 8px;
+}
+.wr-row .wr-pn {
+  font-size: 13px;
+  right: 4px;
+  bottom: 1px;
+}
+.wr-body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.wr-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.012em;
+  color: hsl(var(--ink) / 0.93);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.wr-ex {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: hsl(var(--ink) / 0.5);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.wr-row .wr-meta {
+  font-size: 9px;
+  margin-top: 2px;
+}
+/* how long the read is, drawn as the row's own underline */
+.wr-len {
+  position: absolute;
+  left: 9px;
+  bottom: 0;
+  height: 1px;
+  width: calc((22% + var(--l) * 74%) * 0.92);
+  background: linear-gradient(90deg, hsl(var(--electric) / 0.7), hsl(var(--magenta) / 0.55));
+  transition:
+    opacity 260ms ease,
+    background 260ms ease;
+  opacity: 0.55;
+}
+.wr-row:hover .wr-len,
+.wr-row.on .wr-len {
+  opacity: 1;
+  background: linear-gradient(90deg, hsl(var(--lime)), hsl(var(--lime) / 0.3));
+}
+
+/* rows enter as the page scrolls — compositor-only, no JavaScript, and every
+   row is fully visible where the timeline is not supported (Firefox today) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wr-item {
+      animation: wr-in linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 20%;
+    }
+  }
+}
+@keyframes wr-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------- the labels on the wire */
+.wr-lanes {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  contain: layout style;
+}
+/* The scene writes --ax/--ay (viewport px), --aw (0..1 depth, 1 = nearest) and
+   --aa (fade). Placement, depth cueing and the far-side dimming are all done
+   here in CSS, so a frame costs four custom-property writes and no layout. */
+.wr-lane {
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: -7px 0 0 -7px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  pointer-events: auto;
+  cursor: pointer;
+  visibility: hidden;
+  white-space: nowrap;
+  transform: translate3d(var(--ax, 0px), var(--ay, 0px), 0);
+  opacity: var(--aa, 0);
+}
+.wr-lane .pip {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--ink) / 0.5);
+  background: hsl(var(--bg-deep) / 0.5);
+  /* nearer knots read bigger: the helix gets depth for free */
+  scale: calc(0.72 + var(--aw, 0.7) * 0.46);
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+.wr-lane b {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  color: hsl(var(--ink) / 0.72);
+  font-variant-numeric: tabular-nums;
+  /* the far half of the spiral ghosts out, so eighteen numbers never pile up */
+  opacity: clamp(0.06, calc((var(--aw, 1) - 0.585) * 7), 1);
+  transition: color 220ms ease;
+}
+.wr-lane em {
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: hsl(var(--bg-deep));
+  background: hsl(var(--lime));
+  border-radius: 4px;
+  padding: 0;
+  transition:
+    max-width 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms ease,
+    padding 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wr-lane.on .pip {
+  border-color: hsl(var(--lime));
+  background: hsl(var(--lime) / 0.34);
+  box-shadow: 0 0 14px hsl(var(--lime) / 0.5);
+  scale: calc(0.98 + var(--aw, 0.7) * 0.5);
+}
+.wr-lane.on b {
+  color: hsl(var(--lime));
+  opacity: 1;
+}
+.wr-lane.on em {
+  max-width: 210px;
+  opacity: 1;
+  padding: 3px 7px;
+}
+
+/* ------------------------------------------------------------- the phone */
+@media (max-width: 860px) {
+  .wr {
+    padding-top: 44vh;
+    padding-bottom: calc(var(--rail) + 46px);
+    gap: 20px;
+    contain-intrinsic-size: auto 2960px;
+  }
+  .wr .inner,
+  .wr-feature,
+  .wr-bar,
+  .wr-log {
+    max-width: none;
+  }
+  .wr-stats > div {
+    padding-right: 15px;
+    margin-right: 15px;
+  }
+  .wr-stats dd {
+    font-size: 19px;
+  }
+  .wr-index {
+    gap: 4px;
+    height: 40px;
+  }
+  .wr-index i {
+    width: 6px;
+  }
+  .wr-idxcap {
+    margin-top: 18px;
+  }
+  .wr-feature {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .wr-log {
+    grid-template-columns: 1fr;
+  }
+  .wr-row {
+    grid-template-columns: 20px 56px minmax(0, 1fr);
+    padding: 8px 10px 10px 8px;
+  }
+  .wr-head {
+    position: relative;
+  }
+  .wr-head::before {
+    content: '';
+    position: absolute;
+    inset: -74px -26px -46px -26px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      96% 84% at 38% 54%,
+      hsl(var(--bg-deep) / 0.96) 0%,
+      hsl(var(--bg-deep) / 0.92) 38%,
+      hsl(var(--bg-deep) / 0.42) 72%,
+      transparent 94%
+    );
+  }
+  .wr-lanes {
+    display: none;
+  }
+}
+@media (max-width: 1180px) and (min-width: 861px) {
+  .wr-log {
+    grid-template-columns: 1fr;
+    max-width: min(62vw, 620px);
+  }
+  .wr-feature {
+    max-width: min(62vw, 620px);
+  }
+  .wr-bar {
+    max-width: min(62vw, 620px);
+  }
+}
+
+/* -------------------------------------------------- calm / no-GPU tiers */
+@media (prefers-reduced-motion: reduce) {
+  .wr-plate::before,
+  .wr-card:hover .wr-plate::before,
+  .wr-card.on .wr-plate::before {
+    transform: none;
+  }
+  .wr-feature:hover,
+  .wr-row:hover,
+  .wr-feature.on,
+  .wr-row.on {
+    translate: none;
+  }
+  .wr-item {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* no GPU: the wire has no labels to hang, so the index strip carries the
+   whole eighteen-lane reading on its own */
+html[data-fx='css'] .wr-index i {
+  opacity: 0.7;
+}
+html[data-fx='css'] .wr-lanes {
+  display: none;
+}
+
+/* ------------------------------------------------ re-ordering the archive
+   Only the seventeen rows animate. The rest of the page — the live canvas
+   included — is told to hold still, so re-ordering never cross-fades a
+   screenshot of the core against itself. */
+.wr-log.vt .wr-item {
+  view-transition-name: match-element;
+  view-transition-class: wrx;
+}
+::view-transition-group(.wrx) {
+  animation-duration: 460ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+html[data-wr-vt]::view-transition-old(root) {
+  display: none;
+}
+html[data-wr-vt]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
