@@ -247,6 +247,7 @@ function minor(p: Project, i: number): string {
 /* ----------------------------------------------------------------- page */
 
 export function render(): string {
+  void minor
   const c = SECTIONS.work
   const rest = projects.filter((p) => !FEAT.some((f) => f.slug === p.slug))
   return `
@@ -267,11 +268,7 @@ export function render(): string {
           <div class="wk-mods">${FEAT.map(module_).join('')}
           </div>
 
-          <div class="wk-restwrap">
-            <p class="wk-sub mono rev"><b>also shipped</b><span class="sep">/</span><span>${rest.length} more, newest first</span></p>
-            <div class="wk-rest">${rest.map(minor).join('')}
-            </div>
-          </div>
+          <p class="see-all rev"><span class="mono">also shipped: ${rest.length} more products</span><a class="cta ghost glass" href="/projects/">All ${projects.length} products <span class="arw">↗</span></a></p>
         </div>
       </section>`
 }

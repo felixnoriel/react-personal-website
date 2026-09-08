@@ -480,7 +480,7 @@ export function init(scene: Scene) {
     dim += (dimWant - dim) * clamp(dt * 5.5, 0, 1)
 
     const near =
-      mode === 'live' ? clamp(1 - Math.abs(scene.frame.morph - SHAPE) * 1.05, 0, 1) : onScreen ? 1 : 0
+      mode === 'live' ? clamp(1 - Math.abs(scene.frame.morph - SHAPE) * 2.2, 0, 1) : onScreen ? 1 : 0
     if (near <= 0.002 || (dim > 0.985 && dimWant === 1)) {
       if (active) deactivate()
       return

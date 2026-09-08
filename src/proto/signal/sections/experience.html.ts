@@ -140,8 +140,9 @@ export function render(): string {
 
           <div class="xp-track">
             <span class="xp-spine" aria-hidden="true"><i></i></span>
-            <ol class="xp-roles" data-shape="2">${careers.map((_, i) => roleCard(i)).join('')}
+            <ol class="xp-roles" data-shape="2">${careers.slice(0, 3).map((_, i) => roleCard(i)).join('')}
             </ol>
+            <p class="see-all rev"><span class="mono">the three most recent of ${careers.length} roles</span><a class="cta ghost glass" href="/career/">All ${careers.length} roles <span class="arw">↗</span></a></p>
           </div>
         </div>
       </section>`

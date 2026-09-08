@@ -141,7 +141,8 @@ export function render(): string {
   const totalMins = rows.reduce((a, r) => a + mins(r.w), 0)
 
   const feature = rows[0]
-  const rest = rows.slice(1)
+  // the home page is an overview: the newest dispatch plus the next two
+  const rest = rows.slice(1, 3)
 
   /* the eighteen-bar index: a legend for the sculpture that works on every tier */
   const index = rows
@@ -200,14 +201,8 @@ export function render(): string {
           </span>
         </a>
 
-        <div class="wr-bar rev">
-          <span class="mono wr-barlab">the archive — ${rest.length} more</span>
-          <span class="wr-sort" role="group" aria-label="Order the archive">
-            <button type="button" class="wr-chip on" data-sort="new" aria-pressed="true">newest</button>
-            <button type="button" class="wr-chip" data-sort="long" aria-pressed="false">longest read</button>
-          </span>
-        </div>
-
         <ol class="wr-log">${log}</ol>
+
+        <p class="see-all rev"><span class="mono">the three most recent of ${rows.length} dispatches</span><a class="cta ghost glass" href="/blog/">The whole archive <span class="arw">↗</span></a></p>
       </section>`
 }
