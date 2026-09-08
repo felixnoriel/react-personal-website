@@ -92,7 +92,7 @@ export function localizeImages(html: string, images: Record<string, OptimizedIma
       `<picture>` +
       (img.avif.length ? `<source type="image/avif" srcset="${srcset(img.avif)}" sizes="${sizes}">` : '') +
       (img.webp.length ? `<source type="image/webp" srcset="${srcset(img.webp)}" sizes="${sizes}">` : '') +
-      `<img src="${img.fallback}" alt="${esc(alt)}" width="${w}" height="${h}"${cls ? ` class="${cls}"` : ''}` +
+      `<img src="${img.fallback}" alt="${alt.replace(/"/g, '&quot;')}" width="${w}" height="${h}"${cls ? ` class="${cls}"` : ''}` +
       `${style ? ` style="${style}"` : img.lqip ? ` style="background:url(${img.lqip}) center/cover"` : ''}` +
       ` loading="${eager ? 'eager' : 'lazy'}" decoding="async"${eager ? ' fetchpriority="high"' : ''}${extra ? ' ' + extra : ''}></picture>`
     )

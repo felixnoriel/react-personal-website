@@ -2488,6 +2488,8 @@
 .pj-lb[open] {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
+  /* a long caption must not widen the column past the screen; it ellipsises */
+  grid-template-columns: minmax(0, 1fr);
   animation: pj-lb-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .pj-lb.closing {
@@ -2556,6 +2558,9 @@
 .pj-lb-fig {
   margin: 0;
   display: grid;
+  /* a definite row, so a portrait shot's max-height: 100% has something to
+     resolve against and it fits the screen instead of running below it */
+  grid-template-rows: minmax(0, 1fr);
   place-items: center;
   padding: 0 clamp(12px, 5vw, 70px);
   min-height: 0;
@@ -2564,6 +2569,11 @@
 /* the <picture> steps out of the way so the image sizes against the row */
 .pj-lb-pic {
   display: contents;
+}
+/* with the <picture> gone from layout its <source>s become grid items too
+   and took the sized row, pushing the image into an unsized one below */
+.pj-lb-pic source {
+  display: none;
 }
 .pj-lb-fig img {
   display: block;
@@ -4028,7 +4038,7 @@
               <span class="pj-chip2"><b class="mono">when</b><span>Dec 2025 → Present</span></span>
               <span class="pj-chip2"><b class="mono">where</b><span>Fully Remote</span></span>
               <span class="pj-chip2"><b class="mono">stack</b><span>6 tools</span></span>
-              
+              <span class="pj-chip2"><b class="mono">frames</b><span>5</span></span>
               <span class="pj-chip2"><b class="mono">read</b><span>~1 min</span></span>
             </div>
             <p class="pj-hint mono rev"><span>the build</span><i aria-hidden="true">↓</i></p>
@@ -4069,7 +4079,7 @@
             <a href="#overview" class="on">overview</a>
             <a href="#what-i-m-working-on">what i'm working on</a>
             <a href="#technologies">technologies</a>
-            
+            <a href="#gallery">gallery</a>
             <a href="#more">next</a>
           </nav>
 
@@ -4104,13 +4114,79 @@
                   <div><dt>index</dt><dd>01 / 09</dd></div>
                   <div><dt>id</dt><dd class="lit">#1c8a3f8</dd></div>
                   <div><dt>stack</dt><dd>6 tools</dd></div>
-                  <div><dt>frames</dt><dd>—</dd></div>
+                  <div><dt>frames</dt><dd>5</dd></div>
                   <div><dt>core</dt><dd class="lit">cell 01</dd></div>
                 </dl>
               </div>
             </aside>
           </div>
 
+        <section class="pj-gal" id="gallery" aria-labelledby="gal-title">
+          <header class="pj-galhead">
+            <h2 id="gal-title" class="rev"><span class="kicker mono">gallery</span>5 frames from the build</h2>
+            <div class="pj-tabs mono" role="group" aria-label="Filter the gallery">
+              <button type="button" class="pj-tab on" data-cat="" aria-pressed="true">all<b>05</b></button>
+              <button type="button" class="pj-tab" data-cat="Mobile" aria-pressed="false">Mobile<b>05</b></button>
+            </div>
+          </header>
+          <div class="pj-tiles">
+              <button type="button" class="pj-tile rev" style="--i:0" data-i="0" data-cat="Mobile"
+                data-alt="USDT, Made Easy - home screen with balance and Pay, Receive, Deposit, Earn actions" data-src="/img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-460.webp" data-w="460" data-h="996" data-set="/img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-200.avif 200w, /img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-460.avif 460w" data-type="image/avif" aria-label="Open frame 1 of 5 — Mobile in the light-box">
+                <picture><source type="image/avif" srcset="/img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-200.avif 200w, /img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-460.avif 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><source type="image/webp" srcset="/img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-200.webp 200w, /img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-460.webp 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><img src="/img/fff26f-cb48-12cc-c8dd-0162ce4ee63b-1-png-460x996bb-1edac1da-460.webp" alt="USDT, Made Easy - home screen with balance and Pay, Receive, Deposit, Earn actions" width="400" height="225" class="pj-th" style="background:hsl(200 14% 12%)" loading="lazy" decoding="async"></picture>
+                <span class="pj-hud" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="pj-fno mono">F01</span>
+                <span class="pj-fcat mono">Mobile</span>
+                <span class="pj-open mono" aria-hidden="true">expand</span>
+              </button>
+              <button type="button" class="pj-tile rev" style="--i:1" data-i="1" data-cat="Mobile"
+                data-alt="Send &amp; Receive, Instantly - paying a friend from the number pad" data-src="/img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-460.webp" data-w="460" data-h="996" data-set="/img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-200.avif 200w, /img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-460.avif 460w" data-type="image/avif" aria-label="Open frame 2 of 5 — Mobile in the light-box">
+                <picture><source type="image/avif" srcset="/img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-200.avif 200w, /img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-460.avif 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><source type="image/webp" srcset="/img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-200.webp 200w, /img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-460.webp 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><img src="/img/f2989b-f1b9-5c15-b341-e6e887efcd1f-2-png-460x996bb-d477e66d-460.webp" alt="Send &amp; Receive, Instantly - paying a friend from the number pad" width="400" height="225" class="pj-th" style="background:hsl(200 14% 12%)" loading="lazy" decoding="async"></picture>
+                <span class="pj-hud" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="pj-fno mono">F02</span>
+                <span class="pj-fcat mono">Mobile</span>
+                <span class="pj-open mono" aria-hidden="true">expand</span>
+              </button>
+              <button type="button" class="pj-tile rev" style="--i:2" data-i="2" data-cat="Mobile"
+                data-alt="Zero Fees - payment sent receipt" data-src="/img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-460.webp" data-w="460" data-h="996" data-set="/img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-200.avif 200w, /img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-460.avif 460w" data-type="image/avif" aria-label="Open frame 3 of 5 — Mobile in the light-box">
+                <picture><source type="image/avif" srcset="/img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-200.avif 200w, /img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-460.avif 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><source type="image/webp" srcset="/img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-200.webp 200w, /img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-460.webp 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><img src="/img/6bc1f6-31c2-9afd-a2b9-3fd792ad8ffd-3-png-460x996bb-fc5219f1-460.webp" alt="Zero Fees - payment sent receipt" width="400" height="225" class="pj-th" style="background:hsl(200 14% 12%)" loading="lazy" decoding="async"></picture>
+                <span class="pj-hud" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="pj-fno mono">F03</span>
+                <span class="pj-fcat mono">Mobile</span>
+                <span class="pj-open mono" aria-hidden="true">expand</span>
+              </button>
+              <button type="button" class="pj-tile rev" style="--i:3" data-i="3" data-cat="Mobile"
+                data-alt="Deposit &amp; Earn - StableEarn vault with yearly earnings and APY" data-src="/img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-460.webp" data-w="460" data-h="996" data-set="/img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-200.avif 200w, /img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-460.avif 460w" data-type="image/avif" aria-label="Open frame 4 of 5 — Mobile in the light-box">
+                <picture><source type="image/avif" srcset="/img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-200.avif 200w, /img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-460.avif 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><source type="image/webp" srcset="/img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-200.webp 200w, /img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-460.webp 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><img src="/img/0af5c8-986a-402d-e243-46dafac1ddf9-4-png-460x996bb-c61246e1-460.webp" alt="Deposit &amp; Earn - StableEarn vault with yearly earnings and APY" width="400" height="225" class="pj-th" style="background:hsl(200 14% 12%)" loading="lazy" decoding="async"></picture>
+                <span class="pj-hud" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="pj-fno mono">F04</span>
+                <span class="pj-fcat mono">Mobile</span>
+                <span class="pj-open mono" aria-hidden="true">expand</span>
+              </button>
+              <button type="button" class="pj-tile rev" style="--i:4" data-i="4" data-cat="Mobile"
+                data-alt="Everyday Payments, Made Stable - activity feed of payments and requests" data-src="/img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-460.webp" data-w="460" data-h="996" data-set="/img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-200.avif 200w, /img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-460.avif 460w" data-type="image/avif" aria-label="Open frame 5 of 5 — Mobile in the light-box">
+                <picture><source type="image/avif" srcset="/img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-200.avif 200w, /img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-460.avif 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><source type="image/webp" srcset="/img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-200.webp 200w, /img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-460.webp 460w" sizes="(min-width: 1180px) 260px, (min-width: 700px) 30vw, 46vw"><img src="/img/0d38cf-1f35-dc64-6470-32a034d16eeb-7-png-460x996bb-6bed4ad3-460.webp" alt="Everyday Payments, Made Stable - activity feed of payments and requests" width="400" height="225" class="pj-th" style="background:hsl(200 14% 12%)" loading="lazy" decoding="async"></picture>
+                <span class="pj-hud" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <span class="pj-fno mono">F05</span>
+                <span class="pj-fcat mono">Mobile</span>
+                <span class="pj-open mono" aria-hidden="true">expand</span>
+              </button>
+          </div>
+        </section>
+
+        <dialog class="pj-lb" id="pj-lb" aria-label="StablePay gallery">
+          <div class="pj-lb-bar mono">
+            <span class="pj-lb-n"><b>01</b><span class="sl">/</span>05</span>
+            <span class="pj-lb-cap"></span>
+            <span class="pj-lb-keys" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd><kbd>esc</kbd></span>
+            <button type="button" class="pj-lb-x" aria-label="Close the light-box">✕</button>
+          </div>
+          <figure class="pj-lb-fig">
+            <picture class="pj-lb-pic"><img alt="" width="1600" height="900" decoding="async"></picture>
+          </figure>
+          <button type="button" class="pj-lb-go prev" aria-label="Previous frame">‹</button>
+          <button type="button" class="pj-lb-go next" aria-label="Next frame">›</button>
+          <div class="pj-lb-rail" aria-hidden="true"></div>
+        </dialog>
 
           <section class="pj-more" id="more" aria-label="More projects">
             <div class="pj-nxs">

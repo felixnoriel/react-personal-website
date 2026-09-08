@@ -27,7 +27,14 @@ export const projects: Project[] = [
         "url": "https://www.stable.xyz/images/identity/stable-wordmark.svg",
         "alt": "Stable"
       }
-    }
+    },
+    "gallery": [
+      { "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/5c/ff/f2/5cfff26f-cb48-12cc-c8dd-0162ce4ee63b/1.png/460x996bb.webp", "alt": "USDT, Made Easy - home screen with balance and Pay, Receive, Deposit, Earn actions", "category": "Mobile" },
+      { "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/dc/f2/98/dcf2989b-f1b9-5c15-b341-e6e887efcd1f/2.png/460x996bb.webp", "alt": "Send & Receive, Instantly - paying a friend from the number pad", "category": "Mobile" },
+      { "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/19/6b/c1/196bc1f6-31c2-9afd-a2b9-3fd792ad8ffd/3.png/460x996bb.webp", "alt": "Zero Fees - payment sent receipt", "category": "Mobile" },
+      { "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ea/0a/f5/ea0af5c8-986a-402d-e243-46dafac1ddf9/4.png/460x996bb.webp", "alt": "Deposit & Earn - StableEarn vault with yearly earnings and APY", "category": "Mobile" },
+      { "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/49/0d/38/490d38cf-1f35-dc64-6470-32a034d16eeb/7.png/460x996bb.webp", "alt": "Everyday Payments, Made Stable - activity feed of payments and requests", "category": "Mobile" }
+    ]
   },
   {
     "slug": "genopets",

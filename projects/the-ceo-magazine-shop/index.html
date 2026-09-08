@@ -2488,6 +2488,8 @@
 .pj-lb[open] {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
+  /* a long caption must not widen the column past the screen; it ellipsises */
+  grid-template-columns: minmax(0, 1fr);
   animation: pj-lb-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .pj-lb.closing {
@@ -2556,6 +2558,9 @@
 .pj-lb-fig {
   margin: 0;
   display: grid;
+  /* a definite row, so a portrait shot's max-height: 100% has something to
+     resolve against and it fits the screen instead of running below it */
+  grid-template-rows: minmax(0, 1fr);
   place-items: center;
   padding: 0 clamp(12px, 5vw, 70px);
   min-height: 0;
@@ -2564,6 +2569,11 @@
 /* the <picture> steps out of the way so the image sizes against the row */
 .pj-lb-pic {
   display: contents;
+}
+/* with the <picture> gone from layout its <source>s become grid items too
+   and took the sized row, pushing the image into an unsized one below */
+.pj-lb-pic source {
+  display: none;
 }
 .pj-lb-fig img {
   display: block;

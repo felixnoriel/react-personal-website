@@ -261,8 +261,12 @@ async function processRaster(url: string, buffer: Buffer, slug: string): Promise
     throw new Error('could not read image dimensions')
   }
 
-  let candidateWidths = WIDTHS.filter((w) => w <= sourceWidth)
-  if (candidateWidths.length === 0) candidateWidths = [sourceWidth] // never upscale
+  // Every ladder step the source can fill, plus the source's own width when it
+  // sits between steps: a 460px App Store screenshot would otherwise ship only
+  // a 200px file and be drawn blurry at 260px and in the lightbox.
+  const MAX_WIDTH = WIDTHS[WIDTHS.length - 1]
+  const candidateWidths: number[] = WIDTHS.filter((w) => w <= sourceWidth)
+  if (sourceWidth < MAX_WIDTH && !candidateWidths.includes(sourceWidth)) candidateWidths.push(sourceWidth)
 
   const outputs: string[] = []
   const avif: ImageVariant[] = []
