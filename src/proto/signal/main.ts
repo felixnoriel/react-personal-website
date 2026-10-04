@@ -484,7 +484,10 @@ function start() {
   let charge = 0
   let holdTimer = 0
 
+  // when the mouse last moved: a resting cursor lets the swarm go (below)
+  let movedAt = 0
   const setPointer = (cx: number, cy: number) => {
+    movedAt = performance.now()
     tx = (cx / window.innerWidth) * 2 - 1
     ty = 1 - (cy / window.innerHeight) * 2
     ptrWant = reduced ? 0 : 1
@@ -807,6 +810,12 @@ function start() {
     px += (tx - px) * k
     py += (ty - py) * k
     ptrStr += (ptrWant - ptrStr) * clamp(dt * 3.4, 0, 1)
+    // Gravity follows motion. A cursor left resting over the sculpture used
+    // to hold whatever it caught in orbit for as long as it stayed, which
+    // tore a hole in the coil (worst after a scroll back up, when the whole
+    // swarm flies home past the still cursor). After ~1 s without a move the
+    // pull fades to a dent and the lens to a shimmer; a move brings both back.
+    const rest = charging || dragging ? 0 : smoothstep(0.7, 1.7, (now - movedAt) / 1000)
 
     for (const w of waves) if (w[3] >= 0) w[3] = w[3] > 1.5 ? -1 : w[3] + dt
 
@@ -840,7 +849,10 @@ function start() {
 
     // the pointer is a gravitational lens, in the hero, for a mouse
     const heroOn = 1 - smoothstep(0.25, 0.75, morph)
-    const lensK = coarse || reduced ? 0 : ptrStr * heroOn * smoothstep(1.6, 2.4, bang ? t : t + 2) * (0.85 + charge * 0.9)
+    const lensK =
+      coarse || reduced
+        ? 0
+        : ptrStr * heroOn * smoothstep(1.6, 2.4, bang ? t : t + 2) * (0.85 + charge * 0.9) * (1 - 0.6 * rest)
     const dprK = vw / Math.max(1, window.innerWidth)
 
     const f: Frame = {
@@ -863,6 +875,7 @@ function start() {
           : ptrStr *
             (0.88 - 0.72 * smoothstep(0.15, 0.9, Math.min(1, morph))) *
             (dragging && !charging ? 1.6 : 1) *
+            (1 - 0.85 * rest) *
             (1 + charge * 3.2) *
             (bang ? smoothstep(1.2, 2.0, t) : 1),
       well: ctl.well.p ?? undefined,
