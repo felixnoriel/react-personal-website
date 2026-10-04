@@ -609,6 +609,7 @@ function start() {
     flash[3] = 0.04 + c * 0.03
     chromaK = 0.01 + c * 0.022
     shake = c
+    scene._burst(flash[0] * window.innerWidth, flash[1] * window.innerHeight, c)
   }
 
   // the camera of the last frame, so a viewport point (NDC) can be turned
@@ -909,7 +910,7 @@ function start() {
       chroma: chromaK + Math.min(0.012, Math.abs(scrollV) * 0.000004),
     }
     core.frame(f)
-    scene._tick({ morph, chapter: chapterAt(scrollPos), time: t, dt, scrollY: scrollPos })
+    scene._tick({ morph, chapter: chapterAt(scrollPos), time: t, dt, scrollY: scrollPos, charge })
   }
 
   // Heavy work starts one frame AFTER the first paint — not at `load`, which

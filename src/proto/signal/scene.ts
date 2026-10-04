@@ -18,6 +18,8 @@ export interface FrameInfo {
   time: number
   dt: number
   scrollY: number
+  /** 0..1 how much the held mouse has charged the gravity well */
+  charge: number
 }
 
 export interface AnchorOpts {
@@ -62,6 +64,8 @@ export interface Scene {
   spin(dx: number, dy: number): void
   /** per-frame callback; returns an unsubscribe fn */
   onFrame(cb: (f: FrameInfo) => void): () => void
+  /** a supernova went off at a viewport point (px), power 0..1; returns an unsubscribe fn */
+  onBurst(cb: (x: number, y: number, power: number) => void): () => void
   /** print a telemetry cell in the rail (measured values only) */
   print(key: string, value: string, hot?: boolean): void
 }
@@ -88,13 +92,14 @@ export interface SceneControls {
 export function createScene(env: { reduced: boolean; phone: boolean; coarse: boolean }, ctl: SceneControls) {
   const anchors = new Set<AnchorRec>()
   const subs = new Set<(f: FrameInfo) => void>()
+  const bursts = new Set<(x: number, y: number, power: number) => void>()
 
-  const scene: Scene & { _tick(f: FrameInfo): void } = {
+  const scene: Scene & { _tick(f: FrameInfo): void; _burst(x: number, y: number, power: number): void } = {
     reduced: env.reduced,
     phone: env.phone,
     coarse: env.coarse,
     SHAPE,
-    frame: { morph: 0, chapter: 0, time: 0, dt: 0, scrollY: 0 },
+    frame: { morph: 0, chapter: 0, time: 0, dt: 0, scrollY: 0, charge: 0 },
     live: false,
     project(p) {
       const vp = ctl.vp
@@ -139,8 +144,15 @@ export function createScene(env: { reduced: boolean; phone: boolean; coarse: boo
       subs.add(cb)
       return () => subs.delete(cb)
     },
+    onBurst(cb) {
+      bursts.add(cb)
+      return () => bursts.delete(cb)
+    },
     print(key, value, hot) {
       ctl.print(key, value, hot)
+    },
+    _burst(x, y, power) {
+      for (const cb of bursts) cb(x, y, power)
     },
     _tick(f) {
       this.frame = f

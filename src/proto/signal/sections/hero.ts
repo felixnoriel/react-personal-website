@@ -7,10 +7,20 @@
  * Everything else the hero does lives in the render loop (main.ts).
  */
 import type { Scene } from '../scene'
+import { initMatter } from './matter'
 
 export function init(scene: Scene) {
   const hero = document.querySelector<HTMLElement>('.hero')
-  if (!hero || scene.reduced || scene.coarse) return
+  if (!hero || scene.reduced) return
+
+  // the words themselves (every pointer, touch included)
+  const ink = hero.querySelector<HTMLElement>('h1 .ink')
+  const sub = hero.querySelector<HTMLElement>('.sub')
+  initMatter(scene, [
+    ...(ink ? [{ el: ink, gradient: true }] : []),
+    ...(sub ? [{ el: sub, gradient: false }] : []),
+  ])
+  if (scene.coarse) return
 
   let held: HTMLElement | null = null
   for (const card of Array.from(hero.querySelectorAll<HTMLElement>('.instr .readout'))) {
