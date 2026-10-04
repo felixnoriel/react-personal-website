@@ -13,6 +13,8 @@ export interface CoreOpts {
   exposure: number
   bloomThreshold: number
   bloomStrength: number
+  /** first visit: every particle starts in one point and is blown out by the ignition wave */
+  bang: boolean
 }
 
 /** everything the main thread hands the GPU each frame */
@@ -47,6 +49,20 @@ export interface Frame {
   active: number
   /** four shockwaves: x, y, z, age (age < 0 = idle) */
   waves: [number, number, number, number][]
+  /** how hard each shockwave hits (1 = a click) */
+  waveK: [number, number, number, number]
+  /** seconds since the ignition began (drives the WebGL2 tier's analytic big bang) */
+  bangT: number
+  /** 0..1 how much the held pointer has charged the well */
+  charge: number
+  /** vertical streak length in device px from the scroll speed */
+  warp: number
+  /** the gravitational lens at the pointer: x, y (0..1, y down), strength, Einstein radius (fraction of the height) */
+  lens: [number, number, number, number]
+  /** a flash of light: x, y (0..1, y down), intensity, radius (fraction of the height) */
+  flash: [number, number, number, number]
+  /** extra lateral chromatic spread on the halo */
+  chroma: number
 }
 
 export interface CoreHandle {

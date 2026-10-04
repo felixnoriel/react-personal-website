@@ -27,6 +27,8 @@ uniform vec4 uParams;   // time, morph, ignite, brightness
 uniform vec4 uPhys;     // flowAmp, flowScale, sizePx, camera distance
 uniform vec2 uRes;
 uniform vec4 uWaves[4];
+uniform vec4 uWaveK;    // how hard each shockwave hits (1 = a click)
+uniform vec4 uBang;     // seconds since ignition, 1 = big bang, charge, spare
 uniform vec3 uColA, uColB, uColC, uColD;
 uniform float uCount;
 
@@ -54,14 +56,32 @@ void main() {
   float idx = float(gl_VertexID);
   float fi = idx / uCount;
 
-  // ignition: hauled in from a dark shell, staggered per particle
   float ign = uParams.z;
   float delay = fract(sin(idx * 12.9898) * 43758.5453) * 0.35;
-  float e = clamp((ign - delay) / max(1e-3, 1.0 - delay), 0.0, 1.0);
-  e = 1.0 - pow(1.0 - e, 3.0);
+  float rnd = fract(sin(idx * 78.233) * 24634.6345);
   vec3 dir0 = normalize(target + vec3(1e-3));
-  vec3 shell = dir0 * (4.2 + fract(sin(idx * 78.233) * 24634.6345) * 3.0);
-  vec3 p = mix(shell, target, e);
+  vec3 p;
+  if (uBang.y > 0.5) {
+    // first light: one point, blown apart by the ignition wave at 0.45 s,
+    // then hauled into the shape — the analytic twin of the compute tier
+    vec3 rdir = normalize(vec3(delay * 2.857, rnd, fract(sin(idx * 39.346) * 11346.12)) - 0.5 + 1e-4);
+    vec3 jit = rdir * 0.06 * fract(sin(idx * 4.123) * 9631.7);
+    float bt = uBang.x - 0.45;
+    if (bt <= 0.0) {
+      p = jit;
+    } else {
+      float e2 = clamp((bt - delay * 0.25) / 1.6, 0.0, 1.0);
+      float k = 1.0 - pow(1.0 - e2, 3.0);
+      float burst = (1.0 - e2) * (1.0 - e2) * sin(min(e2 * 7.0, 1.5708));
+      p = mix(jit, target, k) + normalize(mix(rdir, dir0, 0.45)) * burst * (1.3 + rnd * 1.5);
+    }
+  } else {
+    // hauled in from a dark shell, staggered per particle
+    float e = clamp((ign - delay) / max(1e-3, 1.0 - delay), 0.0, 1.0);
+    e = 1.0 - pow(1.0 - e, 3.0);
+    vec3 shell = dir0 * (4.2 + rnd * 3.0);
+    p = mix(shell, target, e);
+  }
 
   // filaments — a displacement field rather than an integrated one
   p += flow(p, uParams.x, uPhys.y) * (uPhys.x * (1.35 - hot));
@@ -72,7 +92,7 @@ void main() {
   float g = uPtr.w / (r2 + 0.13);
   vec3 dir = d * inversesqrt(max(r2, 1e-6));
   vec3 tn = normalize(cross(dir, vec3(0.0, 0.0, 1.0)) + vec3(1e-5));
-  p += dir * g * 0.30 + tn * g * 0.40;
+  p += dir * g * 0.30 + tn * g * (0.40 + uBang.z * 0.6);
 
   float glow = 0.0;
   for (int i = 0; i < 4; i++) {
@@ -80,9 +100,9 @@ void main() {
     if (age < 0.0) continue;
     vec3 dd = p - uWaves[i].xyz;
     float L = length(dd) + 1e-4;
-    float amp = exp(-abs(L - age * 3.6) * 2.6) * max(0.0, 1.0 - age * 0.75);
+    float amp = exp(-abs(L - age * 3.6) * 2.6) * max(0.0, 1.0 - age * 0.75) * uWaveK[i];
     p += (dd / L) * amp * 0.55;
-    glow += amp;
+    glow += exp(-abs(L - age * 3.6) * 5.5) * max(0.0, 1.0 - age * 0.75) * min(uWaveK[i], 2.5);
   }
 
   vec4 clip = uVP * vec4(p, 1.0);
@@ -132,6 +152,9 @@ uniform sampler2D texA;
 uniform sampler2D texB;
 uniform vec4 uTexel;   // 1/w, 1/h, dirX, dirY
 uniform vec4 uCfg;     // radius|exposure, threshold, chroma, bloom
+uniform vec4 uLens;    // x, y (uv, y down), strength, Einstein radius (fraction of the height)
+uniform vec4 uFl;      // flash x, y (uv, y down), intensity, radius
+uniform vec4 uFx;      // extra chroma, aspect, spare, spare
 uniform int uMode;     // 0 bright, 1 blur, 2 composite
 out vec4 o;
 
@@ -157,13 +180,33 @@ void main() {
     c += (texture(texA, vUv + st * 3.253).rgb + texture(texA, vUv - st * 3.253).rgb) * 0.070;
     o = vec4(c, 1.0);
   } else {
-    vec3 scene = texture(texA, vUv).rgb;
-    vec3 bl = texture(texB, vUv).rgb;
-    vec2 off = (vUv - 0.5) * uCfg.z;
-    float br = texture(texB, vUv + off).r;
-    float bb = texture(texB, vUv - off).b;
+    // the pointer is a gravitational lens (see gpu.ts); vUv is y-up here
+    vec2 uv = vUv;
+    float shade = 1.0;
+    float asp = uFx.y;
+    if (uLens.z > 0.001) {
+      float re = uLens.w;
+      vec2 d = (vUv - vec2(uLens.x, 1.0 - uLens.y)) * vec2(asp, 1.0);
+      float r = max(length(d), 1e-4);
+      float win = 1.0 - smoothstep(re * 3.0, re * 7.5, r);
+      float defl = min(re * re / r, re * 2.6) * uLens.z * win;
+      uv = vUv - (d / r) * defl / vec2(asp, 1.0);
+      shade = mix(1.0, smoothstep(re * 0.3, re * 0.85, r), min(uLens.z, 1.0));
+    }
+    vec3 scene = texture(texA, uv).rgb;
+    vec3 bl = texture(texB, uv).rgb;
+    vec2 off = (uv - 0.5) * (uCfg.z + uFx.x);
+    float br = texture(texB, uv + off).r;
+    float bb = texture(texB, uv - off).b;
     vec3 halo = vec3(mix(bl.r, br, 0.6), bl.g, mix(bl.b, bb, 0.6));
-    vec3 c = tonemap((scene + halo * uCfg.w) * uCfg.x);
+    vec3 c = (scene + halo * uCfg.w) * shade;
+    if (uFl.z > 0.001) {
+      vec2 fd = (vUv - vec2(uFl.x, 1.0 - uFl.y)) * vec2(asp, 1.0);
+      float f2 = dot(fd, fd);
+      float fr = uFl.w * uFl.w;
+      c += vec3(1.0, 0.9, 0.82) * uFl.z * (exp(-f2 / fr) + 0.16 * exp(-f2 / (fr * 6.0)));
+    }
+    c = tonemap(c * uCfg.x);
     vec3 s = srgb(c);
     // premultiplied: alpha must be >= every colour channel (see gpu.ts)
     o = vec4(s, max(s.r, max(s.g, s.b)));
@@ -244,6 +287,8 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
     phys: U(prog, 'uPhys'),
     res: U(prog, 'uRes'),
     waves: U(prog, 'uWaves'),
+    waveK: U(prog, 'uWaveK'),
+    bang: U(prog, 'uBang'),
     ca: U(prog, 'uColA'),
     cb: U(prog, 'uColB'),
     cc: U(prog, 'uColC'),
@@ -255,6 +300,9 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
     texB: U(post, 'texB'),
     texel: U(post, 'uTexel'),
     cfg: U(post, 'uCfg'),
+    lens: U(post, 'uLens'),
+    fl: U(post, 'uFl'),
+    fx: U(post, 'uFx'),
     mode: U(post, 'uMode'),
   }
 
@@ -334,6 +382,8 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
       gl.uniform2f(u.res, W, H)
       for (let i = 0; i < 4; i++) wavesArr.set(f.waves[i], i * 4)
       gl.uniform4fv(u.waves, wavesArr)
+      gl.uniform4fv(u.waveK, f.waveK)
+      gl.uniform4f(u.bang, f.bangT, opts.bang ? 1 : 0, f.charge, 0)
       gl.uniform3fv(u.ca, opts.palette[0])
       gl.uniform3fv(u.cb, opts.palette[1])
       gl.uniform3fv(u.cc, opts.palette[2])
@@ -348,6 +398,9 @@ export function createGlCore(opts: CoreOpts): CoreHandle | null {
       gl.useProgram(post)
       gl.uniform1i(pu.texA, 0)
       gl.uniform1i(pu.texB, 1)
+      gl.uniform4fv(pu.lens, f.lens)
+      gl.uniform4fv(pu.fl, f.flash)
+      gl.uniform4f(pu.fx, f.chroma, aspect, 0, 0)
       const run = (dst: FB | null, src: WebGLTexture, src2: WebGLTexture, mode: number, texel: number[], cfg: number[]) => {
         gl.bindFramebuffer(gl.FRAMEBUFFER, dst ? dst.fb : null)
         gl.viewport(0, 0, dst ? dst.w : W, dst ? dst.h : H)

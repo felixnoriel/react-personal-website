@@ -10,6 +10,7 @@ type Init = (scene: Scene) => void
 type Loader = () => Promise<{ init: Init }>
 
 const HOME: [string, Loader][] = [
+  ['hero', () => import('./hero')],
   ['experience', () => import('./experience')],
   ['work', () => import('./work')],
   ['skills', () => import('./skills')],

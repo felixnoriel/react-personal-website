@@ -33,6 +33,8 @@ struct Uni {
   colC     : vec4<f32>,
   colD     : vec4<f32>,
   depth    : vec4<f32>,   // fade near, fade far, spare, spare
+  waveK    : vec4<f32>,   // how hard each shockwave hits (1 = a click)
+  fx       : vec4<f32>,   // scroll streak (device px), charge 0..1, spare, spare
 };
 `
 
@@ -57,13 +59,13 @@ fn flow(p : vec3<f32>, t : f32) -> vec3<f32> {
   return f;
 }
 
-fn shock(p : vec3<f32>, w : vec4<f32>) -> vec3<f32> {
+fn shock(p : vec3<f32>, w : vec4<f32>, k : f32) -> vec3<f32> {
   if (w.w < 0.0) { return vec3<f32>(0.0); }
   let d = p - w.xyz;
   let dd = length(d) + 1e-4;
   let ring = w.w * 3.6;
   let amp = exp(-abs(dd - ring) * 2.6) * max(0.0, 1.0 - w.w * 0.75);
-  return (d / dd) * amp * 11.0;
+  return (d / dd) * amp * 11.0 * k;
 }
 
 @compute @workgroup_size(128)
@@ -89,14 +91,16 @@ fn cs(@builtin(global_invocation_id) gid : vec3<u32>) {
 
   v += (home - p) * (U.phys.x * dt);                 // spring home
   v += flow(p, U.params.x) * (U.phys.z * (1.35 - hot) * dt);  // filaments, gentlest on the spine
-  // gravity well: radial pull plus a tangential swirl, so it orbits
+  // gravity well: radial pull plus a tangential swirl, so it orbits. A
+  // charged well spins harder, which is what flattens it into a disk.
   let d   = U.ptr.xyz - p;
   let r2  = dot(d, d);
   let g   = U.ptr.w / (r2 + 0.13);
   let dir = d * inverseSqrt(max(r2, 1e-6));
   let tn  = normalize(cross(dir, vec3<f32>(0.0, 0.0, 1.0)) + vec3<f32>(1e-5, 1e-5, 0.0));
-  v += (dir * g * 2.4 + tn * g * 3.0) * dt;
-  v += (shock(p, U.wave0) + shock(p, U.wave1) + shock(p, U.wave2) + shock(p, U.wave3)) * dt;
+  v += (dir * g * 2.4 + tn * g * (3.0 + U.fx.y * 4.5)) * dt;
+  v += (shock(p, U.wave0, U.waveK.x) + shock(p, U.wave1, U.waveK.y) +
+        shock(p, U.wave2, U.waveK.z) + shock(p, U.wave3, U.waveK.w)) * dt;
 
   v *= exp(-U.phys.y * dt);
   p += v * dt;
@@ -111,6 +115,13 @@ ${UNI}
 @group(0) @binding(0) var<storage, read> pos : array<vec4<f32>>;
 @group(0) @binding(1) var<storage, read> vel : array<vec4<f32>>;
 @group(0) @binding(2) var<uniform>       U   : Uni;
+
+// a shell of light riding each shockwave's front
+fn front(p : vec3<f32>, w : vec4<f32>, k : f32) -> f32 {
+  if (w.w < 0.0) { return 0.0; }
+  let L = length(p - w.xyz);
+  return exp(-abs(L - w.w * 3.6) * 5.5) * max(0.0, 1.0 - w.w * 0.75) * min(k, 2.5);
+}
 
 struct VOut {
   @builtin(position) clip : vec4<f32>,
@@ -141,9 +152,12 @@ fn vs(@builtin(vertex_index) vi : u32, @builtin(instance_index) ii : u32) -> VOu
   let ndcV = clipV.xy / max(clipV.w, 0.08);
   // build the sprite frame in device pixels so it stays round at any aspect
   let dpx = (ndcV - ndc) * res * 0.5;
-  let sp  = length(dpx);
+  // a fast scroll streaks the light along the scroll, like a long exposure
+  let warp = U.fx.x * (0.55 + 0.45 * fract(f32(ii) * 0.6180339));
+  let mv  = dpx + vec2<f32>(0.0, warp);
+  let sp  = length(mv);
   var ax  = vec2<f32>(1.0, 0.0);
-  if (sp > 0.001) { ax = dpx / sp; }
+  if (sp > 0.001) { ax = mv / sp; }
   let perp = vec2<f32>(-ax.y, ax.x);
 
   let cx = select(-1.0, 1.0, (vi & 1u) == 1u);
@@ -151,7 +165,8 @@ fn vs(@builtin(vertex_index) vi : u32, @builtin(instance_index) ii : u32) -> VOu
 
   let hotv = V.w;
   let radius  = (U.rend.x * (0.62 + hotv * 0.85)) / max(clip.w, 0.25);
-  let stretch = 1.0 + min(sp * 0.42, 2.4);
+  let streak  = min(abs(warp) * 0.3, 10.0);
+  let stretch = 1.0 + min(length(dpx) * 0.42, 2.4) + streak;
   let offPx = ax * (cx * radius * stretch) + perp * (cy * radius);
   o.clip = vec4<f32>(ndc.x + offPx.x * 2.0 / res.x, ndc.y + offPx.y * 2.0 / res.y, 0.5, 1.0);
   o.uv = vec2<f32>(cx, cy);
@@ -167,9 +182,13 @@ fn vs(@builtin(vertex_index) vi : u32, @builtin(instance_index) ii : u32) -> VOu
   let fi = f32(ii) / f32(n);
   let pulse = pow(max(0.0, sin(fi * 12.5664 - U.params.x * 1.15)), 34.0);
 
+  let glow = front(P.xyz, U.wave0, U.waveK.x) + front(P.xyz, U.wave1, U.waveK.y) +
+             front(P.xyz, U.wave2, U.waveK.z) + front(P.xyz, U.wave3, U.waveK.w);
+
   let fade = smoothstep(U.depth.y, U.depth.x, clip.w);
-  o.amp = fade * (0.021 + hotv * 0.155) * (1.0 + pulse * 6.0) * U.rend.w * U.params.w;
-  o.col = col + vec3<f32>(0.55, 0.85, 0.45) * pulse * 0.9;
+  // a streak spreads the same light over a longer sprite
+  o.amp = fade * (0.021 + hotv * 0.155) * (1.0 + pulse * 6.0 + glow * 3.0) * U.rend.w * U.params.w / (1.0 + streak * 0.55);
+  o.col = col + vec3<f32>(0.55, 0.85, 0.45) * pulse * 0.9 + vec3<f32>(1.0, 0.94, 0.86) * glow * 0.55;
   return o;
 }
 
@@ -191,6 +210,12 @@ struct Post {
 @group(0) @binding(1) var texA : texture_2d<f32>;
 @group(0) @binding(2) var texB : texture_2d<f32>;
 @group(0) @binding(3) var<uniform> PP : Post;
+struct Live {
+  lens : vec4<f32>,   // x, y (uv), strength, Einstein radius (fraction of the height)
+  fl   : vec4<f32>,   // flash x, y (uv), intensity, radius
+  fx   : vec4<f32>,   // extra chroma, aspect, spare, spare
+};
+@group(0) @binding(4) var<uniform> LV : Live;
 
 struct FOut { @builtin(position) pos : vec4<f32>, @location(0) uv : vec2<f32> };
 
@@ -240,14 +265,37 @@ fn srgb(x : vec3<f32>) -> vec3<f32> {
 
 @fragment
 fn composite(i : FOut) -> @location(0) vec4<f32> {
-  let scene = textureSample(texA, samp, i.uv).rgb;
-  let bl    = textureSample(texB, samp, i.uv).rgb;
+  let asp = LV.fx.y;
+  // The pointer is a gravitational lens. Light seen at radius r left its
+  // source at r - re²/r, so the swarm bends around the cursor, an Einstein
+  // ring forms where the light crosses re, and the middle is a shadow.
+  var uv = i.uv;
+  var shade = 1.0;
+  let k = LV.lens.z;
+  if (k > 0.001) {
+    let re = LV.lens.w;
+    let d = (i.uv - LV.lens.xy) * vec2<f32>(asp, 1.0);
+    let r = max(length(d), 1e-4);
+    let win = 1.0 - smoothstep(re * 3.0, re * 7.5, r);
+    let defl = min(re * re / r, re * 2.6) * k * win;
+    uv = i.uv - (d / r) * defl / vec2<f32>(asp, 1.0);
+    shade = mix(1.0, smoothstep(re * 0.3, re * 0.85, r), min(k, 1.0));
+  }
+  let scene = textureSample(texA, samp, uv).rgb;
+  let bl    = textureSample(texB, samp, uv).rgb;
   // a whisper of lateral chromatic spread on the halo — lens, not filter
-  let off = (i.uv - vec2<f32>(0.5, 0.5)) * PP.cfg.z;
-  let blr = textureSample(texB, samp, i.uv + off).r;
-  let blb = textureSample(texB, samp, i.uv - off).b;
+  let off = (uv - vec2<f32>(0.5, 0.5)) * (PP.cfg.z + LV.fx.x);
+  let blr = textureSample(texB, samp, uv + off).r;
+  let blb = textureSample(texB, samp, uv - off).b;
   let halo = vec3<f32>(mix(bl.r, blr, 0.6), bl.g, mix(bl.b, blb, 0.6));
-  var c = scene + halo * PP.cfg.w;
+  var c = (scene + halo * PP.cfg.w) * shade;
+  // a flash of light: the ignition, a supernova
+  if (LV.fl.z > 0.001) {
+    let fd = (i.uv - LV.fl.xy) * vec2<f32>(asp, 1.0);
+    let f2 = dot(fd, fd);
+    let fr = LV.fl.w * LV.fl.w;
+    c += vec3<f32>(1.0, 0.9, 0.82) * LV.fl.z * (exp(-f2 / fr) + 0.16 * exp(-f2 / (fr * 6.0)));
+  }
   c = tonemap(c * PP.cfg.x);
   let o = srgb(c);
   // The canvas is premultiplied. Colour with alpha 0 is not a valid
@@ -297,10 +345,22 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
   })
   device.queue.writeBuffer(tgtBuf, 0, opts.shapes.buffer as ArrayBuffer, opts.shapes.byteOffset, opts.shapes.byteLength)
 
-  // ignition seed: everything starts far out on a dark shell and is hauled in
+  // ignition seed. First light: every particle in one point, which the
+  // ignition wave blows apart. Otherwise everything starts far out on a dark
+  // shell and is hauled in.
   const seed = new Float32Array(N * 4)
   for (let i = 0; i < N; i++) {
     const o = i * 4
+    if (opts.bang) {
+      const u = Math.random() * 2 - 1
+      const a = Math.random() * Math.PI * 2
+      const s = Math.sqrt(1 - u * u)
+      const k = 0.06 * Math.sqrt(-2 * Math.log(1 - Math.random() * 0.999))
+      seed[o] = s * Math.cos(a) * k
+      seed[o + 1] = s * Math.sin(a) * k
+      seed[o + 2] = u * k
+      continue
+    }
     const x = opts.shapes[o]
     const y = opts.shapes[o + 1]
     const z = opts.shapes[o + 2]
@@ -313,7 +373,7 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
   device.queue.writeBuffer(posBuf, 0, seed)
   device.queue.writeBuffer(velBuf, 0, new Float32Array(N * 4))
 
-  const UNI_SIZE = 64 + 16 * 13
+  const UNI_SIZE = 64 + 16 * 15
   const uni = new Float32Array(UNI_SIZE / 4)
   const uniBuf = device.createBuffer({ size: UNI_SIZE, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST })
 
@@ -338,6 +398,7 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
       { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
       { binding: 2, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
       { binding: 3, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+      { binding: 4, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
     ],
   })
 
@@ -414,6 +475,10 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
   }
   ctx.configure({ device, format, alphaMode: 'premultiplied' })
 
+  // the per-frame half of the post uniforms: lens, flash, chroma
+  const live = new Float32Array(12)
+  const liveBuf = device.createBuffer({ size: live.byteLength, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST })
+
   const sampler = device.createSampler({
     magFilter: 'linear',
     minFilter: 'linear',
@@ -463,6 +528,7 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
           { binding: 1, resource: a },
           { binding: 2, resource: b },
           { binding: 3, resource: { buffer: u } },
+          { binding: 4, resource: { buffer: liveBuf } },
         ],
       })
     bindBright = bg(vScene, vScene, mkPP(1 / W, 1 / H, 0, 0, 0, opts.bloomThreshold, 0, 0))
@@ -538,7 +604,15 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
       }
       uni[64] = f.dist - 2.9
       uni[65] = f.dist + 3.6
+      uni.set(f.waveK, 68)
+      uni[72] = f.warp
+      uni[73] = f.charge
       device.queue.writeBuffer(uniBuf, 0, uni)
+      live.set(f.lens, 0)
+      live.set(f.flash, 4)
+      live[8] = f.chroma
+      live[9] = aspect
+      device.queue.writeBuffer(liveBuf, 0, live)
 
       const enc = device.createCommandEncoder()
       const cp = enc.beginComputePass()
@@ -582,6 +656,7 @@ export async function createGpuCore(opts: CoreOpts): Promise<CoreHandle | null> 
         texX?.destroy()
         texY?.destroy()
         posBuf.destroy()
+        liveBuf.destroy()
         velBuf.destroy()
         tgtBuf.destroy()
         device.destroy()

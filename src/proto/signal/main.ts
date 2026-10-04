@@ -190,6 +190,23 @@ function revealOnScroll() {
   items.forEach((i) => io.observe(i))
 }
 
+/**
+ * Looping CSS animations keep costing style work every frame even when their
+ * section is far off screen (measured: 21 of the home page's 27 were off
+ * screen at load). A section that is not near the viewport gets .fx-idle,
+ * which pauses them until it comes back.
+ */
+function idleOffscreen() {
+  if (!('IntersectionObserver' in window)) return
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) e.target.classList.toggle('fx-idle', !e.isIntersecting)
+    },
+    { rootMargin: '25% 0px' },
+  )
+  document.querySelectorAll('main > *').forEach((el) => io.observe(el))
+}
+
 /* ------------------------------------------------------------------- boot */
 
 const repeat = (() => {
@@ -211,9 +228,26 @@ function pickCount(): number {
   return 110000
 }
 
+/**
+ * The quality ladder the frame loop walks when a device cannot hold its
+ * refresh rate. Resolution goes first (the glow hides it), then the glass
+ * blur over the moving light, then particles.
+ */
+const FOV = 0.72
+
+const LADDER = [
+  { scale: 1, count: 1, lite: false },
+  { scale: 0.85, count: 1, lite: false },
+  { scale: 0.72, count: 0.8, lite: false },
+  { scale: 0.72, count: 0.6, lite: true },
+  { scale: 0.6, count: 0.42, lite: true },
+  { scale: 0.5, count: 0.3, lite: true },
+]
+
 function start() {
   startClock()
   revealOnScroll()
+  idleOffscreen()
   initTransitions()
 
   const ttfb = navTiming()
@@ -221,7 +255,8 @@ function start() {
   // ---- the scene the sections talk to (works on every tier, GPU or not)
   const ctl = {
     well: { p: null as Vec3 | null, strength: 1 },
-    fire: (p?: Vec3) => fireAt(p),
+    fire: (p?: Vec3, k?: number) => fireAt(p, k),
+    toWorld: (x: number, y: number) => toWorld((x / window.innerWidth) * 2 - 1, 1 - (y / window.innerHeight) * 2),
     spin: (dx: number, dy: number) => {
       yawV += dx * 0.00042
       pitchV += dy * 0.0003
@@ -264,6 +299,10 @@ function start() {
     [0, 0, 0, -1],
     [0, 0, 0, -1],
   ]
+  const waveK: Frame['waveK'] = [1, 1, 1, 1]
+  // first light is a big bang: everything starts in one point. A repeat
+  // visit (the next page of the same session) keeps the short haul-in.
+  const bang = !reduced && !repeat
 
   const idle: (cb: () => void) => void =
     'requestIdleCallback' in window
@@ -322,6 +361,7 @@ function start() {
       exposure: 1.12,
       bloomThreshold: 0.5,
       bloomStrength: 1.15,
+      bang,
     }
     // ?fx=webgl or ?fx=css forces a lower tier, so each path can be checked
     // in every browser without faking the platform
@@ -361,6 +401,7 @@ function start() {
       ms: 0,
       well: 0,
       drawn: core.count,
+      q: 0,
     }
 
     const cells: [string, string, boolean][] = [
@@ -374,7 +415,8 @@ function start() {
       () => {
         root.dataset.ignite = 'done'
       },
-      repeat ? 60 : 1250,
+      // the headline takes its colour as the ignition wave passes it
+      repeat ? 60 : bang ? 820 : 1250,
     )
     // the first frame after the build carries the whole setup gap: start the
     // clock here so the rail never prints a 700 ms "frame time"
@@ -397,12 +439,14 @@ function start() {
 
   let vw = 0
   let vh = 0
+  let level = 0
   function resize() {
     const w = window.innerWidth
     const h = window.innerHeight
     let dpr = Math.min(window.devicePixelRatio || 1, 2)
     const budget = phone ? 2.1e6 : 2.7e6
     if (w * h * dpr * dpr > budget) dpr = Math.sqrt(budget / (w * h))
+    dpr *= LADDER[level].scale
     vw = Math.round(w * dpr)
     vh = Math.round(h * dpr)
     canvasRef.width = vw
@@ -434,6 +478,11 @@ function start() {
   let pitch = 0
   let yawV = 0
   let pitchV = 0
+  // hold the mouse still on open ground and the well charges; let go and
+  // it goes supernova
+  let charging = false
+  let charge = 0
+  let holdTimer = 0
 
   const setPointer = (cx: number, cy: number) => {
     tx = (cx / window.innerWidth) * 2 - 1
@@ -446,7 +495,7 @@ function start() {
       'pointermove',
       (e) => {
         setPointer(e.clientX, e.clientY)
-        if (dragging) {
+        if (dragging && !charging) {
           yawV += (e.clientX - lastX) * 0.00042
           pitchV += (e.clientY - lastY) * 0.0003
           if (!moved && Math.abs(e.clientX - lastX) + Math.abs(e.clientY - lastY) > 3) {
@@ -489,12 +538,23 @@ function start() {
         lastY = e.clientY
         setPointer(e.clientX, e.clientY)
         fire()
+        clearTimeout(holdTimer)
+        if (dragging && e.pointerType === 'mouse' && e.button === 0 && core && morph < 0.6)
+          holdTimer = window.setTimeout(() => {
+            if (moved) return
+            charging = true
+            // the cursor may now wander over the copy: it must not select it
+            root.dataset.drag = '1'
+          }, 200)
       },
       { passive: true },
     )
     // a finger that lifts is a pointer that left: touch and pen release the
     // well, a mouse keeps it because the cursor is still on the page
     const release = (e: PointerEvent) => {
+      clearTimeout(holdTimer)
+      if (charging && charge > 0.12 && e.type === 'pointerup') supernova()
+      charging = false
       dragging = false
       moved = false
       delete root.dataset.drag
@@ -507,6 +567,8 @@ function start() {
       if (moved) e.preventDefault()
     })
     addEventListener('blur', () => {
+      clearTimeout(holdTimer)
+      charging = false
       dragging = false
       moved = false
       delete root.dataset.drag
@@ -519,16 +581,53 @@ function start() {
   function fire() {
     fireAt()
   }
-  function fireAt(p?: Vec3) {
+  function fireAt(p?: Vec3, k = 1) {
     let slot = waves.findIndex((w) => w[3] < 0)
-    if (slot < 0) slot = 0
+    // all four busy: replace the oldest
+    if (slot < 0) slot = waves.reduce((o, w, i) => (w[3] > waves[o][3] ? i : o), 0)
     const at = p ?? ctl.well.p ?? wellWorld
     waves[slot] = [at[0], at[1], at[2], 0]
+    waveK[slot] = k
+  }
+
+  /* --------------------------------------------------------- light events */
+
+  // a flash (x, y in 0..1 of the viewport, intensity, radius) that decays
+  const flash: Frame['flash'] = [0.5, 0.5, 0, 0.1]
+  let chromaK = 0
+  let shake = 0
+  function supernova() {
+    const c = charge
+    charge = 0
+    fireAt(wellWorld, 1 + c * 1.3)
+    flash[0] = px * 0.5 + 0.5
+    flash[1] = 0.5 - py * 0.5
+    flash[2] = 0.35 + c * 0.6
+    flash[3] = 0.04 + c * 0.03
+    chromaK = 0.01 + c * 0.022
+    shake = c
+  }
+
+  // the camera of the last frame, so a viewport point (NDC) can be turned
+  // into a point in the sculpture's space, on the plane through its centre
+  const cam = { dist: 5.6, tilt: 0, spin: 0, shiftX: 0, shiftY: 0 }
+  function toWorld(nx: number, ny: number): Vec3 {
+    const aspect = vw / Math.max(1, vh)
+    const fq = 1 / Math.tan(FOV / 2)
+    const wx = ((nx - cam.shiftX) * aspect * cam.dist) / fq
+    const wy = ((ny - cam.shiftY) * cam.dist) / fq
+    const cs = Math.cos(cam.spin)
+    const ss = Math.sin(cam.spin)
+    const ct = Math.cos(cam.tilt)
+    const st = Math.sin(cam.tilt)
+    return [cs * wx + st * ss * wy, wy * ct, -ss * wx + st * cs * wy]
   }
 
   /* -------------------------------------------------------------- scroll */
 
   let scrollPos = 0
+  let lastScroll = 0
+  let scrollV = 0
   let morph = 0
   addEventListener('scroll', () => (scrollPos = window.scrollY), { passive: true })
 
@@ -546,10 +645,26 @@ function start() {
   let last = performance.now()
   let spin = 0
   let flick = 0
+  let boomed = false
   const times: number[] = []
   let active = N
   let shownCount = N
   let fpsT = 0
+  // quality ladder state: frames since the last change, calm checks in a
+  // row, and a floor that rises when a level has already failed once
+  const recent: number[] = []
+  let calm = 0
+  let floor = 0
+  let lastFailed = -1
+  function setLevel(next: number) {
+    level = next
+    const L = LADDER[level]
+    active = Math.max(1000, Math.floor(N * L.count))
+    root.classList.toggle('q-lite', L.lite)
+    recent.length = 0
+    calm = 0
+    resize()
+  }
 
   function loop(now: number) {
     if (paused || !core) return
@@ -562,20 +677,40 @@ function start() {
     // ---- frame time telemetry + adaptive quality
     times.push(dtRaw * 1000)
     if (times.length > 90) times.shift()
+    recent.push(dtRaw * 1000)
+    if (recent.length > 90) recent.shift()
     if (now - fpsT > 500) {
       const sorted = [...times].sort((a, b) => a - b)
       const med = sorted[sorted.length >> 1] || 16
       printCell('frame', `${med.toFixed(1)}ms`, true, med > 22)
-      const w = window as Window & { __signal?: { fps: number; ms: number; well: number; drawn: number } }
+      const w = window as Window & { __signal?: { fps: number; ms: number; well: number; drawn: number; q: number } }
       if (w.__signal) {
         w.__signal.fps = Math.round(1000 / Math.max(1, med))
         w.__signal.ms = Math.round(med * 100) / 100
         w.__signal.well = Math.round(ptrStr * 100) / 100
         w.__signal.drawn = active
+        w.__signal.q = level
       }
-      if (times.length > 60) {
-        if (med > 19.5 && active > N * 0.3) active = Math.max(Math.floor(N * 0.3), Math.floor(active * 0.78))
-        else if (med < 14 && active < N) active = Math.min(N, Math.floor(active * 1.1) + 1000)
+      // Adaptive quality. The median hides stutter (a device dropping every
+      // third frame still has a 16.7 ms median), so this counts the frames
+      // that missed the display's own interval instead. The interval is the
+      // fast end of what this display has shown, so 60, 120 and 144 Hz
+      // screens are all judged against themselves; anything slower than
+      // ~57 Hz counts as missing, so a device stuck at 30 fps (overloaded,
+      // or a power saver) steps down too. Not during ignition.
+      if (t > (bang ? 2.6 : 1.2) && recent.length >= 40) {
+        const byTime = [...recent].sort((a, b) => a - b)
+        const base = clamp(byTime[Math.floor(byTime.length * 0.1)], 6, 17.5)
+        const missed = recent.filter((x) => x > base * 1.45).length / recent.length
+        if (missed > 0.16 && level < LADDER.length - 1) {
+          // a level that fails twice is never tried again
+          if (level === lastFailed) floor = level + 1
+          lastFailed = level
+          setLevel(level + 1)
+        } else if (missed < 0.03) {
+          if (++calm >= 8 && level > floor) setLevel(level - 1)
+        } else calm = 0
+        recent.splice(0, recent.length - 30)
       }
       // the rail says what the draw call draws: on a phone that throttles,
       // the number goes DOWN and the rail says so
@@ -588,10 +723,44 @@ function start() {
 
     // ---- ignition ramp
     const ignRaw = repeat ? clamp(t / 0.35, 0, 1) : clamp(t / 0.95, 0, 1)
-    const ign = reduced ? 1 : 1 - Math.pow(1 - ignRaw, 3)
+    const ign = reduced || bang ? 1 : 1 - Math.pow(1 - ignRaw, 3)
     // how far the swarm has actually converged — brightness follows THIS,
     // so the wide rush-in cannot blow out the text it passes behind
-    const settle = reduced || repeat ? 1 : smoothstep(0, 1, clamp(t / 1.85, 0, 1))
+    const settle = reduced || repeat ? 1 : smoothstep(0, 1, clamp((t - (bang ? 0.45 : 0)) / 1.85, 0, 1))
+    // The big bang: 0.45 s of a star gathering in one point, then the
+    // ignition wave blows it apart and the springs haul it into the coil.
+    let ignSpring = mix(20, 9.5, ign)
+    let ignDamp = mix(6.5, 3.2, ign)
+    let ignFlow = mix(0.1, 0.55, ign)
+    let ignBright = 1
+    if (bang && t < 2.6) {
+      const BOOM = 0.45
+      if (t < BOOM) {
+        ignSpring = 0
+        ignDamp = 9
+        ignFlow = 0
+        ignBright = 0.012 + 0.02 * smoothstep(0, BOOM, t)
+        const c = scene.project([0, 0, 0])
+        flash[0] = c.x / Math.max(1, ctl.width)
+        flash[1] = c.y / Math.max(1, ctl.height)
+        flash[2] = 0.32 * smoothstep(0, BOOM, t)
+        flash[3] = 0.035
+      } else {
+        if (!boomed) {
+          boomed = true
+          fireAt([0, 0, 0], 1.5)
+          flash[2] = 1.15
+          flash[3] = 0.06
+          chromaK = 0.024
+        }
+        // the cloud is fast and white-hot; it stays dim until it has
+        // gathered, so it never whites out the copy it flies behind
+        ignSpring = mix(mix(7, 16, smoothstep(0.5, 1.2, t)), 9.5, smoothstep(1.5, 2.4, t))
+        ignDamp = mix(2.6, 3.2, smoothstep(0.6, 2.0, t))
+        ignFlow = mix(0.2, 0.55, smoothstep(0.5, 2.0, t))
+        ignBright = mix(0.4, 1, smoothstep(0.7, 2.1, t))
+      }
+    }
 
     // ---- the morph, driven by which chapter is on screen
     if (chapterDirty) {
@@ -600,6 +769,10 @@ function start() {
     }
     const want = Math.min(morphAt(scrollPos), Math.max(0, build.ready - 1))
     morph += (want - morph) * clamp(dt * 7, 0, 1)
+
+    // the scroll speed, for the long-exposure streak
+    scrollV += ((scrollPos - lastScroll) / dt - scrollV) * clamp(dt * 9, 0, 1)
+    lastScroll = scrollPos
 
     // near a whole number the sculpture is "posed" — slow down and flatten
     const nearest = Math.round(morph)
@@ -637,40 +810,49 @@ function start() {
 
     for (const w of waves) if (w[3] >= 0) w[3] = w[3] > 1.5 ? -1 : w[3] + dt
 
-    const fov = 0.72
+    // the well charges while the mouse is held still, and drains when let go
+    charge = charging ? Math.min(1, charge + dt / 1.5) : Math.max(0, charge - dt * 3)
+    flash[2] *= Math.exp(-dt * (bang && t < 0.45 ? 0 : bang && t < 1.5 ? 7.5 : 5.5))
+    chromaK *= Math.exp(-dt * 4)
+    shake *= Math.exp(-dt * 6)
+
+    const fov = FOV
     const dist =
       (phone ? 9.3 : 5.6) + faceOn * (phone ? 1.5 : 0.25) + globeOn * (phone ? 1.9 : 0.5) + stackOn * (phone ? 1.3 : 1.15)
     const tilt = (-0.5 + Math.sin(t * 0.109) * 0.13) * (1 - 0.9 * faceOn) + pitch
-    const shiftX = mix(ANCH_X[mi], ANCH_X[mj], mf)
-    const shiftY = mix(ANCH_Y[mi], ANCH_Y[mj], mf)
+    const jolt = shake > 0.01 && !reduced ? shake * 0.02 : 0
+    const shiftX = mix(ANCH_X[mi], ANCH_X[mj], mf) + (Math.random() - 0.5) * jolt
+    const shiftY = mix(ANCH_Y[mi], ANCH_Y[mj], mf) + (Math.random() - 0.5) * jolt
+    cam.dist = dist
+    cam.tilt = tilt
+    cam.spin = spin + yaw
+    cam.shiftX = shiftX
+    cam.shiftY = shiftY
 
     // the same camera the GPU uses, so HTML labels land on the sculpture
     const [viewM] = viewMatrix(dist, tilt, spin + yaw)
     ctl.vp = mul(perspectiveGPU(fov, vw / Math.max(1, vh), 0.1, 60, shiftX, shiftY), viewM)
 
     // remember where the well is in sculpture space so a click can use it
-    const aspect = vw / vh
-    const fq = 1 / Math.tan(fov / 2)
-    const wx = ((px - shiftX) * aspect * dist) / fq
-    const wy = ((py - shiftY) * dist) / fq
-    const cs = Math.cos(spin + yaw)
-    const ss = Math.sin(spin + yaw)
-    const ct = Math.cos(tilt)
-    const st = Math.sin(tilt)
-    wellWorld = [cs * wx + st * ss * wy, wy * ct, -ss * wx + st * cs * wy]
+    wellWorld = toWorld(px, py)
 
-    flick = 0.88 + Math.sin(t * 2.3) * 0.02 + Math.sin(t * 7.7) * 0.012
+    flick = 0.88 + Math.sin(t * 2.3) * 0.02 + Math.sin(t * 7.7) * (0.012 + charge * 0.05)
+
+    // the pointer is a gravitational lens, in the hero, for a mouse
+    const heroOn = 1 - smoothstep(0.25, 0.75, morph)
+    const lensK = coarse || reduced ? 0 : ptrStr * heroOn * smoothstep(1.6, 2.4, bang ? t : t + 2) * (0.85 + charge * 0.9)
+    const dprK = vw / Math.max(1, window.innerWidth)
 
     const f: Frame = {
       time: t,
       dt,
       morph,
       ignite: ign,
-      spring: mix(20, 9.5, ign) + faceOn * 6,
-      damping: mix(6.5, 3.2, ign) + faceOn * 1.6,
+      spring: ignSpring + faceOn * 6,
+      damping: ignDamp + faceOn * 1.6,
       // the stack is a built thing: the flow that makes filaments would only
       // blur its edges, so it is turned down where the plates are
-      flowAmp: reduced ? 0.16 : mix(0.1, 0.55, ign) * (1 - 0.5 * faceOn) * (1 - 0.62 * stackOn),
+      flowAmp: reduced ? 0.16 : ignFlow * (1 - 0.5 * faceOn) * (1 - 0.62 * stackOn),
       flowScale: 1.05,
       px,
       py,
@@ -678,7 +860,11 @@ function start() {
         ? ctl.well.strength
         : reduced
           ? 0
-          : ptrStr * (0.88 - 0.72 * smoothstep(0.15, 0.9, Math.min(1, morph))) * (dragging ? 1.6 : 1),
+          : ptrStr *
+            (0.88 - 0.72 * smoothstep(0.15, 0.9, Math.min(1, morph))) *
+            (dragging && !charging ? 1.6 : 1) *
+            (1 + charge * 3.2) *
+            (bang ? smoothstep(1.2, 2.0, t) : 1),
       well: ctl.well.p ?? undefined,
       dist,
       fov,
@@ -697,9 +883,17 @@ function start() {
         flick *
         (1 - faceOn * (phone ? 0.12 : 0.16)) *
         (1 + globeOn * (phone ? 0.34 : 0)) *
-        mix(0.5, 1, settle),
+        mix(0.5, 1, settle) *
+        ignBright,
       active,
       waves,
+      waveK,
+      bangT: t,
+      charge,
+      warp: reduced ? 0 : clamp(scrollV * 0.016, -44, 44) * dprK,
+      lens: [px * 0.5 + 0.5, 0.5 - py * 0.5, lensK, 0.03 * (1 + charge * 0.9)],
+      flash,
+      chroma: chromaK + Math.min(0.012, Math.abs(scrollV) * 0.000004),
     }
     core.frame(f)
     scene._tick({ morph, chapter: chapterAt(scrollPos), time: t, dt, scrollY: scrollPos })

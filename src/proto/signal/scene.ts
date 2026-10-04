@@ -54,8 +54,10 @@ export interface Scene {
   anchor(el: HTMLElement, point: Vec3, shape: number, opts?: AnchorOpts): () => void
   /** pull the swarm to a sculpture point (a hovered role, tool, city); null releases */
   setWell(p: Vec3 | null, strength?: number): void
-  /** a shockwave from a sculpture point (default: the current well) */
-  fire(p?: Vec3): void
+  /** a shockwave from a sculpture point (default: the current well); k is its strength (1 = a click) */
+  fire(p?: Vec3, k?: number): void
+  /** the sculpture-space point under a viewport pixel, on the plane through the sculpture's centre */
+  toWorld(x: number, y: number): Vec3
   /** add spin velocity to the sculpture (drag to orbit) */
   spin(dx: number, dy: number): void
   /** per-frame callback; returns an unsubscribe fn */
@@ -73,7 +75,8 @@ interface AnchorRec {
 
 export interface SceneControls {
   well: { p: Vec3 | null; strength: number }
-  fire: (p?: Vec3) => void
+  fire: (p?: Vec3, k?: number) => void
+  toWorld: (x: number, y: number) => Vec3
   spin: (dx: number, dy: number) => void
   print: (key: string, value: string, hot?: boolean) => void
   /** the current view-projection matrix, written by main.ts each frame */
@@ -123,8 +126,11 @@ export function createScene(env: { reduced: boolean; phone: boolean; coarse: boo
       ctl.well.p = p
       ctl.well.strength = strength
     },
-    fire(p) {
-      ctl.fire(p)
+    fire(p, k) {
+      ctl.fire(p, k)
+    },
+    toWorld(x, y) {
+      return ctl.toWorld(x, y)
     },
     spin(dx, dy) {
       ctl.spin(dx, dy)
